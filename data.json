@@ -1,0 +1,17 @@
+{
+    "lastUpdated": "2026-09-15 15:22:24 WIB",
+    "totalRecordsScraped": 1,
+    "openStack": [
+        {
+            "id": 1,
+            "vessel": "Vessel Alongside",
+            "voyage": "TELUK BINTUNI (TEBI065)",
+            "startOpen": "16/09/2026 07:00",
+            "closingTime": "21/09/2026 07:00",
+            "eta": "[ Detail Container ]",
+            "etb": "14/09/2026 18:00",
+            "estDeparture": "22/09/2026 16:46"
+        }
+    ],
+    "estimatedBerth": []
+}
