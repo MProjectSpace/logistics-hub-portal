@@ -1,113 +1,78 @@
 import json
 from datetime import datetime
+import requests
+from bs4 BeautifulSoup
 
-def generate_comprehensive_vessel_data():
-    print("🚀 Menyiapkan data komprehensif terminal pelabuhan...")
+def scrape_pelindo_live_data():
+    print("Menghubungkan langsung ke portal Pelindo...")
     
-    # Kumpulan data kapal Open Stack dan Estimasi Sandar yang kaya dan realistis
-    open_stack_data = [
-        {
-            "id": 1,
-            "vessel": "MTT SANDAKAN",
-            "voyage": "80E / 80W",
-            "startOpen": "14 Sep 2026, 08:00",
-            "closingTime": "17 Sep 2026, 16:00",
-            "estDeparture": "18 Sep 2026"
-        },
-        {
-            "id": 2,
-            "vessel": "SINAR BINTAN",
-            "voyage": "951S / 951N",
-            "startOpen": "15 Sep 2026, 10:00",
-            "closingTime": "18 Sep 2026, 12:00",
-            "estDeparture": "19 Sep 2026"
-        },
-        {
-            "id": 3,
-            "vessel": "WAN HAI 327",
-            "voyage": "S068 / N068",
-            "startOpen": "15 Sep 2026, 14:00",
-            "closingTime": "19 Sep 2026, 15:00",
-            "estDeparture": "20 Sep 2026"
-        },
-        {
-            "id": 4,
-            "vessel": "MSC MALENA III",
-            "voyage": "HC635R",
-            "startOpen": "16 Sep 2026, 06:00",
-            "closingTime": "19 Sep 2026, 20:00",
-            "estDeparture": "21 Sep 2026"
-        },
-        {
-            "id": 5,
-            "vessel": "KM MUTIARA NUSANTARA",
-            "voyage": "VOY-102",
-            "startOpen": "16 Sep 2026, 09:00",
-            "closingTime": "20 Sep 2026, 14:00",
-            "estDeparture": "21 Sep 2026"
-        }
-    ]
-
-    estimated_berth_data = [
-        {
-            "id": 1,
-            "vessel": "TELUK BINTUNI",
-            "voyage": "21/2026",
-            "eta": "15 Sep 2026, 12:00",
-            "etb": "15 Sep 2026, 15:57",
-            "estDeparture": "16 Sep 2026, 21:00",
-            "terminal": "Dermaga 03 - Domestik"
-        },
-        {
-            "id": 2,
-            "vessel": "HONG TAI 656",
-            "voyage": "636S / 637N",
-            "eta": "15 Sep 2026, 18:00",
-            "etb": "15 Sep 2026, 22:10",
-            "estDeparture": "16 Sep 2026, 21:00",
-            "terminal": "Dermaga 01 - Internasional"
-        },
-        {
-            "id": 3,
-            "vessel": "MERATUS SABANG",
-            "voyage": "BJX067S",
-            "eta": "15 Sep 2026, 08:00",
-            "etb": "15 Sep 2026, 11:55",
-            "estDeparture": "16 Sep 2026, 01:00",
-            "terminal": "Dermaga 02 - Domestik"
-        },
-        {
-            "id": 4,
-            "vessel": "KM PACIFIC STAR",
-            "voyage": "VOY-889",
-            "eta": "16 Sep 2026, 02:00",
-            "etb": "16 Sep 2026, 14:00",
-            "estDeparture": "17 Sep 2026, 10:00",
-            "terminal": "Dermaga 03 - Domestik"
-        },
-        {
-            "id": 5,
-            "vessel": "MV GLOBAL EXPRESS",
-            "voyage": "VOY-301",
-            "eta": "17 Sep 2026, 06:00",
-            "etb": "17 Sep 2026, 20:00",
-            "estDeparture": "18 Sep 2026, 12:00",
-            "terminal": "Dermaga 01 - Internasional"
-        }
-    ]
-
-    final_output = {
-        "lastUpdated": datetime.now().strftime("%Y-%m-%d %H:%M:%S WIB"),
-        "totalRecordsScraped": len(open_stack_data) + len(estimated_berth_data),
-        "openStack": open_stack_data,
-        "estimatedBerth": estimated_berth_data
+    # URL target webaccess pelindo/terminal
+    TARGET_URL = "https://ibstpks.pelindo.co.id/webaccess/"
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
     }
 
-    # Simpan ke file data.json
+    open_stack_list = []
+    estimated_berth_list = []
+
+    try:
+        # Melakukan request HTTP ke situs Pelindo
+        response = requests.get(TARGET_URL, headers=headers, timeout=30)
+        response.raise_for_status() # Cek apakah server merespon dengan baik (status 200)
+        
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Mencari semua baris tabel atau elemen data kapal di halaman
+        rows = soup.find_all('tr')
+        print(f"Ditemukan {len(rows)} baris elemen tabel di halaman web.")
+
+        for index, row in enumerate(rows):
+            cols = row.find_all(['td', 'th'])
+            cols_text = [col.text.strip() for col in cols]
+            
+            # Filter baris yang memiliki informasi kapal (minimal nama kapal dan voyage/jadwal)
+            if len(cols_text) >= 3:
+                vessel_name = cols_text[0]
+                # Abaikan baris header tabel
+                if "vessel" in vessel_name.lower() or "nama" in vessel_name.lower() or not vessel_name:
+                    continue
+                
+                row_data = {
+                    "id": len(open_stack_list) + len(estimated_berth_list) + 1,
+                    "vessel": vessel_name,
+                    "voyage": cols_text[1] if len(cols_text) > 1 else "-",
+                    "startOpen": cols_text[2] if len(cols_text) > 2 else "-",
+                    "closingTime": cols_text[3] if len(cols_text) > 3 else "-",
+                    "eta": cols_text[2] if len(cols_text) > 2 else "-",
+                    "etb": cols_text[3] if len(cols_text) > 3 else "-",
+                    "estDeparture": cols_text[4] if len(cols_text) > 4 else "-",
+                    "terminal": "Terminal Pelindo"
+                }
+
+                # Klasifikasi sederhana berdasarkan teks kolom
+                row_str = " ".join(cols_text).lower()
+                if "open" in row_str or "stack" in row_str:
+                    open_stack_list.append(row_data)
+                else:
+                    estimated_berth_list.append(row_data)
+
+    except Exception as e:
+        print(f"Terjadi kendala saat mengambil data dari web: {e}")
+
+    # Jika karena proteksi jaringan server target membatasi request langsung, 
+    # kita pastikan struktur JSON tetap terbentuk valid dengan log peringatan
+    final_output = {
+        "lastUpdated": datetime.now().strftime("%Y-%m-%d %H:%M:%S WIB"),
+        "totalRecordsScraped": len(open_stack_list) + len(estimated_berth_list),
+        "openStack": open_stack_list,
+        "estimatedBerth": estimated_berth_list
+    }
+
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(final_output, f, ensure_ascii=False, indent=4)
     
-    print(f"✅ Berhasil menyusun {final_output['totalRecordsScraped']} data operasional ke data.json!")
+    print(f"Berhasil memproses! Total data tersimpan: {final_output['totalRecordsScraped']}")
 
 if __name__ == "__main__":
-    generate_comprehensive_vessel_data()
+    scrape_pelindo_live_data()
