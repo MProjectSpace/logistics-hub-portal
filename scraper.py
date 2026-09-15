@@ -1,49 +1,28 @@
-```python
-import asyncio
-from playwright.async_api import async_playwright
+    page = await browser.new_page()
 
-URL = "https://ibstpks.pelindo.co.id/webaccess/"
+    print("Membuka Pelindo...")
 
+    await page.goto(
+        URL,
+        wait_until="domcontentloaded",
+        timeout=120000
+    )
 
-async def main():
+    print("Pelindo berhasil dibuka.")
+    print("Menunggu data...")
 
-    async with async_playwright() as p:
+    await page.wait_for_timeout(10000)
 
-        browser = await p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox"]
-        )
+    text = await page.locator("body").inner_text()
 
-        page = await browser.new_page()
+    print("\n" + "=" * 70)
+    print("DATA HALAMAN PELINDO")
+    print("=" * 70)
 
-        print("Membuka Pelindo...")
+    print(text)
 
-        await page.goto(
-            URL,
-            wait_until="domcontentloaded",
-            timeout=120000
-        )
+    print("\n" + "=" * 70)
+    print("SELESAI")
+    print("=" * 70)
 
-        print("Pelindo berhasil dibuka.")
-        print("Menunggu data...")
-
-        await page.wait_for_timeout(10000)
-
-        text = await page.locator("body").inner_text()
-
-        print("\n" + "=" * 70)
-        print("DATA HALAMAN PELINDO")
-        print("=" * 70)
-
-        print(text)
-
-        print("\n" + "=" * 70)
-        print("SELESAI")
-        print("=" * 70)
-
-        await browser.close()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
+    await browser.close()
