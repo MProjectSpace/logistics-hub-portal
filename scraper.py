@@ -6,7 +6,6 @@ from playwright.async_api import async_playwright
 
 URL = "https://ibstpks.pelindo.co.id/webaccess/"
 
-
 KEYWORDS = [
     "Vessel Alongside",
     "Confirmed Vessel",
@@ -36,17 +35,31 @@ async def main():
             }
         )
 
+        # ==========================================
+        # OPEN WEBSITE
+        # ==========================================
+
         print("======================================")
         print("MEMBUKA WEBSITE PELINDO")
         print("======================================")
 
-        await page.goto(
-            URL,
-            wait_until="domcontentloaded",
-            timeout=60000,
-        )
+        try:
 
-        print("Website berhasil dibuka.")
+            await page.goto(
+                URL,
+                wait_until="domcontentloaded",
+                timeout=60000,
+            )
+
+            print("Website berhasil dibuka.")
+
+        except Exception as e:
+
+            print("GAGAL membuka website:")
+            print(repr(e))
+
+            await browser.close()
+            return
 
         print("")
         print("Menunggu aplikasi Pelindo...")
@@ -62,8 +75,39 @@ async def main():
         print("PAGE INFORMATION")
         print("======================================")
 
-        print("TITLE :", await page.title())
-        print("URL   :", page.url)
+        try:
+            print("TITLE :", await page.title())
+        except Exception as e:
+            print("Gagal membaca title:", repr(e))
+
+        try:
+            print("URL   :", page.url)
+        except Exception as e:
+            print("Gagal membaca URL:", repr(e))
+
+        # ==========================================
+        # VISIBLE TEXT
+        # ==========================================
+
+        print("")
+        print("======================================")
+        print("VISIBLE TEXT CHECK")
+        print("======================================")
+
+        try:
+
+            body_text = await page.locator("body").inner_text()
+
+            print(
+                body_text[:10000]
+            )
+
+        except Exception as e:
+
+            print(
+                "Gagal membaca body:",
+                repr(e)
+            )
 
         # ==========================================
         # SEARCH EACH SECTION
@@ -81,49 +125,97 @@ async def main():
             print(keyword)
             print("--------------------------------------")
 
-            locator = page.get_by_text(
-                keyword,
-                exact=False
-            )
+            try:
 
-            count = await locator.count()
+                locator = page.get_by_text(
+                    keyword,
+                    exact=False
+                )
 
-            print("Element ditemukan:", count)
+                count = await locator.count()
 
-            for i in range(count):
+                print(
+                    "Element ditemukan:",
+                    count
+                )
 
-                element = locator.nth(i)
+                for i in range(
+                    min(count, 10)
+                ):
 
-                try:
+                    element = locator.nth(i)
 
-                    info = await element.evaluate(
-                        """
-                        el => {
-                            let parent = el.parentElement;
+                    try:
 
-                            return {
-                                tag: el.tagName,
-                                id: el.id,
-                                className: el.className,
-                                text: el.innerText,
-                                parentTag: parent ? parent.tagName : null,
-                                parentId: parent ? parent.id : null,
-                                parentClass: parent ? parent.className : null,
-                                parentText: parent ? parent.innerText : null
-                            };
-                        }
-                        """
-                    )
+                        info = await element.evaluate(
+                            """
+                            el => {
 
-                    print("")
-                    print("ELEMENT:", info)
+                                const parent =
+                                    el.parentElement;
 
-                except Exception as e:
+                                return {
 
-                    print(
-                        "Gagal inspect:",
-                        e
-                    )
+                                    tag:
+                                        el.tagName,
+
+                                    id:
+                                        el.id,
+
+                                    className:
+                                        String(
+                                            el.className
+                                        ),
+
+                                    text:
+                                        el.innerText || "",
+
+                                    parentTag:
+                                        parent
+                                            ? parent.tagName
+                                            : null,
+
+                                    parentId:
+                                        parent
+                                            ? parent.id
+                                            : null,
+
+                                    parentClass:
+                                        parent
+                                            ? String(
+                                                parent.className
+                                              )
+                                            : null,
+
+                                    parentText:
+                                        parent
+                                            ? (
+                                                parent.innerText
+                                                || ""
+                                              )
+                                            : null
+                                };
+                            }
+                            """
+                        )
+
+                        print("")
+                        print("ELEMENT:")
+                        print(info)
+
+                    except Exception as e:
+
+                        print(
+                            "Gagal inspect element:",
+                            repr(e)
+                        )
+
+            except Exception as e:
+
+                print(
+                    "Gagal mencari keyword:",
+                    repr(e)
+                )
 
         # ==========================================
         # ALL TABLES
@@ -134,39 +226,50 @@ async def main():
         print("TABLE INSPECTION")
         print("======================================")
 
-        tables = page.locator("table")
+        try:
 
-        table_count = await tables.count()
+            tables = page.locator("table")
 
-        print(
-            "Jumlah table:",
-            table_count
-        )
+            table_count = await tables.count()
 
-        for i in range(table_count):
+            print(
+                "Jumlah table:",
+                table_count
+            )
 
-            table = tables.nth(i)
-
-            try:
+            for i in range(table_count):
 
                 print("")
                 print(
                     f"========== TABLE {i + 1} =========="
                 )
 
-                print(
-                    await table.inner_text()
-                )
+                try:
 
-            except Exception as e:
+                    table = tables.nth(i)
 
-                print(
-                    "Gagal membaca table:",
-                    e
-                )
+                    text = await table.inner_text()
+
+                    print(
+                        text[:5000]
+                    )
+
+                except Exception as e:
+
+                    print(
+                        "Gagal membaca table:",
+                        repr(e)
+                    )
+
+        except Exception as e:
+
+            print(
+                "Gagal melakukan table inspection:",
+                repr(e)
+            )
 
         # ==========================================
-        # CARDS
+        # POSSIBLE CARDS
         # ==========================================
 
         print("")
@@ -184,16 +287,30 @@ async def main():
 
         for selector in selectors:
 
+            print("")
+            print(
+                "--------------------------------------"
+            )
+
+            print(
+                "SELECTOR:",
+                selector
+            )
+
+            print(
+                "--------------------------------------"
+            )
+
             try:
 
-                locator = page.locator(selector)
+                locator = page.locator(
+                    selector
+                )
 
                 count = await locator.count()
 
-                print("")
                 print(
-                    selector,
-                    "=>",
+                    "Jumlah:",
                     count
                 )
 
@@ -201,9 +318,9 @@ async def main():
                     min(count, 20)
                 ):
 
-                    element = locator.nth(i)
-
                     try:
+
+                        element = locator.nth(i)
 
                         text = await element.inner_text()
 
@@ -218,42 +335,131 @@ async def main():
                                 text[:3000]
                             )
 
-                    except Exception:
-                        pass
+                    except Exception as e:
 
-            except Exception:
-                pass
+                        print(
+                            "Gagal membaca element:",
+                            repr(e)
+                        )
+
+            except Exception as e:
+
+                print(
+                    "Gagal selector:",
+                    repr(e)
+                )
 
         # ==========================================
-        # SAVE FULL HTML
+        # LINKS
         # ==========================================
-
-        html = await page.content()
-
-        Path(
-            "debug.html"
-        ).write_text(
-            html,
-            encoding="utf-8"
-        )
 
         print("")
-        print(
-            "HTML disimpan: debug.html"
-        )
+        print("======================================")
+        print("LINK / BUTTON INSPECTION")
+        print("======================================")
+
+        try:
+
+            elements = page.locator(
+                "a, button"
+            )
+
+            count = await elements.count()
+
+            print(
+                "Jumlah link/button:",
+                count
+            )
+
+            for i in range(
+                min(count, 100)
+            ):
+
+                try:
+
+                    element = elements.nth(i)
+
+                    text = (
+                        await element.inner_text()
+                    ).strip()
+
+                    if text:
+
+                        print(
+                            f"[{i}] {text[:300]}"
+                        )
+
+                except Exception:
+                    pass
+
+        except Exception as e:
+
+            print(
+                "Gagal membaca link/button:",
+                repr(e)
+            )
+
+        # ==========================================
+        # SAVE HTML
+        # ==========================================
+
+        print("")
+        print("======================================")
+        print("MENYIMPAN HTML")
+        print("======================================")
+
+        try:
+
+            html = await page.content()
+
+            Path(
+                "debug.html"
+            ).write_text(
+                html,
+                encoding="utf-8"
+            )
+
+            print(
+                "HTML berhasil disimpan: debug.html"
+            )
+
+        except Exception as e:
+
+            print(
+                "Gagal menyimpan HTML:",
+                repr(e)
+            )
 
         # ==========================================
         # SCREENSHOT
         # ==========================================
 
-        await page.screenshot(
-            path="pelindo.png",
-            full_page=True
-        )
+        print("")
+        print("======================================")
+        print("MENYIMPAN SCREENSHOT")
+        print("======================================")
 
-        print(
-            "Screenshot disimpan: pelindo.png"
-        )
+        try:
+
+            await page.screenshot(
+                path="pelindo.png",
+                full_page=True
+            )
+
+            print(
+                "Screenshot berhasil disimpan."
+            )
+
+        except Exception as e:
+
+            print(
+                "Gagal screenshot:",
+                repr(e)
+            )
+
+        # ==========================================
+        # FINISHED
+        # ==========================================
 
         print("")
         print("======================================")
@@ -264,4 +470,23 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+
+    try:
+
+        asyncio.run(
+            main()
+        )
+
+    except Exception as e:
+
+        print("")
+        print("======================================")
+        print("FATAL ERROR")
+        print("======================================")
+
+        print(
+            repr(e)
+        )
+
+        # Jangan raise lagi.
+        # Tujuannya agar log diagnostic tetap terbaca.
