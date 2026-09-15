@@ -25,22 +25,12 @@ DATE_PATTERN = re.compile(
 )
 
 
-SECTION_NAMES = [
-    "Vessel Alongside",
-    "Confirmed Vessel",
-    "Open Stack",
-    "Vessel Schedule",
-    "Vessel History"
-]
-
-
 def is_valid_vessel_block(block):
     """
     Memastikan kandidat merupakan blok vessel,
     bukan footer/contact information.
     """
 
-    # Harus ada kandidat voyage
     has_voyage = False
 
     for line in block[:6]:
@@ -66,7 +56,6 @@ def is_valid_vessel_block(block):
     if not has_voyage:
         return False
 
-    # Harus ada indikator bahwa blok ini adalah vessel
     operational_keywords = [
         "DOMESTIC",
         "INTERNATIONAL",
@@ -91,10 +80,6 @@ def is_valid_vessel_block(block):
 
 
 def extract_voyage(block):
-    """
-    Mencari voyage dari beberapa baris pertama
-    setelah nama vessel.
-    """
 
     for line in block[:6]:
 
@@ -132,10 +117,6 @@ def parse_vessels(lines):
         vessel_name = match.group(1).strip()
         vessel_code = match.group(2).strip()
 
-        # ============================================
-        # FILTER NON-VESSEL / FOOTER
-        # ============================================
-
         blocked_words = [
             "WA Hotline",
             "Telpon/Wa",
@@ -151,10 +132,6 @@ def parse_vessels(lines):
         ):
             continue
 
-        # ============================================
-        # AMBIL BLOK
-        # ============================================
-
         block = lines[i + 1:i + 25]
 
         if not is_valid_vessel_block(block):
@@ -164,10 +141,6 @@ def parse_vessels(lines):
 
         if not voyage:
             continue
-
-        # ============================================
-        # FIELD
-        # ============================================
 
         eta = ""
         etb = ""
@@ -275,348 +248,355 @@ def parse_vessels(lines):
     return vessels
 
 
-def extract_section(lines, section_name):
+async def diagnose_dom(page):
     """
-    Mengambil isi section tertentu dari halaman Pelindo.
-
-    Contoh:
-        Vessel Alongside
-        ...
-        Confirmed Vessel
-        ...
-
-    Maka hanya isi antara Vessel Alongside
-    sampai sebelum Confirmed Vessel yang diambil.
+    Menganalisis struktur DOM Pelindo untuk menemukan
+    section Vessel Alongside, Confirmed Vessel,
+    Open Stack, Vessel Schedule, dan Vessel History.
     """
 
-    start = -1
+    print("")
+    print("======================================")
+    print("PELINDO DOM DIAGNOSTIC")
+    print("======================================")
 
-    # ============================================
-    # CARI AWAL SECTION
-    # ============================================
+    section_names = [
+        "Vessel Alongside",
+        "Confirmed Vessel",
+        "Open Stack",
+        "Vessel Schedule",
+        "Vessel History"
+    ]
 
-    for i, line in enumerate(lines):
+    for section_name in section_names:
 
-        if line.strip().lower() == section_name.lower():
+        print("")
+        print("--------------------------------------")
+        print(f"SECTION: {section_name}")
+        print("--------------------------------------")
 
-            start = i + 1
-            break
+        result = await page.evaluate(
+            """
+            (sectionName) => {
 
-    if start == -1:
+                const elements = [];
 
-        print(
-            f"[SECTION] {section_name}: "
-            "TIDAK DITEMUKAN"
+                const all = document.querySelectorAll("*");
+
+                for (const el of all) {
+
+                    const text = (el.innerText || "").trim();
+
+                    if (!text) {
+                        continue;
+                    }
+
+                    if (
+                        text.toLowerCase().includes(
+                            sectionName.toLowerCase()
+                        )
+                    ) {
+
+                        const rect = el.getBoundingClientRect();
+
+                        elements.push({
+                            tag: el.tagName,
+                            id: el.id || "",
+                            className:
+                                typeof el.className === "string"
+                                    ? el.className
+                                    : "",
+                            text:
+                                text.substring(0, 500),
+                            childCount:
+                                el.children.length,
+                            width:
+                                Math.round(rect.width),
+                            height:
+                                Math.round(rect.height)
+                        });
+                    }
+                }
+
+                return elements.slice(0, 20);
+            }
+            """,
+            section_name
         )
 
-        return []
+        if not result:
 
-    # ============================================
-    # CARI AKHIR SECTION
-    # ============================================
-
-    end = len(lines)
-
-    for i in range(start, len(lines)):
-
-        current = lines[i].strip().lower()
-
-        for other_section in SECTION_NAMES:
-
-            if other_section.lower() == section_name.lower():
-                continue
-
-            if current == other_section.lower():
-
-                end = i
-                break
-
-        if end != len(lines):
-            break
-
-    result = lines[start:end]
-
-    print(
-        f"[SECTION] {section_name}: "
-        f"{len(result)} baris"
-    )
-
-    return result
-
-
-def make_unique_vessels(*vessel_groups):
-    """
-    Menggabungkan semua vessel dari berbagai section
-    tanpa duplikasi berdasarkan:
-        vesselName + vesselCode + voyage
-    """
-
-    all_vessels = []
-
-    seen = set()
-
-    for group in vessel_groups:
-
-        for vessel in group:
-
-            key = (
-                vessel["vesselName"],
-                vessel["vesselCode"],
-                vessel["voyage"]
+            print(
+                "[DOM] Tidak ditemukan elemen."
             )
 
-            if key in seen:
-                continue
+            continue
 
-            seen.add(key)
+        print(
+            f"[DOM] Ditemukan {len(result)} kandidat elemen."
+        )
 
-            all_vessels.append(vessel)
+        for index, item in enumerate(result, 1):
 
-    return all_vessels
+            print("")
+            print(
+                f"[{index}] TAG = {item['tag']}"
+            )
 
+            print(
+                f"    ID = {item['id']}"
+            )
 
-def build_data(
-    alongside_vessels,
-    confirmed_vessels,
-    open_stack_vessels,
-    schedule_vessels,
-    history_vessels
-):
+            print(
+                f"    CLASS = {item['className']}"
+            )
 
-    # ============================================
-    # ALL VESSELS
-    # ============================================
+            print(
+                f"    CHILDREN = {item['childCount']}"
+            )
 
-    all_vessels = make_unique_vessels(
-        alongside_vessels,
-        confirmed_vessels,
-        open_stack_vessels,
-        schedule_vessels,
-        history_vessels
+            print(
+                f"    SIZE = "
+                f"{item['width']}x{item['height']}"
+            )
+
+            text_preview = (
+                item["text"]
+                .replace("\n", " | ")
+            )
+
+            print(
+                f"    TEXT = {text_preview[:500]}"
+            )
+
+    # ==========================================
+    # CARI TABLE
+    # ==========================================
+
+    print("")
+    print("======================================")
+    print("SEMUA TABLE DI HALAMAN")
+    print("======================================")
+
+    tables = await page.evaluate(
+        """
+        () => {
+
+            return Array.from(
+                document.querySelectorAll("table")
+            ).map((table, index) => {
+
+                const rect =
+                    table.getBoundingClientRect();
+
+                return {
+                    index: index + 1,
+
+                    id:
+                        table.id || "",
+
+                    className:
+                        typeof table.className === "string"
+                            ? table.className
+                            : "",
+
+                    rows:
+                        table.querySelectorAll("tr").length,
+
+                    columns:
+                        table.querySelectorAll("tr:first-child th").length
+                        ||
+                        table.querySelectorAll("tr:first-child td").length,
+
+                    text:
+                        (table.innerText || "")
+                            .trim()
+                            .substring(0, 1000),
+
+                    width:
+                        Math.round(rect.width),
+
+                    height:
+                        Math.round(rect.height)
+                };
+
+            });
+
+        }
+        """
     )
 
-    # ============================================
-    # DATA
-    # ============================================
+    print(
+        f"Jumlah TABLE: {len(tables)}"
+    )
 
-    return {
+    for table in tables:
 
-        "lastUpdated":
-            datetime.now().strftime(
-                "%d/%m/%Y %H:%M"
-            ),
+        print("")
+        print(
+            f"[TABLE {table['index']}]"
+        )
 
-        "source":
-            URL,
+        print(
+            f"TAG = TABLE"
+        )
 
-        # ========================================
-        # VESSEL ALONGSIDE
-        # ========================================
+        print(
+            f"ID = {table['id']}"
+        )
 
-        "vesselAlongside": [
+        print(
+            f"CLASS = {table['className']}"
+        )
 
-            {
-                "vesselName":
-                    vessel["vesselName"],
+        print(
+            f"ROWS = {table['rows']}"
+        )
 
-                "vesselCode":
-                    vessel["vesselCode"],
+        print(
+            f"COLUMNS = {table['columns']}"
+        )
 
-                "voyage":
-                    vessel["voyage"],
+        print(
+            f"SIZE = "
+            f"{table['width']}x{table['height']}"
+        )
 
-                "atb":
-                    vessel["atb"],
+        text_preview = (
+            table["text"]
+            .replace("\n", " | ")
+        )
 
-                "etd":
-                    vessel["etd"],
+        print(
+            f"TEXT = {text_preview[:1000]}"
+        )
 
-                "atd":
-                    vessel["atd"]
+    # ==========================================
+    # CARI TEXT SECTION SECARA LEBIH SPESIFIK
+    # ==========================================
+
+    print("")
+    print("======================================")
+    print("SECTION TEXT MATCH")
+    print("======================================")
+
+    matches = await page.evaluate(
+        """
+        (sectionNames) => {
+
+            const result = [];
+
+            const walker =
+                document.createTreeWalker(
+                    document.body,
+                    NodeFilter.SHOW_TEXT
+                );
+
+            let node;
+
+            while (
+                node = walker.nextNode()
+            ) {
+
+                const value =
+                    node.textContent.trim();
+
+                if (!value) {
+                    continue;
+                }
+
+                for (const name of sectionNames) {
+
+                    if (
+                        value.toLowerCase()
+                            === name.toLowerCase()
+                    ) {
+
+                        const parent =
+                            node.parentElement;
+
+                        result.push({
+
+                            section: name,
+
+                            tag:
+                                parent
+                                    ? parent.tagName
+                                    : "",
+
+                            id:
+                                parent
+                                    ? parent.id || ""
+                                    : "",
+
+                            className:
+                                parent &&
+                                typeof parent.className === "string"
+                                    ? parent.className
+                                    : "",
+
+                            parentHTML:
+                                parent
+                                    ? parent.outerHTML
+                                        .substring(0, 2000)
+                                    : ""
+                        });
+                    }
+                }
             }
 
-            for vessel in alongside_vessels
-        ],
+            return result;
+        }
+        """,
+        section_names
+    )
 
-        # ========================================
-        # CONFIRMED VESSEL
-        # ========================================
+    if not matches:
 
-        "confirmedVessel": [
+        print(
+            "[MATCH] Tidak ada exact text match."
+        )
 
-            {
-                "vesselName":
-                    vessel["vesselName"],
+    else:
 
-                "vesselCode":
-                    vessel["vesselCode"],
+        for index, item in enumerate(
+            matches,
+            1
+        ):
 
-                "voyage":
-                    vessel["voyage"],
+            print("")
+            print(
+                f"[MATCH {index}] "
+                f"{item['section']}"
+            )
 
-                "etb":
-                    vessel["etb"],
+            print(
+                f"TAG = {item['tag']}"
+            )
 
-                "etd":
-                    vessel["etd"],
+            print(
+                f"ID = {item['id']}"
+            )
 
-                "openStack":
-                    vessel["openStack"],
+            print(
+                f"CLASS = {item['className']}"
+            )
 
-                "closingTime":
-                    vessel["closingTime"],
+            print(
+                "PARENT HTML:"
+            )
 
-                "booking":
-                    vessel["booking"],
-
-                "open":
-                    vessel["open"],
-
-                "actual":
-                    vessel["actual"]
-            }
-
-            for vessel in confirmed_vessels
-        ],
-
-        # ========================================
-        # OPEN STACK
-        # ========================================
-
-        "openStack": [
-
-            {
-                "vesselName":
-                    vessel["vesselName"],
-
-                "vesselCode":
-                    vessel["vesselCode"],
-
-                "voyage":
-                    vessel["voyage"],
-
-                "eta":
-                    vessel["eta"],
-
-                "etb":
-                    vessel["etb"],
-
-                "etd":
-                    vessel["etd"],
-
-                "openStack":
-                    vessel["openStack"],
-
-                "closingTime":
-                    vessel["closingTime"],
-
-                "booking":
-                    vessel["booking"],
-
-                "open":
-                    vessel["open"],
-
-                "actual":
-                    vessel["actual"]
-            }
-
-            for vessel in open_stack_vessels
-        ],
-
-        # ========================================
-        # VESSEL SCHEDULE
-        # ========================================
-
-        "vesselSchedule": [
-
-            {
-                "vesselName":
-                    vessel["vesselName"],
-
-                "vesselCode":
-                    vessel["vesselCode"],
-
-                "voyage":
-                    vessel["voyage"],
-
-                "eta":
-                    vessel["eta"],
-
-                "etb":
-                    vessel["etb"],
-
-                "etd":
-                    vessel["etd"]
-            }
-
-            for vessel in schedule_vessels
-        ],
-
-        # ========================================
-        # VESSEL HISTORY
-        # ========================================
-
-        "vesselHistory": [
-
-            {
-                "vesselName":
-                    vessel["vesselName"],
-
-                "vesselCode":
-                    vessel["vesselCode"],
-
-                "voyage":
-                    vessel["voyage"],
-
-                "eta":
-                    vessel["eta"],
-
-                "etb":
-                    vessel["etb"],
-
-                "etd":
-                    vessel["etd"],
-
-                "atb":
-                    vessel["atb"],
-
-                "atd":
-                    vessel["atd"],
-
-                "openStack":
-                    vessel["openStack"],
-
-                "closingTime":
-                    vessel["closingTime"],
-
-                "booking":
-                    vessel["booking"],
-
-                "open":
-                    vessel["open"],
-
-                "actual":
-                    vessel["actual"]
-            }
-
-            for vessel in history_vessels
-        ],
-
-        # ========================================
-        # ALL VESSELS
-        # ========================================
-
-        "allVessels":
-            all_vessels
-    }
+            print(
+                item["parentHTML"]
+            )
 
 
 async def open_pelindo(page):
-    """
-    Membuka Pelindo dengan beberapa strategi.
-    """
 
-    for attempt in range(1, MAX_RETRIES + 1):
+    for attempt in range(
+        1,
+        MAX_RETRIES + 1
+    ):
 
         print(
             f"[CONNECT] Percobaan "
@@ -624,10 +604,6 @@ async def open_pelindo(page):
         )
 
         try:
-
-            # ====================================
-            # STRATEGI NORMAL
-            # ====================================
 
             await page.goto(
                 URL,
@@ -646,10 +622,6 @@ async def open_pelindo(page):
             print(
                 "[WARNING] Navigation timeout."
             )
-
-            # ====================================
-            # CEK APAKAH HALAMAN SUDAH TERSEDIA
-            # ====================================
 
             try:
 
@@ -678,10 +650,6 @@ async def open_pelindo(page):
                     "[WARNING] Pemeriksaan halaman gagal:",
                     check_error
                 )
-
-            # ====================================
-            # RETRY
-            # ====================================
 
             if attempt < MAX_RETRIES:
 
@@ -722,15 +690,13 @@ async def open_pelindo(page):
 async def main():
 
     print("======================================")
-    print("PELINDO LIVE SCRAPER")
+    print("PELINDO LIVE SCRAPER - DOM DIAGNOSTIC")
     print("======================================")
 
     async with async_playwright() as p:
 
         browser = await p.chromium.launch(
-
             headless=True,
-
             args=[
                 "--no-sandbox",
                 "--disable-dev-shm-usage"
@@ -738,7 +704,6 @@ async def main():
         )
 
         page = await browser.new_page(
-
             viewport={
                 "width": 1440,
                 "height": 900
@@ -796,11 +761,8 @@ async def main():
             )
 
         lines = [
-
             line.strip()
-
             for line in text.splitlines()
-
             if line.strip()
         ]
 
@@ -810,156 +772,33 @@ async def main():
         )
 
         # ============================================
-        # CARI SECTION
+        # DIAGNOSTIC DOM
+        # ============================================
+
+        await diagnose_dom(page)
+
+        # ============================================
+        # PARSER LAMA TETAP DIJALANKAN
         # ============================================
 
         print("")
         print("======================================")
-        print("MEMISAHKAN SECTION PELINDO")
+        print("PARSER LAMA")
         print("======================================")
 
-        alongside_lines = extract_section(
-            lines,
-            "Vessel Alongside"
-        )
-
-        confirmed_lines = extract_section(
-            lines,
-            "Confirmed Vessel"
-        )
-
-        open_stack_lines = extract_section(
-            lines,
-            "Open Stack"
-        )
-
-        schedule_lines = extract_section(
-            lines,
-            "Vessel Schedule"
-        )
-
-        history_lines = extract_section(
-            lines,
-            "Vessel History"
-        )
-
-        # ============================================
-        # PARSE VESSEL ALONGSIDE
-        # ============================================
-
-        print("")
-        print(
-            "[5] Parsing Vessel Alongside..."
-        )
-
-        alongside_vessels = parse_vessels(
-            alongside_lines
-        )
-
-        # ============================================
-        # PARSE CONFIRMED VESSEL
-        # ============================================
-
-        print("")
-        print(
-            "[6] Parsing Confirmed Vessel..."
-        )
-
-        confirmed_vessels = parse_vessels(
-            confirmed_lines
-        )
-
-        # ============================================
-        # PARSE OPEN STACK
-        # ============================================
-
-        print("")
-        print(
-            "[7] Parsing Open Stack..."
-        )
-
-        open_stack_vessels = parse_vessels(
-            open_stack_lines
-        )
-
-        # ============================================
-        # PARSE VESSEL SCHEDULE
-        # ============================================
-
-        print("")
-        print(
-            "[8] Parsing Vessel Schedule..."
-        )
-
-        schedule_vessels = parse_vessels(
-            schedule_lines
-        )
-
-        # ============================================
-        # PARSE VESSEL HISTORY
-        # ============================================
-
-        print("")
-        print(
-            "[9] Parsing Vessel History..."
-        )
-
-        history_vessels = parse_vessels(
-            history_lines
-        )
-
-        # ============================================
-        # VALIDASI HASIL
-        # ============================================
+        vessels = parse_vessels(lines)
 
         print("")
         print("======================================")
-        print("HASIL SCRAPING")
+        print("HASIL PARSER LAMA")
         print("======================================")
 
         print(
-            "Alongside:",
-            len(alongside_vessels)
+            "Jumlah vessel:",
+            len(vessels)
         )
 
-        print(
-            "Confirmed:",
-            len(confirmed_vessels)
-        )
-
-        print(
-            "Open Stack:",
-            len(open_stack_vessels)
-        )
-
-        print(
-            "Schedule:",
-            len(schedule_vessels)
-        )
-
-        print(
-            "History:",
-            len(history_vessels)
-        )
-
-        # ============================================
-        # VALIDASI TOTAL
-        # ============================================
-
-        all_vessels = make_unique_vessels(
-            alongside_vessels,
-            confirmed_vessels,
-            open_stack_vessels,
-            schedule_vessels,
-            history_vessels
-        )
-
-        print(
-            "All unique vessels:",
-            len(all_vessels)
-        )
-
-        if len(all_vessels) == 0:
+        if len(vessels) == 0:
 
             await browser.close()
 
@@ -969,76 +808,30 @@ async def main():
             )
 
         # ============================================
-        # BUAT DATA
-        # ============================================
-
-        data = build_data(
-
-            alongside_vessels,
-            confirmed_vessels,
-            open_stack_vessels,
-            schedule_vessels,
-            history_vessels
-        )
-
-        # ============================================
-        # SIMPAN DATA.JSON
-        # ============================================
-
-        with open(
-            "data.json",
-            "w",
-            encoding="utf-8"
-        ) as file:
-
-            json.dump(
-                data,
-                file,
-                ensure_ascii=False,
-                indent=2
-            )
-
-        # ============================================
-        # HASIL AKHIR
+        # JANGAN UBAH DATA PRODUKSI
         # ============================================
 
         print("")
         print("======================================")
-        print("DATA.JSON BERHASIL DIBUAT")
+        print("DIAGNOSTIC SELESAI")
         print("======================================")
 
         print(
-            "Alongside:",
-            len(data["vesselAlongside"])
-        )
-
-        print(
-            "Confirmed:",
-            len(data["confirmedVessel"])
-        )
-
-        print(
-            "Open Stack:",
-            len(data["openStack"])
-        )
-
-        print(
-            "Schedule:",
-            len(data["vesselSchedule"])
-        )
-
-        print(
-            "History:",
-            len(data["vesselHistory"])
-        )
-
-        print(
-            "All Vessels:",
-            len(data["allVessels"])
+            "Parser lama berhasil membaca:",
+            len(vessels),
+            "vessel"
         )
 
         print("")
-        print("=== SCRAPER SELESAI ===")
+        print(
+            "Belum membuat perubahan pada data.json."
+        )
+
+        print(
+            "Kirimkan output bagian "
+            "'PELINDO DOM DIAGNOSTIC' "
+            "kepada saya."
+        )
 
         await browser.close()
 
