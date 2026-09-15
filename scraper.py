@@ -26,10 +26,6 @@ DATE_PATTERN = re.compile(
 
 
 def is_valid_vessel_block(block):
-    """
-    Memastikan kandidat merupakan blok vessel,
-    bukan footer/contact information.
-    """
 
     has_voyage = False
 
@@ -241,354 +237,7 @@ def parse_vessels(lines):
 
         vessels.append(vessel)
 
-        print(
-            f"[FOUND] {vessel_name} | {voyage}"
-        )
-
     return vessels
-
-
-async def diagnose_dom(page):
-    """
-    Menganalisis struktur DOM Pelindo untuk menemukan
-    section Vessel Alongside, Confirmed Vessel,
-    Open Stack, Vessel Schedule, dan Vessel History.
-    """
-
-    print("")
-    print("======================================")
-    print("PELINDO DOM DIAGNOSTIC")
-    print("======================================")
-
-    section_names = [
-        "Vessel Alongside",
-        "Confirmed Vessel",
-        "Open Stack",
-        "Vessel Schedule",
-        "Vessel History"
-    ]
-
-    for section_name in section_names:
-
-        print("")
-        print("--------------------------------------")
-        print(f"SECTION: {section_name}")
-        print("--------------------------------------")
-
-        result = await page.evaluate(
-            """
-            (sectionName) => {
-
-                const elements = [];
-
-                const all = document.querySelectorAll("*");
-
-                for (const el of all) {
-
-                    const text = (el.innerText || "").trim();
-
-                    if (!text) {
-                        continue;
-                    }
-
-                    if (
-                        text.toLowerCase().includes(
-                            sectionName.toLowerCase()
-                        )
-                    ) {
-
-                        const rect = el.getBoundingClientRect();
-
-                        elements.push({
-                            tag: el.tagName,
-                            id: el.id || "",
-                            className:
-                                typeof el.className === "string"
-                                    ? el.className
-                                    : "",
-                            text:
-                                text.substring(0, 500),
-                            childCount:
-                                el.children.length,
-                            width:
-                                Math.round(rect.width),
-                            height:
-                                Math.round(rect.height)
-                        });
-                    }
-                }
-
-                return elements.slice(0, 20);
-            }
-            """,
-            section_name
-        )
-
-        if not result:
-
-            print(
-                "[DOM] Tidak ditemukan elemen."
-            )
-
-            continue
-
-        print(
-            f"[DOM] Ditemukan {len(result)} kandidat elemen."
-        )
-
-        for index, item in enumerate(result, 1):
-
-            print("")
-            print(
-                f"[{index}] TAG = {item['tag']}"
-            )
-
-            print(
-                f"    ID = {item['id']}"
-            )
-
-            print(
-                f"    CLASS = {item['className']}"
-            )
-
-            print(
-                f"    CHILDREN = {item['childCount']}"
-            )
-
-            print(
-                f"    SIZE = "
-                f"{item['width']}x{item['height']}"
-            )
-
-            text_preview = (
-                item["text"]
-                .replace("\n", " | ")
-            )
-
-            print(
-                f"    TEXT = {text_preview[:500]}"
-            )
-
-    # ==========================================
-    # CARI TABLE
-    # ==========================================
-
-    print("")
-    print("======================================")
-    print("SEMUA TABLE DI HALAMAN")
-    print("======================================")
-
-    tables = await page.evaluate(
-        """
-        () => {
-
-            return Array.from(
-                document.querySelectorAll("table")
-            ).map((table, index) => {
-
-                const rect =
-                    table.getBoundingClientRect();
-
-                return {
-                    index: index + 1,
-
-                    id:
-                        table.id || "",
-
-                    className:
-                        typeof table.className === "string"
-                            ? table.className
-                            : "",
-
-                    rows:
-                        table.querySelectorAll("tr").length,
-
-                    columns:
-                        table.querySelectorAll("tr:first-child th").length
-                        ||
-                        table.querySelectorAll("tr:first-child td").length,
-
-                    text:
-                        (table.innerText || "")
-                            .trim()
-                            .substring(0, 1000),
-
-                    width:
-                        Math.round(rect.width),
-
-                    height:
-                        Math.round(rect.height)
-                };
-
-            });
-
-        }
-        """
-    )
-
-    print(
-        f"Jumlah TABLE: {len(tables)}"
-    )
-
-    for table in tables:
-
-        print("")
-        print(
-            f"[TABLE {table['index']}]"
-        )
-
-        print(
-            f"TAG = TABLE"
-        )
-
-        print(
-            f"ID = {table['id']}"
-        )
-
-        print(
-            f"CLASS = {table['className']}"
-        )
-
-        print(
-            f"ROWS = {table['rows']}"
-        )
-
-        print(
-            f"COLUMNS = {table['columns']}"
-        )
-
-        print(
-            f"SIZE = "
-            f"{table['width']}x{table['height']}"
-        )
-
-        text_preview = (
-            table["text"]
-            .replace("\n", " | ")
-        )
-
-        print(
-            f"TEXT = {text_preview[:1000]}"
-        )
-
-    # ==========================================
-    # CARI TEXT SECTION SECARA LEBIH SPESIFIK
-    # ==========================================
-
-    print("")
-    print("======================================")
-    print("SECTION TEXT MATCH")
-    print("======================================")
-
-    matches = await page.evaluate(
-        """
-        (sectionNames) => {
-
-            const result = [];
-
-            const walker =
-                document.createTreeWalker(
-                    document.body,
-                    NodeFilter.SHOW_TEXT
-                );
-
-            let node;
-
-            while (
-                node = walker.nextNode()
-            ) {
-
-                const value =
-                    node.textContent.trim();
-
-                if (!value) {
-                    continue;
-                }
-
-                for (const name of sectionNames) {
-
-                    if (
-                        value.toLowerCase()
-                            === name.toLowerCase()
-                    ) {
-
-                        const parent =
-                            node.parentElement;
-
-                        result.push({
-
-                            section: name,
-
-                            tag:
-                                parent
-                                    ? parent.tagName
-                                    : "",
-
-                            id:
-                                parent
-                                    ? parent.id || ""
-                                    : "",
-
-                            className:
-                                parent &&
-                                typeof parent.className === "string"
-                                    ? parent.className
-                                    : "",
-
-                            parentHTML:
-                                parent
-                                    ? parent.outerHTML
-                                        .substring(0, 2000)
-                                    : ""
-                        });
-                    }
-                }
-            }
-
-            return result;
-        }
-        """,
-        section_names
-    )
-
-    if not matches:
-
-        print(
-            "[MATCH] Tidak ada exact text match."
-        )
-
-    else:
-
-        for index, item in enumerate(
-            matches,
-            1
-        ):
-
-            print("")
-            print(
-                f"[MATCH {index}] "
-                f"{item['section']}"
-            )
-
-            print(
-                f"TAG = {item['tag']}"
-            )
-
-            print(
-                f"ID = {item['id']}"
-            )
-
-            print(
-                f"CLASS = {item['className']}"
-            )
-
-            print(
-                "PARENT HTML:"
-            )
-
-            print(
-                item["parentHTML"]
-            )
 
 
 async def open_pelindo(page):
@@ -625,13 +274,6 @@ async def open_pelindo(page):
 
             try:
 
-                current_url = page.url
-
-                print(
-                    f"[CONNECT] URL saat ini: "
-                    f"{current_url}"
-                )
-
                 body_count = await page.locator(
                     "body"
                 ).count()
@@ -644,12 +286,8 @@ async def open_pelindo(page):
 
                     return True
 
-            except Exception as check_error:
-
-                print(
-                    "[WARNING] Pemeriksaan halaman gagal:",
-                    check_error
-                )
+            except Exception:
+                pass
 
             if attempt < MAX_RETRIES:
 
@@ -657,8 +295,7 @@ async def open_pelindo(page):
 
                 print(
                     f"[CONNECT] Menunggu "
-                    f"{wait_seconds} detik "
-                    "sebelum retry..."
+                    f"{wait_seconds} detik..."
                 )
 
                 await page.wait_for_timeout(
@@ -687,10 +324,248 @@ async def open_pelindo(page):
     return False
 
 
+async def diagnose_history(page):
+
+    print("")
+    print("======================================")
+    print("HISTORY BUTTON DIAGNOSTIC")
+    print("======================================")
+
+    # ==========================================
+    # CARI SEMUA ELEMEN HISTORY
+    # ==========================================
+
+    history_elements = await page.evaluate(
+        """
+        () => {
+
+            const result = [];
+
+            const elements =
+                document.querySelectorAll("*");
+
+            for (const el of elements) {
+
+                const text =
+                    (el.innerText || "").trim();
+
+                if (
+                    text.toLowerCase() === "history"
+                ) {
+
+                    result.push({
+
+                        tag:
+                            el.tagName,
+
+                        id:
+                            el.id || "",
+
+                        className:
+                            typeof el.className === "string"
+                                ? el.className
+                                : "",
+
+                        href:
+                            el.getAttribute("href") || "",
+
+                        onclick:
+                            el.getAttribute("onclick") || "",
+
+                        outerHTML:
+                            el.outerHTML.substring(
+                                0,
+                                2000
+                            )
+                    });
+                }
+            }
+
+            return result;
+        }
+        """
+    )
+
+    print(
+        "Jumlah elemen exact 'History':",
+        len(history_elements)
+    )
+
+    for index, item in enumerate(
+        history_elements[:20],
+        1
+    ):
+
+        print("")
+        print(
+            f"[HISTORY {index}]"
+        )
+
+        print(
+            f"TAG = {item['tag']}"
+        )
+
+        print(
+            f"ID = {item['id']}"
+        )
+
+        print(
+            f"CLASS = {item['className']}"
+        )
+
+        print(
+            f"HREF = {item['href']}"
+        )
+
+        print(
+            f"ONCLICK = {item['onclick']}"
+        )
+
+        print(
+            "HTML ="
+        )
+
+        print(
+            item["outerHTML"]
+        )
+
+    # ==========================================
+    # CARI TD.VESSEL
+    # ==========================================
+
+    vessel_cells = page.locator(
+        "td.vessel"
+    )
+
+    count = await vessel_cells.count()
+
+    print("")
+    print(
+        "Jumlah td.vessel:",
+        count
+    )
+
+    # ==========================================
+    # CARI VESSEL PERTAMA YANG MEMILIKI HISTORY
+    # ==========================================
+
+    for i in range(count):
+
+        cell = vessel_cells.nth(i)
+
+        text = (
+            await cell.inner_text()
+        ).strip()
+
+        if "History" not in text:
+
+            continue
+
+        print("")
+        print("======================================")
+        print(
+            f"VESSEL CELL PERTAMA DENGAN HISTORY: "
+            f"{i + 1}"
+        )
+        print("======================================")
+
+        print(
+            text[:2000]
+        )
+
+        # ======================================
+        # CARI LINK / BUTTON HISTORY
+        # ======================================
+
+        candidates = cell.locator(
+            "a, button, input, span"
+        )
+
+        candidate_count = (
+            await candidates.count()
+        )
+
+        print("")
+        print(
+            "Jumlah kandidat tombol/link:",
+            candidate_count
+        )
+
+        for j in range(
+            candidate_count
+        ):
+
+            candidate = candidates.nth(j)
+
+            candidate_text = (
+                await candidate.inner_text()
+            ).strip()
+
+            value = await candidate.get_attribute(
+                "value"
+            )
+
+            href = await candidate.get_attribute(
+                "href"
+            )
+
+            onclick = await candidate.get_attribute(
+                "onclick"
+            )
+
+            if (
+                "history" in candidate_text.lower()
+                or (
+                    value
+                    and "history"
+                    in value.lower()
+                )
+            ):
+
+                print("")
+                print(
+                    f"[CANDIDATE {j + 1}]"
+                )
+
+                print(
+                    "TEXT =",
+                    candidate_text
+                )
+
+                print(
+                    "VALUE =",
+                    value
+                )
+
+                print(
+                    "HREF =",
+                    href
+                )
+
+                print(
+                    "ONCLICK =",
+                    onclick
+                )
+
+                print(
+                    "HTML ="
+                )
+
+                print(
+                    (
+                        await candidate.evaluate(
+                            "(el) => el.outerHTML"
+                        )
+                    )[:3000]
+                )
+
+        break
+
+
 async def main():
 
     print("======================================")
-    print("PELINDO LIVE SCRAPER - DOM DIAGNOSTIC")
+    print("PELINDO HISTORY DIAGNOSTIC")
     print("======================================")
 
     async with async_playwright() as p:
@@ -710,10 +585,6 @@ async def main():
             }
         )
 
-        # ============================================
-        # BUKA PELINDO
-        # ============================================
-
         print("[1] Membuka Pelindo...")
 
         success = await open_pelindo(page)
@@ -723,13 +594,8 @@ async def main():
             await browser.close()
 
             raise RuntimeError(
-                "Pelindo tidak dapat diakses setelah "
-                f"{MAX_RETRIES} percobaan."
+                "Pelindo tidak dapat diakses."
             )
-
-        # ============================================
-        # TUNGGU DATA JAVASCRIPT
-        # ============================================
 
         print(
             "[2] Menunggu data vessel..."
@@ -739,99 +605,16 @@ async def main():
             WAIT_AFTER_LOAD
         )
 
-        # ============================================
-        # BACA BODY
-        # ============================================
-
         print(
-            "[3] Membaca data halaman..."
+            "[3] Menjalankan diagnostic..."
         )
 
-        text = await page.locator(
-            "body"
-        ).inner_text()
-
-        if not text.strip():
-
-            await browser.close()
-
-            raise RuntimeError(
-                "Halaman Pelindo terbuka tetapi "
-                "tidak menghasilkan text."
-            )
-
-        lines = [
-            line.strip()
-            for line in text.splitlines()
-            if line.strip()
-        ]
-
-        print(
-            f"[4] Total baris halaman: "
-            f"{len(lines)}"
-        )
-
-        # ============================================
-        # DIAGNOSTIC DOM
-        # ============================================
-
-        await diagnose_dom(page)
-
-        # ============================================
-        # PARSER LAMA TETAP DIJALANKAN
-        # ============================================
-
-        print("")
-        print("======================================")
-        print("PARSER LAMA")
-        print("======================================")
-
-        vessels = parse_vessels(lines)
-
-        print("")
-        print("======================================")
-        print("HASIL PARSER LAMA")
-        print("======================================")
-
-        print(
-            "Jumlah vessel:",
-            len(vessels)
-        )
-
-        if len(vessels) == 0:
-
-            await browser.close()
-
-            raise RuntimeError(
-                "Pelindo berhasil dibuka tetapi "
-                "tidak ada vessel valid ditemukan."
-            )
-
-        # ============================================
-        # JANGAN UBAH DATA PRODUKSI
-        # ============================================
+        await diagnose_history(page)
 
         print("")
         print("======================================")
         print("DIAGNOSTIC SELESAI")
         print("======================================")
-
-        print(
-            "Parser lama berhasil membaca:",
-            len(vessels),
-            "vessel"
-        )
-
-        print("")
-        print(
-            "Belum membuat perubahan pada data.json."
-        )
-
-        print(
-            "Kirimkan output bagian "
-            "'PELINDO DOM DIAGNOSTIC' "
-            "kepada saya."
-        )
 
         await browser.close()
 
