@@ -1,0 +1,42 @@
+name: Pelindo Diagnostic Scraper
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  scrape:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright Chromium
+        run: |
+          python -m playwright install --with-deps chromium
+
+      - name: Run Pelindo diagnostic scraper
+        run: |
+          python scraper.py
+
+      - name: Upload diagnostic files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pelindo-debug
+          path: |
+            pelindo.png
+            debug.html
