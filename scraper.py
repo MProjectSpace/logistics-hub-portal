@@ -4,10 +4,9 @@ import re
 from datetime import datetime
 
 from playwright.async_api import (
-    async_playwright,
-    TimeoutError as PlaywrightTimeoutError
+async_playwright,
+TimeoutError as PlaywrightTimeoutError
 )
-
 
 URL = "https://ibstpks.pelindo.co.id/webaccess/"
 
@@ -15,103 +14,77 @@ MAX_RETRIES = 3
 NAVIGATION_TIMEOUT = 120000
 WAIT_AFTER_LOAD = 10000
 
-
 VESSEL_PATTERN = re.compile(
-    r"^(.+?)\s*\(([^()]+)\)$"
+r"^(.+?)\s*\(([^()]+)\)$"
 )
 
 DATE_PATTERN = re.compile(
-    r"\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}"
+r"\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}"
 )
 
-
 # ============================================================
+
 # BASIC HELPERS
+
 # ============================================================
 
 def normalize_text(text):
-    if not text:
-        return ""
+if not text:
+return ""
 
-    return (
-        text.replace("\xa0", " ")
-        .replace("\r", "")
-        .strip()
-    )
-
+```
+return (
+    text.replace("\xa0", " ")
+    .replace("\r", "")
+    .strip()
+)
+```
 
 def clean_lines(text):
-    return [
-        normalize_text(line)
-        for line in text.splitlines()
-        if normalize_text(line)
-    ]
-
+return [
+normalize_text(line)
+for line in text.splitlines()
+if normalize_text(line)
+]
 
 def is_footer_name(name):
-    name_lower = name.lower()
+name_lower = name.lower()
 
-    footer_keywords = [
-        "wa hotline",
-        "telpon/wa",
-        "support",
-        "contact",
-        "planner",
-        "customer service",
-    ]
+```
+footer_keywords = [
+    "wa hotline",
+    "telpon/wa",
+    "support",
+    "contact",
+    "planner",
+    "customer service",
+]
 
-    return any(keyword in name_lower for keyword in footer_keywords)
-
+return any(
+    keyword in name_lower
+    for keyword in footer_keywords
+)
+```
 
 # ============================================================
+
 # VESSEL BLOCK VALIDATION
+
 # ============================================================
 
 def extract_voyage(block):
-    for line in block[:8]:
+for line in block[:8]:
 
-        line = normalize_text(line)
+```
+    line = normalize_text(line)
 
-        if not line:
-            continue
+    if not line:
+        continue
 
-        if DATE_PATTERN.search(line):
-            continue
+    if DATE_PATTERN.search(line):
+        continue
 
-        excluded = [
-            "DOMESTIC",
-            "INTERNATIONAL",
-            "ETA :",
-            "ETB :",
-            "ETD :",
-            "ATB :",
-            "ATD :",
-            "Open Stack :",
-            "Closing Time :",
-            "Booking / Open / Actual :",
-            "Export Box / Teus :",
-            "Import Box / Teus :",
-            "Vessel Name",
-            "Periode",
-        ]
-
-        if any(x.lower() in line.lower() for x in excluded):
-            continue
-
-        if "/" in line:
-            return line
-
-    return ""
-
-
-def is_valid_vessel_block(block):
-
-    voyage = extract_voyage(block)
-
-    if not voyage:
-        return False
-
-    keywords = [
+    excluded = [
         "DOMESTIC",
         "INTERNATIONAL",
         "ETA :",
@@ -124,666 +97,1054 @@ def is_valid_vessel_block(block):
         "Booking / Open / Actual :",
         "Export Box / Teus :",
         "Import Box / Teus :",
+        "Vessel Name",
+        "Periode",
     ]
 
-    joined = " ".join(block).lower()
+    if any(
+        x.lower() in line.lower()
+        for x in excluded
+    ):
+        continue
 
-    return any(
-        keyword.lower() in joined
-        for keyword in keywords
-    )
+    if "/" in line:
+        return line
 
+return ""
+```
+
+def is_valid_vessel_block(block):
+
+```
+voyage = extract_voyage(block)
+
+if not voyage:
+    return False
+
+keywords = [
+    "DOMESTIC",
+    "INTERNATIONAL",
+    "ETA :",
+    "ETB :",
+    "ETD :",
+    "ATB :",
+    "ATD :",
+    "Open Stack :",
+    "Closing Time :",
+    "Booking / Open / Actual :",
+    "Export Box / Teus :",
+    "Import Box / Teus :",
+]
+
+joined = " ".join(block).lower()
+
+return any(
+    keyword.lower() in joined
+    for keyword in keywords
+)
+```
 
 # ============================================================
+
 # PARSE STANDARD VESSEL
-# ============================================================
-
-def parse_vessel_block(vessel_name, vessel_code, block):
-
-    data = {
-        "vesselName": vessel_name,
-        "vesselCode": vessel_code,
-        "voyage": extract_voyage(block),
-
-        "eta": "",
-        "etb": "",
-        "etd": "",
-        "atb": "",
-        "atd": "",
-
-        "openStack": "",
-        "closingTime": "",
-
-        "booking": "",
-        "open": "",
-        "actual": "",
-
-        "exportBox": "",
-        "exportTeus": "",
-        "importBox": "",
-        "importTeus": "",
-    }
-
-    for line in block:
-
-        line = normalize_text(line)
-
-        if line.startswith("ETA :"):
-            data["eta"] = line.replace("ETA :", "", 1).strip()
-
-        elif line.startswith("ETB :"):
-            data["etb"] = line.replace("ETB :", "", 1).strip()
-
-        elif line.startswith("ETD :"):
-            data["etd"] = line.replace("ETD :", "", 1).strip()
-
-        elif line.startswith("ATB :"):
-            data["atb"] = line.replace("ATB :", "", 1).strip()
-
-        elif line.startswith("ATD :"):
-            data["atd"] = line.replace("ATD :", "", 1).strip()
-
-        elif line.startswith("Open Stack :"):
-            data["openStack"] = line.replace(
-                "Open Stack :", "", 1
-            ).strip()
-
-        elif line.startswith("Closing Time :"):
-            data["closingTime"] = line.replace(
-                "Closing Time :", "", 1
-            ).strip()
-
-        elif line.startswith("Booking / Open / Actual :"):
-
-            value = line.replace(
-                "Booking / Open / Actual :", "", 1
-            ).strip()
-
-            parts = [
-                x.strip()
-                for x in value.split("/")
-            ]
-
-            if len(parts) >= 3:
-                data["booking"] = parts[0]
-                data["open"] = parts[1]
-                data["actual"] = parts[2]
-
-        elif line.startswith("Export Box / Teus :"):
-
-            value = line.replace(
-                "Export Box / Teus :", "", 1
-            ).strip()
-
-            parts = [
-                x.strip()
-                for x in value.split("/")
-            ]
-
-            if len(parts) >= 2:
-                data["exportBox"] = parts[0]
-                data["exportTeus"] = parts[1]
-
-        elif line.startswith("Import Box / Teus :"):
-
-            value = line.replace(
-                "Import Box / Teus :", "", 1
-            ).strip()
-
-            parts = [
-                x.strip()
-                for x in value.split("/")
-            ]
-
-            if len(parts) >= 2:
-                data["importBox"] = parts[0]
-                data["importTeus"] = parts[1]
-
-    return data
-
 
 # ============================================================
+
+def parse_vessel_block(
+vessel_name,
+vessel_code,
+block
+):
+
+```
+data = {
+    "vesselName": vessel_name,
+    "vesselCode": vessel_code,
+    "voyage": extract_voyage(block),
+
+    "eta": "",
+    "etb": "",
+    "etd": "",
+    "atb": "",
+    "atd": "",
+
+    "openStack": "",
+    "closingTime": "",
+
+    "booking": "",
+    "open": "",
+    "actual": "",
+
+    "exportBox": "",
+    "exportTeus": "",
+    "importBox": "",
+    "importTeus": "",
+}
+
+for line in block:
+
+    line = normalize_text(line)
+
+    if line.startswith("ETA :"):
+
+        data["eta"] = line.replace(
+            "ETA :",
+            "",
+            1
+        ).strip()
+
+    elif line.startswith("ETB :"):
+
+        data["etb"] = line.replace(
+            "ETB :",
+            "",
+            1
+        ).strip()
+
+    elif line.startswith("ETD :"):
+
+        data["etd"] = line.replace(
+            "ETD :",
+            "",
+            1
+        ).strip()
+
+    elif line.startswith("ATB :"):
+
+        data["atb"] = line.replace(
+            "ATB :",
+            "",
+            1
+        ).strip()
+
+    elif line.startswith("ATD :"):
+
+        data["atd"] = line.replace(
+            "ATD :",
+            "",
+            1
+        ).strip()
+
+    elif line.startswith("Open Stack :"):
+
+        data["openStack"] = line.replace(
+            "Open Stack :",
+            "",
+            1
+        ).strip()
+
+    elif line.startswith("Closing Time :"):
+
+        data["closingTime"] = line.replace(
+            "Closing Time :",
+            "",
+            1
+        ).strip()
+
+    elif line.startswith(
+        "Booking / Open / Actual :"
+    ):
+
+        value = line.replace(
+            "Booking / Open / Actual :",
+            "",
+            1
+        ).strip()
+
+        parts = [
+            x.strip()
+            for x in value.split("/")
+        ]
+
+        if len(parts) >= 3:
+
+            data["booking"] = parts[0]
+            data["open"] = parts[1]
+            data["actual"] = parts[2]
+
+    elif line.startswith(
+        "Export Box / Teus :"
+    ):
+
+        value = line.replace(
+            "Export Box / Teus :",
+            "",
+            1
+        ).strip()
+
+        parts = [
+            x.strip()
+            for x in value.split("/")
+        ]
+
+        if len(parts) >= 2:
+
+            data["exportBox"] = parts[0]
+            data["exportTeus"] = parts[1]
+
+    elif line.startswith(
+        "Import Box / Teus :"
+    ):
+
+        value = line.replace(
+            "Import Box / Teus :",
+            "",
+            1
+        ).strip()
+
+        parts = [
+            x.strip()
+            for x in value.split("/")
+        ]
+
+        if len(parts) >= 2:
+
+            data["importBox"] = parts[0]
+            data["importTeus"] = parts[1]
+
+return data
+```
+
+# ============================================================
+
 # PARSE VESSELS FROM A SPECIFIC TD.VESSEL
+
 # ============================================================
 
 def parse_vessel_cell(text):
 
-    lines = clean_lines(text)
+```
+lines = clean_lines(text)
 
-    vessels = []
+vessels = []
 
-    for i, line in enumerate(lines):
+vessel_positions = []
 
-        match = VESSEL_PATTERN.match(line)
+for i, line in enumerate(lines):
 
-        if not match:
-            continue
+    match = VESSEL_PATTERN.match(line)
 
-        vessel_name = match.group(1).strip()
-        vessel_code = match.group(2).strip()
+    if not match:
+        continue
 
-        if is_footer_name(vessel_name):
-            continue
+    vessel_name = match.group(1).strip()
 
-        block = lines[i + 1:i + 25]
+    if is_footer_name(vessel_name):
+        continue
 
-        if not is_valid_vessel_block(block):
-            continue
+    vessel_positions.append(i)
 
-        vessel = parse_vessel_block(
-            vessel_name,
-            vessel_code,
-            block
-        )
+for position_index, start in enumerate(
+    vessel_positions
+):
 
-        vessels.append(vessel)
+    line = lines[start]
 
-    return vessels
+    match = VESSEL_PATTERN.match(line)
 
+    if not match:
+        continue
+
+    vessel_name = match.group(1).strip()
+    vessel_code = match.group(2).strip()
+
+    if position_index + 1 < len(
+        vessel_positions
+    ):
+
+        end = vessel_positions[
+            position_index + 1
+        ]
+
+    else:
+
+        end = len(lines)
+
+    block = lines[
+        start + 1:end
+    ]
+
+    if not is_valid_vessel_block(block):
+        continue
+
+    vessel = parse_vessel_block(
+        vessel_name,
+        vessel_code,
+        block
+    )
+
+    vessels.append(vessel)
+
+return vessels
+```
 
 # ============================================================
+
 # FIND THE 4 MAIN VESSEL SECTIONS
+
 # ============================================================
 
 async def get_vessel_sections(page):
 
-    cells = await page.locator("td.vessel").evaluate_all("""
-        els => els.map((el, index) => ({
-            index: index,
-            text: el.innerText || ""
-        }))
-    """)
+```
+cells = await page.locator(
+    "td.vessel"
+).evaluate_all("""
+    els => els.map((el, index) => ({
+        index: index,
+        text: el.innerText || ""
+    }))
+""")
 
-    sections = {}
+sections = {}
 
-    for cell in cells:
+for cell in cells:
 
-        text = normalize_text(cell["text"])
+    raw_text = cell["text"]
+    text = normalize_text(raw_text)
 
-        if "Vessel Schedule" in text:
-            sections["schedule"] = text
+    if "Vessel Schedule" in text:
 
-        elif "Confirmed Vessel" in text:
-            sections["confirmed"] = text
+        sections["schedule"] = text
 
-        elif "Open Stack" in text:
-            sections["openStack"] = text
+    elif "Confirmed Vessel" in text:
 
-        elif (
-            "Vessel Alongside" in text
-            or "Vessel\\u00a0Alongside" in cell["text"]
-        ):
-            sections["alongside"] = text
+        sections["confirmed"] = text
 
-    return sections
+    elif "Open Stack" in text:
 
+        sections["openStack"] = text
+
+    elif (
+        "Vessel Alongside" in text
+        or "Vessel\\u00a0Alongside" in raw_text
+    ):
+
+        sections["alongside"] = text
+
+return sections
+```
 
 # ============================================================
+
 # LOAD VESSEL HISTORY
+
 # ============================================================
 
 async def load_history_section(page):
 
-    print()
-    print("[HISTORY] Mencari tombol History...")
+```
+print()
+print(
+    "[HISTORY] Mencari tombol History..."
+)
 
-    history_links = page.locator(
-        'td.vessel a[data-url*="vessel_audit"]'
-    )
+history_links = page.locator(
+    'td.vessel a[data-url*="vessel_audit"]'
+)
 
-    count = await history_links.count()
+count = await history_links.count()
 
-    print(f"[HISTORY] Jumlah tombol History: {count}")
+print(
+    f"[HISTORY] Jumlah tombol History: {count}"
+)
 
-    if count == 0:
-        print("[HISTORY] Tombol History tidak ditemukan.")
-        return ""
-
-    # --------------------------------------------------------
-    # Klik History pertama untuk memicu loading/history section
-    # --------------------------------------------------------
-
-    first_link = history_links.first
-
-    title = await first_link.get_attribute("title")
-    data_url = await first_link.get_attribute("data-url")
-
-    print(f"[HISTORY] Klik History: {title}")
-    print(f"[HISTORY] Audit URL: {data_url}")
-
-    try:
-        await first_link.click(timeout=10000)
-    except Exception as e:
-        print(f"[HISTORY] Click error: {e}")
-
-        try:
-            await first_link.evaluate("el => el.click()")
-        except Exception as e2:
-            print(f"[HISTORY] JavaScript click error: {e2}")
-            return ""
-
-    # Tunggu AJAX
-    await page.wait_for_timeout(2500)
-
-    # --------------------------------------------------------
-    # Tutup modal audit
-    # --------------------------------------------------------
-
-    close_button = page.locator("#TB_closeWindowButton")
-
-    if await close_button.count() > 0:
-
-        try:
-            await close_button.click(timeout=5000)
-            print("[HISTORY] Modal audit ditutup.")
-        except Exception as e:
-            print(f"[HISTORY] Gagal menutup modal: {e}")
-
-    await page.wait_for_timeout(1000)
-
-    # --------------------------------------------------------
-    # Cari Vessel History
-    # --------------------------------------------------------
-
-    cells_after = await page.locator("td.vessel").evaluate_all("""
-        els => els.map((el, index) => ({
-            index: index,
-            text: el.innerText || ""
-        }))
-    """)
+if count == 0:
 
     print(
-        f"[HISTORY] Jumlah td.vessel setelah History: "
-        f"{len(cells_after)}"
+        "[HISTORY] Tombol History tidak ditemukan."
     )
-
-    for cell in cells_after:
-
-        text = normalize_text(cell["text"])
-
-        if "Vessel History" in text:
-
-            print(
-                f"[HISTORY] Section ditemukan di "
-                f"td.vessel index {cell['index']}"
-            )
-
-            return text
-
-    print("[HISTORY] Section Vessel History tidak ditemukan.")
 
     return ""
 
+first_link = history_links.first
+
+title = await first_link.get_attribute(
+    "title"
+)
+
+data_url = await first_link.get_attribute(
+    "data-url"
+)
+
+print(
+    f"[HISTORY] Klik History: {title}"
+)
+
+print(
+    f"[HISTORY] Audit URL: {data_url}"
+)
+
+try:
+
+    await first_link.click(
+        timeout=10000
+    )
+
+except Exception as e:
+
+    print(
+        f"[HISTORY] Click error: {e}"
+    )
+
+    try:
+
+        await first_link.evaluate(
+            "el => el.click()"
+        )
+
+    except Exception as e2:
+
+        print(
+            f"[HISTORY] JavaScript click error: {e2}"
+        )
+
+        return ""
+
+await page.wait_for_timeout(2500)
+
+close_button = page.locator(
+    "#TB_closeWindowButton"
+)
+
+if await close_button.count() > 0:
+
+    try:
+
+        await close_button.click(
+            timeout=5000
+        )
+
+        print(
+            "[HISTORY] Modal audit ditutup."
+        )
+
+    except Exception as e:
+
+        print(
+            f"[HISTORY] Gagal menutup modal: {e}"
+        )
+
+await page.wait_for_timeout(1000)
+
+cells_after = await page.locator(
+    "td.vessel"
+).evaluate_all("""
+    els => els.map((el, index) => ({
+        index: index,
+        text: el.innerText || ""
+    }))
+""")
+
+print(
+    f"[HISTORY] Jumlah td.vessel setelah History: "
+    f"{len(cells_after)}"
+)
+
+for cell in cells_after:
+
+    text = normalize_text(
+        cell["text"]
+    )
+
+    if "Vessel History" in text:
+
+        print(
+            f"[HISTORY] Section ditemukan di "
+            f"td.vessel index {cell['index']}"
+        )
+
+        return text
+
+print(
+    "[HISTORY] Section Vessel History tidak ditemukan."
+)
+
+return ""
+```
 
 # ============================================================
+
+# PARSE VESSEL SCHEDULE
+
+#
+
+# Schedule berbeda dengan section vessel lainnya:
+
+# formatnya hanya:
+
+#
+
+# Vessel Name
+
+# Periode
+
+#
+
+# NAME (CODE)
+
+# VOYAGE
+
+# ETB : DATE
+
+#
+
+# NAME (CODE)
+
+# VOYAGE
+
+# ETB : DATE
+
+#
+
+# Kita menggunakan vessel berikutnya sebagai batas
+
+# setiap record, bukan batas jumlah baris.
+
+# ============================================================
+
+def parse_schedule(text):
+
+```
+lines = clean_lines(text)
+
+schedules = []
+
+vessel_positions = []
+
+for i, line in enumerate(lines):
+
+    match = VESSEL_PATTERN.match(line)
+
+    if not match:
+        continue
+
+    vessel_name = match.group(1).strip()
+
+    if is_footer_name(vessel_name):
+        continue
+
+    vessel_positions.append(i)
+
+for position_index, start in enumerate(
+    vessel_positions
+):
+
+    line = lines[start]
+
+    match = VESSEL_PATTERN.match(line)
+
+    if not match:
+        continue
+
+    vessel_name = match.group(1).strip()
+    vessel_code = match.group(2).strip()
+
+    if position_index + 1 < len(
+        vessel_positions
+    ):
+
+        end = vessel_positions[
+            position_index + 1
+        ]
+
+    else:
+
+        end = len(lines)
+
+    block = lines[
+        start + 1:end
+    ]
+
+    voyage = ""
+    etb = ""
+
+    # Cari voyage
+    for block_line in block:
+
+        if DATE_PATTERN.search(block_line):
+            continue
+
+        if block_line.startswith("ETB :"):
+            continue
+
+        if block_line in (
+            "Detail",
+            "[ Detail ]"
+        ):
+            continue
+
+        if "/" in block_line:
+
+            voyage = block_line
+            break
+
+    # Cari ETB
+    for block_line in block:
+
+        if block_line.startswith("ETB :"):
+
+            etb = block_line.replace(
+                "ETB :",
+                "",
+                1
+            ).strip()
+
+            break
+
+    # Record Schedule dianggap valid
+    # jika memiliki voyage dan ETB.
+    if not voyage or not etb:
+        continue
+
+    schedules.append({
+        "vesselName": vessel_name,
+        "vesselCode": vessel_code,
+        "voyage": voyage,
+        "etb": etb
+    })
+
+return schedules
+```
+
+# ============================================================
+
 # BUILD DATA
+
 # ============================================================
 
 def build_data(
-    alongside,
-    confirmed,
-    open_stack,
-    schedule,
-    history
+alongside,
+confirmed,
+open_stack,
+schedule,
+history
 ):
 
-    return {
+```
+return {
 
-        "lastUpdated": datetime.now().strftime(
-            "%d/%m/%Y %H:%M"
-        ),
+    "lastUpdated": datetime.now().strftime(
+        "%d/%m/%Y %H:%M"
+    ),
 
-        "source": URL,
+    "source": URL,
 
-        "vesselAlongside": alongside,
+    "vesselAlongside": alongside,
 
-        "confirmedVessel": confirmed,
+    "confirmedVessel": confirmed,
 
-        "openStack": open_stack,
+    "openStack": open_stack,
 
-        "vesselSchedule": schedule,
+    "vesselSchedule": schedule,
 
-        "vesselHistory": history,
+    "vesselHistory": history,
 
-        "allVessels": (
-            alongside
-            + confirmed
-            + open_stack
-            + history
-        ),
-    }
-
+    "allVessels": (
+        alongside
+        + confirmed
+        + open_stack
+        + history
+    ),
+}
+```
 
 # ============================================================
+
 # OPEN PELINDO
+
 # ============================================================
 
 async def open_pelindo(page):
 
-    for attempt in range(1, MAX_RETRIES + 1):
+```
+for attempt in range(
+    1,
+    MAX_RETRIES + 1
+):
+
+    try:
+
+        print(
+            f"[CONNECT] Percobaan "
+            f"{attempt}/{MAX_RETRIES}"
+        )
+
+        await page.goto(
+            URL,
+            wait_until="domcontentloaded",
+            timeout=NAVIGATION_TIMEOUT
+        )
+
+        print(
+            "[CONNECT] Pelindo berhasil dibuka."
+        )
+
+        return True
+
+    except PlaywrightTimeoutError:
+
+        print(
+            "[CONNECT] Navigation timeout."
+        )
 
         try:
 
-            print(
-                f"[CONNECT] Percobaan "
-                f"{attempt}/{MAX_RETRIES}"
+            body_text = await page.locator(
+                "body"
+            ).inner_text(
+                timeout=5000
             )
 
-            await page.goto(
-                URL,
-                wait_until="domcontentloaded",
-                timeout=NAVIGATION_TIMEOUT
-            )
+            if body_text.strip():
 
-            print(
-                "[CONNECT] Pelindo berhasil dibuka."
-            )
+                print(
+                    "[CONNECT] Body tetap tersedia "
+                    "setelah timeout."
+                )
 
-            return True
+                return True
 
-        except PlaywrightTimeoutError:
+        except Exception:
+            pass
 
-            print(
-                "[CONNECT] Navigation timeout."
-            )
+    except Exception as e:
 
-            try:
+        print(
+            f"[CONNECT] Error: {e}"
+        )
 
-                body_text = await page.locator(
-                    "body"
-                ).inner_text(timeout=5000)
+    if attempt < MAX_RETRIES:
 
-                if body_text.strip():
+        print(
+            "[CONNECT] Menunggu sebelum retry..."
+        )
 
-                    print(
-                        "[CONNECT] Body tetap tersedia "
-                        "setelah timeout."
-                    )
+        await page.wait_for_timeout(
+            5000
+        )
 
-                    return True
-
-            except Exception:
-                pass
-
-        except Exception as e:
-
-            print(
-                f"[CONNECT] Error: {e}"
-            )
-
-        if attempt < MAX_RETRIES:
-
-            print(
-                "[CONNECT] Menunggu sebelum retry..."
-            )
-
-            await page.wait_for_timeout(5000)
-
-    return False
-
+return False
+```
 
 # ============================================================
+
 # MAIN
+
 # ============================================================
 
 async def main():
 
+```
+print()
+print("=" * 70)
+print("PELINDO VESSEL SCRAPER")
+print("=" * 70)
+
+async with async_playwright() as p:
+
+    browser = await p.chromium.launch(
+        headless=True,
+        args=[
+            "--no-sandbox",
+            "--disable-dev-shm-usage"
+        ]
+    )
+
+    page = await browser.new_page(
+        viewport={
+            "width": 1440,
+            "height": 900
+        }
+    )
+
+    page.set_default_timeout(
+        15000
+    )
+
+    # ----------------------------------------------------
+    # CONNECT
+    # ----------------------------------------------------
+
     print()
-    print("=" * 70)
-    print("PELINDO VESSEL SCRAPER")
-    print("=" * 70)
+    print("[1] Membuka Pelindo...")
 
-    async with async_playwright() as p:
+    success = await open_pelindo(
+        page
+    )
 
-        browser = await p.chromium.launch(
-            headless=True,
-            args=[
-                "--no-sandbox",
-                "--disable-dev-shm-usage"
-            ]
-        )
-
-        page = await browser.new_page(
-            viewport={
-                "width": 1440,
-                "height": 900
-            }
-        )
-
-        page.set_default_timeout(15000)
-
-        # ----------------------------------------------------
-        # CONNECT
-        # ----------------------------------------------------
-
-        print()
-        print("[1] Membuka Pelindo...")
-
-        success = await open_pelindo(page)
-
-        if not success:
-
-            print(
-                "[ERROR] Gagal membuka Pelindo."
-            )
-
-            await browser.close()
-            return
-
-        # ----------------------------------------------------
-        # WAIT
-        # ----------------------------------------------------
-
-        print()
-        print("[2] Menunggu data vessel...")
-
-        await page.wait_for_timeout(
-            WAIT_AFTER_LOAD
-        )
-
-        # ----------------------------------------------------
-        # MAIN SECTIONS
-        # ----------------------------------------------------
-
-        print()
-        print("[3] Mengambil 4 section utama...")
-
-        sections = await get_vessel_sections(page)
-
-        print()
-        print(
-            "[SECTION] Alongside :",
-            "OK" if "alongside" in sections else "TIDAK ADA"
-        )
+    if not success:
 
         print(
-            "[SECTION] Confirmed :",
-            "OK" if "confirmed" in sections else "TIDAK ADA"
+            "[ERROR] Gagal membuka Pelindo."
         )
 
-        print(
-            "[SECTION] Open Stack:",
-            "OK" if "openStack" in sections else "TIDAK ADA"
+        await browser.close()
+        return
+
+    # ----------------------------------------------------
+    # WAIT
+    # ----------------------------------------------------
+
+    print()
+    print(
+        "[2] Menunggu data vessel..."
+    )
+
+    await page.wait_for_timeout(
+        WAIT_AFTER_LOAD
+    )
+
+    # ----------------------------------------------------
+    # MAIN SECTIONS
+    # ----------------------------------------------------
+
+    print()
+    print(
+        "[3] Mengambil 4 section utama..."
+    )
+
+    sections = await get_vessel_sections(
+        page
+    )
+
+    print()
+    print(
+        "[SECTION] Alongside :",
+        "OK"
+        if "alongside" in sections
+        else "TIDAK ADA"
+    )
+
+    print(
+        "[SECTION] Confirmed :",
+        "OK"
+        if "confirmed" in sections
+        else "TIDAK ADA"
+    )
+
+    print(
+        "[SECTION] Open Stack:",
+        "OK"
+        if "openStack" in sections
+        else "TIDAK ADA"
+    )
+
+    print(
+        "[SECTION] Schedule  :",
+        "OK"
+        if "schedule" in sections
+        else "TIDAK ADA"
+    )
+
+    # ----------------------------------------------------
+    # PARSE MAIN SECTIONS
+    # ----------------------------------------------------
+
+    alongside = parse_vessel_cell(
+        sections.get(
+            "alongside",
+            ""
         )
+    )
 
-        print(
-            "[SECTION] Schedule  :",
-            "OK" if "schedule" in sections else "TIDAK ADA"
+    confirmed = parse_vessel_cell(
+        sections.get(
+            "confirmed",
+            ""
         )
+    )
 
-        # ----------------------------------------------------
-        # PARSE 4 MAIN SECTIONS
-        # ----------------------------------------------------
-
-        alongside = parse_vessel_cell(
-            sections.get("alongside", "")
+    open_stack = parse_vessel_cell(
+        sections.get(
+            "openStack",
+            ""
         )
+    )
 
-        confirmed = parse_vessel_cell(
-            sections.get("confirmed", "")
-        )
+    # ----------------------------------------------------
+    # PARSE SCHEDULE
+    # ----------------------------------------------------
 
-        open_stack = parse_vessel_cell(
-            sections.get("openStack", "")
-        )
-
-        # ----------------------------------------------------
-        # SCHEDULE SPECIAL PARSER
-        # ----------------------------------------------------
-
-        schedule = []
-
-        schedule_text = sections.get(
+    schedule = parse_schedule(
+        sections.get(
             "schedule",
             ""
         )
+    )
 
-        schedule_lines = clean_lines(
-            schedule_text
-        )
+    # ----------------------------------------------------
+    # HISTORY
+    # ----------------------------------------------------
 
-        for i, line in enumerate(schedule_lines):
+    print()
+    print(
+        "[4] Memuat Vessel History..."
+    )
 
-            match = VESSEL_PATTERN.match(line)
+    history_text = await load_history_section(
+        page
+    )
 
-            if not match:
-                continue
+    history = parse_vessel_cell(
+        history_text
+    )
 
-            vessel_name = match.group(1).strip()
-            vessel_code = match.group(2).strip()
+    # ----------------------------------------------------
+    # RESULT
+    # ----------------------------------------------------
 
-            block = schedule_lines[
-                i + 1:i + 8
-            ]
+    print()
+    print("=" * 70)
+    print("HASIL SCRAPING")
+    print("=" * 70)
 
-            etb = ""
+    print(
+        "Alongside:",
+        len(alongside)
+    )
 
-            for bline in block:
+    print(
+        "Confirmed:",
+        len(confirmed)
+    )
 
-                if bline.startswith("ETB :"):
+    print(
+        "Open Stack:",
+        len(open_stack)
+    )
 
-                    etb = bline.replace(
-                        "ETB :",
-                        "",
-                        1
-                    ).strip()
+    print(
+        "Schedule:",
+        len(schedule)
+    )
 
-                    break
+    print(
+        "History:",
+        len(history)
+    )
 
-            if not etb:
-                continue
+    # ----------------------------------------------------
+    # SHOW SCHEDULE
+    # ----------------------------------------------------
 
-            schedule.append({
-                "vesselName": vessel_name,
-                "vesselCode": vessel_code,
-                "voyage": extract_voyage(block),
-                "etb": etb
-            })
+    print()
+    print("SCHEDULE DATA:")
 
-        # ----------------------------------------------------
-        # HISTORY
-        # ----------------------------------------------------
-
-        print()
-        print("[4] Memuat Vessel History...")
-
-        history_text = await load_history_section(
-            page
-        )
-
-        history = parse_vessel_cell(
-            history_text
-        )
-
-        # ----------------------------------------------------
-        # PRINT RESULT
-        # ----------------------------------------------------
-
-        print()
-        print("=" * 70)
-        print("HASIL SCRAPING")
-        print("=" * 70)
+    for vessel in schedule:
 
         print(
-            "Alongside:",
-            len(alongside)
+            f"- {vessel['vesselName']} "
+            f"| {vessel['voyage']} "
+            f"| ETB: {vessel['etb']}"
         )
+
+    # ----------------------------------------------------
+    # SHOW HISTORY
+    # ----------------------------------------------------
+
+    print()
+    print("HISTORY DATA:")
+
+    for vessel in history:
 
         print(
-            "Confirmed:",
-            len(confirmed)
+            f"- {vessel['vesselName']} "
+            f"| {vessel['voyage']}"
         )
 
-        print(
-            "Open Stack:",
-            len(open_stack)
+    # ----------------------------------------------------
+    # BUILD JSON
+    # ----------------------------------------------------
+
+    data = build_data(
+        alongside=alongside,
+        confirmed=confirmed,
+        open_stack=open_stack,
+        schedule=schedule,
+        history=history
+    )
+
+    # ----------------------------------------------------
+    # WRITE JSON
+    # ----------------------------------------------------
+
+    with open(
+        "data.json",
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2
         )
 
-        print(
-            "Schedule:",
-            len(schedule)
-        )
+    print()
+    print(
+        "DATA.JSON BERHASIL DIBUAT"
+    )
 
-        print(
-            "History:",
-            len(history)
-        )
+    print()
+    print("=" * 70)
+    print("SCRAPER SELESAI")
+    print("=" * 70)
 
-        # ----------------------------------------------------
-        # SHOW HISTORY
-        # ----------------------------------------------------
+    await browser.close()
+```
 
-        print()
-        print("HISTORY DATA:")
+if **name** == "**main**":
+asyncio.run(main())
 
-        for vessel in history:
+````
 
-            print(
-                f"- {vessel['vesselName']} "
-                f"| {vessel['voyage']}"
-            )
+### Perubahan yang benar-benar dilakukan
 
-        # ----------------------------------------------------
-        # BUILD JSON
-        # ----------------------------------------------------
+**Hanya parser Schedule yang diperbaiki secara fungsional.**
 
-        data = build_data(
-            alongside=alongside,
-            confirmed=confirmed,
-            open_stack=open_stack,
-            schedule=schedule,
-            history=history
-        )
+Sebelumnya:
 
-        # ----------------------------------------------------
-        # WRITE JSON
-        # ----------------------------------------------------
+```python
+block = schedule_lines[i + 1:i + 8]
+````
 
-        with open(
-            "data.json",
-            "w",
-            encoding="utf-8"
-        ) as f:
+Sekarang:
 
-            json.dump(
-                data,
-                f,
-                ensure_ascii=False,
-                indent=2
-            )
+```python
+vessel_positions = []
+```
 
-        print()
-        print(
-            "DATA.JSON BERHASIL DIBUAT"
-        )
+Kemudian setiap vessel dianggap sebagai awal record baru, sehingga:
 
-        print()
-        print("=" * 70)
-        print("SCRAPER SELESAI")
-        print("=" * 70)
+```text
+WAN HAI 311
+↓
+EVER OASIS
+```
 
-        await browser.close()
+menjadi batas record pertama.
 
+Dengan demikian parser **tidak peduli berapa jumlah baris di antara dua vessel**.
 
-if __name__ == "__main__":
-    asyncio.run(main())
+Target dari data yang sudah kita lihat adalah:
+
+```text
+SCHEDULE DATA:
+- WAN HAI 311 | S259 / N260 | ETB: 24/09/2026 10:00
+- EVER OASIS | 0493-092S / 0493-092N | ETB: 23/09/2026 22:00
+- SINAR BINTAN | 952S / 952N | ETB: 24/09/2026 21:00
+- MMSS 2711 | 261016N / 261016N | ETB: 16/09/2026 10:00
+- EVER OPTIMA | 0494-050S / 0494-050N | ETB: 24/09/2026 18:00
+- SITC BATANGAS | 2618S / 2619N | ETB: 01/10/2026 16:00
+- MAERSK VIGO | 637S / 638N | ETB: 21/09/2026 15:00
+```
+
+Jadi jalankan:
+
+```text
+python scraper.py
+```
+
+Lalu **cukup kirim bagian `HASIL SCRAPING` dan `SCHEDULE DATA`**. Kalau Schedule sudah **7**, kita anggap scraper sudah beres dan baru lanjut ke `index.html`.
