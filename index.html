@@ -3,255 +3,904 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Logistics Hub Portal - Port Operations Dashboard</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
 </head>
+
 <body class="bg-slate-100 text-slate-800 font-sans antialiased">
 
     <!-- Navbar -->
     <header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
             <div class="flex items-center space-x-3">
+
                 <div class="bg-blue-900 text-white p-2 rounded-lg">
                     <i class="fa-solid fa-ship text-lg"></i>
                 </div>
+
                 <div>
-                    <span class="text-lg font-bold tracking-tight text-blue-900 block leading-none">LOGISTICS HUB</span>
-                    <span class="text-[10px] text-slate-500 tracking-wider uppercase font-semibold">Port Terminal Operations</span>
+                    <span class="text-lg font-bold tracking-tight text-blue-900 block leading-none">
+                        LOGISTICS HUB
+                    </span>
+
+                    <span class="text-[10px] text-slate-500 tracking-wider uppercase font-semibold">
+                        Port Terminal Operations
+                    </span>
                 </div>
+
             </div>
+
             <nav class="hidden md:flex items-center space-x-4 font-medium text-xs text-slate-600">
-                <a href="#alongside" class="hover:text-blue-600 transition">Vessel Alongside</a>
-                <a href="#confirmed" class="hover:text-blue-600 transition">Confirmed Vessel</a>
-                <a href="#openstack" class="hover:text-blue-600 transition">Open Stack</a>
-                <a href="#schedule" class="hover:text-blue-600 transition">Vessel Schedule</a>
+
+                <a href="#alongside" class="hover:text-blue-600 transition">
+                    Vessel Alongside
+                </a>
+
+                <a href="#confirmed" class="hover:text-blue-600 transition">
+                    Confirmed Vessel
+                </a>
+
+                <a href="#openstack" class="hover:text-blue-600 transition">
+                    Open Stack
+                </a>
+
+                <a href="#schedule" class="hover:text-blue-600 transition">
+                    Vessel Schedule
+                </a>
+
             </nav>
+
         </div>
+
     </header>
+
 
     <!-- Header Hero & Search -->
     <section class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white py-12 px-4">
+
         <div class="max-w-4xl mx-auto text-center">
+
             <span class="bg-blue-800/80 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block border border-blue-700">
                 Live Dynamic Port Data Pipeline
             </span>
+
             <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
                 Monitoring Jadwal & Status Kapal Pelabuhan
             </h1>
-            <p id="lastUpdateBadge" class="text-xs text-blue-200 mb-6 italic">Memuat waktu pembaruan data...</p>
-            
+
+            <p
+                id="lastUpdateBadge"
+                class="text-xs text-blue-200 mb-6 italic"
+            >
+                Memuat waktu pembaruan data...
+            </p>
+
+
+            <!-- Search -->
             <div class="relative max-w-xl mx-auto">
+
                 <div class="flex items-center bg-white rounded-xl shadow-lg p-1.5 border border-slate-200">
-                    <span class="pl-3 text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" id="searchInput" placeholder="Cari nama vessel atau voyage..." 
-                           class="w-full px-3 py-1.5 text-slate-800 text-sm focus:outline-none bg-transparent">
+
+                    <span class="pl-3 text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Cari nama vessel atau voyage..."
+                        class="w-full px-3 py-1.5 text-slate-800 text-sm focus:outline-none bg-transparent"
+                    >
+
                 </div>
+
             </div>
+
         </div>
+
     </section>
 
-    <!-- Main Content: 4 Tables -->
+
+    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
 
-        <!-- Section 1 : Vessel Alongside -->
-        <section id="alongside" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+        <!-- ===================================================== -->
+        <!-- SECTION 1 : VESSEL ALONGSIDE -->
+        <!-- ===================================================== -->
+
+        <section
+            id="alongside"
+            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+        >
+
             <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+
                 <h2 class="text-base font-bold text-slate-900 flex items-center">
-                    <span class="w-2.5 h-2.5 bg-blue-600 rounded-full inline-block mr-2"></span> 
+
+                    <span class="w-2.5 h-2.5 bg-blue-600 rounded-full inline-block mr-2"></span>
+
                     Vessel Alongside
+
                 </h2>
-                <p class="text-xs text-slate-500 mt-0.5">Daftar kapal yang sedang sandar di dermaga beserta waktu kedatangan dan estimasi keberangkatannya.</p>
+
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Daftar kapal yang sedang sandar di dermaga beserta waktu kedatangan dan estimasi keberangkatannya.
+                </p>
+
             </div>
+
+
             <div class="overflow-x-auto">
+
                 <table class="w-full text-left border-collapse text-xs">
+
                     <thead>
+
                         <tr class="bg-slate-50 text-slate-600 uppercase tracking-wider border-b border-slate-200">
-                            <th class="py-3 px-5 font-semibold">Vessel Name</th>
-                            <th class="py-3 px-5 font-semibold">Voyage</th>
-                            <th class="py-3 px-5 font-semibold">Actual Time Berthing (ATB)</th>
-                            <th class="py-3 px-5 font-semibold">Estimated Time Departure (ETD)</th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Vessel Name
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Voyage
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Actual Time Berthing (ATB)
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Estimated Time Departure (ETD)
+                            </th>
+
                         </tr>
+
                     </thead>
-                    <tbody id="table1Body" class="divide-y divide-slate-100 text-slate-700"></tbody>
+
+                    <tbody
+                        id="table1Body"
+                        class="divide-y divide-slate-100 text-slate-700"
+                    ></tbody>
+
                 </table>
+
             </div>
+
         </section>
 
-        <!-- Section 2 : Confirmed Vessel -->
-        <section id="confirmed" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+        <!-- ===================================================== -->
+        <!-- SECTION 2 : CONFIRMED VESSEL -->
+        <!-- ===================================================== -->
+
+        <section
+            id="confirmed"
+            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+        >
+
             <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+
                 <h2 class="text-base font-bold text-slate-900 flex items-center">
-                    <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block mr-2"></span> 
+
+                    <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block mr-2"></span>
+
                     Confirmed Vessel
+
                 </h2>
-                <p class="text-xs text-slate-500 mt-0.5">Daftar kapal yang jadwal sandarnya telah dikonfirmasi beserta rincian masa penumpukan kargo.</p>
+
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Daftar kapal yang jadwal sandarnya telah dikonfirmasi beserta rincian masa penumpukan kargo.
+                </p>
+
             </div>
+
+
             <div class="overflow-x-auto">
+
                 <table class="w-full text-left border-collapse text-xs">
+
                     <thead>
+
                         <tr class="bg-slate-50 text-slate-600 uppercase tracking-wider border-b border-slate-200">
-                            <th class="py-3 px-5 font-semibold">Vessel Name</th>
-                            <th class="py-3 px-5 font-semibold">Voyage</th>
-                            <th class="py-3 px-5 font-semibold">ETB</th>
-                            <th class="py-3 px-5 font-semibold">ETD</th>
-                            <th class="py-3 px-5 font-semibold">Open Stack</th>
-                            <th class="py-3 px-5 font-semibold">Closing Time</th>
-                            <th class="py-3 px-5 font-semibold">Booking / Open / Actual</th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Vessel Name
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Voyage
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                ETB
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                ETD
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Open Stack
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Closing Time
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Booking / Open / Actual
+                            </th>
+
                         </tr>
+
                     </thead>
-                    <tbody id="table2Body" class="divide-y divide-slate-100 text-slate-700"></tbody>
+
+                    <tbody
+                        id="table2Body"
+                        class="divide-y divide-slate-100 text-slate-700"
+                    ></tbody>
+
                 </table>
+
             </div>
+
         </section>
 
-        <!-- Section 3 : Open Stack -->
-        <section id="openstack" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+        <!-- ===================================================== -->
+        <!-- SECTION 3 : OPEN STACK -->
+        <!-- ===================================================== -->
+
+        <section
+            id="openstack"
+            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+        >
+
             <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+
                 <h2 class="text-base font-bold text-slate-900 flex items-center">
-                    <span class="w-2.5 h-2.5 bg-amber-500 rounded-full inline-block mr-2"></span> 
+
+                    <span class="w-2.5 h-2.5 bg-amber-500 rounded-full inline-block mr-2"></span>
+
                     Open Stack
+
                 </h2>
-                <p class="text-xs text-slate-500 mt-0.5">Informasi kapal yang masa penerimaan kargo (penumpukan) di terminalnya sedang dibuka.</p>
+
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Informasi kapal yang masa penerimaan kargo (penumpukan) di terminalnya sedang dibuka.
+                </p>
+
             </div>
+
+
             <div class="overflow-x-auto">
+
                 <table class="w-full text-left border-collapse text-xs">
+
                     <thead>
+
                         <tr class="bg-slate-50 text-slate-600 uppercase tracking-wider border-b border-slate-200">
-                            <th class="py-3 px-5 font-semibold">Vessel Name</th>
-                            <th class="py-3 px-5 font-semibold">Voyage</th>
-                            <th class="py-3 px-5 font-semibold">ETA</th>
-                            <th class="py-3 px-5 font-semibold">ETB</th>
-                            <th class="py-3 px-5 font-semibold">ETD</th>
-                            <th class="py-3 px-5 font-semibold">Open Stack</th>
-                            <th class="py-3 px-5 font-semibold">Closing Time</th>
-                            <th class="py-3 px-5 font-semibold">Booking / Open / Actual</th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Vessel Name
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Voyage
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                ETA
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                ETB
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                ETD
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Open Stack
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Closing Time
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Booking / Open / Actual
+                            </th>
+
                         </tr>
+
                     </thead>
-                    <tbody id="table3Body" class="divide-y divide-slate-100 text-slate-700"></tbody>
+
+                    <tbody
+                        id="table3Body"
+                        class="divide-y divide-slate-100 text-slate-700"
+                    ></tbody>
+
                 </table>
+
             </div>
+
         </section>
 
-        <!-- Section 4 : Vessel Schedule -->
-        <section id="schedule" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+        <!-- ===================================================== -->
+        <!-- SECTION 4 : VESSEL SCHEDULE -->
+        <!-- ===================================================== -->
+
+        <section
+            id="schedule"
+            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+        >
+
             <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+
                 <h2 class="text-base font-bold text-slate-900 flex items-center">
-                    <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full inline-block mr-2"></span> 
+
+                    <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full inline-block mr-2"></span>
+
                     Vessel Schedule
+
                 </h2>
-                <p class="text-xs text-slate-500 mt-0.5">Jadwal estimasi kedatangan dan antrean sandar kapal secara keseluruhan di pelabuhan.</p>
+
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Jadwal estimasi kedatangan dan antrean sandar kapal secara keseluruhan di pelabuhan.
+                </p>
+
             </div>
+
+
             <div class="overflow-x-auto">
+
                 <table class="w-full text-left border-collapse text-xs">
+
                     <thead>
+
                         <tr class="bg-slate-50 text-slate-600 uppercase tracking-wider border-b border-slate-200">
-                            <th class="py-3 px-5 font-semibold">Vessel Name</th>
-                            <th class="py-3 px-5 font-semibold">Voyage</th>
-                            <th class="py-3 px-5 font-semibold">Estimated Berthing (ETB)</th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Vessel Name
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Voyage
+                            </th>
+
+                            <th class="py-3 px-5 font-semibold">
+                                Estimated Berthing (ETB)
+                            </th>
+
                         </tr>
+
                     </thead>
-                    <tbody id="table4Body" class="divide-y divide-slate-100 text-slate-700"></tbody>
+
+                    <tbody
+                        id="table4Body"
+                        class="divide-y divide-slate-100 text-slate-700"
+                    ></tbody>
+
                 </table>
+
             </div>
+
         </section>
 
     </main>
 
+
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-12 text-center text-xs">
-        <p>&copy; 2026 MProjectSpace (`logistics-hub-portal`). Terminal Operations Live Dashboard.</p>
+
+        <p>
+            &copy; 2026 MProjectSpace (`logistics-hub-portal`).
+            Terminal Operations Live Dashboard.
+        </p>
+
     </footer>
 
-    <!-- Script Renderer & Dynamic Search -->
+
+    <!-- ========================================================= -->
+    <!-- SCRIPT -->
+    <!-- ========================================================= -->
+
     <script>
-        let cachedData = { vesselAlongside: [], confirmedVessel: [], openStack: [], vesselSchedule: [] };
+
+        // =====================================================
+        // DATA CACHE
+        // =====================================================
+
+        let cachedData = {
+            vesselAlongside: [],
+            confirmedVessel: [],
+            openStack: [],
+            vesselSchedule: []
+        };
+
+
+        // =====================================================
+        // LOAD DATA.JSON
+        // =====================================================
 
         async function fetchDashboardData() {
+
             try {
-                const res = await fetch('data.json');
-                cachedData = await res.json();
-                if (cachedData.lastUpdated) {
-                    document.getElementById('lastUpdateBadge').innerText = `Terakhir disinkronkan: ${cachedData.lastUpdated}`;
+
+                console.log(
+                    "[Dashboard] Mengambil data terbaru..."
+                );
+
+
+                // Timestamp digunakan untuk mencegah browser
+                // menggunakan data.json dari cache lama.
+
+                const res = await fetch(
+                    `data.json?t=${Date.now()}`,
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+                if (!res.ok) {
+
+                    throw new Error(
+                        `HTTP ${res.status}`
+                    );
+
                 }
+
+
+                const data = await res.json();
+
+
+                cachedData = {
+
+                    vesselAlongside:
+                        Array.isArray(data.vesselAlongside)
+                            ? data.vesselAlongside
+                            : [],
+
+                    confirmedVessel:
+                        Array.isArray(data.confirmedVessel)
+                            ? data.confirmedVessel
+                            : [],
+
+                    openStack:
+                        Array.isArray(data.openStack)
+                            ? data.openStack
+                            : [],
+
+                    vesselSchedule:
+                        Array.isArray(data.vesselSchedule)
+                            ? data.vesselSchedule
+                            : [],
+
+                    lastUpdated:
+                        data.lastUpdated || "",
+
+                    source:
+                        data.source || ""
+
+                };
+
+
+                // =================================================
+                // UPDATE LAST UPDATE BADGE
+                // =================================================
+
+                const badge =
+                    document.getElementById(
+                        "lastUpdateBadge"
+                    );
+
+
+                if (cachedData.lastUpdated) {
+
+                    badge.innerText =
+                        `Terakhir disinkronkan: ${cachedData.lastUpdated}`;
+
+                } else {
+
+                    badge.innerText =
+                        "Data berhasil dimuat.";
+
+                }
+
+
+                // =================================================
+                // RENDER
+                // =================================================
+
                 renderTables(cachedData);
+
+
+                console.log(
+                    "[Dashboard] Data berhasil diperbarui.",
+                    cachedData
+                );
+
+
             } catch (err) {
-                console.error("Gagal memuat data.json:", err);
-                document.getElementById('lastUpdateBadge').innerText = 'Menunggu siklus scraper berjalan...';
+
+                console.error(
+                    "[Dashboard] Gagal memuat data.json:",
+                    err
+                );
+
+
+                document.getElementById(
+                    "lastUpdateBadge"
+                ).innerText =
+                    "Gagal memuat data terbaru. Mencoba kembali...";
+
             }
+
         }
+
+
+        // =====================================================
+        // RENDER ALL TABLES
+        // =====================================================
 
         function renderTables(data) {
-            document.getElementById('table1Body').innerHTML = data.vesselAlongside.length === 0 ? 
-                `<tr><td colspan="4" class="py-4 text-center text-slate-400 italic">Tidak ada data vessel alongside.</td></tr>` :
-                data.vesselAlongside.map(i => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="py-3 px-5 font-bold text-slate-900">${i.vessel}</td>
-                        <td class="py-3 px-5 text-blue-600 font-medium">${i.voyage}</td>
-                        <td class="py-3 px-5 text-blue-800 font-semibold">${i.atb}</td>
-                        <td class="py-3 px-5">${i.etd}</td>
-                    </tr>
-                `).join('');
 
-            document.getElementById('table2Body').innerHTML = data.confirmedVessel.length === 0 ? 
-                `<tr><td colspan="7" class="py-4 text-center text-slate-400 italic">Tidak ada data confirmed vessel.</td></tr>` :
-                data.confirmedVessel.map(i => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="py-3 px-5 font-bold text-slate-900">${i.vessel}</td>
-                        <td class="py-3 px-5 text-blue-600 font-medium">${i.voyage}</td>
-                        <td class="py-3 px-5 text-amber-600 font-medium">${i.etb}</td>
-                        <td class="py-3 px-5">${i.etd}</td>
-                        <td class="py-3 px-5">${i.openStack}</td>
-                        <td class="py-3 px-5 text-rose-600">${i.closingTime}</td>
-                        <td class="py-3 px-5 font-semibold text-slate-600">${i.statusInfo}</td>
-                    </tr>
-                `).join('');
 
-            document.getElementById('table3Body').innerHTML = data.openStack.length === 0 ? 
-                `<tr><td colspan="8" class="py-4 text-center text-slate-400 italic">Tidak ada data open stack.</td></tr>` :
-                data.openStack.map(i => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="py-3 px-5 font-bold text-slate-900">${i.vessel}</td>
-                        <td class="py-3 px-5 text-blue-600 font-medium">${i.voyage}</td>
-                        <td class="py-3 px-5">${i.eta}</td>
-                        <td class="py-3 px-5 text-amber-600 font-medium">${i.etb}</td>
-                        <td class="py-3 px-5">${i.etd}</td>
-                        <td class="py-3 px-5 font-medium text-emerald-600">${i.openStack}</td>
-                        <td class="py-3 px-5 text-rose-600">${i.closingTime}</td>
-                        <td class="py-3 px-5 font-semibold text-slate-600">${i.statusInfo}</td>
-                    </tr>
-                `).join('');
+            // =================================================
+            // TABLE 1 — VESSEL ALONGSIDE
+            // =================================================
 
-            document.getElementById('table4Body').innerHTML = data.vesselSchedule.length === 0 ? 
-                `<tr><td colspan="3" class="py-4 text-center text-slate-400 italic">Tidak ada data vessel schedule.</td></tr>` :
-                data.vesselSchedule.map(i => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="py-3 px-5 font-bold text-slate-900">${i.vessel}</td>
-                        <td class="py-3 px-5 text-blue-600 font-medium">${i.voyage}</td>
-                        <td class="py-3 px-5 text-indigo-600 font-semibold">${i.etb}</td>
+            document.getElementById(
+                "table1Body"
+            ).innerHTML =
+
+                data.vesselAlongside.length === 0
+
+                    ?
+
+                    `
+                    <tr>
+                        <td
+                            colspan="4"
+                            class="py-4 text-center text-slate-400 italic"
+                        >
+                            Tidak ada data vessel alongside.
+                        </td>
                     </tr>
-                `).join('');
+                    `
+
+                    :
+
+                    data.vesselAlongside.map(i => `
+
+                        <tr class="hover:bg-slate-50">
+
+                            <td class="py-3 px-5 font-bold text-slate-900">
+                                ${i.vesselName || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-blue-600 font-medium">
+                                ${i.voyage || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-blue-800 font-semibold">
+                                ${i.atb || "-"}
+                            </td>
+
+                            <td class="py-3 px-5">
+                                ${i.etd || "-"}
+                            </td>
+
+                        </tr>
+
+                    `).join("");
+
+
+            // =================================================
+            // TABLE 2 — CONFIRMED VESSEL
+            // =================================================
+
+            document.getElementById(
+                "table2Body"
+            ).innerHTML =
+
+                data.confirmedVessel.length === 0
+
+                    ?
+
+                    `
+                    <tr>
+                        <td
+                            colspan="7"
+                            class="py-4 text-center text-slate-400 italic"
+                        >
+                            Tidak ada data confirmed vessel.
+                        </td>
+                    </tr>
+                    `
+
+                    :
+
+                    data.confirmedVessel.map(i => `
+
+                        <tr class="hover:bg-slate-50">
+
+                            <td class="py-3 px-5 font-bold text-slate-900">
+                                ${i.vesselName || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-blue-600 font-medium">
+                                ${i.voyage || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-amber-600 font-medium">
+                                ${i.etb || "-"}
+                            </td>
+
+                            <td class="py-3 px-5">
+                                ${i.etd || "-"}
+                            </td>
+
+                            <td class="py-3 px-5">
+                                ${i.openStack || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-rose-600">
+                                ${i.closingTime || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 font-semibold text-slate-600">
+                                ${i.booking || "-"}
+                                /
+                                ${i.open || "-"}
+                                /
+                                ${i.actual || "-"}
+                            </td>
+
+                        </tr>
+
+                    `).join("");
+
+
+            // =================================================
+            // TABLE 3 — OPEN STACK
+            // =================================================
+
+            document.getElementById(
+                "table3Body"
+            ).innerHTML =
+
+                data.openStack.length === 0
+
+                    ?
+
+                    `
+                    <tr>
+                        <td
+                            colspan="8"
+                            class="py-4 text-center text-slate-400 italic"
+                        >
+                            Tidak ada data open stack.
+                        </td>
+                    </tr>
+                    `
+
+                    :
+
+                    data.openStack.map(i => `
+
+                        <tr class="hover:bg-slate-50">
+
+                            <td class="py-3 px-5 font-bold text-slate-900">
+                                ${i.vesselName || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-blue-600 font-medium">
+                                ${i.voyage || "-"}
+                            </td>
+
+                            <td class="py-3 px-5">
+                                ${i.eta || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-amber-600 font-medium">
+                                ${i.etb || "-"}
+                            </td>
+
+                            <td class="py-3 px-5">
+                                ${i.etd || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 font-medium text-emerald-600">
+                                ${i.openStack || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-rose-600">
+                                ${i.closingTime || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 font-semibold text-slate-600">
+                                ${i.booking || "-"}
+                                /
+                                ${i.open || "-"}
+                                /
+                                ${i.actual || "-"}
+                            </td>
+
+                        </tr>
+
+                    `).join("");
+
+
+            // =================================================
+            // TABLE 4 — VESSEL SCHEDULE
+            // =================================================
+
+            document.getElementById(
+                "table4Body"
+            ).innerHTML =
+
+                data.vesselSchedule.length === 0
+
+                    ?
+
+                    `
+                    <tr>
+                        <td
+                            colspan="3"
+                            class="py-4 text-center text-slate-400 italic"
+                        >
+                            Tidak ada data vessel schedule.
+                        </td>
+                    </tr>
+                    `
+
+                    :
+
+                    data.vesselSchedule.map(i => `
+
+                        <tr class="hover:bg-slate-50">
+
+                            <td class="py-3 px-5 font-bold text-slate-900">
+                                ${i.vesselName || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-blue-600 font-medium">
+                                ${i.voyage || "-"}
+                            </td>
+
+                            <td class="py-3 px-5 text-indigo-600 font-semibold">
+                                ${i.etb || "-"}
+                            </td>
+
+                        </tr>
+
+                    `).join("");
+
         }
 
-        document.getElementById('searchInput').addEventListener('keyup', function(e) {
-            const query = e.target.value.toLowerCase().trim();
-            if(!query) {
-                renderTables(cachedData);
-                return;
-            }
 
-            const filterFn = (arr) => arr.filter(item => item.vessel.toLowerCase().includes(query) || item.voyage.toLowerCase().includes(query));
+        // =====================================================
+        // SEARCH
+        // =====================================================
 
-            renderTables({
-                lastUpdated: cachedData.lastUpdated,
-                vesselAlongside: filterFn(cachedData.vesselAlongside),
-                confirmedVessel: filterFn(cachedData.confirmedVessel),
-                openStack: filterFn(cachedData.openStack),
-                vesselSchedule: filterFn(cachedData.vesselSchedule)
-            });
-        });
+        document
+            .getElementById("searchInput")
+            .addEventListener(
+                "keyup",
+                function(e) {
 
-        window.onload = fetchDashboardData;
+                    const query =
+                        e.target.value
+                            .toLowerCase()
+                            .trim();
+
+
+                    // Kalau search kosong,
+                    // tampilkan seluruh data.
+
+                    if (!query) {
+
+                        renderTables(cachedData);
+
+                        return;
+
+                    }
+
+
+                    const filterFn = (arr) => {
+
+                        return arr.filter(item => {
+
+                            const vessel =
+                                (
+                                    item.vesselName || ""
+                                ).toLowerCase();
+
+                            const voyage =
+                                (
+                                    item.voyage || ""
+                                ).toLowerCase();
+
+                            return (
+                                vessel.includes(query)
+                                ||
+                                voyage.includes(query)
+                            );
+
+                        });
+
+                    };
+
+
+                    renderTables({
+
+                        lastUpdated:
+                            cachedData.lastUpdated,
+
+                        vesselAlongside:
+                            filterFn(
+                                cachedData.vesselAlongside
+                            ),
+
+                        confirmedVessel:
+                            filterFn(
+                                cachedData.confirmedVessel
+                            ),
+
+                        openStack:
+                            filterFn(
+                                cachedData.openStack
+                            ),
+
+                        vesselSchedule:
+                            filterFn(
+                                cachedData.vesselSchedule
+                            )
+
+                    });
+
+                }
+            );
+
+
+        // =====================================================
+        // INITIAL LOAD
+        // =====================================================
+
+        window.addEventListener(
+            "load",
+            fetchDashboardData
+        );
+
+
+        // =====================================================
+        // AUTO REFRESH
+        // =====================================================
+
+        // Dashboard mengecek data terbaru setiap 5 menit.
+
+        setInterval(
+            fetchDashboardData,
+            5 * 60 * 1000
+        );
+
     </script>
+
 </body>
 </html>
