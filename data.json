@@ -1,56 +1,17 @@
 {
-  "lastUpdated": "15/09/2026 17:48",
+  "lastUpdated": "15/09/2026 17:52",
   "source": "https://ibstpks.pelindo.co.id/webaccess/",
-  "vesselAlongside": [
-    {
-      "vesselName": "TELUK BINTUNI",
-      "voyage": "21/2026 / 21/2026",
-      "atb": "15/09/2026 23:43",
-      "etd": "16/09/2026 02:15"
-    },
-    {
-      "vesselName": "MERATUS SABANG",
-      "voyage": "BJX067S / MSX030N",
-      "atb": "15/09/2026 23:43",
-      "etd": "16/09/2026 16:00"
-    },
-    {
-      "vesselName": "MYD ZHANGZHOU",
-      "voyage": "CS2090N / CS2090N",
-      "atb": "15/09/2026 23:43",
-      "etd": "16/09/2026 23:00"
-    },
-    {
-      "vesselName": "OKEE CORNELIA",
-      "voyage": "636S / 637N",
-      "atb": "15/09/2026 23:43",
-      "etd": "16/09/2026 15:00"
-    },
-    {
-      "vesselName": "SITC SHEKOU",
-      "voyage": "2618S / 2619N",
-      "atb": "14/09/2026 22:10",
-      "etd": ""
-    },
-    {
-      "vesselName": "HONG TAI 656",
-      "voyage": "636S / 637N",
-      "atb": "15/09/2026 10:57",
-      "etd": ""
-    },
-    {
-      "vesselName": "SINAR BANDA",
-      "voyage": "2650S / 2650N",
-      "atb": "15/09/2026 10:57",
-      "etd": ""
-    }
-  ],
+  "vesselAlongside": [],
   "confirmedVessel": [
     {
-      "vesselName": "MYD ZHANGZHOU",
-      "voyage": "CS2090N / CS2090N",
+      "vesselName": "SKY PRIDE",
+      "vesselCode": "SKYP011",
+      "voyage": "2607S / 2607N",
+      "eta": "",
       "etb": "16/09/2026 01:00",
       "etd": "16/09/2026 23:00",
+      "atb": "",
+      "atd": "",
       "openStack": "10/09/2026 18:00",
       "closingTime": "15/09/2026 18:00",
       "booking": "1200",
@@ -58,21 +19,14 @@
       "actual": "966"
     },
     {
-      "vesselName": "OKEE CORNELIA",
-      "voyage": "636S / 637N",
+      "vesselName": "PULAU NUNUKAN",
+      "vesselCode": "PLNN064",
+      "voyage": "20/2026 / 20/2026",
+      "eta": "",
       "etb": "16/09/2026 01:00",
       "etd": "16/09/2026 15:00",
-      "openStack": "10/09/2026 18:00",
-      "closingTime": "15/09/2026 18:00",
-      "booking": "1200",
-      "open": "1200",
-      "actual": "966"
-    },
-    {
-      "vesselName": "SKY PRIDE",
-      "voyage": "2607S / 2607N",
-      "etb": "16/09/2026 01:00",
-      "etd": "16/09/2026 15:00",
+      "atb": "",
+      "atd": "",
       "openStack": "08/09/2026 18:00",
       "closingTime": "13/09/2026 18:00",
       "booking": "250",
@@ -80,10 +34,14 @@
       "actual": "186"
     },
     {
-      "vesselName": "PULAU NUNUKAN",
-      "voyage": "20/2026 / 20/2026",
+      "vesselName": "SONGA SUCCESS",
+      "vesselCode": "SCSS012",
+      "voyage": "0055S / 0055N",
+      "eta": "",
       "etb": "16/09/2026 04:00",
       "etd": "16/09/2026 16:00",
+      "atb": "",
+      "atd": "",
       "openStack": "10/09/2026 17:00",
       "closingTime": "15/09/2026 17:00",
       "booking": "800",
@@ -91,10 +49,14 @@
       "actual": "251"
     },
     {
-      "vesselName": "SONGA SUCCESS",
-      "voyage": "0055S / 0055N",
+      "vesselName": "EVER OBEY",
+      "vesselCode": "OBEY037",
+      "voyage": "0492-057S / 0492-057N",
+      "eta": "",
       "etb": "16/09/2026 12:00",
       "etd": "17/09/2026 06:00",
+      "atb": "",
+      "atd": "",
       "openStack": "09/09/2026 18:00",
       "closingTime": "14/09/2026 12:00",
       "booking": "1170",
@@ -102,283 +64,31 @@
       "actual": "436"
     },
     {
-      "vesselName": "EVER OBEY",
-      "voyage": "0492-057S / 0492-057N",
+      "vesselName": "MERATUS BARITO",
+      "vesselCode": "MRTO209",
+      "voyage": "SP196S / SP197N",
+      "eta": "",
       "etb": "16/09/2026 19:00",
       "etd": "17/09/2026 13:00",
+      "atb": "",
+      "atd": "",
       "openStack": "11/09/2026 19:00",
       "closingTime": "16/09/2026 19:00",
       "booking": "300",
       "open": "300",
       "actual": "171"
-    },
-    {
-      "vesselName": "MERATUS BARITO",
-      "voyage": "SP196S / SP197N",
-      "etb": "16/09/2026 16:00",
-      "etd": "17/09/2026 09:00",
-      "openStack": "11/09/2026 06:00",
-      "closingTime": "16/09/2026 06:00",
-      "booking": "600",
-      "open": "600",
-      "actual": "423"
-    },
-    {
-      "vesselName": "MTT SANDAKAN",
-      "voyage": "80E / 80W",
-      "etb": "17/09/2026 05:00",
-      "etd": "18/09/2026 05:00",
-      "openStack": "12/09/2026 02:00",
-      "closingTime": "17/09/2026 02:00",
-      "booking": "1000",
-      "open": "1000",
-      "actual": "754"
-    },
-    {
-      "vesselName": "SINAR BINTAN",
-      "voyage": "951S / 951N",
-      "etb": "17/09/2026 11:00",
-      "etd": "18/09/2026 04:00",
-      "openStack": "11/09/2026 12:00",
-      "closingTime": "16/09/2026 12:00",
-      "booking": "750",
-      "open": "750",
-      "actual": "439"
-    },
-    {
-      "vesselName": "WAN HAI 327",
-      "voyage": "S068 / N068",
-      "etb": "17/09/2026 12:00",
-      "etd": "18/09/2026 17:00",
-      "openStack": "12/09/2026 00:00",
-      "closingTime": "17/09/2026 00:00",
-      "booking": "1100",
-      "open": "1100",
-      "actual": "617"
-    },
-    {
-      "vesselName": "MSC MALENA III",
-      "voyage": "HC635R / HC635R",
-      "etb": "18/09/2026 06:00",
-      "etd": "19/09/2026 02:00",
-      "openStack": "13/09/2026 08:00",
-      "closingTime": "18/09/2026 08:00",
-      "booking": "870",
-      "open": "870",
-      "actual": "459"
-    },
-    {
-      "vesselName": "DANUM 171",
-      "voyage": "112S / 112N",
-      "etb": "18/09/2026 09:00",
-      "etd": "19/09/2026 16:00",
-      "openStack": "13/09/2026 03:00",
-      "closingTime": "18/09/2026 03:00",
-      "booking": "220",
-      "open": "220",
-      "actual": "47"
-    },
-    {
-      "vesselName": "TELUK FLAMINGGO",
-      "voyage": "19/2026 / 19/2026",
-      "etb": "19/09/2026 01:00",
-      "etd": "19/09/2026 16:52",
-      "openStack": "14/09/2026 18:00",
-      "closingTime": "18/09/2026 12:00",
-      "booking": "540",
-      "open": "540",
-      "actual": "84"
-    },
-    {
-      "vesselName": "EVER CONSIST",
-      "voyage": "0553-069S / 0553-069N",
-      "etb": "19/09/2026 03:00",
-      "etd": "20/09/2026 09:15",
-      "openStack": "13/09/2026 21:00",
-      "closingTime": "18/09/2026 16:00",
-      "booking": "1150",
-      "open": "1150",
-      "actual": "522"
-    },
-    {
-      "vesselName": "HUI ZHOU JIN HAI",
-      "voyage": "0K82GN / 0K82GN",
-      "etb": "19/09/2026 20:00",
-      "etd": "20/09/2026 19:04",
-      "openStack": "14/09/2026 14:00",
-      "closingTime": "19/09/2026 14:00",
-      "booking": "600",
-      "open": "600",
-      "actual": "258"
-    },
-    {
-      "vesselName": "MERATUS SAMARINDA",
-      "voyage": "MSX028S / MSX029N",
-      "etb": "20/09/2026 13:00",
-      "etd": "22/09/2026 00:00",
-      "openStack": "15/09/2026 07:00",
-      "closingTime": "20/09/2026 07:00",
-      "booking": "1400",
-      "open": "1400",
-      "actual": "135"
-    },
-    {
-      "vesselName": "SINAR BAJO",
-      "voyage": "135S / 135N",
-      "etb": "20/09/2026 21:00",
-      "etd": "20/09/2026 21:30",
-      "openStack": "15/09/2026 15:00",
-      "closingTime": "20/09/2026 15:00",
-      "booking": "250",
-      "open": "250",
-      "actual": "0"
-    },
-    {
-      "vesselName": "MERATUS DILI",
-      "voyage": "SL320S / SL320S",
-      "etb": "21/09/2026 11:00",
-      "etd": "21/09/2026 12:00",
-      "openStack": "16/09/2026 05:00",
-      "closingTime": "20/09/2026 22:00",
-      "booking": "1200",
-      "open": "0",
-      "actual": "2"
-    },
-    {
-      "vesselName": "EVER BOOMY",
-      "voyage": "1206-093B / 1206-093B",
-      "etb": "21/09/2026 13:00",
-      "etd": "22/09/2026 16:46",
-      "openStack": "16/09/2026 07:00",
-      "closingTime": "21/09/2026 07:00",
-      "booking": "1000",
-      "open": "7",
-      "actual": "7"
-    },
-    {
-      "vesselName": "SITC NANSHA",
-      "voyage": "2620S / 2621N",
-      "etb": "23/09/2026 22:00",
-      "etd": "22/09/2026 16:46",
-      "openStack": "16/09/2026 07:00",
-      "closingTime": "21/09/2026 07:00",
-      "booking": "1000",
-      "open": "7",
-      "actual": "7"
-    },
-    {
-      "vesselName": "SITC SHEKOU",
-      "voyage": "2618S / 2619N",
-      "etb": "14/09/2026 22:00",
-      "etd": "",
-      "openStack": "",
-      "closingTime": "",
-      "booking": "",
-      "open": "",
-      "actual": ""
-    },
-    {
-      "vesselName": "HONG TAI 656",
-      "voyage": "636S / 637N",
-      "etb": "14/09/2026 18:00",
-      "etd": "",
-      "openStack": "",
-      "closingTime": "",
-      "booking": "",
-      "open": "",
-      "actual": ""
-    },
-    {
-      "vesselName": "SINAR BANDA",
-      "voyage": "2650S / 2650N",
-      "etb": "14/09/2026 18:00",
-      "etd": "",
-      "openStack": "",
-      "closingTime": "",
-      "booking": "",
-      "open": "",
-      "actual": ""
     }
   ],
   "openStack": [
     {
-      "vesselName": "MYD ZHANGZHOU",
-      "voyage": "CS2090N / CS2090N",
-      "eta": "",
-      "etb": "16/09/2026 01:00",
-      "etd": "16/09/2026 23:00",
-      "openStack": "10/09/2026 18:00",
-      "closingTime": "15/09/2026 18:00",
-      "booking": "1200",
-      "open": "1200",
-      "actual": "966"
-    },
-    {
-      "vesselName": "OKEE CORNELIA",
-      "voyage": "636S / 637N",
-      "eta": "",
-      "etb": "16/09/2026 01:00",
-      "etd": "16/09/2026 15:00",
-      "openStack": "10/09/2026 18:00",
-      "closingTime": "15/09/2026 18:00",
-      "booking": "1200",
-      "open": "1200",
-      "actual": "966"
-    },
-    {
-      "vesselName": "SKY PRIDE",
-      "voyage": "2607S / 2607N",
-      "eta": "",
-      "etb": "16/09/2026 01:00",
-      "etd": "16/09/2026 15:00",
-      "openStack": "08/09/2026 18:00",
-      "closingTime": "13/09/2026 18:00",
-      "booking": "250",
-      "open": "250",
-      "actual": "186"
-    },
-    {
-      "vesselName": "PULAU NUNUKAN",
-      "voyage": "20/2026 / 20/2026",
-      "eta": "",
-      "etb": "16/09/2026 04:00",
-      "etd": "16/09/2026 16:00",
-      "openStack": "10/09/2026 17:00",
-      "closingTime": "15/09/2026 17:00",
-      "booking": "800",
-      "open": "800",
-      "actual": "251"
-    },
-    {
-      "vesselName": "SONGA SUCCESS",
-      "voyage": "0055S / 0055N",
-      "eta": "",
-      "etb": "16/09/2026 12:00",
-      "etd": "17/09/2026 06:00",
-      "openStack": "09/09/2026 18:00",
-      "closingTime": "14/09/2026 12:00",
-      "booking": "1170",
-      "open": "1170",
-      "actual": "436"
-    },
-    {
-      "vesselName": "EVER OBEY",
-      "voyage": "0492-057S / 0492-057N",
-      "eta": "",
-      "etb": "16/09/2026 19:00",
-      "etd": "17/09/2026 13:00",
-      "openStack": "11/09/2026 19:00",
-      "closingTime": "16/09/2026 19:00",
-      "booking": "300",
-      "open": "300",
-      "actual": "171"
-    },
-    {
-      "vesselName": "MERATUS BARITO",
-      "voyage": "SP196S / SP197N",
+      "vesselName": "MTT SANDAKAN",
+      "vesselCode": "MDKN045",
+      "voyage": "80E / 80W",
       "eta": "15/09/2026 02:00",
       "etb": "16/09/2026 16:00",
       "etd": "17/09/2026 09:00",
+      "atb": "",
+      "atd": "",
       "openStack": "11/09/2026 06:00",
       "closingTime": "16/09/2026 06:00",
       "booking": "600",
@@ -386,11 +96,14 @@
       "actual": "423"
     },
     {
-      "vesselName": "MTT SANDAKAN",
-      "voyage": "80E / 80W",
+      "vesselName": "SINAR BINTAN",
+      "vesselCode": "SIBI093",
+      "voyage": "951S / 951N",
       "eta": "17/09/2026 04:00",
       "etb": "17/09/2026 05:00",
       "etd": "18/09/2026 05:00",
+      "atb": "",
+      "atd": "",
       "openStack": "12/09/2026 02:00",
       "closingTime": "17/09/2026 02:00",
       "booking": "1000",
@@ -398,11 +111,14 @@
       "actual": "754"
     },
     {
-      "vesselName": "SINAR BINTAN",
-      "voyage": "951S / 951N",
+      "vesselName": "WAN HAI 327",
+      "vesselCode": "W327007",
+      "voyage": "S068 / N068",
       "eta": "16/09/2026 14:00",
       "etb": "17/09/2026 11:00",
       "etd": "18/09/2026 04:00",
+      "atb": "",
+      "atd": "",
       "openStack": "11/09/2026 12:00",
       "closingTime": "16/09/2026 12:00",
       "booking": "750",
@@ -410,11 +126,14 @@
       "actual": "439"
     },
     {
-      "vesselName": "WAN HAI 327",
-      "voyage": "S068 / N068",
+      "vesselName": "MSC MALENA III",
+      "vesselCode": "MSL3002",
+      "voyage": "HC635R / HC635R",
       "eta": "16/09/2026 07:00",
       "etb": "17/09/2026 12:00",
       "etd": "18/09/2026 17:00",
+      "atb": "",
+      "atd": "",
       "openStack": "12/09/2026 00:00",
       "closingTime": "17/09/2026 00:00",
       "booking": "1100",
@@ -422,11 +141,14 @@
       "actual": "617"
     },
     {
-      "vesselName": "MSC MALENA III",
-      "voyage": "HC635R / HC635R",
+      "vesselName": "DANUM 171",
+      "vesselCode": "D171021",
+      "voyage": "112S / 112N",
       "eta": "17/09/2026 08:00",
       "etb": "18/09/2026 06:00",
       "etd": "19/09/2026 02:00",
+      "atb": "",
+      "atd": "",
       "openStack": "13/09/2026 08:00",
       "closingTime": "18/09/2026 08:00",
       "booking": "870",
@@ -434,11 +156,14 @@
       "actual": "459"
     },
     {
-      "vesselName": "DANUM 171",
-      "voyage": "112S / 112N",
+      "vesselName": "TELUK FLAMINGGO",
+      "vesselCode": "TELO025",
+      "voyage": "19/2026 / 19/2026",
       "eta": "18/09/2026 08:00",
       "etb": "18/09/2026 09:00",
       "etd": "19/09/2026 16:00",
+      "atb": "",
+      "atd": "",
       "openStack": "13/09/2026 03:00",
       "closingTime": "18/09/2026 03:00",
       "booking": "220",
@@ -446,11 +171,14 @@
       "actual": "47"
     },
     {
-      "vesselName": "TELUK FLAMINGGO",
-      "voyage": "19/2026 / 19/2026",
+      "vesselName": "EVER CONSIST",
+      "vesselCode": "CNST052",
+      "voyage": "0553-069S / 0553-069N",
       "eta": "19/09/2026 00:00",
       "etb": "19/09/2026 01:00",
       "etd": "19/09/2026 16:52",
+      "atb": "",
+      "atd": "",
       "openStack": "14/09/2026 18:00",
       "closingTime": "18/09/2026 12:00",
       "booking": "540",
@@ -458,11 +186,14 @@
       "actual": "84"
     },
     {
-      "vesselName": "EVER CONSIST",
-      "voyage": "0553-069S / 0553-069N",
+      "vesselName": "HUI ZHOU JIN HAI",
+      "vesselCode": "HUJI002",
+      "voyage": "0K82GN / 0K82GN",
       "eta": "19/09/2026 02:00",
       "etb": "19/09/2026 03:00",
       "etd": "20/09/2026 09:15",
+      "atb": "",
+      "atd": "",
       "openStack": "13/09/2026 21:00",
       "closingTime": "18/09/2026 16:00",
       "booking": "1150",
@@ -470,11 +201,14 @@
       "actual": "522"
     },
     {
-      "vesselName": "HUI ZHOU JIN HAI",
-      "voyage": "0K82GN / 0K82GN",
+      "vesselName": "MERATUS SAMARINDA",
+      "vesselCode": "MRDA024",
+      "voyage": "MSX028S / MSX029N",
       "eta": "19/09/2026 19:00",
       "etb": "19/09/2026 20:00",
       "etd": "20/09/2026 19:04",
+      "atb": "",
+      "atd": "",
       "openStack": "14/09/2026 14:00",
       "closingTime": "19/09/2026 14:00",
       "booking": "600",
@@ -482,11 +216,14 @@
       "actual": "258"
     },
     {
-      "vesselName": "MERATUS SAMARINDA",
-      "voyage": "MSX028S / MSX029N",
+      "vesselName": "SINAR BAJO",
+      "vesselCode": "SIJO018",
+      "voyage": "135S / 135N",
       "eta": "20/09/2026 12:00",
       "etb": "20/09/2026 13:00",
       "etd": "22/09/2026 00:00",
+      "atb": "",
+      "atd": "",
       "openStack": "15/09/2026 07:00",
       "closingTime": "20/09/2026 07:00",
       "booking": "1400",
@@ -494,11 +231,14 @@
       "actual": "135"
     },
     {
-      "vesselName": "SINAR BAJO",
-      "voyage": "135S / 135N",
+      "vesselName": "MERATUS DILI",
+      "vesselCode": "DILI005",
+      "voyage": "SL320S / SL320S",
       "eta": "20/09/2026 13:00",
       "etb": "20/09/2026 21:00",
       "etd": "20/09/2026 21:30",
+      "atb": "",
+      "atd": "",
       "openStack": "15/09/2026 15:00",
       "closingTime": "20/09/2026 15:00",
       "booking": "250",
@@ -506,11 +246,14 @@
       "actual": "0"
     },
     {
-      "vesselName": "MERATUS DILI",
-      "voyage": "SL320S / SL320S",
+      "vesselName": "EVER BOOMY",
+      "vesselCode": "BOMY041",
+      "voyage": "1206-093B / 1206-093B",
       "eta": "21/09/2026 10:00",
       "etb": "21/09/2026 11:00",
       "etd": "21/09/2026 12:00",
+      "atb": "",
+      "atd": "",
       "openStack": "16/09/2026 05:00",
       "closingTime": "20/09/2026 22:00",
       "booking": "1200",
@@ -518,23 +261,14 @@
       "actual": "2"
     },
     {
-      "vesselName": "EVER BOOMY",
-      "voyage": "1206-093B / 1206-093B",
+      "vesselName": "SITC NANSHA",
+      "vesselCode": "SITN006",
+      "voyage": "2620S / 2621N",
       "eta": "21/09/2026 12:00",
       "etb": "21/09/2026 13:00",
       "etd": "22/09/2026 16:46",
-      "openStack": "16/09/2026 07:00",
-      "closingTime": "21/09/2026 07:00",
-      "booking": "1000",
-      "open": "7",
-      "actual": "7"
-    },
-    {
-      "vesselName": "SITC NANSHA",
-      "voyage": "2620S / 2621N",
-      "eta": "21/09/2026 12:00",
-      "etb": "23/09/2026 22:00",
-      "etd": "22/09/2026 16:46",
+      "atb": "",
+      "atd": "",
       "openStack": "16/09/2026 07:00",
       "closingTime": "21/09/2026 07:00",
       "booking": "1000",
@@ -544,186 +278,72 @@
   ],
   "vesselSchedule": [
     {
-      "vesselName": "MYD ZHANGZHOU",
-      "voyage": "CS2090N / CS2090N",
-      "etb": "16/09/2026 01:00"
-    },
-    {
-      "vesselName": "OKEE CORNELIA",
-      "voyage": "636S / 637N",
-      "etb": "16/09/2026 01:00"
-    },
-    {
-      "vesselName": "SKY PRIDE",
-      "voyage": "2607S / 2607N",
-      "etb": "16/09/2026 01:00"
-    },
-    {
-      "vesselName": "PULAU NUNUKAN",
-      "voyage": "20/2026 / 20/2026",
-      "etb": "16/09/2026 04:00"
-    },
-    {
-      "vesselName": "SONGA SUCCESS",
-      "voyage": "0055S / 0055N",
-      "etb": "16/09/2026 12:00"
-    },
-    {
-      "vesselName": "EVER OBEY",
-      "voyage": "0492-057S / 0492-057N",
-      "etb": "16/09/2026 19:00"
-    },
-    {
-      "vesselName": "MERATUS BARITO",
-      "voyage": "SP196S / SP197N",
-      "etb": "16/09/2026 16:00"
-    },
-    {
-      "vesselName": "MTT SANDAKAN",
-      "voyage": "80E / 80W",
-      "etb": "17/09/2026 05:00"
-    },
-    {
-      "vesselName": "SINAR BINTAN",
-      "voyage": "951S / 951N",
-      "etb": "17/09/2026 11:00"
-    },
-    {
-      "vesselName": "WAN HAI 327",
-      "voyage": "S068 / N068",
-      "etb": "17/09/2026 12:00"
-    },
-    {
-      "vesselName": "MSC MALENA III",
-      "voyage": "HC635R / HC635R",
-      "etb": "18/09/2026 06:00"
-    },
-    {
-      "vesselName": "DANUM 171",
-      "voyage": "112S / 112N",
-      "etb": "18/09/2026 09:00"
-    },
-    {
-      "vesselName": "TELUK FLAMINGGO",
-      "voyage": "19/2026 / 19/2026",
-      "etb": "19/09/2026 01:00"
-    },
-    {
-      "vesselName": "EVER CONSIST",
-      "voyage": "0553-069S / 0553-069N",
-      "etb": "19/09/2026 03:00"
-    },
-    {
-      "vesselName": "HUI ZHOU JIN HAI",
-      "voyage": "0K82GN / 0K82GN",
-      "etb": "19/09/2026 20:00"
-    },
-    {
-      "vesselName": "MERATUS SAMARINDA",
-      "voyage": "MSX028S / MSX029N",
-      "etb": "20/09/2026 13:00"
-    },
-    {
-      "vesselName": "SINAR BAJO",
-      "voyage": "135S / 135N",
-      "etb": "20/09/2026 21:00"
-    },
-    {
-      "vesselName": "MERATUS DILI",
-      "voyage": "SL320S / SL320S",
-      "etb": "21/09/2026 11:00"
-    },
-    {
-      "vesselName": "EVER BOOMY",
-      "voyage": "1206-093B / 1206-093B",
-      "etb": "21/09/2026 13:00"
-    },
-    {
-      "vesselName": "SITC NANSHA",
-      "voyage": "2620S / 2621N",
-      "etb": "23/09/2026 22:00"
-    },
-    {
       "vesselName": "SITC SHEKOU",
+      "vesselCode": "SISH031",
       "voyage": "2618S / 2619N",
-      "etb": "14/09/2026 22:00"
+      "eta": "",
+      "etb": "14/09/2026 19:00",
+      "etd": "",
+      "atb": "14/09/2026 20:07",
+      "atd": "15/09/2026 16:07",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": ""
     },
     {
       "vesselName": "HONG TAI 656",
+      "vesselCode": "HONG003",
       "voyage": "636S / 637N",
-      "etb": "14/09/2026 18:00"
+      "eta": "",
+      "etb": "14/09/2026 22:00",
+      "etd": "",
+      "atb": "14/09/2026 22:10",
+      "atd": "15/09/2026 22:10",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": ""
     },
     {
       "vesselName": "SINAR BANDA",
+      "vesselCode": "SIDA037",
       "voyage": "2650S / 2650N",
-      "etb": "14/09/2026 18:00"
+      "eta": "",
+      "etb": "14/09/2026 18:00",
+      "etd": "",
+      "atb": "15/09/2026 10:57",
+      "atd": "15/09/2026 10:57",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": ""
     }
   ],
+  "vesselHistory": [],
   "allVessels": [
-    {
-      "vesselName": "TELUK BINTUNI",
-      "vesselCode": "TEBI065",
-      "voyage": "21/2026 / 21/2026",
-      "eta": "",
-      "etb": "",
-      "etd": "16/09/2026 02:15",
-      "atb": "15/09/2026 23:43",
-      "atd": "",
-      "openStack": "",
-      "closingTime": "",
-      "booking": "",
-      "open": "",
-      "actual": ""
-    },
-    {
-      "vesselName": "MERATUS SABANG",
-      "vesselCode": "MRBG056",
-      "voyage": "BJX067S / MSX030N",
-      "eta": "",
-      "etb": "",
-      "etd": "16/09/2026 16:00",
-      "atb": "15/09/2026 23:43",
-      "atd": "",
-      "openStack": "",
-      "closingTime": "",
-      "booking": "",
-      "open": "",
-      "actual": ""
-    },
-    {
-      "vesselName": "MYD ZHANGZHOU",
-      "vesselCode": "ZHAN008",
-      "voyage": "CS2090N / CS2090N",
-      "eta": "",
-      "etb": "16/09/2026 01:00",
-      "etd": "16/09/2026 23:00",
-      "atb": "15/09/2026 23:43",
-      "atd": "",
-      "openStack": "10/09/2026 18:00",
-      "closingTime": "15/09/2026 18:00",
-      "booking": "1200",
-      "open": "1200",
-      "actual": "966"
-    },
-    {
-      "vesselName": "OKEE CORNELIA",
-      "vesselCode": "OKEE002",
-      "voyage": "636S / 637N",
-      "eta": "",
-      "etb": "16/09/2026 01:00",
-      "etd": "16/09/2026 15:00",
-      "atb": "15/09/2026 23:43",
-      "atd": "",
-      "openStack": "10/09/2026 18:00",
-      "closingTime": "15/09/2026 18:00",
-      "booking": "1200",
-      "open": "1200",
-      "actual": "966"
-    },
     {
       "vesselName": "SKY PRIDE",
       "vesselCode": "SKYP011",
       "voyage": "2607S / 2607N",
+      "eta": "",
+      "etb": "16/09/2026 01:00",
+      "etd": "16/09/2026 23:00",
+      "atb": "",
+      "atd": "",
+      "openStack": "10/09/2026 18:00",
+      "closingTime": "15/09/2026 18:00",
+      "booking": "1200",
+      "open": "1200",
+      "actual": "966"
+    },
+    {
+      "vesselName": "PULAU NUNUKAN",
+      "vesselCode": "PLNN064",
+      "voyage": "20/2026 / 20/2026",
       "eta": "",
       "etb": "16/09/2026 01:00",
       "etd": "16/09/2026 15:00",
@@ -736,9 +356,9 @@
       "actual": "186"
     },
     {
-      "vesselName": "PULAU NUNUKAN",
-      "vesselCode": "PLNN064",
-      "voyage": "20/2026 / 20/2026",
+      "vesselName": "SONGA SUCCESS",
+      "vesselCode": "SCSS012",
+      "voyage": "0055S / 0055N",
       "eta": "",
       "etb": "16/09/2026 04:00",
       "etd": "16/09/2026 16:00",
@@ -751,9 +371,9 @@
       "actual": "251"
     },
     {
-      "vesselName": "SONGA SUCCESS",
-      "vesselCode": "SCSS012",
-      "voyage": "0055S / 0055N",
+      "vesselName": "EVER OBEY",
+      "vesselCode": "OBEY037",
+      "voyage": "0492-057S / 0492-057N",
       "eta": "",
       "etb": "16/09/2026 12:00",
       "etd": "17/09/2026 06:00",
@@ -766,9 +386,9 @@
       "actual": "436"
     },
     {
-      "vesselName": "EVER OBEY",
-      "vesselCode": "OBEY037",
-      "voyage": "0492-057S / 0492-057N",
+      "vesselName": "MERATUS BARITO",
+      "vesselCode": "MRTO209",
+      "voyage": "SP196S / SP197N",
       "eta": "",
       "etb": "16/09/2026 19:00",
       "etd": "17/09/2026 13:00",
@@ -781,9 +401,9 @@
       "actual": "171"
     },
     {
-      "vesselName": "MERATUS BARITO",
-      "vesselCode": "MRTO209",
-      "voyage": "SP196S / SP197N",
+      "vesselName": "MTT SANDAKAN",
+      "vesselCode": "MDKN045",
+      "voyage": "80E / 80W",
       "eta": "15/09/2026 02:00",
       "etb": "16/09/2026 16:00",
       "etd": "17/09/2026 09:00",
@@ -796,9 +416,9 @@
       "actual": "423"
     },
     {
-      "vesselName": "MTT SANDAKAN",
-      "vesselCode": "MDKN045",
-      "voyage": "80E / 80W",
+      "vesselName": "SINAR BINTAN",
+      "vesselCode": "SIBI093",
+      "voyage": "951S / 951N",
       "eta": "17/09/2026 04:00",
       "etb": "17/09/2026 05:00",
       "etd": "18/09/2026 05:00",
@@ -811,9 +431,9 @@
       "actual": "754"
     },
     {
-      "vesselName": "SINAR BINTAN",
-      "vesselCode": "SIBI093",
-      "voyage": "951S / 951N",
+      "vesselName": "WAN HAI 327",
+      "vesselCode": "W327007",
+      "voyage": "S068 / N068",
       "eta": "16/09/2026 14:00",
       "etb": "17/09/2026 11:00",
       "etd": "18/09/2026 04:00",
@@ -826,9 +446,9 @@
       "actual": "439"
     },
     {
-      "vesselName": "WAN HAI 327",
-      "vesselCode": "W327007",
-      "voyage": "S068 / N068",
+      "vesselName": "MSC MALENA III",
+      "vesselCode": "MSL3002",
+      "voyage": "HC635R / HC635R",
       "eta": "16/09/2026 07:00",
       "etb": "17/09/2026 12:00",
       "etd": "18/09/2026 17:00",
@@ -841,9 +461,9 @@
       "actual": "617"
     },
     {
-      "vesselName": "MSC MALENA III",
-      "vesselCode": "MSL3002",
-      "voyage": "HC635R / HC635R",
+      "vesselName": "DANUM 171",
+      "vesselCode": "D171021",
+      "voyage": "112S / 112N",
       "eta": "17/09/2026 08:00",
       "etb": "18/09/2026 06:00",
       "etd": "19/09/2026 02:00",
@@ -856,9 +476,9 @@
       "actual": "459"
     },
     {
-      "vesselName": "DANUM 171",
-      "vesselCode": "D171021",
-      "voyage": "112S / 112N",
+      "vesselName": "TELUK FLAMINGGO",
+      "vesselCode": "TELO025",
+      "voyage": "19/2026 / 19/2026",
       "eta": "18/09/2026 08:00",
       "etb": "18/09/2026 09:00",
       "etd": "19/09/2026 16:00",
@@ -871,9 +491,9 @@
       "actual": "47"
     },
     {
-      "vesselName": "TELUK FLAMINGGO",
-      "vesselCode": "TELO025",
-      "voyage": "19/2026 / 19/2026",
+      "vesselName": "EVER CONSIST",
+      "vesselCode": "CNST052",
+      "voyage": "0553-069S / 0553-069N",
       "eta": "19/09/2026 00:00",
       "etb": "19/09/2026 01:00",
       "etd": "19/09/2026 16:52",
@@ -886,9 +506,9 @@
       "actual": "84"
     },
     {
-      "vesselName": "EVER CONSIST",
-      "vesselCode": "CNST052",
-      "voyage": "0553-069S / 0553-069N",
+      "vesselName": "HUI ZHOU JIN HAI",
+      "vesselCode": "HUJI002",
+      "voyage": "0K82GN / 0K82GN",
       "eta": "19/09/2026 02:00",
       "etb": "19/09/2026 03:00",
       "etd": "20/09/2026 09:15",
@@ -901,9 +521,9 @@
       "actual": "522"
     },
     {
-      "vesselName": "HUI ZHOU JIN HAI",
-      "vesselCode": "HUJI002",
-      "voyage": "0K82GN / 0K82GN",
+      "vesselName": "MERATUS SAMARINDA",
+      "vesselCode": "MRDA024",
+      "voyage": "MSX028S / MSX029N",
       "eta": "19/09/2026 19:00",
       "etb": "19/09/2026 20:00",
       "etd": "20/09/2026 19:04",
@@ -916,9 +536,9 @@
       "actual": "258"
     },
     {
-      "vesselName": "MERATUS SAMARINDA",
-      "vesselCode": "MRDA024",
-      "voyage": "MSX028S / MSX029N",
+      "vesselName": "SINAR BAJO",
+      "vesselCode": "SIJO018",
+      "voyage": "135S / 135N",
       "eta": "20/09/2026 12:00",
       "etb": "20/09/2026 13:00",
       "etd": "22/09/2026 00:00",
@@ -931,9 +551,9 @@
       "actual": "135"
     },
     {
-      "vesselName": "SINAR BAJO",
-      "vesselCode": "SIJO018",
-      "voyage": "135S / 135N",
+      "vesselName": "MERATUS DILI",
+      "vesselCode": "DILI005",
+      "voyage": "SL320S / SL320S",
       "eta": "20/09/2026 13:00",
       "etb": "20/09/2026 21:00",
       "etd": "20/09/2026 21:30",
@@ -946,9 +566,9 @@
       "actual": "0"
     },
     {
-      "vesselName": "MERATUS DILI",
-      "vesselCode": "DILI005",
-      "voyage": "SL320S / SL320S",
+      "vesselName": "EVER BOOMY",
+      "vesselCode": "BOMY041",
+      "voyage": "1206-093B / 1206-093B",
       "eta": "21/09/2026 10:00",
       "etb": "21/09/2026 11:00",
       "etd": "21/09/2026 12:00",
@@ -961,26 +581,11 @@
       "actual": "2"
     },
     {
-      "vesselName": "EVER BOOMY",
-      "vesselCode": "BOMY041",
-      "voyage": "1206-093B / 1206-093B",
-      "eta": "21/09/2026 12:00",
-      "etb": "21/09/2026 13:00",
-      "etd": "22/09/2026 16:46",
-      "atb": "",
-      "atd": "",
-      "openStack": "16/09/2026 07:00",
-      "closingTime": "21/09/2026 07:00",
-      "booking": "1000",
-      "open": "7",
-      "actual": "7"
-    },
-    {
       "vesselName": "SITC NANSHA",
       "vesselCode": "SITN006",
       "voyage": "2620S / 2621N",
       "eta": "21/09/2026 12:00",
-      "etb": "23/09/2026 22:00",
+      "etb": "21/09/2026 13:00",
       "etd": "22/09/2026 16:46",
       "atb": "",
       "atd": "",
@@ -995,10 +600,10 @@
       "vesselCode": "SISH031",
       "voyage": "2618S / 2619N",
       "eta": "",
-      "etb": "14/09/2026 22:00",
+      "etb": "14/09/2026 19:00",
       "etd": "",
-      "atb": "14/09/2026 22:10",
-      "atd": "15/09/2026 22:10",
+      "atb": "14/09/2026 20:07",
+      "atd": "15/09/2026 16:07",
       "openStack": "",
       "closingTime": "",
       "booking": "",
@@ -1010,10 +615,10 @@
       "vesselCode": "HONG003",
       "voyage": "636S / 637N",
       "eta": "",
-      "etb": "14/09/2026 18:00",
+      "etb": "14/09/2026 22:00",
       "etd": "",
-      "atb": "15/09/2026 10:57",
-      "atd": "15/09/2026 10:57",
+      "atb": "14/09/2026 22:10",
+      "atd": "15/09/2026 22:10",
       "openStack": "",
       "closingTime": "",
       "booking": "",
