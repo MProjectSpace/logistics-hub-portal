@@ -10,8 +10,8 @@ VESSEL_PATTERN = re.compile(
     r"^(.+?)\s*\(([^()]+)\)$"
 )
 
-VOYAGE_PATTERN = re.compile(
-    r"^[A-Za-z0-9]+(?:[-/][A-Za-z0-9]+)+\s*/\s*[A-Za-z0-9]+"
+DATE_PATTERN = re.compile(
+    r"\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}"
 )
 
 
@@ -39,6 +39,7 @@ async def main():
         )
 
         print("[2] Menunggu data...")
+
         await page.wait_for_timeout(10000)
 
         text = await page.locator("body").inner_text()
@@ -51,6 +52,10 @@ async def main():
 
         vessels = []
 
+        # ==================================================
+        # CARI VESSEL
+        # ==================================================
+
         for i, line in enumerate(lines):
 
             match = VESSEL_PATTERN.match(line)
@@ -61,34 +66,88 @@ async def main():
             vessel_name = match.group(1).strip()
             vessel_code = match.group(2).strip()
 
-            # --------------------------------------
-            # VALIDASI BLOK VESSEL
-            # --------------------------------------
+            # Hindari footer / kontak
+            bad_words = [
+                "WA Hotline",
+                "Telpon/Wa",
+                "Support",
+                "Contact",
+                "Planner"
+            ]
 
-            next_lines = lines[i + 1:i + 8]
+            if any(
+                word.lower() in vessel_name.lower()
+                for word in bad_words
+            ):
+                continue
+
+            # ==================================================
+            # AMBIL BLOK DATA DI BAWAH NAMA VESSEL
+            # ==================================================
+
+            block = lines[i + 1:i + 25]
 
             voyage = ""
 
-            for candidate in next_lines:
+            # Voyage biasanya berada tepat setelah nama vessel,
+            # tetapi kita cari beberapa baris ke bawah.
+            for candidate in block[:5]:
 
-                if VOYAGE_PATTERN.match(candidate):
-                    voyage = candidate
-                    break
+                # Jangan ambil tanggal sebagai voyage
+                if DATE_PATTERN.search(candidate):
+                    continue
 
-            # Kalau tidak ada voyage,
-            # kemungkinan bukan data vessel.
-            if not voyage:
+                # Voyage harus mengandung "/"
+                if "/" in candidate:
+
+                    # Hindari field tanggal / URL / kontak
+                    if (
+                        "Booking / Open / Actual" not in candidate
+                        and "Open Stack" not in candidate
+                        and "Closing Time" not in candidate
+                    ):
+                        voyage = candidate
+                        break
+
+            # ==================================================
+            # CEK APAKAH INI BENAR-BENAR BLOK VESSEL
+            # ==================================================
+
+            operational_keywords = [
+                "DOMESTIC",
+                "INTERNATIONAL",
+                "ETA :",
+                "ETB :",
+                "ETD :",
+                "ATB :",
+                "ATD :",
+                "Open Stack :",
+                "Closing Time :",
+                "Booking / Open / Actual :"
+            ]
+
+            is_vessel = (
+                voyage
+                and any(
+                    keyword in block
+                    for keyword in operational_keywords
+                    for block in [block]
+                )
+            )
+
+            if not is_vessel:
                 continue
 
-            # --------------------------------------
-            # DATA FIELD
-            # --------------------------------------
+            # ==================================================
+            # FIELD
+            # ==================================================
 
             eta = ""
             etb = ""
             etd = ""
             atb = ""
             atd = ""
+
             open_stack = ""
             closing_time = ""
 
@@ -96,46 +155,62 @@ async def main():
             open_qty = ""
             actual = ""
 
-            block = lines[i + 1:i + 25]
-
             for item in block:
 
                 if item.startswith("ETA :"):
-                    eta = item[5:].strip()
+
+                    eta = item.replace(
+                        "ETA :", ""
+                    ).strip()
 
                 elif item.startswith("ETB :"):
-                    etb = item[5:].strip()
+
+                    etb = item.replace(
+                        "ETB :", ""
+                    ).strip()
 
                 elif item.startswith("ETD :"):
-                    etd = item[5:].strip()
+
+                    etd = item.replace(
+                        "ETD :", ""
+                    ).strip()
 
                 elif item.startswith("ATB :"):
-                    atb = item[5:].strip()
+
+                    atb = item.replace(
+                        "ATB :", ""
+                    ).strip()
 
                 elif item.startswith("ATD :"):
-                    atd = item[5:].strip()
+
+                    atd = item.replace(
+                        "ATD :", ""
+                    ).strip()
 
                 elif item.startswith("Open Stack :"):
-                    open_stack = item[
-                        len("Open Stack :"):
-                    ].strip()
+
+                    open_stack = item.replace(
+                        "Open Stack :",
+                        ""
+                    ).strip()
 
                 elif item.startswith("Closing Time :"):
-                    closing_time = item[
-                        len("Closing Time :"):
-                    ].strip()
+
+                    closing_time = item.replace(
+                        "Closing Time :",
+                        ""
+                    ).strip()
 
                 elif item.startswith(
                     "Booking / Open / Actual :"
                 ):
 
-                    values = item[
-                        len(
-                            "Booking / Open / Actual :"
-                        ):
-                    ].strip().split("/")
+                    values = item.replace(
+                        "Booking / Open / Actual :",
+                        ""
+                    ).strip().split("/")
 
-                    if len(values) == 3:
+                    if len(values) >= 3:
 
                         booking = values[0].strip()
                         open_qty = values[1].strip()
@@ -163,11 +238,10 @@ async def main():
                 f"[FOUND] {vessel_name} | {voyage}"
             )
 
-        # ------------------------------------------
-        # VALIDASI
-        # ------------------------------------------
+        # ==================================================
+        # HASIL
+        # ==================================================
 
-        print("")
         print("======================================")
         print("HASIL SCRAPING")
         print("======================================")
@@ -183,9 +257,9 @@ async def main():
                 "Tidak ada vessel valid ditemukan."
             )
 
-        # ------------------------------------------
+        # ==================================================
         # CLASSIFICATION
-        # ------------------------------------------
+        # ==================================================
 
         alongside = []
         confirmed = []
@@ -238,9 +312,9 @@ async def main():
                     "actual": v["actual"]
                 })
 
-        # ------------------------------------------
-        # DATA.JSON
-        # ------------------------------------------
+        # ==================================================
+        # SIMPAN DATA.JSON
+        # ==================================================
 
         data = {
             "lastUpdated":
@@ -274,7 +348,6 @@ async def main():
                 indent=2
             )
 
-        print("")
         print("======================================")
         print("DATA.JSON BERHASIL DIBUAT")
         print("======================================")
@@ -299,10 +372,9 @@ async def main():
             len(schedule)
         )
 
-        print("")
-        print("=== SCRAPER SELESAI ===")
-
         await browser.close()
+
+        print("=== SCRAPER SELESAI ===")
 
 
 if __name__ == "__main__":
