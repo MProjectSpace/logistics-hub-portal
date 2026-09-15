@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Hub Portal - Port Operations & Vessel Schedule</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-900 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-ship text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-lg font-bold tracking-tight text-blue-900 block leading-none">LOGISTICS HUB</span>
+                    <span class="text-[10px] text-slate-500 tracking-wider uppercase font-semibold">Terminal Operations</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 font-medium text-sm text-slate-600">
+                <a href="#search-section" class="hover:text-blue-600 transition">Pencarian Jadwal</a>
+                <a href="#open-stack" class="hover:text-blue-600 transition">Open Stack</a>
+                <a href="#estimated-berth" class="hover:text-blue-600 transition">Estimasi Sandar</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero / Main Search Section -->
+    <section id="search-section" class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white py-16 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="bg-blue-800/80 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block border border-blue-700">
+                Portal Informasi Jadwal Kapal & Terminal
+            </span>
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">
+                Cari Jadwal Voyage & Vessel
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base mb-8 max-w-2xl mx-auto">
+                Masukkan nama kapal (vessel) atau nomor voyage untuk melihat status operasional terkini secara real-time.
+            </p>
+            
+            <!-- Interactive Search Bar -->
+            <div class="relative max-w-2xl mx-auto">
+                <div class="flex items-center bg-white rounded-xl shadow-lg p-2 border border-slate-200">
+                    <span class="pl-3 text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Ketik nama vessel atau voyage (Contoh: KM Nusantara / VOY-024)..." 
+                           class="w-full px-3 py-2 text-slate-800 text-sm focus:outline-none bg-transparent">
+                    <button onclick="handleSearch()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg text-sm transition shadow-sm">
+                        Cari
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Result Container (Hidden by default or shows info if no match) -->
+    <div id="searchResultContainer" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 hidden">
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-circle-info text-blue-600 text-lg"></i>
+                <span id="searchResultText" class="text-sm font-medium text-blue-900">Menampilkan hasil pencarian...</span>
+            </div>
+            <button onclick="clearSearch()" class="text-xs text-blue-700 hover:underline font-semibold">Reset Filter</button>
+        </div>
+    </div>
+
+    <!-- Main Content Tables -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+
+        <!-- Tabel 1: Daftar Kapal Open Stack -->
+        <section id="open-stack" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center">
+                        <span class="w-3 h-3 bg-emerald-500 rounded-full inline-block mr-2.5"></span> 
+                        Daftar Kapal Open Stack
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Kapal yang sudah buka masa penumpukan kargo di terminal.</p>
+                </div>
+                <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-3 py-1 rounded-full w-fit">
+                    Aktif Menerima Kargo
+                </span>
+            </div>
+            <div class="overflow-x-auto">
+                <table id="tableOpenStack" class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 uppercase text-[11px] tracking-wider border-b border-slate-200">
+                            <th class="py-3.5 px-6 font-semibold">Vessel Name</th>
+                            <th class="py-3.5 px-6 font-semibold">Voyage</th>
+                            <th class="py-3.5 px-6 font-semibold">Start Open Stack</th>
+                            <th class="py-3.5 px-6 font-semibold">Closing Time (CLT)</th>
+                            <th class="py-3.5 px-6 font-semibold">Estimated Departure</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <tr class="hover:bg-slate-50/80 transition searchable-row" data-keyword="km mutiara nusantara voy-102">
+                            <td class="py-4 px-6 font-bold text-slate-900">KM Mutiara Nusantara</td>
+                            <td class="py-4 px-6 font-medium text-blue-600">VOY-102</td>
+                            <td class="py-4 px-6">14 Sep 2026, 08:00</td>
+                            <td class="py-4 px-6 text-rose-600 font-medium">17 Sep 2026, 16:00</td>
+                            <td class="py-4 px-6">18 Sep 2026</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50/80 transition searchable-row" data-keyword="mv sejahtera raya voy-045">
+                            <td class="py-4 px-6 font-bold text-slate-900">MV Sejahtera Raya</td>
+                            <td class="py-4 px-6 font-medium text-blue-600">VOY-045</td>
+                            <td class="py-4 px-6">15 Sep 2026, 10:00</td>
+                            <td class="py-4 px-6 text-rose-600 font-medium">18 Sep 2026, 12:00</td>
+                            <td class="py-4 px-6">19 Sep 2026</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Tabel 2: Estimasi Kapal Segera Sandar -->
+        <section id="estimated-berth" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center">
+                        <span class="w-3 h-3 bg-amber-500 rounded-full inline-block mr-2.5"></span> 
+                        Estimasi Kapal Segera Sandar (Estimated Berthing)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Daftar kapal dalam antrean labuh menuju dermaga.</p>
+                </div>
+                <span class="bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold px-3 py-1 rounded-full w-fit">
+                    Antrean Dermaga
+                </span>
+            </div>
+            <div class="overflow-x-auto">
+                <table id="tableEstimated" class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 uppercase text-[11px] tracking-wider border-b border-slate-200">
+                            <th class="py-3.5 px-6 font-semibold">Vessel Name</th>
+                            <th class="py-3.5 px-6 font-semibold">Voyage</th>
+                            <th class="py-3.5 px-6 font-semibold">Est. Arrival (ETA)</th>
+                            <th class="py-3.5 px-6 font-semibold">Est. Berthing (ETB)</th>
+                            <th class="py-3.5 px-6 font-semibold">Terminal / Dermaga</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <tr class="hover:bg-slate-50/80 transition searchable-row" data-keyword="km pacific star voy-889">
+                            <td class="py-4 px-6 font-bold text-slate-900">KM Pacific Star</td>
+                            <td class="py-4 px-6 font-medium text-blue-600">VOY-889</td>
+                            <td class="py-4 px-6">16 Sep 2026, 02:00</td>
+                            <td class="py-4 px-6 text-amber-600 font-medium">16 Sep 2026, 14:00</td>
+                            <td class="py-4 px-6">Dermaga 03 - Domestik</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50/80 transition searchable-row" data-keyword="mv global express voy-301">
+                            <td class="py-4 px-6 font-bold text-slate-900">MV Global Express</td>
+                            <td class="py-4 px-6 font-medium text-blue-600">VOY-301</td>
+                            <td class="py-4 px-6">17 Sep 2026, 06:00</td>
+                            <td class="py-4 px-6 text-amber-600 font-medium">17 Sep 2026, 20:00</td>
+                            <td class="py-4 px-6">Dermaga 01 - Internasional</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- No Result Warning State -->
+        <div id="noResultState" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">Tidak ada data yang ditemukan</h3>
+            <p class="text-xs text-slate-500 mt-1">Coba gunakan kata kunci nama kapal atau nomor *voyage* yang lain.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs">
+            <p>&copy; 2026 MProjectSpace (`logistics-hub-portal`). Developed for personal portfolio project.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Live Filtering Logic -->
+    <script>
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const rows = document.querySelectorAll('.searchable-row');
+            const resultContainer = document.getElementById('searchResultContainer');
+            const resultText = document.getElementById('searchResultText');
+            const noResultState = document.getElementById('noResultState');
+            
+            let matchCount = 0;
+
+            if (query === "") {
+                // Jika kosong, tampilkan semua baris kembali dan sembunyikan info filter
+                rows.forEach(row => row.style.display = "");
+                resultContainer.classList.add('hidden');
+                noResultState.classList.add('hidden');
+                return;
+            }
+
+            rows.forEach(row => {
+                const keyword = row.getAttribute('data-keyword');
+                if (keyword.includes(query)) {
+                    row.style.display = "";
+                    matchCount++;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            // Tampilkan informasi hasil atau state kosong jika tidak ada yang cocok
+            resultContainer.classList.remove('hidden');
+            if (matchCount > 0) {
+                resultText.innerHTML = `Ditemukan <b>${matchCount}</b> data yang cocok dengan kata kunci: "<i>${query}</i>"`;
+                noResultState.classList.add('hidden');
+            } else {
+                resultText.innerHTML = `Tidak ada data ditemukan untuk kata kunci: "<i>${query}</i>"`;
+                noResultState.classList.remove('hidden');
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = "";
+            handleSearch();
+        }
+
+        // Jalankan pencarian otomatis saat menekan tombol Enter pada input
+        document.getElementById('searchInput').addEventListener('keyup', function(event) {
+            handleSearch();
+        });
+    </script>
+
+</body>
+</html>
