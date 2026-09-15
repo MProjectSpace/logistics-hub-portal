@@ -2,10 +2,19 @@ import asyncio
 import json
 import re
 from datetime import datetime
-from playwright.async_api import async_playwright
+
+from playwright.async_api import (
+    async_playwright,
+    TimeoutError as PlaywrightTimeoutError
+)
 
 
 URL = "https://ibstpks.pelindo.co.id/webaccess/"
+
+MAX_RETRIES = 3
+NAVIGATION_TIMEOUT = 120000
+WAIT_AFTER_LOAD = 10000
+
 
 VESSEL_PATTERN = re.compile(
     r"^(.+?)\s*\(([^()]+)\)$"
@@ -18,11 +27,11 @@ DATE_PATTERN = re.compile(
 
 def is_valid_vessel_block(block):
     """
-    Memastikan kandidat benar-benar blok data vessel,
+    Memastikan kandidat merupakan blok vessel,
     bukan footer/contact information.
     """
 
-    # Harus punya voyage
+    # Harus ada kandidat voyage
     has_voyage = False
 
     for line in block[:6]:
@@ -33,13 +42,13 @@ def is_valid_vessel_block(block):
         if DATE_PATTERN.search(line):
             continue
 
-        if "Booking / Open / Actual" in line:
+        if line.startswith("Booking / Open / Actual"):
             continue
 
-        if "Open Stack" in line:
+        if line.startswith("Open Stack"):
             continue
 
-        if "Closing Time" in line:
+        if line.startswith("Closing Time"):
             continue
 
         has_voyage = True
@@ -48,7 +57,7 @@ def is_valid_vessel_block(block):
     if not has_voyage:
         return False
 
-    # Harus punya minimal satu indikator data vessel
+    # Harus ada indikator bahwa blok ini adalah vessel
     operational_keywords = [
         "DOMESTIC",
         "INTERNATIONAL",
@@ -63,24 +72,447 @@ def is_valid_vessel_block(block):
     ]
 
     for line in block:
-
         for keyword in operational_keywords:
-
             if keyword in line:
                 return True
 
     return False
 
 
+def extract_voyage(block):
+    """
+    Mencari voyage dari beberapa baris pertama
+    setelah nama vessel.
+    """
+
+    for line in block[:6]:
+
+        if "/" not in line:
+            continue
+
+        if DATE_PATTERN.search(line):
+            continue
+
+        if line.startswith("Booking / Open / Actual"):
+            continue
+
+        if line.startswith("Open Stack"):
+            continue
+
+        if line.startswith("Closing Time"):
+            continue
+
+        return line
+
+    return ""
+
+
+def parse_vessels(lines):
+
+    vessels = []
+
+    for i, line in enumerate(lines):
+
+        match = VESSEL_PATTERN.match(line)
+
+        if not match:
+            continue
+
+        vessel_name = match.group(1).strip()
+        vessel_code = match.group(2).strip()
+
+        # ============================================
+        # FILTER NON-VESSEL / FOOTER
+        # ============================================
+
+        blocked_words = [
+            "WA Hotline",
+            "Telpon/Wa",
+            "Support",
+            "Contact",
+            "Planner",
+            "Customer Service"
+        ]
+
+        if any(
+            word.lower() in vessel_name.lower()
+            for word in blocked_words
+        ):
+            continue
+
+        # ============================================
+        # AMBIL BLOK
+        # ============================================
+
+        block = lines[i + 1:i + 25]
+
+        if not is_valid_vessel_block(block):
+            continue
+
+        voyage = extract_voyage(block)
+
+        if not voyage:
+            continue
+
+        # ============================================
+        # FIELD
+        # ============================================
+
+        eta = ""
+        etb = ""
+        etd = ""
+        atb = ""
+        atd = ""
+
+        open_stack = ""
+        closing_time = ""
+
+        booking = ""
+        open_qty = ""
+        actual = ""
+
+        for item in block:
+
+            if item.startswith("ETA :"):
+
+                eta = item.replace(
+                    "ETA :",
+                    ""
+                ).strip()
+
+            elif item.startswith("ETB :"):
+
+                etb = item.replace(
+                    "ETB :",
+                    ""
+                ).strip()
+
+            elif item.startswith("ETD :"):
+
+                etd = item.replace(
+                    "ETD :",
+                    ""
+                ).strip()
+
+            elif item.startswith("ATB :"):
+
+                atb = item.replace(
+                    "ATB :",
+                    ""
+                ).strip()
+
+            elif item.startswith("ATD :"):
+
+                atd = item.replace(
+                    "ATD :",
+                    ""
+                ).strip()
+
+            elif item.startswith("Open Stack :"):
+
+                open_stack = item.replace(
+                    "Open Stack :",
+                    ""
+                ).strip()
+
+            elif item.startswith("Closing Time :"):
+
+                closing_time = item.replace(
+                    "Closing Time :",
+                    ""
+                ).strip()
+
+            elif item.startswith(
+                "Booking / Open / Actual :"
+            ):
+
+                raw = item.replace(
+                    "Booking / Open / Actual :",
+                    ""
+                ).strip()
+
+                values = raw.split("/")
+
+                if len(values) >= 3:
+
+                    booking = values[0].strip()
+                    open_qty = values[1].strip()
+                    actual = values[2].strip()
+
+        vessel = {
+            "vesselName": vessel_name,
+            "vesselCode": vessel_code,
+            "voyage": voyage,
+            "eta": eta,
+            "etb": etb,
+            "etd": etd,
+            "atb": atb,
+            "atd": atd,
+            "openStack": open_stack,
+            "closingTime": closing_time,
+            "booking": booking,
+            "open": open_qty,
+            "actual": actual
+        }
+
+        vessels.append(vessel)
+
+        print(
+            f"[FOUND] {vessel_name} | {voyage}"
+        )
+
+    return vessels
+
+
+def build_data(vessels):
+
+    alongside = []
+    confirmed = []
+    open_stack_list = []
+    schedule = []
+
+    for vessel in vessels:
+
+        # ============================================
+        # ALONGSIDE
+        # ============================================
+
+        if vessel["atb"] or vessel["atd"]:
+
+            alongside.append({
+                "vesselName":
+                    vessel["vesselName"],
+
+                "voyage":
+                    vessel["voyage"],
+
+                "atb":
+                    vessel["atb"],
+
+                "etd":
+                    vessel["etd"]
+            })
+
+        # ============================================
+        # CONFIRMED
+        # ============================================
+
+        if vessel["etb"]:
+
+            confirmed.append({
+                "vesselName":
+                    vessel["vesselName"],
+
+                "voyage":
+                    vessel["voyage"],
+
+                "etb":
+                    vessel["etb"],
+
+                "etd":
+                    vessel["etd"],
+
+                "openStack":
+                    vessel["openStack"],
+
+                "closingTime":
+                    vessel["closingTime"],
+
+                "booking":
+                    vessel["booking"],
+
+                "open":
+                    vessel["open"],
+
+                "actual":
+                    vessel["actual"]
+            })
+
+            schedule.append({
+                "vesselName":
+                    vessel["vesselName"],
+
+                "voyage":
+                    vessel["voyage"],
+
+                "etb":
+                    vessel["etb"]
+            })
+
+        # ============================================
+        # OPEN STACK
+        # ============================================
+
+        if vessel["openStack"]:
+
+            open_stack_list.append({
+                "vesselName":
+                    vessel["vesselName"],
+
+                "voyage":
+                    vessel["voyage"],
+
+                "eta":
+                    vessel["eta"],
+
+                "etb":
+                    vessel["etb"],
+
+                "etd":
+                    vessel["etd"],
+
+                "openStack":
+                    vessel["openStack"],
+
+                "closingTime":
+                    vessel["closingTime"],
+
+                "booking":
+                    vessel["booking"],
+
+                "open":
+                    vessel["open"],
+
+                "actual":
+                    vessel["actual"]
+            })
+
+    return {
+        "lastUpdated":
+            datetime.now().strftime(
+                "%d/%m/%Y %H:%M"
+            ),
+
+        "source": URL,
+
+        "vesselAlongside":
+            alongside,
+
+        "confirmedVessel":
+            confirmed,
+
+        "openStack":
+            open_stack_list,
+
+        "vesselSchedule":
+            schedule,
+
+        "allVessels":
+            vessels
+    }
+
+
+async def open_pelindo(page):
+    """
+    Membuka Pelindo dengan beberapa strategi.
+    """
+
+    for attempt in range(1, MAX_RETRIES + 1):
+
+        print(
+            f"[CONNECT] Percobaan {attempt}/{MAX_RETRIES}"
+        )
+
+        try:
+
+            # Strategi normal
+            await page.goto(
+                URL,
+                wait_until="domcontentloaded",
+                timeout=NAVIGATION_TIMEOUT
+            )
+
+            print(
+                "[CONNECT] Pelindo berhasil dibuka."
+            )
+
+            return True
+
+        except PlaywrightTimeoutError:
+
+            print(
+                "[WARNING] Navigation timeout."
+            )
+
+            # Cek apakah browser sebenarnya
+            # sudah mendapatkan halaman
+            try:
+
+                current_url = page.url
+
+                print(
+                    f"[CONNECT] URL saat ini: {current_url}"
+                )
+
+                body_count = await page.locator(
+                    "body"
+                ).count()
+
+                if body_count > 0:
+
+                    print(
+                        "[CONNECT] Body halaman tersedia."
+                    )
+
+                    return True
+
+            except Exception as check_error:
+
+                print(
+                    "[WARNING] Pemeriksaan halaman gagal:",
+                    check_error
+                )
+
+            # Retry berikutnya
+            if attempt < MAX_RETRIES:
+
+                wait_seconds = attempt * 5
+
+                print(
+                    f"[CONNECT] Menunggu {wait_seconds} detik "
+                    "sebelum retry..."
+                )
+
+                await page.wait_for_timeout(
+                    wait_seconds * 1000
+                )
+
+        except Exception as error:
+
+            print(
+                f"[WARNING] Koneksi gagal: {error}"
+            )
+
+            if attempt < MAX_RETRIES:
+
+                wait_seconds = attempt * 5
+
+                print(
+                    f"[CONNECT] Retry dalam "
+                    f"{wait_seconds} detik..."
+                )
+
+                await page.wait_for_timeout(
+                    wait_seconds * 1000
+                )
+
+    return False
+
+
 async def main():
 
-    print("=== PELINDO LIVE SCRAPER ===")
+    print("======================================")
+    print("PELINDO LIVE SCRAPER")
+    print("======================================")
 
     async with async_playwright() as p:
 
         browser = await p.chromium.launch(
             headless=True,
-            args=["--no-sandbox"]
+            args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage"
+            ]
         )
 
         page = await browser.new_page(
@@ -90,23 +522,55 @@ async def main():
             }
         )
 
+        # ============================================
+        # BUKA PELINDO
+        # ============================================
+
         print("[1] Membuka Pelindo...")
 
-        await page.goto(
-            URL,
-            wait_until="domcontentloaded",
-            timeout=60000
+        success = await open_pelindo(page)
+
+        if not success:
+
+            await browser.close()
+
+            raise RuntimeError(
+                "Pelindo tidak dapat diakses setelah "
+                f"{MAX_RETRIES} percobaan."
+            )
+
+        # ============================================
+        # TUNGGU DATA JAVASCRIPT
+        # ============================================
+
+        print(
+            "[2] Menunggu data vessel..."
         )
 
-        print("[2] Menunggu data...")
+        await page.wait_for_timeout(
+            WAIT_AFTER_LOAD
+        )
 
-        await page.wait_for_timeout(10000)
+        # ============================================
+        # BACA BODY
+        # ============================================
+
+        print(
+            "[3] Membaca data halaman..."
+        )
 
         text = await page.locator(
             "body"
         ).inner_text()
 
-        print("[3] Data halaman berhasil dibaca")
+        if not text.strip():
+
+            await browser.close()
+
+            raise RuntimeError(
+                "Halaman Pelindo terbuka tetapi "
+                "tidak menghasilkan text."
+            )
 
         lines = [
             line.strip()
@@ -114,215 +578,27 @@ async def main():
             if line.strip()
         ]
 
-        vessels = []
+        print(
+            f"[4] Total baris halaman: {len(lines)}"
+        )
 
-        # =====================================================
-        # CARI SEMUA KANDIDAT VESSEL
-        # =====================================================
+        # ============================================
+        # PARSE
+        # ============================================
 
-        for i, line in enumerate(lines):
+        print(
+            "[5] Mencari vessel..."
+        )
 
-            match = VESSEL_PATTERN.match(line)
+        vessels = parse_vessels(lines)
 
-            if not match:
-                continue
+        # ============================================
+        # VALIDASI HASIL
+        # ============================================
 
-            vessel_name = match.group(1).strip()
-            vessel_code = match.group(2).strip()
-
-            # ---------------------------------------------
-            # FILTER FOOTER / CONTACT
-            # ---------------------------------------------
-
-            blocked_words = [
-                "WA Hotline",
-                "Telpon/Wa",
-                "Support",
-                "Contact",
-                "Planner"
-            ]
-
-            if any(
-                word.lower() in vessel_name.lower()
-                for word in blocked_words
-            ):
-                continue
-
-            # ---------------------------------------------
-            # AMBIL DATA DI BAWAH NAMA VESSEL
-            # ---------------------------------------------
-
-            block = lines[i + 1:i + 25]
-
-            # ---------------------------------------------
-            # VALIDASI
-            # ---------------------------------------------
-
-            if not is_valid_vessel_block(block):
-                continue
-
-            # ---------------------------------------------
-            # VOYAGE
-            # ---------------------------------------------
-
-            voyage = ""
-
-            for candidate in block[:6]:
-
-                if "/" not in candidate:
-                    continue
-
-                if DATE_PATTERN.search(candidate):
-                    continue
-
-                if "Booking / Open / Actual" in candidate:
-                    continue
-
-                if "Open Stack" in candidate:
-                    continue
-
-                if "Closing Time" in candidate:
-                    continue
-
-                voyage = candidate
-                break
-
-            # ---------------------------------------------
-            # FIELD
-            # ---------------------------------------------
-
-            eta = ""
-            etb = ""
-            etd = ""
-            atb = ""
-            atd = ""
-
-            open_stack = ""
-            closing_time = ""
-
-            booking = ""
-            open_qty = ""
-            actual = ""
-
-            for item in block:
-
-                if item.startswith("ETA :"):
-
-                    eta = item.replace(
-                        "ETA :",
-                        ""
-                    ).strip()
-
-                elif item.startswith("ETB :"):
-
-                    etb = item.replace(
-                        "ETB :",
-                        ""
-                    ).strip()
-
-                elif item.startswith("ETD :"):
-
-                    etd = item.replace(
-                        "ETD :",
-                        ""
-                    ).strip()
-
-                elif item.startswith("ATB :"):
-
-                    atb = item.replace(
-                        "ATB :",
-                        ""
-                    ).strip()
-
-                elif item.startswith("ATD :"):
-
-                    atd = item.replace(
-                        "ATD :",
-                        ""
-                    ).strip()
-
-                elif item.startswith(
-                    "Open Stack :"
-                ):
-
-                    open_stack = item.replace(
-                        "Open Stack :",
-                        ""
-                    ).strip()
-
-                elif item.startswith(
-                    "Closing Time :"
-                ):
-
-                    closing_time = item.replace(
-                        "Closing Time :",
-                        ""
-                    ).strip()
-
-                elif item.startswith(
-                    "Booking / Open / Actual :"
-                ):
-
-                    raw = item.replace(
-                        "Booking / Open / Actual :",
-                        ""
-                    ).strip()
-
-                    values = raw.split("/")
-
-                    if len(values) >= 3:
-
-                        booking = values[0].strip()
-                        open_qty = values[1].strip()
-                        actual = values[2].strip()
-
-            # ---------------------------------------------
-            # SIMPAN VESSEL
-            # ---------------------------------------------
-
-            vessel = {
-
-                "vesselName": vessel_name,
-
-                "vesselCode": vessel_code,
-
-                "voyage": voyage,
-
-                "eta": eta,
-
-                "etb": etb,
-
-                "etd": etd,
-
-                "atb": atb,
-
-                "atd": atd,
-
-                "openStack": open_stack,
-
-                "closingTime": closing_time,
-
-                "booking": booking,
-
-                "open": open_qty,
-
-                "actual": actual
-            }
-
-            vessels.append(vessel)
-
-            print(
-                f"[FOUND] {vessel_name} | {voyage}"
-            )
-
-        # =====================================================
-        # HASIL SCRAPING
-        # =====================================================
-
+        print("")
         print("======================================")
-
         print("HASIL SCRAPING")
-
         print("======================================")
 
         print(
@@ -330,220 +606,68 @@ async def main():
             len(vessels)
         )
 
-        if not vessels:
+        if len(vessels) == 0:
+
+            await browser.close()
 
             raise RuntimeError(
-                "Tidak ada vessel valid ditemukan."
+                "Pelindo berhasil dibuka tetapi "
+                "tidak ada vessel valid ditemukan."
             )
 
-        # =====================================================
-        # CLASSIFICATION
-        # =====================================================
+        # ============================================
+        # BUAT DATA
+        # ============================================
 
-        alongside = []
+        data = build_data(vessels)
 
-        confirmed = []
-
-        open_stack_list = []
-
-        schedule = []
-
-        for vessel in vessels:
-
-            # ---------------------------------------------
-            # VESSEL ALONGSIDE
-            # ---------------------------------------------
-
-            if (
-                vessel["atb"]
-                or vessel["atd"]
-            ):
-
-                alongside.append({
-
-                    "vesselName":
-                        vessel["vesselName"],
-
-                    "voyage":
-                        vessel["voyage"],
-
-                    "atb":
-                        vessel["atb"],
-
-                    "etd":
-                        vessel["etd"]
-                })
-
-            # ---------------------------------------------
-            # CONFIRMED VESSEL
-            # ---------------------------------------------
-
-            if vessel["etb"]:
-
-                confirmed.append({
-
-                    "vesselName":
-                        vessel["vesselName"],
-
-                    "voyage":
-                        vessel["voyage"],
-
-                    "etb":
-                        vessel["etb"],
-
-                    "etd":
-                        vessel["etd"],
-
-                    "openStack":
-                        vessel["openStack"],
-
-                    "closingTime":
-                        vessel["closingTime"],
-
-                    "booking":
-                        vessel["booking"],
-
-                    "open":
-                        vessel["open"],
-
-                    "actual":
-                        vessel["actual"]
-                })
-
-                # -----------------------------------------
-                # SCHEDULE
-                # -----------------------------------------
-
-                schedule.append({
-
-                    "vesselName":
-                        vessel["vesselName"],
-
-                    "voyage":
-                        vessel["voyage"],
-
-                    "etb":
-                        vessel["etb"]
-                })
-
-            # ---------------------------------------------
-            # OPEN STACK
-            # ---------------------------------------------
-
-            if vessel["openStack"]:
-
-                open_stack_list.append({
-
-                    "vesselName":
-                        vessel["vesselName"],
-
-                    "voyage":
-                        vessel["voyage"],
-
-                    "eta":
-                        vessel["eta"],
-
-                    "etb":
-                        vessel["etb"],
-
-                    "etd":
-                        vessel["etd"],
-
-                    "openStack":
-                        vessel["openStack"],
-
-                    "closingTime":
-                        vessel["closingTime"],
-
-                    "booking":
-                        vessel["booking"],
-
-                    "open":
-                        vessel["open"],
-
-                    "actual":
-                        vessel["actual"]
-                })
-
-        # =====================================================
-        # DATA JSON
-        # =====================================================
-
-        data = {
-
-            "lastUpdated":
-                datetime.now().strftime(
-                    "%d/%m/%Y %H:%M"
-                ),
-
-            "source": URL,
-
-            "vesselAlongside":
-                alongside,
-
-            "confirmedVessel":
-                confirmed,
-
-            "openStack":
-                open_stack_list,
-
-            "vesselSchedule":
-                schedule,
-
-            "allVessels":
-                vessels
-        }
+        # ============================================
+        # SIMPAN
+        # ============================================
 
         with open(
             "data.json",
             "w",
             encoding="utf-8"
-        ) as f:
+        ) as file:
 
             json.dump(
                 data,
-                f,
+                file,
                 ensure_ascii=False,
                 indent=2
             )
 
-        # =====================================================
-        # SUMMARY
-        # =====================================================
-
+        print("")
         print("======================================")
-
         print("DATA.JSON BERHASIL DIBUAT")
-
         print("======================================")
 
         print(
             "Alongside:",
-            len(alongside)
+            len(data["vesselAlongside"])
         )
 
         print(
             "Confirmed:",
-            len(confirmed)
+            len(data["confirmedVessel"])
         )
 
         print(
             "Open Stack:",
-            len(open_stack_list)
+            len(data["openStack"])
         )
 
         print(
             "Schedule:",
-            len(schedule)
+            len(data["vesselSchedule"])
         )
 
         print("")
-
         print("=== SCRAPER SELESAI ===")
 
         await browser.close()
 
 
 if __name__ == "__main__":
-
     asyncio.run(main())
