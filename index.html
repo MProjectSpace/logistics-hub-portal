@@ -22,10 +22,10 @@
                 </div>
             </div>
             <nav class="hidden md:flex items-center space-x-4 font-medium text-xs text-slate-600">
-                <a href="#tabel1" class="hover:text-blue-600 transition">Alongside</a>
-                <a href="#tabel2" class="hover:text-blue-600 transition">Confirmed</a>
-                <a href="#tabel3" class="hover:text-blue-600 transition">Open Stack</a>
-                <a href="#tabel4" class="hover:text-blue-600 transition">Schedule</a>
+                <a href="#alongside" class="hover:text-blue-600 transition">Vessel Alongside</a>
+                <a href="#confirmed" class="hover:text-blue-600 transition">Confirmed Vessel</a>
+                <a href="#openstack" class="hover:text-blue-600 transition">Open Stack</a>
+                <a href="#schedule" class="hover:text-blue-600 transition">Vessel Schedule</a>
             </nav>
         </div>
     </header>
@@ -54,14 +54,14 @@
     <!-- Main Content: 4 Tables -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
 
-        <!-- Tabel 1 : Vessel Alongside -->
-        <section id="tabel1" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <!-- Section 1 : Vessel Alongside -->
+        <section id="alongside" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
                 <h2 class="text-base font-bold text-slate-900 flex items-center">
                     <span class="w-2.5 h-2.5 bg-blue-600 rounded-full inline-block mr-2"></span> 
-                    Tabel 1 : Vessel Alongside
+                    Vessel Alongside
                 </h2>
-                <span class="bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">ATB, ETD</span>
+                <p class="text-xs text-slate-500 mt-0.5">Daftar kapal yang sedang sandar di dermaga beserta waktu kedatangan dan estimasi keberangkatannya.</p>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
@@ -78,14 +78,14 @@
             </div>
         </section>
 
-        <!-- Tabel 2 : Confirmed Vessel -->
-        <section id="tabel2" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <!-- Section 2 : Confirmed Vessel -->
+        <section id="confirmed" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
                 <h2 class="text-base font-bold text-slate-900 flex items-center">
                     <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block mr-2"></span> 
-                    Tabel 2 : Confirmed Vessel
+                    Confirmed Vessel
                 </h2>
-                <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">ETB, ETD, Open Stack, Closing Time, Status</span>
+                <p class="text-xs text-slate-500 mt-0.5">Daftar kapal yang jadwal sandarnya telah dikonfirmasi beserta rincian masa penumpukan kargo.</p>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
@@ -105,14 +105,14 @@
             </div>
         </section>
 
-        <!-- Tabel 3 : Open Stack -->
-        <section id="tabel3" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <!-- Section 3 : Open Stack -->
+        <section id="openstack" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
                 <h2 class="text-base font-bold text-slate-900 flex items-center">
                     <span class="w-2.5 h-2.5 bg-amber-500 rounded-full inline-block mr-2"></span> 
-                    Tabel 3 : Open Stack
+                    Open Stack
                 </h2>
-                <span class="bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">ETA, ETB, ETD, Stack, Closing, Status</span>
+                <p class="text-xs text-slate-500 mt-0.5">Informasi kapal yang masa penerimaan kargo (penumpukan) di terminalnya sedang dibuka.</p>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
@@ -133,14 +133,14 @@
             </div>
         </section>
 
-        <!-- Tabel 4 : Vessel Schedule -->
-        <section id="tabel4" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <!-- Section 4 : Vessel Schedule -->
+        <section id="schedule" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
                 <h2 class="text-base font-bold text-slate-900 flex items-center">
                     <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full inline-block mr-2"></span> 
-                    Tabel 4 : Vessel Schedule
+                    Vessel Schedule
                 </h2>
-                <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">ETB</span>
+                <p class="text-xs text-slate-500 mt-0.5">Jadwal estimasi kedatangan dan antrean sandar kapal secara keseluruhan di pelabuhan.</p>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
@@ -182,7 +182,6 @@
         }
 
         function renderTables(data) {
-            // Render Tabel 1
             document.getElementById('table1Body').innerHTML = data.vesselAlongside.length === 0 ? 
                 `<tr><td colspan="4" class="py-4 text-center text-slate-400 italic">Tidak ada data vessel alongside.</td></tr>` :
                 data.vesselAlongside.map(i => `
@@ -194,7 +193,6 @@
                     </tr>
                 `).join('');
 
-            // Render Tabel 2
             document.getElementById('table2Body').innerHTML = data.confirmedVessel.length === 0 ? 
                 `<tr><td colspan="7" class="py-4 text-center text-slate-400 italic">Tidak ada data confirmed vessel.</td></tr>` :
                 data.confirmedVessel.map(i => `
@@ -209,7 +207,6 @@
                     </tr>
                 `).join('');
 
-            // Render Tabel 3
             document.getElementById('table3Body').innerHTML = data.openStack.length === 0 ? 
                 `<tr><td colspan="8" class="py-4 text-center text-slate-400 italic">Tidak ada data open stack.</td></tr>` :
                 data.openStack.map(i => `
@@ -225,7 +222,6 @@
                     </tr>
                 `).join('');
 
-            // Render Tabel 4
             document.getElementById('table4Body').innerHTML = data.vesselSchedule.length === 0 ? 
                 `<tr><td colspan="3" class="py-4 text-center text-slate-400 italic">Tidak ada data vessel schedule.</td></tr>` :
                 data.vesselSchedule.map(i => `
@@ -237,7 +233,6 @@
                 `).join('');
         }
 
-        // Live Search Handler
         document.getElementById('searchInput').addEventListener('keyup', function(e) {
             const query = e.target.value.toLowerCase().trim();
             if(!query) {
