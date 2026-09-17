@@ -70,6 +70,7 @@
             height: 8px;
             border-radius: 9999px;
             display: inline-block;
+            flex-shrink: 0;
         }
 
         .pulse {
@@ -88,6 +89,7 @@
 
         .section-scroll {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .section-scroll table {
@@ -448,6 +450,7 @@
                 <!-- CLEAR -->
                 <button
                     id="clearSearchButton"
+                    type="button"
                     onclick="clearSearch()"
                     class="px-4 py-3 rounded-xl
                            border border-slate-200
@@ -463,6 +466,7 @@
                 <!-- REFRESH -->
                 <button
                     id="refreshButton"
+                    type="button"
                     onclick="loadData()"
                     class="px-4 py-3 rounded-xl
                            bg-blue-600 hover:bg-blue-700
@@ -580,7 +584,7 @@
                         class="text-xs text-slate-400"
                     >
                         TPKS Vessel Monitoring
-                        Dashboard v2.0.2
+                        Dashboard v2.0.3
                     </div>
 
                 </div>
@@ -611,8 +615,9 @@
                 id="vesselModalContent"
                 class="modal-enter bg-white
                        w-full max-w-2xl
+                       max-h-[calc(100vh-2rem)]
                        rounded-2xl shadow-2xl
-                       overflow-hidden"
+                       overflow-hidden flex flex-col"
             >
 
                 <!-- MODAL HEADER -->
@@ -620,7 +625,8 @@
                     class="px-5 py-4
                            border-b border-slate-200
                            flex items-center
-                           justify-between"
+                           justify-between
+                           flex-shrink-0"
                 >
 
                     <div
@@ -660,6 +666,7 @@
                     </div>
 
                     <button
+                        type="button"
                         onclick="closeVesselModal()"
                         class="w-9 h-9 rounded-lg
                                hover:bg-slate-100
@@ -673,7 +680,9 @@
 
 
                 <!-- MODAL BODY -->
-                <div class="px-5 py-4">
+                <div
+                    class="px-5 py-4 overflow-y-auto"
+                >
 
                     <div
                         id="modalVesselGrid"
@@ -689,10 +698,12 @@
                     class="px-5 py-3
                            border-t border-slate-200
                            bg-slate-50
-                           flex justify-end"
+                           flex justify-end
+                           flex-shrink-0"
                 >
 
                     <button
+                        type="button"
                         onclick="closeVesselModal()"
                         class="px-4 py-2 rounded-xl
                                bg-white border
@@ -763,7 +774,8 @@
     const DATA_REFRESH_INTERVAL =
         5 * 60 * 1000;
 
-    const SCRAPER_INTERVAL_MINUTES = 30;
+    const SCRAPER_STATUS_INTERVAL =
+        2 * 60 * 1000;
 
 
     let DATA = {
@@ -996,15 +1008,9 @@
         ],
 
 
-        /*
-         * OPEN STACK
-         *
-         * Semua informasi tetap dipertahankan.
-         *
-         * ETA / ETB / ETD / Open Stack / Closing
-         * menggunakan renderer datetime agar tanggal
-         * dan jam tampil bertingkat.
-         */
+        /* =====================================================
+           OPEN STACK
+           ===================================================== */
 
         openStack: [
 
@@ -1231,9 +1237,9 @@
     }
 
 
-    /*
-     * Format tanggal + jam untuk status/header.
-     */
+    /* =========================================================
+       DATE / TIME
+    ========================================================= */
 
     function formatDateTime(date) {
 
@@ -1289,22 +1295,9 @@
     }
 
 
-    /*
-     * =========================================================
-     * OPEN STACK DATETIME RENDERER
-     * =========================================================
-     *
-     * Input:
-     *   18 Sep 2026 08:00
-     *
-     * Output:
-     *
-     *   18 Sep 2026
-     *   08:00
-     *
-     * Jika data tidak mempunyai pola tanggal + jam,
-     * nilai asli tetap ditampilkan.
-     */
+    /* =========================================================
+       OPEN STACK DATETIME RENDERER
+    ========================================================= */
 
     function renderDateTime(value) {
 
@@ -1321,24 +1314,11 @@
             String(value).trim();
 
 
-        /*
-         * Cari bagian waktu di akhir string.
-         *
-         * Mendukung:
-         * HH:MM
-         * HH:MM:SS
-         */
-
         const match =
             text.match(
                 /^(.*?)\s+(\d{1,2}:\d{2}(?::\d{2})?)$/
             );
 
-
-        /*
-         * Jika format tidak cocok,
-         * jangan mengubah data.
-         */
 
         if (!match) {
 
@@ -1379,6 +1359,10 @@
     }
 
 
+    /* =========================================================
+       DATA AGE
+    ========================================================= */
+
     function getAgeMinutes() {
 
         const timestamp =
@@ -1416,6 +1400,72 @@
             ) / 60000
 
         );
+
+    }
+
+
+    function formatAge(minutes) {
+
+        if (
+            minutes === null ||
+            minutes === undefined ||
+            Number.isNaN(minutes)
+        ) {
+
+            return "-";
+
+        }
+
+
+        if (minutes < 1) {
+
+            return "just now";
+
+        }
+
+
+        if (minutes < 60) {
+
+            return `${Math.floor(minutes)} min`;
+
+        }
+
+
+        const hours =
+            Math.floor(
+                minutes / 60
+            );
+
+
+        const mins =
+            Math.floor(
+                minutes % 60
+            );
+
+
+        if (hours < 24) {
+
+            if (mins === 0) {
+
+                return `${hours} hr`;
+
+            }
+
+
+            return `${hours} hr ${mins} min`;
+
+        }
+
+
+        const days =
+            Math.floor(
+                hours / 24
+            );
+
+
+        return days === 1
+            ? "1 day"
+            : `${days} days`;
 
     }
 
@@ -1577,59 +1627,6 @@
     }
 
 
-    function formatAge(minutes) {
-
-        if (minutes < 1) {
-            return "just now";
-        }
-
-
-        if (minutes < 60) {
-
-            return `${Math.floor(minutes)} min`;
-
-        }
-
-
-        const hours =
-            Math.floor(
-                minutes / 60
-            );
-
-
-        const mins =
-            Math.floor(
-                minutes % 60
-            );
-
-
-        if (hours < 24) {
-
-            if (mins === 0) {
-
-                return `${hours} hr`;
-
-            }
-
-
-            return `${hours} hr ${mins} min`;
-
-        }
-
-
-        const days =
-            Math.floor(
-                hours / 24
-            );
-
-
-        return `$
-            {days > 1 ? `${days} days` : `${days} day`}
-        `;
-
-    }
-
-
     /* =========================================================
        NEXT SCRAPER UPDATE
     ========================================================= */
@@ -1647,14 +1644,6 @@
         const currentMinutes =
             now.getMinutes();
 
-
-        /*
-         * 00–29
-         * → next run at :30
-         *
-         * 30–59
-         * → next run at next hour :00
-         */
 
         if (
             currentMinutes < 30
@@ -1798,6 +1787,17 @@
             );
 
 
+        if (
+            !dot ||
+            !status ||
+            !detail
+        ) {
+
+            return;
+
+        }
+
+
         try {
 
             const response =
@@ -1918,11 +1918,8 @@
         catch (error) {
 
             console.error(
-
                 "Failed to load scraper status:",
-
                 error
-
             );
 
 
@@ -2375,6 +2372,132 @@
     }
 
 
+    /* =========================================================
+       ERROR DISPLAY
+    ========================================================= */
+
+    function renderDataError(message) {
+
+        const statistics =
+            document.getElementById(
+                "statistics"
+            );
+
+        const sections =
+            document.getElementById(
+                "sections"
+            );
+
+
+        if (statistics) {
+
+            statistics.innerHTML = "";
+
+        }
+
+
+        if (sections) {
+
+            sections.innerHTML = `
+
+                <section
+                    class="bg-white
+                           border border-red-200
+                           rounded-2xl
+                           shadow-sm overflow-hidden"
+                >
+
+                    <div class="p-6">
+
+                        <div
+                            class="flex items-start
+                                   gap-4"
+                        >
+
+                            <div
+                                class="w-11 h-11
+                                       rounded-xl
+                                       bg-red-50
+                                       text-red-600
+                                       flex items-center
+                                       justify-center
+                                       flex-shrink-0"
+                            >
+
+                                <i
+                                    class="fa-solid
+                                           fa-triangle-exclamation"
+                                ></i>
+
+                            </div>
+
+
+                            <div class="min-w-0">
+
+                                <h2
+                                    class="font-bold
+                                           text-slate-800"
+                                >
+                                    Unable to Load Data
+                                </h2>
+
+                                <p
+                                    class="mt-1
+                                           text-sm
+                                           text-slate-500"
+                                >
+                                    The dashboard could not
+                                    load the latest
+                                    <code>data.json</code>.
+                                </p>
+
+                                <p
+                                    class="mt-2
+                                           text-xs
+                                           text-red-600
+                                           break-words"
+                                >
+                                    ${escapeHtml(message)}
+                                </p>
+
+                                <button
+                                    type="button"
+                                    onclick="loadData()"
+                                    class="mt-4
+                                           px-4 py-2
+                                           rounded-xl
+                                           bg-blue-600
+                                           hover:bg-blue-700
+                                           text-white
+                                           text-sm
+                                           font-semibold"
+                                >
+                                    <i
+                                        class="fa-solid
+                                               fa-rotate mr-2"
+                                    ></i>
+                                    Try Again
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            `;
+
+        }
+
+    }
+
+
+    /* =========================================================
+       TABLE SECTION
+    ========================================================= */
+
     function renderSection(
 
         sectionKey,
@@ -2692,19 +2815,39 @@
 
     ) {
 
-        const encodedVessel =
-            encodeURIComponent(
-                JSON.stringify(vessel)
+        let encodedVessel = "";
+
+
+        try {
+
+            encodedVessel =
+                encodeURIComponent(
+                    JSON.stringify(vessel)
+                );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Failed to encode vessel:",
+                error
             );
+
+            encodedVessel =
+                "";
+
+        }
 
 
         return `
 
             <tr
                 class="table-row-clickable"
-                onclick="openVesselModal(
-                    '${encodedVessel}'
-                )"
+                ${
+                    encodedVessel
+                        ? `onclick="openVesselModal('${encodedVessel}')"`
+                        : ""
+                }
                 title="Click to view vessel details"
             >
 
@@ -2744,11 +2887,9 @@
 
     ) {
 
-        /*
-         * =====================================================
-         * VESSEL
-         * =====================================================
-         */
+        /* =====================================================
+           VESSEL
+        ===================================================== */
 
         if (
             column.type ===
@@ -2812,11 +2953,9 @@
         }
 
 
-        /*
-         * =====================================================
-         * TYPE
-         * =====================================================
-         */
+        /* =====================================================
+           TYPE
+        ===================================================== */
 
         if (
             column.type ===
@@ -2870,13 +3009,9 @@
         }
 
 
-        /*
-         * =====================================================
-         * DATETIME
-         *
-         * Dipakai khusus Open Stack.
-         * =====================================================
-         */
+        /* =====================================================
+           DATETIME
+        ===================================================== */
 
         if (
             column.type ===
@@ -2902,11 +3037,9 @@
         }
 
 
-        /*
-         * =====================================================
-         * NUMBER
-         * =====================================================
-         */
+        /* =====================================================
+           NUMBER
+        ===================================================== */
 
         if (
             column.type ===
@@ -2942,11 +3075,9 @@
         }
 
 
-        /*
-         * =====================================================
-         * DEFAULT TEXT
-         * =====================================================
-         */
+        /* =====================================================
+           DEFAULT TEXT
+        ===================================================== */
 
         return `
 
@@ -3015,6 +3146,20 @@
                 document.getElementById(
                     "modalVesselGrid"
                 );
+
+
+            if (
+                !modal ||
+                !name ||
+                !code ||
+                !grid
+            ) {
+
+                throw new Error(
+                    "Modal elements not found"
+                );
+
+            }
 
 
             name.textContent =
@@ -3433,16 +3578,68 @@
 
                     `HTTP ${
                         response.status
-                    }`
+                    } while loading ${DATA_FILE}`
 
                 );
 
             }
 
 
-            const json =
-                await response.json();
+            /*
+             * Read the response as text first.
+             * This gives clearer errors if GitHub Pages
+             * returns HTML instead of JSON.
+             */
 
+            const responseText =
+                await response.text();
+
+
+            if (!responseText.trim()) {
+
+                throw new Error(
+                    "data.json is empty"
+                );
+
+            }
+
+
+            let json;
+
+
+            try {
+
+                json =
+                    JSON.parse(
+                        responseText
+                    );
+
+            }
+            catch (jsonError) {
+
+                throw new Error(
+                    "data.json is not valid JSON"
+                );
+
+            }
+
+
+            if (
+                !json ||
+                typeof json !== "object" ||
+                Array.isArray(json)
+            ) {
+
+                throw new Error(
+                    "data.json has an invalid root structure"
+                );
+
+            }
+
+
+            /*
+             * Accept both updatedAt and lastUpdated.
+             */
 
             DATA = {
 
@@ -3511,10 +3708,39 @@
 
                 counts:
 
-                    json.counts ||
-                    {}
+                    json.counts &&
+                    typeof json.counts === "object"
+
+                        ? json.counts
+                        : {}
 
             };
+
+
+            /*
+             * Console diagnostic.
+             * Useful if data.json changes structure later.
+             */
+
+            console.log(
+                "TPKS data loaded successfully:",
+                {
+                    vesselAlongside:
+                        DATA.vesselAlongside.length,
+
+                    confirmedVessel:
+                        DATA.confirmedVessel.length,
+
+                    openStack:
+                        DATA.openStack.length,
+
+                    vesselSchedule:
+                        DATA.vesselSchedule.length,
+
+                    vesselHistory:
+                        DATA.vesselHistory.length
+                }
+            );
 
 
             updateStatistics();
@@ -3558,6 +3784,12 @@
 
             );
 
+
+            renderDataError(
+                error?.message ||
+                "Unknown data loading error"
+            );
+
         }
         finally {
 
@@ -3591,11 +3823,15 @@
        SEARCH EVENT
     ========================================================= */
 
-    document
-        .getElementById(
+    const searchInput =
+        document.getElementById(
             "searchInput"
-        )
-        .addEventListener(
+        );
+
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
 
             "input",
 
@@ -3616,16 +3852,22 @@
 
         );
 
+    }
+
 
     /* =========================================================
        MODAL EVENTS
     ========================================================= */
 
-    document
-        .getElementById(
+    const vesselModal =
+        document.getElementById(
             "vesselModal"
-        )
-        .addEventListener(
+        );
+
+
+    if (vesselModal) {
+
+        vesselModal.addEventListener(
 
             "click",
 
@@ -3643,6 +3885,8 @@
             }
 
         );
+
+    }
 
 
     document.addEventListener(
@@ -3709,15 +3953,14 @@
 
 
     /*
-     * Check GitHub Actions scraper status
-     * every 2 minutes.
+     * Check GitHub Actions scraper status every 2 minutes.
      */
 
     setInterval(
 
         loadScraperStatus,
 
-        2 * 60 * 1000
+        SCRAPER_STATUS_INTERVAL
 
     );
 
