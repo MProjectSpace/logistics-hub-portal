@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-09-18 03:42:05",
-  "updatedAt": "2026-09-18 03:42:05",
+  "lastUpdated": "2026-09-18 04:15:57",
+  "updatedAt": "2026-09-18 04:15:57",
   "source": "https://ibstpks.pelindo.co.id/webaccess/",
   "allVessels": [
     {
@@ -34,21 +34,21 @@
       "shippingLine": "MERATUS BARITO (MRTO209)",
       "type": "DOMESTIC",
       "eta": "",
-      "etb": "18/09/2026 04:00",
-      "atb": "",
+      "etb": "",
+      "atb": "18/09/2026 03:35",
       "etd": "19/09/2026 01:30",
       "atd": "",
-      "openStack": "11/09/2026 19:00",
-      "closingTime": "16/09/2026 19:00",
-      "booking": "300",
-      "open": "300",
-      "actual": "199",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
       "export": "",
       "exportTeus": "",
       "import": "",
       "importTeus": "",
       "vesId": "MRTO209",
-      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_schedule&ves_id=MRTO209&width=600&height=500",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=MRTO209&width=600&height=500",
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MRTO209&width=900&height=500"
     },
     {
@@ -210,7 +210,7 @@
       "closingTime": "20/09/2026 07:00",
       "booking": "1400",
       "open": "1400",
-      "actual": "928",
+      "actual": "932",
       "export": "",
       "exportTeus": "",
       "import": "",
@@ -916,9 +916,7 @@
       "vesId": "SIBI093",
       "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=SIBI093&width=600&height=500",
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=SIBI093&width=900&height=500"
-    }
-  ],
-  "confirmedVessel": [
+    },
     {
       "vesselName": "MERATUS BARITO",
       "vesselCode": "MRTO209",
@@ -926,23 +924,25 @@
       "shippingLine": "MERATUS BARITO (MRTO209)",
       "type": "DOMESTIC",
       "eta": "",
-      "etb": "18/09/2026 04:00",
-      "atb": "",
+      "etb": "",
+      "atb": "18/09/2026 03:35",
       "etd": "19/09/2026 01:30",
       "atd": "",
-      "openStack": "11/09/2026 19:00",
-      "closingTime": "16/09/2026 19:00",
-      "booking": "300",
-      "open": "300",
-      "actual": "199",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
       "export": "",
       "exportTeus": "",
       "import": "",
       "importTeus": "",
       "vesId": "MRTO209",
-      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_schedule&ves_id=MRTO209&width=600&height=500",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=MRTO209&width=600&height=500",
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MRTO209&width=900&height=500"
-    },
+    }
+  ],
+  "confirmedVessel": [
     {
       "vesselName": "MSC MALENA III",
       "vesselCode": "MSL3002",
@@ -1104,7 +1104,7 @@
       "closingTime": "20/09/2026 07:00",
       "booking": "1400",
       "open": "1400",
-      "actual": "928",
+      "actual": "932",
       "export": "",
       "exportTeus": "",
       "import": "",
@@ -1792,8 +1792,8 @@
   ],
   "counts": {
     "allVessels": 37,
-    "vesselAlongside": 1,
-    "confirmedVessel": 3,
+    "vesselAlongside": 2,
+    "confirmedVessel": 2,
     "openStack": 17,
     "vesselSchedule": 9,
     "vesselHistory": 7
