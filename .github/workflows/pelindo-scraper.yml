@@ -1,12 +1,11 @@
 ```yaml
-name: Pelindo TPKS Data Scraper
+name: Pelindo TPKS Scraper
 
 on:
   workflow_dispatch:
 
   schedule:
-    # Setiap 30 menit
-    # UTC 00:00 = 07:00 WIB
+    # Run every 30 minutes
     - cron: "*/30 * * * *"
 
   push:
@@ -21,95 +20,78 @@ permissions:
   contents: write
 
 jobs:
-
   scrape:
-
     runs-on: ubuntu-latest
 
     steps:
-
-      # ==================================================
-      # Checkout repository
-      # ==================================================
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-
-      # ==================================================
-      # Setup Python
-      # ==================================================
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
-
-
-      # ==================================================
-      # Install dependencies
-      # ==================================================
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-
-      # ==================================================
-      # Run scraper
-      # ==================================================
-
       - name: Run Pelindo scraper
         run: |
           python scraper.py
-
-
-      # ==================================================
-      # Check generated data
-      # ==================================================
 
       - name: Validate data.json
         run: |
           python - <<'PY'
           import json
-          from pathlib import Path
 
-          path = Path("data.json")
-
-          if not path.exists():
-              raise SystemExit("ERROR: data.json was not generated.")
-
-          with path.open("r", encoding="utf-8") as f:
+          with open("data.json", "r", encoding="utf-8") as f:
               data = json.load(f)
 
-          if not isinstance(data, dict):
-              raise SystemExit("ERROR: data.json root must be an object.")
+          required_keys = [
+              "vesselAlongside",
+              "confirmedVessel",
+              "openStack",
+              "vesselSchedule",
+              "vesselHistory",
+              "counts"
+          ]
 
-          print("data.json is valid JSON.")
-          print("Top-level keys:")
-          for key in data.keys():
-              print(f" - {key}")
+          missing = [key for key in required_keys if key not in data]
+
+          if missing:
+              raise SystemExit(
+                  f"data.json missing required keys: {', '.join(missing)}"
+              )
+
+          for key in required_keys[:-1]:
+              if not isinstance(data[key], list):
+                  raise SystemExit(
+                      f"{key} must be an array/list"
+                  )
+
+          if not isinstance(data["counts"], dict):
+              raise SystemExit("counts must be an object")
+
+          print("data.json validation: OK")
+          print(
+              "Counts:",
+              {
+                  key: len(data[key])
+                  for key in required_keys[:-1]
+              }
+          )
           PY
 
-
-      # ==================================================
-      # Show git status
-      # ==================================================
-
-      - name: Check changes
+      - name: Check generated data
         run: |
-          git status --short
+          echo "Generated data.json:"
+          ls -lh data.json
 
-
-      # ==================================================
-      # Commit updated data.json
-      # ==================================================
-
-      - name: Commit updated data
+      - name: Commit updated data.json
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -117,9 +99,9 @@ jobs:
           git add data.json
 
           if git diff --cached --quiet; then
-            echo "No data changes detected."
+            echo "No changes detected."
           else
-            git commit -m "Update Pelindo TPKS data"
+            git commit -m "chore: update Pelindo TPKS data"
             git push
           fi
 ```
