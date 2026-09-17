@@ -1,20 +1,14 @@
-```python
 import json
 import re
 from datetime import datetime
-from pathlib import Path
-from urllib.parse import unquote, urljoin
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup, Comment
 
 
-# ============================================================
-# CONFIGURATION
-# ============================================================
-
-BASE_URL = "https://ibstpks.pelindo.co.id/webaccess/information"
-OUTPUT_FILE = Path(__file__).resolve().parent / "data.json"
+BASE_URL = "https://ibstpks.pelindo.co.id"
+INFORMATION_URL = f"{BASE_URL}/webaccess/information"
 
 HEADERS = {
     "User-Agent": (
@@ -22,13 +16,13 @@ HEADERS = {
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/153.0.0.0 Safari/537.36"
     ),
-    "Accept": (
-        "text/html,application/xhtml+xml,application/xml;q=0.9,"
-        "image/avif,image/webp,*/*;q=0.8"
-    ),
-    "Accept-Language": "en-US,en;q=0.9,id;q=0.8",
-    "Connection": "keep-alive",
+    "Referer": f"{BASE_URL}/webaccess/",
+    "X-Requested-With": "XMLHttpRequest",
 }
+
+
+OUTPUT_FILE = "data.json"
+
 
 SECTION_NAMES = {
     "vesselAlongside": "VESSEL ALONGSIDE",
@@ -39,701 +33,506 @@ SECTION_NAMES = {
 }
 
 
-# ============================================================
-# BASIC HELPERS
-# ============================================================
-
-def clean(value):
-    """Normalize whitespace and return a clean string."""
+def clean_text(value):
     if value is None:
         return ""
 
     value = str(value)
+    value = value.replace("\xa0", " ")
     value = re.sub(r"\s+", " ", value)
-
     return value.strip()
 
 
+def absolute_url(url):
+    if not url:
+        return ""
+
+    return urljoin(BASE_URL, url)
+
+
 def normalize_date(value):
-    """
-    Normalize Pelindo date format.
-
-    Input examples:
-        17/09/2026 08:00
-        17/09/2026
-
-    Output remains human-readable because the dashboard uses
-    Pelindo's original date/time format.
-    """
-    value = clean(value)
+    value = clean_text(value)
 
     if not value:
         return ""
 
-    formats = [
-        "%d/%m/%Y %H:%M",
-        "%d/%m/%Y",
-    ]
-
-    for fmt in formats:
-        try:
-            parsed = datetime.strptime(value, fmt)
-
-            if "%H:%M" in fmt:
-                return parsed.strftime("%d/%m/%Y %H:%M")
-
-            return parsed.strftime("%d/%m/%Y")
-
-        except ValueError:
-            continue
-
     return value
 
 
-def number_or_zero(value):
-    """Convert a numeric text value to int/float."""
-    value = clean(value)
+def extract_number(value):
+    value = clean_text(value)
 
     if not value:
         return 0
 
     value = value.replace(",", "")
-
     match = re.search(r"-?\d+(?:\.\d+)?", value)
 
     if not match:
         return 0
 
-    number = float(match.group(0))
+    try:
+        number = float(match.group())
+        return int(number) if number.is_integer() else number
+    except ValueError:
+        return 0
 
-    if number.is_integer():
-        return int(number)
 
-    return number
-
-
-def parse_name_code(value):
+def get_label_value(soup, labels):
     """
-    Parse:
-        EVER OBEY (OBEY037)
-
-    into:
-        vesselName = EVER OBEY
-        vesselCode = OBEY037
+    Try to find a value based on nearby label text.
     """
-    value = clean(value)
+    labels = [label.lower() for label in labels]
 
-    match = re.match(
-        r"^(.*?)\s*\(([^()]+)\)\s*$",
-        value
-    )
+    for element in soup.find_all(["td", "div", "span", "li"]):
+        text = clean_text(element.get_text(" ", strip=True))
 
-    if match:
-        return (
-            clean(match.group(1)),
-            clean(match.group(2)),
-        )
-
-    return value, ""
-
-
-def make_absolute_url(url):
-    if not url:
-        return ""
-
-    return unquote(
-        urljoin(BASE_URL, url)
-    )
-
-
-# ============================================================
-# RAW SECTION DETECTION
-# ============================================================
-
-def find_section_comment_positions(raw_html):
-    """
-    Pelindo HTML contains comments such as:
-
-        <!-- ########## VESSEL SCHEDULE ########## -->
-
-    We use those comments to identify sections.
-
-    This is safer than relying on:
-        _mCS_1
-        _mCS_2
-        _mCS_3
-        _mCS_4
-
-    because those IDs can change when the website layout changes.
-    """
-
-    positions = {}
-
-    comments = re.finditer(
-        r"<!--\s*##########\s*(.*?)\s*##########\s*-->",
-        raw_html,
-        flags=re.I | re.S,
-    )
-
-    for match in comments:
-        title = clean(match.group(1)).upper()
-
-        for key, section_name in SECTION_NAMES.items():
-
-            if title == section_name:
-                positions[key] = match.start()
-
-    return positions
-
-
-def extract_section_html(raw_html, section_key):
-    """
-    Extract HTML belonging to one Pelindo section.
-    """
-
-    positions = find_section_comment_positions(raw_html)
-
-    if section_key not in positions:
-        return ""
-
-    start = positions[section_key]
-
-    later_positions = [
-        position
-        for key, position in positions.items()
-        if position > start
-    ]
-
-    if later_positions:
-        end = min(later_positions)
-    else:
-        end = len(raw_html)
-
-    return raw_html[start:end]
-
-
-# ============================================================
-# VESSEL BLOCK EXTRACTION
-# ============================================================
-
-def extract_vessel_blocks(section_html):
-    """
-    Pelindo vessel sections use:
-
-        <div class="ves_along_sched">...</div>
-
-    and separate vessel records with:
-
-        <hr class="ves_along_sched_hr">
-
-    We collect all .ves_along_sched elements belonging
-    to one vessel until the next HR separator.
-    """
-
-    if not section_html:
-        return []
-
-    soup = BeautifulSoup(section_html, "lxml")
-
-    blocks = []
-
-    current = []
-
-    # Only inspect direct-ish content vessel elements.
-    elements = soup.find_all(
-        ["div", "hr"],
-        class_=re.compile(r"ves_along_sched")
-    )
-
-    for element in elements:
-
-        classes = element.get("class", [])
-
-        # Separator between vessel records.
-        if (
-            element.name == "hr"
-            and "ves_along_sched_hr" in classes
-        ):
-            if current:
-                blocks.append(current)
-                current = []
-
+        if not text:
             continue
 
-        # Vessel data element.
-        if (
-            element.name == "div"
-            and "ves_along_sched" in classes
-        ):
-            current.append(element)
+        lower = text.lower()
 
-    if current:
-        blocks.append(current)
-
-    return blocks
-
-
-# ============================================================
-# LINK EXTRACTION
-# ============================================================
-
-def extract_links(block):
-
-    detail_url = ""
-    history_url = ""
-    ves_id = ""
-
-    for element in block:
-
-        for link in element.find_all("a"):
-
-            data_url = (
-                link.get("data-url")
-                or link.get("href")
-                or ""
-            )
-
-            data_url = unquote(data_url)
-
-            # ------------------------------------------------
-            # Container Detail
-            # ------------------------------------------------
-
-            if "do=vessel" in data_url:
-                detail_url = make_absolute_url(data_url)
-
-            # ------------------------------------------------
-            # Vessel History
-            # ------------------------------------------------
-
-            if "do=vessel_audit" in data_url:
-                history_url = make_absolute_url(data_url)
-
-            # ------------------------------------------------
-            # Schedule Detail
-            # ------------------------------------------------
-
-            if "do=ves_schedule_det" in data_url:
-                detail_url = make_absolute_url(data_url)
-
-            # ------------------------------------------------
-            # Vessel ID
-            # ------------------------------------------------
-
-            match = re.search(
-                r"[?&]ves_id=([^&]+)",
-                data_url,
-                flags=re.I,
-            )
-
-            if match:
-                candidate = clean(
-                    unquote(match.group(1))
+        for label in labels:
+            if label in lower:
+                # Same element contains label and value.
+                parts = re.split(
+                    rf"{re.escape(label)}\s*:?\s*",
+                    text,
+                    flags=re.IGNORECASE,
                 )
 
-                if candidate:
-                    ves_id = candidate
+                if len(parts) > 1:
+                    value = clean_text(parts[-1])
 
-    return {
-        "detailUrl": detail_url,
-        "historyUrl": history_url,
-        "vesId": ves_id,
-    }
+                    if value and value.lower() != label:
+                        return value
 
+                # Try next sibling.
+                sibling = element.find_next_sibling()
 
-# ============================================================
-# FIELD PARSERS
-# ============================================================
+                if sibling:
+                    value = clean_text(
+                        sibling.get_text(" ", strip=True)
+                    )
 
-def parse_booking_open_actual(text):
+                    if value:
+                        return value
 
-    match = re.search(
-        r"Booking\s*/\s*Open\s*/\s*Actual\s*:\s*"
-        r"([\d.,]+)\s*/\s*([\d.,]+)\s*/\s*([\d.,]+)",
-        text,
-        flags=re.I,
-    )
+    return ""
 
-    if not match:
-        return 0, 0, 0
-
-    return (
-        number_or_zero(match.group(1)),
-        number_or_zero(match.group(2)),
-        number_or_zero(match.group(3)),
-    )
-
-
-def parse_box_teus(text):
-
-    match = re.search(
-        r"(Export|Import)\s+Box\s*/\s*Teus\s*:\s*"
-        r"([\d.,]+)\s*/\s*([\d.,]+)",
-        text,
-        flags=re.I,
-    )
-
-    if not match:
-        return None
-
-    direction = match.group(1).lower()
-
-    boxes = number_or_zero(match.group(2))
-    teus = number_or_zero(match.group(3))
-
-    return direction, boxes, teus
-
-
-# ============================================================
-# STANDARD VESSEL OBJECT
-# ============================================================
 
 def empty_vessel():
-
     return {
         "vesselName": "",
         "vesselCode": "",
         "voyage": "",
         "shippingLine": "",
         "type": "",
-
         "eta": "",
         "etb": "",
         "atb": "",
         "etd": "",
         "atd": "",
-
         "openStack": "",
         "closingTime": "",
-
         "booking": 0,
         "open": 0,
         "actual": 0,
-
         "export": 0,
         "exportTeus": 0,
-
         "import": 0,
         "importTeus": 0,
-
         "vesId": "",
-
         "detailUrl": "",
-        "historyUrl": "",
+        "historyUrl": ""
     }
 
 
-# ============================================================
-# VESSEL BLOCK PARSER
-# ============================================================
+def parse_vessel_block(block):
+    """
+    Parse one Pelindo vessel block.
 
-def parse_vessel_block(block, section_key):
+    The HTML layout can change, so this parser uses multiple
+    fallback methods rather than relying on fixed div indexes.
+    """
 
-    if not block:
-        return None
+    result = empty_vessel()
 
-    texts = []
+    text = clean_text(block.get_text(" ", strip=True))
 
-    for element in block:
+    if not text:
+        return result
 
-        text = clean(
-            element.get_text(
-                " ",
-                strip=True
-            )
-        )
+    # ---------------------------------------------------------
+    # URLs
+    # ---------------------------------------------------------
+    links = block.find_all("a", href=True)
 
-        if text:
-            texts.append(text)
+    for link in links:
+        href = absolute_url(link.get("href", ""))
+        link_text = clean_text(link.get_text(" ", strip=True)).lower()
 
-    if not texts:
-        return None
-
-    item = empty_vessel()
-
-    # --------------------------------------------------------
-    # Vessel Name
-    # --------------------------------------------------------
-
-    vessel_name, vessel_code = parse_name_code(
-        texts[0]
-    )
-
-    item["vesselName"] = vessel_name
-    item["vesselCode"] = vessel_code
-
-    # --------------------------------------------------------
-    # Voyage
-    # --------------------------------------------------------
-
-    if len(texts) > 1:
-
-        candidate = texts[1]
-
-        if (
-            ":" not in candidate
-            and candidate.lower()
-            not in {
-                "detail container",
-                "history",
-            }
+        if not result["detailUrl"] and (
+            "detail" in href.lower()
+            or "container" in href.lower()
+            or "ves_id" in href.lower()
         ):
-            item["voyage"] = candidate
+            result["detailUrl"] = href
 
-    # --------------------------------------------------------
-    # Parse labelled values
-    # --------------------------------------------------------
+        if not result["historyUrl"] and "history" in href.lower():
+            result["historyUrl"] = href
 
-    for text in texts:
+        if not result["detailUrl"] and "detail" in link_text:
+            result["detailUrl"] = href
 
-        lower = text.lower()
+        if not result["historyUrl"] and "history" in link_text:
+            result["historyUrl"] = href
 
-        # ETA
-        if lower.startswith("eta"):
-            match = re.search(
-                r"ETA\s*:\s*(.*)",
-                text,
-                flags=re.I,
-            )
+    # ---------------------------------------------------------
+    # Data attributes
+    # ---------------------------------------------------------
+    attrs = {}
 
-            if match:
-                item["eta"] = normalize_date(
-                    match.group(1)
-                )
+    for tag in block.find_all(True):
+        for key, value in tag.attrs.items():
+            if key.lower().startswith("data-"):
+                attrs[key.lower()] = clean_text(value)
 
-        # ETB
-        elif lower.startswith("etb"):
-            match = re.search(
-                r"ETB\s*:\s*(.*)",
-                text,
-                flags=re.I,
-            )
+    for key, value in attrs.items():
+        if "ves" in key and "id" in key and not result["vesId"]:
+            result["vesId"] = value
 
-            if match:
-                item["etb"] = normalize_date(
-                    match.group(1)
-                )
+        if "vessel" in key and "code" in key and not result["vesselCode"]:
+            result["vesselCode"] = value
 
-        # ATB
-        elif lower.startswith("atb"):
-            match = re.search(
-                r"ATB\s*:\s*(.*)",
-                text,
-                flags=re.I,
-            )
+    # ---------------------------------------------------------
+    # Tables
+    # ---------------------------------------------------------
+    rows = block.find_all("tr")
 
-            if match:
-                item["atb"] = normalize_date(
-                    match.group(1)
-                )
+    for row in rows:
+        cells = [
+            clean_text(cell.get_text(" ", strip=True))
+            for cell in row.find_all(["th", "td"])
+        ]
 
-        # ETD
-        elif lower.startswith("etd"):
-            match = re.search(
-                r"ETD\s*:\s*(.*)",
-                text,
-                flags=re.I,
-            )
-
-            if match:
-                item["etd"] = normalize_date(
-                    match.group(1)
-                )
-
-        # ATD
-        elif lower.startswith("atd"):
-            match = re.search(
-                r"ATD\s*:\s*(.*)",
-                text,
-                flags=re.I,
-            )
-
-            if match:
-                item["atd"] = normalize_date(
-                    match.group(1)
-                )
-
-        # Open Stack
-        elif lower.startswith("open stack"):
-            match = re.search(
-                r"Open\s+Stack\s*:\s*(.*)",
-                text,
-                flags=re.I,
-            )
-
-            if match:
-                item["openStack"] = normalize_date(
-                    match.group(1)
-                )
-
-        # Closing
-        elif lower.startswith("closing"):
-            match = re.search(
-                r"Closing\s+Time\s*:\s*(.*)",
-                text,
-                flags=re.I,
-            )
-
-            if match:
-                item["closingTime"] = normalize_date(
-                    match.group(1)
-                )
-
-        # Booking / Open / Actual
-        elif "booking" in lower and "actual" in lower:
-
-            (
-                item["booking"],
-                item["open"],
-                item["actual"],
-            ) = parse_booking_open_actual(text)
-
-        # Export / Import
-        box_data = parse_box_teus(text)
-
-        if box_data:
-
-            direction, boxes, teus = box_data
-
-            item[direction] = boxes
-            item[f"{direction}Teus"] = teus
-
-    # --------------------------------------------------------
-    # Shipping Line + Type
-    # --------------------------------------------------------
-
-    for text in texts[1:]:
-
-        upper = clean(text).upper()
-
-        if upper in {
-            "DOMESTIC",
-            "INTERNATIONAL",
-        }:
-            item["type"] = upper
+        if len(cells) < 2:
             continue
 
-        # Shipping line is normally an unlabelled text
-        # between voyage and type.
-        if (
-            not item["shippingLine"]
-            and section_key in {
-                "confirmedVessel",
-                "openStack",
-                "vesselHistory",
-            }
-            and ":" not in text
-            and text != item["voyage"]
-            and upper not in {
-                "DOMESTIC",
-                "INTERNATIONAL",
-            }
-            and "[ DETAIL CONTAINER ]" not in upper
-            and "[ HISTORY ]" not in upper
-        ):
-            item["shippingLine"] = text
+        for i in range(0, len(cells) - 1, 2):
+            label = cells[i].lower()
+            value = cells[i + 1]
 
-    # --------------------------------------------------------
-    # URLs / Vessel ID
-    # --------------------------------------------------------
+            if "vessel" in label and "name" in label:
+                result["vesselName"] = value
 
-    links = extract_links(block)
+            elif label in ("vessel", "vessel name"):
+                result["vesselName"] = value
 
-    item["detailUrl"] = links["detailUrl"]
-    item["historyUrl"] = links["historyUrl"]
+            elif "voyage" in label:
+                result["voyage"] = value
 
-    item["vesId"] = (
-        links["vesId"]
-        or item["vesselCode"]
+            elif "shipping" in label or "line" in label:
+                result["shippingLine"] = value
+
+            elif label == "type" or "vessel type" in label:
+                result["type"] = value
+
+            elif label == "eta":
+                result["eta"] = normalize_date(value)
+
+            elif label == "etb":
+                result["etb"] = normalize_date(value)
+
+            elif label == "atb":
+                result["atb"] = normalize_date(value)
+
+            elif label == "etd":
+                result["etd"] = normalize_date(value)
+
+            elif label == "atd":
+                result["atd"] = normalize_date(value)
+
+            elif "open stack" in label:
+                result["openStack"] = normalize_date(value)
+
+            elif "closing" in label:
+                result["closingTime"] = normalize_date(value)
+
+            elif "booking" in label:
+                result["booking"] = extract_number(value)
+
+            elif label == "open":
+                result["open"] = extract_number(value)
+
+            elif "actual" in label:
+                result["actual"] = extract_number(value)
+
+            elif label.startswith("export"):
+                numbers = re.findall(r"\d+(?:,\d+)*", value)
+
+                if numbers:
+                    result["export"] = extract_number(numbers[0])
+
+                if len(numbers) > 1:
+                    result["exportTeus"] = extract_number(numbers[1])
+
+            elif label.startswith("import"):
+                numbers = re.findall(r"\d+(?:,\d+)*", value)
+
+                if numbers:
+                    result["import"] = extract_number(numbers[0])
+
+                if len(numbers) > 1:
+                    result["importTeus"] = extract_number(numbers[1])
+
+    # ---------------------------------------------------------
+    # Generic text fallback
+    # ---------------------------------------------------------
+    texts = [
+        clean_text(x.get_text(" ", strip=True))
+        for x in block.find_all(["div", "span", "td", "a"])
+    ]
+
+    texts = [x for x in texts if x]
+
+    # First useful text often contains vessel name.
+    if not result["vesselName"] and texts:
+        for candidate in texts:
+            candidate_upper = candidate.upper()
+
+            if (
+                len(candidate) >= 3
+                and not re.search(r"\d{1,2}/\d{1,2}/\d{4}", candidate)
+                and "VESSEL" not in candidate_upper
+                and "VOYAGE" not in candidate_upper
+                and "BOOKING" not in candidate_upper
+            ):
+                result["vesselName"] = candidate
+                break
+
+    # Try to detect voyage patterns.
+    if not result["voyage"]:
+        voyage_pattern = re.compile(
+            r"\b[A-Z0-9]{1,8}(?:-[A-Z0-9]{1,8})?[NS]\b",
+            re.IGNORECASE,
+        )
+
+        for candidate in texts:
+            match = voyage_pattern.search(candidate)
+
+            if match:
+                result["voyage"] = candidate
+                break
+
+    # ---------------------------------------------------------
+    # Date fallback
+    # ---------------------------------------------------------
+    date_pattern = re.compile(
+        r"\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2}"
     )
 
-    # --------------------------------------------------------
-    # Validate
-    # --------------------------------------------------------
+    dates = []
 
-    if not item["vesselName"]:
-        return None
+    for candidate in texts:
+        dates.extend(date_pattern.findall(candidate))
 
+    # Remove duplicates but preserve order.
+    dates = list(dict.fromkeys(dates))
+
+    if dates:
+        if not result["eta"]:
+            result["eta"] = dates[0]
+
+        if not result["etb"] and len(dates) > 1:
+            result["etb"] = dates[1]
+
+        if not result["etd"] and len(dates) > 2:
+            result["etd"] = dates[2]
+
+    # ---------------------------------------------------------
+    # Type detection
+    # ---------------------------------------------------------
+    if not result["type"]:
+        upper_text = text.upper()
+
+        if "INTERNATIONAL" in upper_text:
+            result["type"] = "INTERNATIONAL"
+        elif "DOMESTIC" in upper_text:
+            result["type"] = "DOMESTIC"
+
+    # ---------------------------------------------------------
+    # Remove obviously invalid vessel name
+    # ---------------------------------------------------------
     invalid_names = {
-        "detail",
-        "history",
-        "vessel schedule",
-        "vessel history",
+        "",
+        "VESSEL",
+        "VESSEL NAME",
+        "DETAIL",
+        "HISTORY",
+        "OPEN STACK",
+        "CONFIRMED VESSEL",
+        "VESSEL SCHEDULE",
+        "VESSEL HISTORY",
     }
 
-    if item["vesselName"].lower() in invalid_names:
-        return None
+    if result["vesselName"].strip().upper() in invalid_names:
+        result["vesselName"] = ""
 
-    return item
+    return result
 
 
-# ============================================================
-# SECTION PARSER
-# ============================================================
+def extract_vessel_blocks(section):
+    """
+    Detect vessel blocks using Pelindo's vessel CSS classes and
+    horizontal separators.
+    """
 
-def parse_section(raw_html, section_key):
-
-    section_html = extract_section_html(
-        raw_html,
-        section_key,
-    )
-
-    if not section_html:
+    if not section:
         return []
 
-    blocks = extract_vessel_blocks(
-        section_html
+    blocks = []
+
+    # Primary structure.
+    candidates = section.find_all(
+        "div",
+        class_=re.compile(r"ves_along_sched", re.IGNORECASE)
     )
 
-    records = []
-    seen = set()
-
-    for block in blocks:
-
-        item = parse_vessel_block(
-            block,
-            section_key,
-        )
-
-        if not item:
+    # Filter nested/duplicate candidates.
+    for candidate in candidates:
+        if candidate.find_parent(
+            "div",
+            class_=re.compile(r"ves_along_sched", re.IGNORECASE)
+        ):
             continue
 
-        unique_key = (
-            item["vesselName"].upper(),
-            item["voyage"].upper(),
-            item["vesId"].upper(),
+        blocks.append(candidate)
+
+    if blocks:
+        return blocks
+
+    # Fallback: split using separator.
+    separators = section.find_all(
+        "hr",
+        class_=re.compile(r"ves_along_sched_hr", re.IGNORECASE)
+    )
+
+    if separators:
+        html_parts = re.split(
+            r'<hr[^>]*class=["\'][^"\']*ves_along_sched_hr[^"\']*["\'][^>]*>',
+            str(section),
+            flags=re.IGNORECASE,
         )
 
-        if unique_key in seen:
-            continue
+        for part in html_parts:
+            if clean_text(BeautifulSoup(part, "lxml").get_text(" ", strip=True)):
+                blocks.append(
+                    BeautifulSoup(part, "lxml")
+                )
 
-        seen.add(unique_key)
-
-        records.append(item)
-
-    return records
+    return blocks
 
 
-# ============================================================
-# VESSEL SCHEDULE AJAX
-# ============================================================
-
-def request_vessel_schedule(session):
-
+def find_comment_section(soup, section_title):
     """
-    Pelindo provides:
+    Locate a section using HTML comments such as:
 
-        POST /webaccess/information
+    ########## OPEN STACK ##########
+    """
 
-    with:
+    wanted = section_title.upper()
 
-        do=search_vessel_schedule
-        vesName=
-        fromDt=
-        toDt=
+    comments = soup.find_all(
+        string=lambda text: isinstance(text, Comment)
+    )
 
-    This is the same endpoint used by the site's
-    searchVessel() JavaScript.
+    for comment in comments:
+        comment_text = clean_text(comment).upper()
+
+        if wanted not in comment_text:
+            continue
+
+        start = comment.parent
+
+        collected = []
+
+        for element in start.find_all_next():
+            if isinstance(element, Comment):
+                current = clean_text(element).upper()
+
+                if (
+                    current != comment_text
+                    and "##########" in current
+                    and any(
+                        name in current
+                        for name in SECTION_NAMES.values()
+                    )
+                ):
+                    break
+
+            collected.append(element)
+
+        wrapper = BeautifulSoup("<div></div>", "lxml")
+
+        for element in collected:
+            wrapper.div.append(
+                BeautifulSoup(str(element), "lxml")
+            )
+
+        return wrapper.div
+
+    return None
+
+
+def parse_html_sections(html):
+    soup = BeautifulSoup(html, "lxml")
+
+    result = {
+        "vesselAlongside": [],
+        "confirmedVessel": [],
+        "openStack": [],
+        "vesselSchedule": [],
+        "vesselHistory": [],
+    }
+
+    for key, title in SECTION_NAMES.items():
+        section = find_comment_section(soup, title)
+
+        if not section:
+            continue
+
+        blocks = extract_vessel_blocks(section)
+
+        for block in blocks:
+            vessel = parse_vessel_block(block)
+
+            if vessel["vesselName"] or vessel["voyage"]:
+                result[key].append(vessel)
+
+    return result
+
+
+def fetch_page():
+    response = requests.get(
+        BASE_URL,
+        headers=HEADERS,
+        timeout=60,
+    )
+
+    response.raise_for_status()
+    return response.text
+
+
+def fetch_schedule_ajax():
+    """
+    Pelindo WebAccess provides an AJAX endpoint:
+
+    POST /webaccess/information
+    do=search_vessel_schedule
+
+    This is used as an additional source when the normal page
+    does not expose all schedule information.
     """
 
     payload = {
@@ -743,63 +542,11 @@ def request_vessel_schedule(session):
         "toDt": "",
     }
 
-    try:
-
-        response = session.post(
-            BASE_URL,
-            data=payload,
-            headers={
-                **HEADERS,
-                "X-Requested-With": "XMLHttpRequest",
-                "Referer": BASE_URL,
-            },
-            timeout=100,
-        )
-
-        response.raise_for_status()
-
-        return response.text
-
-    except requests.RequestException as exc:
-
-        print(
-            f"[WARNING] Vessel Schedule AJAX failed: {exc}"
-        )
-
-        return ""
-
-
-def parse_schedule_ajax(html):
-
-    if not html:
-        return []
-
-    # The AJAX response may contain only the schedule
-    # content without the original section comment.
-    wrapped_html = (
-        "<!-- ########## VESSEL SCHEDULE ########## -->"
-        + html
-    )
-
-    return parse_section(
-        wrapped_html,
-        "vesselSchedule",
-    )
-
-
-# ============================================================
-# MAIN PAGE REQUEST
-# ============================================================
-
-def get_main_page(session):
-
-    response = session.get(
-        BASE_URL,
-        params={
-            "do": "home"
-        },
+    response = requests.post(
+        INFORMATION_URL,
         headers=HEADERS,
-        timeout=60,
+        data=payload,
+        timeout=100,
     )
 
     response.raise_for_status()
@@ -807,233 +554,188 @@ def get_main_page(session):
     return response.text
 
 
-# ============================================================
-# DATA VALIDATION
-# ============================================================
+def merge_vessels(primary, secondary):
+    """
+    Merge records while avoiding duplicate vessel/voyage records.
+    """
 
-def validate_data(data):
+    merged = list(primary)
 
-    required_sections = [
-        "vesselAlongside",
-        "confirmedVessel",
-        "openStack",
-        "vesselSchedule",
-        "vesselHistory",
-    ]
+    seen = set()
 
-    for section in required_sections:
-
-        if section not in data:
-            data[section] = []
-
-        if not isinstance(
-            data[section],
-            list
-        ):
-            data[section] = []
-
-    data["counts"] = {
-        section: len(data[section])
-        for section in required_sections
-    }
-
-    return data
-
-
-# ============================================================
-# SCRAPER
-# ============================================================
-
-def scrape():
-
-    print("=" * 70)
-    print("PELINDO TPKS SCRAPER")
-    print("=" * 70)
-
-    session = requests.Session()
-
-    session.headers.update(
-        HEADERS
-    )
-
-    # --------------------------------------------------------
-    # Main page
-    # --------------------------------------------------------
-
-    print("[1/5] Downloading Pelindo TPKS page...")
-
-    raw_html = get_main_page(
-        session
-    )
-
-    print(
-        f"[OK] HTML downloaded: {len(raw_html):,} bytes"
-    )
-
-    # --------------------------------------------------------
-    # Parse five main sections
-    # --------------------------------------------------------
-
-    print("[2/5] Parsing Vessel Alongside...")
-
-    vessel_alongside = parse_section(
-        raw_html,
-        "vesselAlongside",
-    )
-
-    print(
-        f"      Found: {len(vessel_alongside)}"
-    )
-
-    print("[3/5] Parsing Confirmed Vessel...")
-
-    confirmed_vessel = parse_section(
-        raw_html,
-        "confirmedVessel",
-    )
-
-    print(
-        f"      Found: {len(confirmed_vessel)}"
-    )
-
-    print("[4/5] Parsing Open Stack...")
-
-    open_stack = parse_section(
-        raw_html,
-        "openStack",
-    )
-
-    print(
-        f"      Found: {len(open_stack)}"
-    )
-
-    print("[5/5] Parsing Vessel Schedule + History...")
-
-    vessel_schedule = parse_section(
-        raw_html,
-        "vesselSchedule",
-    )
-
-    # If the normal HTML does not expose schedule records,
-    # use Pelindo's AJAX endpoint as fallback.
-    if not vessel_schedule:
-
-        print(
-            "      Main schedule empty. "
-            "Trying Pelindo search_vessel_schedule AJAX..."
+    for item in merged:
+        key = (
+            clean_text(item.get("vesselName")).upper(),
+            clean_text(item.get("voyage")).upper(),
+            clean_text(item.get("vesId")).upper(),
         )
 
-        schedule_html = request_vessel_schedule(
-            session
+        seen.add(key)
+
+    for item in secondary:
+        key = (
+            clean_text(item.get("vesselName")).upper(),
+            clean_text(item.get("voyage")).upper(),
+            clean_text(item.get("vesId")).upper(),
         )
 
-        vessel_schedule = parse_schedule_ajax(
-            schedule_html
-        )
+        if key not in seen:
+            merged.append(item)
+            seen.add(key)
 
-    vessel_history = parse_section(
-        raw_html,
-        "vesselHistory",
-    )
+    return merged
 
-    print(
-        f"      Schedule: {len(vessel_schedule)}"
-    )
 
-    print(
-        f"      History : {len(vessel_history)}"
-    )
+def build_output(data):
+    now = datetime.now().astimezone().isoformat()
 
-    # --------------------------------------------------------
-    # Build final JSON
-    # --------------------------------------------------------
-
-    now = datetime.now().astimezone()
-
-    data = {
-
+    return {
+        "updatedAt": now,
         "source": "Pelindo TPKS WebAccess",
 
-        "sourceUrl": BASE_URL,
-
-        "lastUpdated": now.strftime(
-            "%Y-%m-%d %H:%M:%S %z"
+        "vesselAlongside": data.get(
+            "vesselAlongside", []
         ),
 
-        "scrapedAt": now.isoformat(),
+        "confirmedVessel": data.get(
+            "confirmedVessel", []
+        ),
+
+        "openStack": data.get(
+            "openStack", []
+        ),
+
+        "vesselSchedule": data.get(
+            "vesselSchedule", []
+        ),
+
+        "vesselHistory": data.get(
+            "vesselHistory", []
+        ),
 
         "counts": {
             "vesselAlongside": len(
-                vessel_alongside
+                data.get("vesselAlongside", [])
             ),
-
             "confirmedVessel": len(
-                confirmed_vessel
+                data.get("confirmedVessel", [])
             ),
-
             "openStack": len(
-                open_stack
+                data.get("openStack", [])
             ),
-
             "vesselSchedule": len(
-                vessel_schedule
+                data.get("vesselSchedule", [])
             ),
-
             "vesselHistory": len(
-                vessel_history
+                data.get("vesselHistory", [])
             ),
         },
-
-        "vesselAlongside": vessel_alongside,
-
-        "confirmedVessel": confirmed_vessel,
-
-        "openStack": open_stack,
-
-        "vesselSchedule": vessel_schedule,
-
-        "vesselHistory": vessel_history,
     }
 
-    # --------------------------------------------------------
-    # Validate
-    # --------------------------------------------------------
 
-    data = validate_data(
-        data
-    )
+def main():
+    print("========================================")
+    print("Pelindo TPKS Scraper")
+    print("========================================")
 
-    # --------------------------------------------------------
-    # Save
-    # --------------------------------------------------------
+    final_data = {
+        "vesselAlongside": [],
+        "confirmedVessel": [],
+        "openStack": [],
+        "vesselSchedule": [],
+        "vesselHistory": [],
+    }
 
-    OUTPUT_FILE.write_text(
-        json.dumps(
-            data,
+    # ---------------------------------------------------------
+    # 1. Main page
+    # ---------------------------------------------------------
+    try:
+        print("[1/2] Fetching Pelindo main page...")
+
+        html = fetch_page()
+
+        parsed = parse_html_sections(html)
+
+        for key in final_data:
+            final_data[key] = merge_vessels(
+                final_data[key],
+                parsed.get(key, [])
+            )
+
+        print("Main page parsed successfully.")
+
+    except Exception as exc:
+        print(f"Main page error: {exc}")
+
+    # ---------------------------------------------------------
+    # 2. AJAX schedule endpoint
+    # ---------------------------------------------------------
+    try:
+        print("[2/2] Fetching Pelindo vessel schedule AJAX...")
+
+        ajax_html = fetch_schedule_ajax()
+
+        parsed_ajax = parse_html_sections(ajax_html)
+
+        # Schedule endpoint is mainly useful for schedule data.
+        final_data["vesselSchedule"] = merge_vessels(
+            final_data["vesselSchedule"],
+            parsed_ajax.get("vesselSchedule", [])
+        )
+
+        # Some responses may return open-stack data too.
+        final_data["openStack"] = merge_vessels(
+            final_data["openStack"],
+            parsed_ajax.get("openStack", [])
+        )
+
+        print("AJAX data parsed successfully.")
+
+    except Exception as exc:
+        print(f"AJAX error: {exc}")
+
+    # ---------------------------------------------------------
+    # Build JSON
+    # ---------------------------------------------------------
+    output = build_output(final_data)
+
+    with open(
+        OUTPUT_FILE,
+        "w",
+        encoding="utf-8"
+    ) as file:
+        json.dump(
+            output,
+            file,
             ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
+            indent=2
+        )
 
-    # --------------------------------------------------------
-    # Summary
-    # --------------------------------------------------------
-
-    print()
-    print("=" * 70)
-    print("SCRAPE COMPLETED")
-    print("=" * 70)
-
+    print("----------------------------------------")
+    print("Scraping completed.")
     print(
         f"Vessel Alongside : "
-        f"{data['counts']['vesselAlongside']}"
+        f"{output['counts']['vesselAlongside']}"
     )
-
     print(
         f"Confirmed Vessel : "
-        f"{data['counts']['confirmedVessel']}"
+        f"{output['counts']['confirmedVessel']}"
     )
+    print(
+        f"Open Stack       : "
+        f"{output['counts']['openStack']}"
+    )
+    print(
+        f"Vessel Schedule  : "
+        f"{output['counts']['vesselSchedule']}"
+    )
+    print(
+        f"Vessel History   : "
+        f"{output['counts']['vesselHistory']}"
+    )
+    print("----------------------------------------")
+    print(f"Output: {OUTPUT_FILE}")
 
-    prin
-```
+
+if __name__ == "__main__":
+    main()
