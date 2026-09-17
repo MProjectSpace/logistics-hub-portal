@@ -1,4 +1,3 @@
-```yaml
 name: Pelindo TPKS Scraper
 
 on:
@@ -104,4 +103,3 @@ jobs:
             git commit -m "chore: update Pelindo TPKS data"
             git push
           fi
-```
