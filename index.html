@@ -1,11 +1,13 @@
-```html
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Logistics Hub | Pelindo TPKS</title>
+    <title>Pelindo TPKS Dashboard</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -15,1569 +17,816 @@
     >
 
     <style>
-        html {
-            scroll-behavior: smooth;
+        body {
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
         }
 
-        body {
-            background: #f8fafc;
+        .glass {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
         }
 
         .table-wrapper {
-            scrollbar-width: thin;
+            overflow-x: auto;
         }
 
-        .table-wrapper::-webkit-scrollbar {
-            height: 7px;
+        table {
+            min-width: 1100px;
         }
 
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
+        th {
+            white-space: nowrap;
         }
 
-        .loading {
-            animation: pulse 1.5s infinite;
+        td {
+            white-space: nowrap;
         }
 
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
 
-            50% {
-                opacity: .5;
-            }
+        .section-card {
+            transition:
+                transform 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .section-card:hover {
+            transform: translateY(-1px);
         }
     </style>
 </head>
 
-<body class="text-slate-800">
+<body class="bg-slate-100 text-slate-800">
 
-<!-- =========================================================
-     HEADER
-========================================================= -->
+    <!-- HEADER -->
+    <header class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-[1800px] mx-auto px-6 py-5">
 
-<header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
-
-    <div class="max-w-[1600px] mx-auto px-4 lg:px-6">
-
-        <div class="h-16 flex items-center justify-between">
-
-            <!-- LOGO -->
-
-            <div class="flex items-center gap-3">
-
-                <div class="w-10 h-10 rounded-xl bg-blue-900 text-white flex items-center justify-center">
-                    <i class="fa-solid fa-ship"></i>
-                </div>
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
                 <div>
-                    <h1 class="font-bold text-blue-900 leading-tight">
-                        LOGISTICS HUB
-                    </h1>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center"
+                        >
+                            <i class="fa-solid fa-ship text-xl"></i>
+                        </div>
 
-                    <p class="text-[10px] uppercase tracking-wider text-slate-500">
-                        Pelindo TPKS Vessel Monitoring
-                    </p>
+                        <div>
+                            <h1 class="text-2xl font-bold">
+                                Pelindo TPKS
+                            </h1>
+
+                            <p class="text-slate-300 text-sm">
+                                Vessel Monitoring Dashboard
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+
+                    <div
+                        id="connectionStatus"
+                        class="flex items-center gap-2 text-sm bg-white/10 px-4 py-2 rounded-lg"
+                    >
+                        <span
+                            id="statusDot"
+                            class="status-dot bg-yellow-400"
+                        ></span>
+
+                        <span id="statusText">
+                            Loading...
+                        </span>
+                    </div>
+
+                    <button
+                        onclick="loadData(true)"
+                        class="px-4 py-2 rounded-lg bg-white text-slate-900 hover:bg-slate-200 transition font-medium"
+                    >
+                        <i class="fa-solid fa-rotate-right mr-2"></i>
+                        Refresh
+                    </button>
+
                 </div>
 
             </div>
 
-
-            <!-- NAVIGATION -->
-
-            <nav class="hidden md:flex items-center gap-5 text-xs font-semibold text-slate-500">
-
-                <a href="#alongside"
-                   class="hover:text-blue-600 transition">
-                    Alongside
-                </a>
-
-                <a href="#confirmed"
-                   class="hover:text-emerald-600 transition">
-                    Confirmed
-                </a>
-
-                <a href="#openstack"
-                   class="hover:text-amber-600 transition">
-                    Open Stack
-                </a>
-
-                <a href="#schedule"
-                   class="hover:text-indigo-600 transition">
-                    Schedule
-                </a>
-
-                <a href="#history"
-                   class="hover:text-slate-900 transition">
-                    History
-                </a>
-
-            </nav>
-
         </div>
-
-    </div>
-
-</header>
+    </header>
 
 
-<!-- =========================================================
-     HERO / SEARCH
-========================================================= -->
+    <!-- MAIN -->
+    <main class="max-w-[1800px] mx-auto px-6 py-6">
 
-<section class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-900 text-white">
+        <!-- SEARCH -->
+        <section class="glass rounded-2xl shadow-sm p-5 mb-6">
 
-    <div class="max-w-[1600px] mx-auto px-4 lg:px-6 py-12">
+            <div class="flex flex-col lg:flex-row gap-4">
 
-        <div class="max-w-4xl mx-auto text-center">
+                <div class="flex-1 relative">
 
-            <!-- STATUS -->
+                    <i
+                        class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    ></i>
 
-            <div
-                id="connectionStatus"
-                class="inline-flex items-center gap-2 bg-blue-800/70 border border-blue-700 rounded-full px-3 py-1 text-[11px] font-semibold mb-4"
-            >
-                <span
-                    id="statusDot"
-                    class="w-2 h-2 rounded-full bg-yellow-400"
-                ></span>
+                    <input
+                        id="searchInput"
+                        type="text"
+                        placeholder="Search vessel name, code, voyage, shipping line, type..."
+                        class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400"
+                        oninput="applySearch()"
+                    >
 
-                <span id="statusText">
-                    Connecting...
+                </div>
+
+                <button
+                    onclick="clearSearch()"
+                    class="px-5 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 transition"
+                >
+                    <i class="fa-solid fa-xmark mr-2"></i>
+                    Clear
+                </button>
+
+            </div>
+
+            <div class="mt-3 text-sm text-slate-500">
+                <span id="searchInfo">
+                    Showing all vessels
                 </span>
             </div>
 
+        </section>
 
-            <!-- TITLE -->
 
-            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">
+        <!-- STATISTICS -->
+        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
 
-                Pelindo TPKS
+            <div class="glass rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-slate-500">
+                    Vessel Alongside
+                </p>
 
-            </h2>
+                <p
+                    id="countAlongside"
+                    class="text-3xl font-bold mt-2"
+                >
+                    0
+                </p>
+            </div>
 
-            <p class="mt-2 text-blue-200 text-sm">
 
-                Vessel Schedule & Operational Monitoring
+            <div class="glass rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-slate-500">
+                    Confirmed Vessel
+                </p>
 
+                <p
+                    id="countConfirmed"
+                    class="text-3xl font-bold mt-2"
+                >
+                    0
+                </p>
+            </div>
+
+
+            <div class="glass rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-slate-500">
+                    Open Stack
+                </p>
+
+                <p
+                    id="countOpenStack"
+                    class="text-3xl font-bold mt-2"
+                >
+                    0
+                </p>
+            </div>
+
+
+            <div class="glass rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-slate-500">
+                    Vessel Schedule
+                </p>
+
+                <p
+                    id="countSchedule"
+                    class="text-3xl font-bold mt-2"
+                >
+                    0
+                </p>
+            </div>
+
+
+            <div class="glass rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-slate-500">
+                    Vessel History
+                </p>
+
+                <p
+                    id="countHistory"
+                    class="text-3xl font-bold mt-2"
+                >
+                    0
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- DATA SECTIONS -->
+        <div id="sectionsContainer"></div>
+
+
+        <!-- FOOTER -->
+        <footer class="mt-8 pb-8 text-center text-sm text-slate-500">
+
+            <p>
+                Source:
+                <strong>Pelindo TPKS WebAccess</strong>
             </p>
 
+            <p class="mt-1">
+                Last update:
+                <span id="lastUpdate">-</span>
+            </p>
 
-            <!-- SEARCH -->
+        </footer>
 
-            <div class="mt-7">
+    </main>
 
-                <div class="relative">
-
-                    <div
-                        class="flex items-center bg-white rounded-xl shadow-xl overflow-hidden"
-                    >
-
-                        <div class="pl-4 text-slate-400">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </div>
-
-                        <input
-                            id="searchInput"
-                            type="text"
-                            autocomplete="off"
-                            placeholder="Search vessel, voyage, shipping line, vessel ID..."
-                            class="w-full px-4 py-4 text-sm text-slate-800 outline-none"
-                        >
-
-                        <button
-                            id="clearSearch"
-                            type="button"
-                            class="hidden px-5 text-slate-400 hover:text-slate-700"
-                        >
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div class="mt-3 text-[11px] text-blue-200">
-
-                    Search berlaku untuk seluruh Vessel Alongside,
-                    Confirmed Vessel, Open Stack, Schedule, dan History.
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     SUMMARY
-========================================================= -->
-
-<section class="max-w-[1600px] mx-auto px-4 lg:px-6 -mt-7 relative z-10">
-
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-
-
-        <!-- ALONGSIDE -->
-
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
-
-            <div class="flex justify-between items-start">
-
-                <div>
-
-                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-500">
-                        Vessel Alongside
-                    </p>
-
-                    <p
-                        id="countAlongside"
-                        class="text-2xl font-extrabold text-blue-700 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                    <i class="fa-solid fa-anchor"></i>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- CONFIRMED -->
-
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
-
-            <div class="flex justify-between items-start">
-
-                <div>
-
-                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-500">
-                        Confirmed
-                    </p>
-
-                    <p
-                        id="countConfirmed"
-                        class="text-2xl font-extrabold text-emerald-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- OPEN STACK -->
-
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
-
-            <div class="flex justify-between items-start">
-
-                <div>
-
-                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-500">
-                        Open Stack
-                    </p>
-
-                    <p
-                        id="countOpenStack"
-                        class="text-2xl font-extrabold text-amber-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-                <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                    <i class="fa-solid fa-box-open"></i>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- SCHEDULE -->
-
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
-
-            <div class="flex justify-between items-start">
-
-                <div>
-
-                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-500">
-                        Schedule
-                    </p>
-
-                    <p
-                        id="countSchedule"
-                        class="text-2xl font-extrabold text-indigo-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                    <i class="fa-solid fa-calendar-days"></i>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- HISTORY -->
-
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
-
-            <div class="flex justify-between items-start">
-
-                <div>
-
-                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-500">
-                        History
-                    </p>
-
-                    <p
-                        id="countHistory"
-                        class="text-2xl font-extrabold text-slate-700 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     MAIN
-========================================================= -->
-
-<main class="max-w-[1600px] mx-auto px-4 lg:px-6 py-8 space-y-7">
-
-
-<!-- =========================================================
-     VESSEL ALONGSIDE
-========================================================= -->
-
-<section
-    id="alongside"
-    class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden"
->
-
-    <div class="p-5 border-b border-slate-200">
-
-        <div class="flex flex-wrap items-center justify-between gap-3">
-
-            <div>
-
-                <div class="flex items-center gap-2">
-
-                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-
-                    <h3 class="font-bold text-slate-900">
-                        Vessel Alongside
-                    </h3>
-
-                </div>
-
-                <p class="text-xs text-slate-500 mt-1">
-                    Kapal yang sedang atau telah berada di area alongside.
-                </p>
-
-            </div>
-
-            <span
-                id="sectionCountAlongside"
-                class="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700"
-            >
-                0 vessel
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <div class="table-wrapper overflow-x-auto">
-
-        <table class="w-full min-w-[900px] text-xs">
-
-            <thead class="bg-slate-50">
-
-                <tr class="text-left text-slate-500 uppercase tracking-wider">
-
-                    <th class="px-4 py-3">Vessel</th>
-                    <th class="px-4 py-3">Voyage</th>
-                    <th class="px-4 py-3">Type</th>
-                    <th class="px-4 py-3">ETA</th>
-                    <th class="px-4 py-3">ATB</th>
-                    <th class="px-4 py-3">ETD</th>
-                    <th class="px-4 py-3">ATD</th>
-                    <th class="px-4 py-3">Vessel ID</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody
-                id="tableAlongside"
-                class="divide-y divide-slate-100"
-            ></tbody>
-
-        </table>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     CONFIRMED VESSEL
-========================================================= -->
-
-<section
-    id="confirmed"
-    class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden"
->
-
-    <div class="p-5 border-b border-slate-200">
-
-        <div class="flex flex-wrap items-center justify-between gap-3">
-
-            <div>
-
-                <div class="flex items-center gap-2">
-
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-
-                    <h3 class="font-bold text-slate-900">
-                        Confirmed Vessel
-                    </h3>
-
-                </div>
-
-                <p class="text-xs text-slate-500 mt-1">
-                    Vessel yang telah dikonfirmasi dalam planning TPKS.
-                </p>
-
-            </div>
-
-            <span
-                id="sectionCountConfirmed"
-                class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700"
-            >
-                0 vessel
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <div class="table-wrapper overflow-x-auto">
-
-        <table class="w-full min-w-[1350px] text-xs">
-
-            <thead class="bg-slate-50">
-
-                <tr class="text-left text-slate-500 uppercase tracking-wider">
-
-                    <th class="px-4 py-3">Vessel</th>
-                    <th class="px-4 py-3">Voyage</th>
-                    <th class="px-4 py-3">Shipping Line</th>
-                    <th class="px-4 py-3">Type</th>
-                    <th class="px-4 py-3">ETA</th>
-                    <th class="px-4 py-3">ETB</th>
-                    <th class="px-4 py-3">ETD</th>
-                    <th class="px-4 py-3">Open Stack</th>
-                    <th class="px-4 py-3">Closing</th>
-                    <th class="px-4 py-3">B/O/A</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody
-                id="tableConfirmed"
-                class="divide-y divide-slate-100"
-            ></tbody>
-
-        </table>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     OPEN STACK
-========================================================= -->
-
-<section
-    id="openstack"
-    class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden"
->
-
-    <div class="p-5 border-b border-slate-200">
-
-        <div class="flex flex-wrap items-center justify-between gap-3">
-
-            <div>
-
-                <div class="flex items-center gap-2">
-
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-
-                    <h3 class="font-bold text-slate-900">
-                        Open Stack
-                    </h3>
-
-                </div>
-
-                <p class="text-xs text-slate-500 mt-1">
-                    Vessel dengan periode open stack yang tersedia.
-                </p>
-
-            </div>
-
-            <span
-                id="sectionCountOpenStack"
-                class="text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-700"
-            >
-                0 vessel
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <div class="table-wrapper overflow-x-auto">
-
-        <table class="w-full min-w-[1500px] text-xs">
-
-            <thead class="bg-slate-50">
-
-                <tr class="text-left text-slate-500 uppercase tracking-wider">
-
-                    <th class="px-4 py-3">Vessel</th>
-                    <th class="px-4 py-3">Voyage</th>
-                    <th class="px-4 py-3">Shipping Line</th>
-                    <th class="px-4 py-3">Type</th>
-                    <th class="px-4 py-3">ETA</th>
-                    <th class="px-4 py-3">ETB</th>
-                    <th class="px-4 py-3">ETD</th>
-                    <th class="px-4 py-3">Open Stack</th>
-                    <th class="px-4 py-3">Closing</th>
-                    <th class="px-4 py-3">B/O/A</th>
-                    <th class="px-4 py-3">Export</th>
-                    <th class="px-4 py-3">Import</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody
-                id="tableOpenStack"
-                class="divide-y divide-slate-100"
-            ></tbody>
-
-        </table>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     VESSEL SCHEDULE
-========================================================= -->
-
-<section
-    id="schedule"
-    class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden"
->
-
-    <div class="p-5 border-b border-slate-200">
-
-        <div class="flex flex-wrap items-center justify-between gap-3">
-
-            <div>
-
-                <div class="flex items-center gap-2">
-
-                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
-
-                    <h3 class="font-bold text-slate-900">
-                        Vessel Schedule
-                    </h3>
-
-                </div>
-
-                <p class="text-xs text-slate-500 mt-1">
-                    Jadwal kapal yang akan datang.
-                </p>
-
-            </div>
-
-            <span
-                id="sectionCountSchedule"
-                class="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700"
-            >
-                0 vessel
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <div class="table-wrapper overflow-x-auto">
-
-        <table class="w-full min-w-[800px] text-xs">
-
-            <thead class="bg-slate-50">
-
-                <tr class="text-left text-slate-500 uppercase tracking-wider">
-
-                    <th class="px-4 py-3">Vessel</th>
-                    <th class="px-4 py-3">Voyage</th>
-                    <th class="px-4 py-3">ETB</th>
-                    <th class="px-4 py-3">Vessel ID</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody
-                id="tableSchedule"
-                class="divide-y divide-slate-100"
-            ></tbody>
-
-        </table>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     VESSEL HISTORY
-========================================================= -->
-
-<section
-    id="history"
-    class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden"
->
-
-    <div class="p-5 border-b border-slate-200">
-
-        <div class="flex flex-wrap items-center justify-between gap-3">
-
-            <div>
-
-                <div class="flex items-center gap-2">
-
-                    <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
-
-                    <h3 class="font-bold text-slate-900">
-                        Vessel History
-                    </h3>
-
-                </div>
-
-                <p class="text-xs text-slate-500 mt-1">
-                    Riwayat vessel yang telah beroperasi.
-                </p>
-
-            </div>
-
-            <span
-                id="sectionCountHistory"
-                class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700"
-            >
-                0 vessel
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <div class="table-wrapper overflow-x-auto">
-
-        <table class="w-full min-w-[1400px] text-xs">
-
-            <thead class="bg-slate-50">
-
-                <tr class="text-left text-slate-500 uppercase tracking-wider">
-
-                    <th class="px-4 py-3">Vessel</th>
-                    <th class="px-4 py-3">Voyage</th>
-                    <th class="px-4 py-3">Shipping Line</th>
-                    <th class="px-4 py-3">Type</th>
-                    <th class="px-4 py-3">ETB</th>
-                    <th class="px-4 py-3">ATB</th>
-                    <th class="px-4 py-3">ATD</th>
-                    <th class="px-4 py-3">Export</th>
-                    <th class="px-4 py-3">Import</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody
-                id="tableHistory"
-                class="divide-y divide-slate-100"
-            ></tbody>
-
-        </table>
-
-    </div>
-
-</section>
-
-</main>
-
-
-<!-- =========================================================
-     FOOTER
-========================================================= -->
-
-<footer class="bg-slate-950 text-slate-400 mt-10">
-
-    <div class="max-w-[1600px] mx-auto px-4 lg:px-6 py-6">
-
-        <div class="flex flex-col md:flex-row justify-between gap-3 text-xs">
-
-            <div>
-
-                <p class="font-semibold text-slate-200">
-                    Logistics Hub Portal
-                </p>
-
-                <p class="mt-1">
-                    Pelindo TPKS Vessel Monitoring
-                </p>
-
-            </div>
-
-            <div class="md:text-right">
-
-                <p id="footerUpdate">
-                    Last update: -
-                </p>
-
-                <p class="mt-1 text-slate-500">
-                    Data source: Pelindo TPKS WebAccess
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</footer>
-
-
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
 
 <script>
 
-const DATA_URL = "data.json";
-
-const REFRESH_INTERVAL = 5 * 60 * 1000;
-
-
-/* ============================================================
-   DATA
-============================================================ */
+const DATA_FILE = "data.json";
 
 let DATA = {
-
+    updatedAt: "",
+    source: "",
     vesselAlongside: [],
     confirmedVessel: [],
     openStack: [],
     vesselSchedule: [],
     vesselHistory: [],
-
-    lastUpdated: "",
-    source: ""
-
+    counts: {}
 };
 
 
-/* ============================================================
-   HELPERS
-============================================================ */
+const SECTION_CONFIG = [
 
-function escapeHTML(value) {
+    {
+        key: "vesselAlongside",
+        title: "Vessel Alongside",
+        icon: "fa-anchor",
+        description: "Vessels currently alongside."
+    },
 
-    return String(value ?? "")
+    {
+        key: "confirmedVessel",
+        title: "Confirmed Vessel",
+        icon: "fa-circle-check",
+        description: "Confirmed vessel information."
+    },
+
+    {
+        key: "openStack",
+        title: "Open Stack",
+        icon: "fa-box-open",
+        description: "Vessels with open stack information."
+    },
+
+    {
+        key: "vesselSchedule",
+        title: "Vessel Schedule",
+        icon: "fa-calendar-days",
+        description: "Upcoming vessel schedule."
+    },
+
+    {
+        key: "vesselHistory",
+        title: "Vessel History",
+        icon: "fa-clock-rotate-left",
+        description: "Historical vessel movements."
+    }
+
+];
+
+
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
 }
 
 
-function display(value) {
+function formatNumber(value) {
 
     if (
         value === null ||
         value === undefined ||
         value === ""
     ) {
-        return "-";
+        return "0";
     }
 
-    return escapeHTML(value);
+    const number = Number(value);
+
+    if (Number.isNaN(number)) {
+        return escapeHtml(value);
+    }
+
+    return number.toLocaleString("en-US");
+}
+
+
+function normalizeSearchValue(value) {
+
+    return String(value ?? "")
+        .toLowerCase()
+        .trim();
 
 }
 
 
-function vesselName(item) {
+function vesselMatches(vessel, query) {
 
-    const name =
-        display(item.vesselName || "-");
+    if (!query) {
+        return true;
+    }
 
-    if (!item.detailUrl) {
+    const searchable = Object.values(vessel)
+        .map(value => normalizeSearchValue(value))
+        .join(" ");
+
+    return searchable.includes(query);
+}
+
+
+function renderTable(items) {
+
+    if (!items || items.length === 0) {
 
         return `
-            <span class="font-bold text-slate-800">
-                ${name}
-            </span>
+            <div class="p-8 text-center text-slate-500">
+                <i class="fa-solid fa-database text-3xl mb-3"></i>
+
+                <p>
+                    No data available.
+                </p>
+            </div>
         `;
 
     }
 
+
     return `
-        <a
-            href="${escapeHTML(item.detailUrl)}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="font-bold text-blue-700 hover:text-blue-900 hover:underline"
-        >
-            ${name}
-            <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-1"></i>
-        </a>
+
+        <div class="table-wrapper">
+
+            <table class="w-full text-sm">
+
+                <thead class="bg-slate-100 border-b border-slate-200">
+
+                    <tr>
+
+                        <th class="px-4 py-3 text-left">
+                            Vessel
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            Code
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            Voyage
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            Shipping Line
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            Type
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            ETA
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            ETB
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            ATB
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            ETD
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            ATD
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            Open Stack
+                        </th>
+
+                        <th class="px-4 py-3 text-left">
+                            Closing
+                        </th>
+
+                        <th class="px-4 py-3 text-right">
+                            Booking
+                        </th>
+
+                        <th class="px-4 py-3 text-right">
+                            Open
+                        </th>
+
+                        <th class="px-4 py-3 text-right">
+                            Actual
+                        </th>
+
+                        <th class="px-4 py-3 text-right">
+                            Export
+                        </th>
+
+                        <th class="px-4 py-3 text-right">
+                            Import
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody class="divide-y divide-slate-100">
+
+                    ${items.map(vessel => `
+
+                        <tr class="hover:bg-slate-50 transition">
+
+                            <td class="px-4 py-3 font-semibold text-slate-900">
+                                ${escapeHtml(vessel.vesselName)}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.vesselCode)}
+                            </td>
+
+                            <td class="px-4 py-3 font-medium">
+                                ${escapeHtml(vessel.voyage)}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.shippingLine)}
+                            </td>
+
+                            <td class="px-4 py-3">
+
+                                ${
+                                    vessel.type
+                                    ? `
+                                        <span class="px-2 py-1 rounded-md bg-slate-100">
+                                            ${escapeHtml(vessel.type)}
+                                        </span>
+                                      `
+                                    : "-"
+                                }
+
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.eta)}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.etb)}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.atb)}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.etd)}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.atd)}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.openStack)}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                ${escapeHtml(vessel.closingTime)}
+                            </td>
+
+                            <td class="px-4 py-3 text-right">
+                                ${formatNumber(vessel.booking)}
+                            </td>
+
+                            <td class="px-4 py-3 text-right">
+                                ${formatNumber(vessel.open)}
+                            </td>
+
+                            <td class="px-4 py-3 text-right">
+                                ${formatNumber(vessel.actual)}
+                            </td>
+
+                            <td class="px-4 py-3 text-right">
+                                ${formatNumber(vessel.export)}
+                            </td>
+
+                            <td class="px-4 py-3 text-right">
+                                ${formatNumber(vessel.import)}
+                            </td>
+
+                        </tr>
+
+                    `).join("")}
+
+                </tbody>
+
+            </table>
+
+        </div>
     `;
 
 }
 
 
-function boxTeus(box, teus) {
+function renderSections() {
 
-    if (
-        (box === undefined || box === null || box === "") &&
-        (teus === undefined || teus === null || teus === "")
-    ) {
-        return "-";
-    }
+    const container =
+        document.getElementById("sectionsContainer");
 
-    return `
-        <span class="font-semibold">
-            ${display(box)}
-        </span>
-        <span class="text-slate-400">
-            /
-        </span>
-        <span class="text-slate-500">
-            ${display(teus)}
-        </span>
-    `;
-
-}
+    const query =
+        normalizeSearchValue(
+            document.getElementById("searchInput").value
+        );
 
 
-function bookingActual(item) {
-
-    return `
-        <span class="font-semibold">
-            ${display(item.booking)}
-        </span>
-        <span class="text-slate-400">/</span>
-        <span class="text-emerald-600 font-semibold">
-            ${display(item.open)}
-        </span>
-        <span class="text-slate-400">/</span>
-        <span class="text-blue-600 font-semibold">
-            ${display(item.actual)}
-        </span>
-    `;
-
-}
+    let totalVisible = 0;
 
 
-function emptyRow(colspan, message) {
+    container.innerHTML = SECTION_CONFIG.map(section => {
 
-    return `
-        <tr>
+        const source =
+            Array.isArray(DATA[section.key])
+                ? DATA[section.key]
+                : [];
 
-            <td
-                colspan="${colspan}"
-                class="px-4 py-10 text-center text-slate-400"
-            >
 
-                <div class="flex flex-col items-center gap-2">
+        const filtered =
+            source.filter(vessel =>
+                vesselMatches(vessel, query)
+            );
 
-                    <i class="fa-solid fa-inbox text-2xl"></i>
 
-                    <span>
-                        ${escapeHTML(message)}
-                    </span>
+        totalVisible += filtered.length;
+
+
+        return `
+
+            <section class="section-card glass rounded-2xl shadow-sm mb-6 overflow-hidden">
+
+                <div class="px-5 py-4 border-b border-slate-200 bg-white">
+
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+                        <div class="flex items-center gap-3">
+
+                            <div
+                                class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center"
+                            >
+                                <i class="fa-solid ${section.icon}"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="font-bold text-lg">
+                                    ${section.title}
+                                </h2>
+
+                                <p class="text-sm text-slate-500">
+                                    ${section.description}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-sm">
+
+                            <span class="px-3 py-1.5 rounded-lg bg-slate-100">
+
+                                ${filtered.length}
+
+                                ${
+                                    query &&
+                                    filtered.length !== source.length
+                                    ? ` / ${source.length}`
+                                    : ""
+                                }
+
+                                records
+
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </td>
 
-        </tr>
-    `;
+                ${renderTable(filtered)}
+
+            </section>
+
+        `;
+
+    }).join("");
+
+
+    const searchInfo =
+        document.getElementById("searchInfo");
+
+
+    if (query) {
+
+        searchInfo.textContent =
+            `Search "${query}" — ${totalVisible} matching records`;
+
+    } else {
+
+        searchInfo.textContent =
+            "Showing all vessels";
+
+    }
 
 }
 
 
-/* ============================================================
-   TABLE RENDERING
-============================================================ */
+function updateStatistics() {
 
-function renderAlongside(items) {
+    const counts = DATA.counts || {};
 
-    const table =
-        document.getElementById("tableAlongside");
 
-    if (!items.length) {
+    document.getElementById("countAlongside").textContent =
+        formatNumber(
+            Array.isArray(DATA.vesselAlongside)
+                ? DATA.vesselAlongside.length
+                : counts.vesselAlongside || 0
+        );
 
-        table.innerHTML =
-            emptyRow(
-                8,
-                "Tidak ada data Vessel Alongside."
-            );
+
+    document.getElementById("countConfirmed").textContent =
+        formatNumber(
+            Array.isArray(DATA.confirmedVessel)
+                ? DATA.confirmedVessel.length
+                : counts.confirmedVessel || 0
+        );
+
+
+    document.getElementById("countOpenStack").textContent =
+        formatNumber(
+            Array.isArray(DATA.openStack)
+                ? DATA.openStack.length
+                : counts.openStack || 0
+        );
+
+
+    document.getElementById("countSchedule").textContent =
+        formatNumber(
+            Array.isArray(DATA.vesselSchedule)
+                ? DATA.vesselSchedule.length
+                : counts.vesselSchedule || 0
+        );
+
+
+    document.getElementById("countHistory").textContent =
+        formatNumber(
+            Array.isArray(DATA.vesselHistory)
+                ? DATA.vesselHistory.length
+                : counts.vesselHistory || 0
+        );
+
+}
+
+
+function updateLastUpdate() {
+
+    const element =
+        document.getElementById("lastUpdate");
+
+
+    if (!DATA.updatedAt) {
+
+        element.textContent = "-";
+        return;
+
+    }
+
+
+    const date =
+        new Date(DATA.updatedAt);
+
+
+    if (Number.isNaN(date.getTime())) {
+
+        element.textContent =
+            DATA.updatedAt;
 
         return;
 
     }
 
-    table.innerHTML =
-        items.map(item => `
 
-            <tr class="hover:bg-slate-50">
-
-                <td class="px-4 py-3">
-                    ${vesselName(item)}
-                </td>
-
-                <td class="px-4 py-3 font-medium text-blue-700">
-                    ${display(item.voyage)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.type)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.eta)}
-                </td>
-
-                <td class="px-4 py-3 font-semibold">
-                    ${display(item.atb)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.etd)}
-                </td>
-
-                <td class="px-4 py-3 font-semibold">
-                    ${display(item.atd)}
-                </td>
-
-                <td class="px-4 py-3 text-slate-500">
-                    ${display(item.vesId)}
-                </td>
-
-            </tr>
-
-        `).join("");
-
-}
-
-
-function renderConfirmed(items) {
-
-    const table =
-        document.getElementById("tableConfirmed");
-
-    if (!items.length) {
-
-        table.innerHTML =
-            emptyRow(
-                10,
-                "Tidak ada data Confirmed Vessel."
-            );
-
-        return;
-
-    }
-
-    table.innerHTML =
-        items.map(item => `
-
-            <tr class="hover:bg-slate-50">
-
-                <td class="px-4 py-3">
-                    ${vesselName(item)}
-                </td>
-
-                <td class="px-4 py-3 font-medium text-blue-700">
-                    ${display(item.voyage)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.shippingLine)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.type)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.eta)}
-                </td>
-
-                <td class="px-4 py-3 font-semibold text-amber-600">
-                    ${display(item.etb)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.etd)}
-                </td>
-
-                <td class="px-4 py-3 text-emerald-600 font-medium">
-                    ${display(item.openStack)}
-                </td>
-
-                <td class="px-4 py-3 text-rose-600 font-medium">
-                    ${display(item.closingTime)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${bookingActual(item)}
-                </td>
-
-            </tr>
-
-        `).join("");
-
-}
-
-
-function renderOpenStack(items) {
-
-    const table =
-        document.getElementById("tableOpenStack");
-
-    if (!items.length) {
-
-        table.innerHTML =
-            emptyRow(
-                12,
-                "Tidak ada data Open Stack."
-            );
-
-        return;
-
-    }
-
-    table.innerHTML =
-        items.map(item => `
-
-            <tr class="hover:bg-slate-50">
-
-                <td class="px-4 py-3">
-                    ${vesselName(item)}
-                </td>
-
-                <td class="px-4 py-3 font-medium text-blue-700">
-                    ${display(item.voyage)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.shippingLine)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.type)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.eta)}
-                </td>
-
-                <td class="px-4 py-3 font-semibold text-amber-600">
-                    ${display(item.etb)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.etd)}
-                </td>
-
-                <td class="px-4 py-3 text-emerald-600 font-medium">
-                    ${display(item.openStack)}
-                </td>
-
-                <td class="px-4 py-3 text-rose-600 font-medium">
-                    ${display(item.closingTime)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${bookingActual(item)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${boxTeus(
-                        item.export,
-                        item.exportTeus
-                    )}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${boxTeus(
-                        item.import,
-                        item.importTeus
-                    )}
-                </td>
-
-            </tr>
-
-        `).join("");
-
-}
-
-
-function renderSchedule(items) {
-
-    const table =
-        document.getElementById("tableSchedule");
-
-    if (!items.length) {
-
-        table.innerHTML =
-            emptyRow(
-                4,
-                "Tidak ada data Vessel Schedule."
-            );
-
-        return;
-
-    }
-
-    table.innerHTML =
-        items.map(item => `
-
-            <tr class="hover:bg-slate-50">
-
-                <td class="px-4 py-3">
-                    ${vesselName(item)}
-                </td>
-
-                <td class="px-4 py-3 font-medium text-blue-700">
-                    ${display(item.voyage)}
-                </td>
-
-                <td class="px-4 py-3 font-semibold text-indigo-600">
-                    ${display(item.etb)}
-                </td>
-
-                <td class="px-4 py-3 text-slate-500">
-                    ${display(item.vesId)}
-                </td>
-
-            </tr>
-
-        `).join("");
-
-}
-
-
-function renderHistory(items) {
-
-    const table =
-        document.getElementById("tableHistory");
-
-    if (!items.length) {
-
-        table.innerHTML =
-            emptyRow(
-                9,
-                "Tidak ada data Vessel History."
-            );
-
-        return;
-
-    }
-
-    table.innerHTML =
-        items.map(item => `
-
-            <tr class="hover:bg-slate-50">
-
-                <td class="px-4 py-3">
-                    ${vesselName(item)}
-                </td>
-
-                <td class="px-4 py-3 font-medium text-blue-700">
-                    ${display(item.voyage)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.shippingLine)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.type)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.etb)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${display(item.atb)}
-                </td>
-
-                <td class="px-4 py-3 font-semibold">
-                    ${display(item.atd)}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${boxTeus(
-                        item.export,
-                        item.exportTeus
-                    )}
-                </td>
-
-                <td class="px-4 py-3">
-                    ${boxTeus(
-                        item.import,
-                        item.importTeus
-                    )}
-                </td>
-
-            </tr>
-
-        `).join("");
-
-}
-
-
-/* ============================================================
-   COUNTERS
-============================================================ */
-
-function updateCounters(data) {
-
-    const values = {
-
-        countAlongside:
-            data.vesselAlongside.length,
-
-        countConfirmed:
-            data.confirmedVessel.length,
-
-        countOpenStack:
-            data.openStack.length,
-
-        countSchedule:
-            data.vesselSchedule.length,
-
-        countHistory:
-            data.vesselHistory.length
-
-    };
-
-
-    Object.entries(values).forEach(
-        ([id, value]) => {
-
-            const element =
-                document.getElementById(id);
-
-            if (element) {
-                element.textContent = value;
+    element.textContent =
+        date.toLocaleString(
+            "id-ID",
+            {
+                dateStyle: "medium",
+                timeStyle: "medium"
             }
-
-        }
-    );
-
-
-    document.getElementById(
-        "sectionCountAlongside"
-    ).textContent =
-        `${data.vesselAlongside.length} vessel`;
-
-
-    document.getElementById(
-        "sectionCountConfirmed"
-    ).textContent =
-        `${data.confirmedVessel.length} vessel`;
-
-
-    document.getElementById(
-        "sectionCountOpenStack"
-    ).textContent =
-        `${data.openStack.length} vessel`;
-
-
-    document.getElementById(
-        "sectionCountSchedule"
-    ).textContent =
-        `${data.vesselSchedule.length} vessel`;
-
-
-    document.getElementById(
-        "sectionCountHistory"
-    ).textContent =
-        `${data.vesselHistory.length} vessel`;
-
-}
-
-
-/* ============================================================
-   RENDER ALL
-============================================================ */
-
-function renderAll(data) {
-
-    renderAlongside(
-        data.vesselAlongside
-    );
-
-    renderConfirmed(
-        data.confirmedVessel
-    );
-
-    renderOpenStack(
-        data.openStack
-    );
-
-    renderSchedule(
-        data.vesselSchedule
-    );
-
-    renderHistory(
-        data.vesselHistory
-    );
-
-    updateCounters(data);
-
-}
-
-
-/* ============================================================
-   SEARCH
-============================================================ */
-
-function searchableText(item) {
-
-    return Object.values(item)
-        .filter(
-            value =>
-                value !== null &&
-                value !== undefined
-        )
-        .join(" ")
-        .toLowerCase();
-
-}
-
-
-function filterArray(array, query) {
-
-    if (!query) {
-        return array;
-    }
-
-    return array.filter(
-        item =>
-            searchableText(item)
-                .includes(query)
-    );
-
-}
-
-
-function performSearch() {
-
-    const input =
-        document.getElementById(
-            "searchInput"
         );
 
-    const query =
-        input.value
-            .trim()
-            .toLowerCase();
-
-
-    const filteredData = {
-
-        vesselAlongside:
-            filterArray(
-                DATA.vesselAlongside,
-                query
-            ),
-
-        confirmedVessel:
-            filterArray(
-                DATA.confirmedVessel,
-                query
-            ),
-
-        openStack:
-            filterArray(
-                DATA.openStack,
-                query
-            ),
-
-        vesselSchedule:
-            filterArray(
-                DATA.vesselSchedule,
-                query
-            ),
-
-        vesselHistory:
-            filterArray(
-                DATA.vesselHistory,
-                query
-            )
-
-    };
-
-
-    renderAll(filteredData);
-
-
-    const clearButton =
-        document.getElementById(
-            "clearSearch"
-        );
-
-
-    clearButton.classList.toggle(
-        "hidden",
-        !input.value
-    );
-
 }
 
 
-/* ============================================================
-   CONNECTION STATUS
-============================================================ */
-
-function setStatus(
-    status,
-    message
-) {
+function updateConnectionStatus(success) {
 
     const dot =
-        document.getElementById(
-            "statusDot"
-        );
+        document.getElementById("statusDot");
 
     const text =
-        document.getElementById(
-            "statusText"
-        );
+        document.getElementById("statusText");
 
 
-    text.textContent = message;
+    if (success) {
 
+        dot.className =
+            "status-dot bg-green-400";
 
-    dot.className =
-        "w-2 h-2 rounded-full";
+        text.textContent =
+            "Connected";
 
+    } else {
 
-    if (status === "success") {
+        dot.className =
+            "status-dot bg-red-400";
 
-        dot.classList.add(
-            "bg-emerald-400"
-        );
-
-    }
-
-    else if (status === "error") {
-
-        dot.classList.add(
-            "bg-red-400"
-        );
-
-    }
-
-    else {
-
-        dot.classList.add(
-            "bg-yellow-400"
-        );
+        text.textContent =
+            "Connection error";
 
     }
 
 }
 
 
-/* ============================================================
-   LOAD DATA
-============================================================ */
-
-async function loadData() {
+async function loadData(manual = false) {
 
     try {
 
-        setStatus(
-            "loading",
-            "Updating data..."
-        );
+        if (manual) {
+
+            document.getElementById("statusText")
+                .textContent = "Refreshing...";
+
+        }
 
 
         const response =
             await fetch(
-                `${DATA_URL}?t=${Date.now()}`,
+                `${DATA_FILE}?t=${Date.now()}`,
                 {
                     cache: "no-store"
                 }
@@ -1598,88 +847,39 @@ async function loadData() {
 
 
         DATA = {
-
+            updatedAt: json.updatedAt || "",
+            source: json.source || "",
             vesselAlongside:
-                Array.isArray(
-                    json.vesselAlongside
-                )
+                Array.isArray(json.vesselAlongside)
                     ? json.vesselAlongside
                     : [],
-
             confirmedVessel:
-                Array.isArray(
-                    json.confirmedVessel
-                )
+                Array.isArray(json.confirmedVessel)
                     ? json.confirmedVessel
                     : [],
-
             openStack:
-                Array.isArray(
-                    json.openStack
-                )
+                Array.isArray(json.openStack)
                     ? json.openStack
                     : [],
-
             vesselSchedule:
-                Array.isArray(
-                    json.vesselSchedule
-                )
+                Array.isArray(json.vesselSchedule)
                     ? json.vesselSchedule
                     : [],
-
             vesselHistory:
-                Array.isArray(
-                    json.vesselHistory
-                )
+                Array.isArray(json.vesselHistory)
                     ? json.vesselHistory
                     : [],
-
-            lastUpdated:
-                json.lastUpdated || "",
-
-            source:
-                json.source || ""
-
+            counts: json.counts || {}
         };
 
 
-        renderAll(DATA);
+        updateStatistics();
+        updateLastUpdate();
+        renderSections();
+        updateConnectionStatus(true);
 
 
-        // Re-apply current search after refresh.
-        const input =
-            document.getElementById(
-                "searchInput"
-            );
-
-        if (input.value.trim()) {
-
-            performSearch();
-
-        }
-
-
-        setStatus(
-            "success",
-            "Live Data Connected"
-        );
-
-
-        const updateText =
-            DATA.lastUpdated
-                ? `Last update: ${DATA.lastUpdated}`
-                : "Last update: -";
-
-
-        document.getElementById(
-            "footerUpdate"
-        ).textContent =
-            updateText;
-
-
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Failed to load data.json:",
@@ -1687,74 +887,71 @@ async function loadData() {
         );
 
 
-        setStatus(
-            "error",
-            "Data Update Failed"
-        );
+        updateConnectionStatus(false);
 
 
         document.getElementById(
-            "footerUpdate"
-        ).textContent =
-            "Failed to load data.json";
+            "sectionsContainer"
+        ).innerHTML = `
 
+            <div class="glass rounded-2xl p-10 text-center">
+
+                <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4"></i>
+
+                <h2 class="text-xl font-bold mb-2">
+                    Failed to load data
+                </h2>
+
+                <p class="text-slate-500">
+                    ${escapeHtml(error.message)}
+                </p>
+
+            </div>
+
+        `;
 
     }
 
 }
 
 
-/* ============================================================
-   EVENTS
-============================================================ */
+function applySearch() {
 
-document
-    .getElementById("searchInput")
-    .addEventListener(
-        "input",
-        performSearch
-    );
+    renderSections();
+
+}
 
 
-document
-    .getElementById("clearSearch")
-    .addEventListener(
-        "click",
-        () => {
+function clearSearch() {
 
-            const input =
-                document.getElementById(
-                    "searchInput"
-                );
+    document.getElementById(
+        "searchInput"
+    ).value = "";
 
-            input.value = "";
+    renderSections();
 
-            performSearch();
-
-            input.focus();
-
-        }
-    );
+}
 
 
-/* ============================================================
-   INITIAL LOAD
-============================================================ */
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-loadData();
+        loadData();
 
+        /*
+         * Refresh dashboard every 5 minutes.
+         * GitHub Actions updates data.json every 30 minutes.
+         */
+        setInterval(
+            () => loadData(),
+            5 * 60 * 1000
+        );
 
-/* ============================================================
-   AUTO REFRESH
-============================================================ */
-
-setInterval(
-    loadData,
-    REFRESH_INTERVAL
+    }
 );
 
 </script>
 
 </body>
 </html>
-```
