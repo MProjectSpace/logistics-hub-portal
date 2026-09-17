@@ -1,105 +1,258 @@
-name: Pelindo TPKS Scraper
-
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "*/30 * * * *"
-  push:
-    branches:
-      - main
-    paths:
-      - "scraper.py"
-      - "requirements.txt"
-      - ".github/workflows/pelindo-scraper.yml"
-
-permissions:
-  contents: write
-
-jobs:
-  scrape:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run Pelindo scraper
-        run: |
-          python scraper.py
-
-      - name: Validate data.json
-        run: |
-          python - <<'PY'
-          import json
-
-          with open("data.json", "r", encoding="utf-8") as f:
-              data = json.load(f)
-
-          required = [
-              "vesselAlongside",
-              "confirmedVessel",
-              "openStack",
-              "vesselSchedule",
-              "vesselHistory",
-              "counts"
-          ]
-
-          missing = [
-              key for key in required
-              if key not in data
-          ]
-
-          if missing:
-              raise SystemExit(
-                  f"Missing required keys: {missing}"
-              )
-
-          print("data.json validation passed.")
-
-          for key in required[:-1]:
-              print(
-                  f"{key}: "
-                  f"{len(data[key])}"
-              )
-          PY
-
-      - name: Upload debug HTML
-        uses: actions/upload-artifact@v4
-        with:
-          name: pelindo-debug-html
-          path: debug_pelindo.html
-          if-no-files-found: warn
-
-      - name: Commit and push data.json
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add data.json
-
-          if git diff --cached --quiet; then
-            echo "No changes to data.json."
-            exit 0
-          fi
-
-          git commit -m "chore: update Pelindo TPKS data"
-
-          echo "Fetching latest main..."
-          git fetch origin main
-
-          echo "Merging latest main..."
-          git merge origin/main -X ours --no-edit
-
-          echo "Pushing updated data.json..."
-          git push origin main
+{
+  "updatedAt": "2026-09-17 23:46:26",
+  "source": "https://ibstpks.pelindo.co.id",
+  "vesselAlongside": [],
+  "confirmedVessel": [],
+  "openStack": [],
+  "vesselSchedule": [
+    {
+      "vesselName": "WAN HAI 311",
+      "vesselCode": "",
+      "voyage": "S259 / N260",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "24/09/2026 10:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "W311S259N260",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=W311S259N260&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
+      "vesselName": "SINAR BINTAN",
+      "vesselCode": "",
+      "voyage": "952S / 952N",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "24/09/2026 21:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "SIBI952S952N",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=SIBI952S952N&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
+      "vesselName": "EVER OPTIMA",
+      "vesselCode": "",
+      "voyage": "0494-050S / 0494-050N",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "24/09/2026 18:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "OPTM0494-050S0494-050N",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=OPTM0494-050S0494-050N&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
+      "vesselName": "SITC BATANGAS",
+      "vesselCode": "",
+      "voyage": "2618S / 2619N",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "01/10/2026 16:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "SIGA2618S2619N",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=SIGA2618S2619N&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
+      "vesselName": "MINAS BARU",
+      "vesselCode": "",
+      "voyage": "22/2026 / 22/2026",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "24/09/2026 00:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "MINA22/202622/2026",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=MINA22/202622/2026&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
+      "vesselName": "TELUK BINTUNI",
+      "vesselCode": "",
+      "voyage": "22/2026 / 22/2026",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "24/09/2026 00:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "TEBI22/202622/2026",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=TEBI22/202622/2026&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
+      "vesselName": "EVER CANDID",
+      "vesselCode": "",
+      "voyage": "0554-090S / 0554-090N",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "27/09/2026 14:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "CNDD0554-090S0554-090N",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=CNDD0554-090S0554-090N&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
+      "vesselName": "SMOOTH SAILING",
+      "vesselCode": "",
+      "voyage": "089S / 089N",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "23/09/2026 15:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "SMSL089S089N",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=SMSL089S089N&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
+      "vesselName": "SINAR BAJO",
+      "vesselCode": "",
+      "voyage": "136S / 136N",
+      "shippingLine": "",
+      "type": "",
+      "eta": "",
+      "etb": "27/09/2026 08:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "SIJO136S136N",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=SIJO136S136N&width=600&height=270",
+      "historyUrl": ""
+    }
+  ],
+  "vesselHistory": [
+    {
+      "vesselName": "TELUK BINTUNI",
+      "vesselCode": "TEBI065",
+      "voyage": "21/2026 / 21/2026",
+      "shippingLine": "SALAM PACIFIC INDONESIA LIN",
+      "type": "DOMESTIC",
+      "eta": "",
+      "etb": "17/09/2026 10:00",
+      "atb": "17/09/2026 10:27",
+      "etd": "",
+      "atd": "17/09/2026 22:59",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "0",
+      "exportTeus": "0",
+      "import": "225",
+      "importTeus": "450",
+      "vesId": "TEBI065",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=2711001&width=600&height=500",
+      "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=2711001&width=900&height=500"
+    }
+  ],
+  "counts": {
+    "vesselAlongside": 0,
+    "confirmedVessel": 0,
+    "openStack": 0,
+    "vesselSchedule": 9,
+    "vesselHistory": 1
+  }
+}
