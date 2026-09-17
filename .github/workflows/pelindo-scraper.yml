@@ -55,25 +55,35 @@ jobs:
               "confirmedVessel",
               "openStack",
               "vesselSchedule",
-              "vesselHistory"
+              "vesselHistory",
+              "counts"
           ]
 
-          for key in required:
-              if key not in data:
-                  raise SystemExit(
-                      f"Missing required key: {key}"
-                  )
+          missing = [
+              key for key in required
+              if key not in data
+          ]
+
+          if missing:
+              raise SystemExit(
+                  f"Missing required keys: {missing}"
+              )
 
           print("data.json validation passed.")
 
-          print(
-              "Total records:",
-              sum(
-                  len(data[key])
-                  for key in required
+          for key in required[:-1]:
+              print(
+                  f"{key}: "
+                  f"{len(data[key])}"
               )
-          )
           PY
+
+      - name: Upload debug HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: pelindo-debug-html
+          path: debug_pelindo.html
+          if-no-files-found: warn
 
       - name: Commit and push data.json
         run: |
@@ -89,8 +99,11 @@ jobs:
 
           git commit -m "chore: update Pelindo TPKS data"
 
-          echo "Syncing latest main branch..."
-          git pull --rebase origin main
+          echo "Fetching latest main..."
+          git fetch origin main
+
+          echo "Merging latest main..."
+          git merge origin/main -X ours --no-edit
 
           echo "Pushing updated data.json..."
           git push origin main
