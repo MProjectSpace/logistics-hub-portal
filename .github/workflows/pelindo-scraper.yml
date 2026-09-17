@@ -1,67 +1,41 @@
-name: Pelindo Live Scraper
+name: Pelindo TPKS Data Scraper
 
 on:
-  workflow_dispatch:
-
   schedule:
-    - cron: "*/15 * * * *"
-
-permissions:
-  contents: write
+    # Berjalan otomatis setiap 30 menit
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # Memungkinkan eksekusi manual dari tab Actions GitHub
+  push:
+    branches:
+      - main
 
 jobs:
-  scrape:
+  scrape-and-update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Setup Python
-        uses: actions/setup-python@v6
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.11'
 
-      - name: Install Playwright
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install playwright
+          pip install beautifulsoup4 requests
 
-      - name: Install Chromium
+      - name: Run Pelindo Scraper
         run: |
-          python -m playwright install --with-deps chromium
+          python scraper.py -i https://ibstpks.pelindo.co.id/webaccess/ -o data.json
 
-      - name: Run Pelindo scraper
-        run: |
-          python scraper.py
-
-      - name: Check generated data
-        run: |
-          python - <<'PY'
-          import json
-
-          with open("data.json", encoding="utf-8") as f:
-              data = json.load(f)
-
-          print("Last Updated:", data["lastUpdated"])
-          print("All Vessels:", len(data["allVessels"]))
-          print("Alongside:", len(data["vesselAlongside"]))
-          print("Confirmed:", len(data["confirmedVessel"]))
-          print("Open Stack:", len(data["openStack"]))
-          print("Schedule:", len(data["vesselSchedule"]))
-          PY
-
-      - name: Commit updated data.json
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@github.com"
-
-          git add data.json
-
-          if git diff --cached --quiet; then
-            echo "Tidak ada perubahan data."
-          else
-            git commit -m "Update Pelindo vessel data"
-            git push
-          fi
+      - name: Commit and Push Data JSON
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "auto: update Pelindo vessel live data [skip ci]"
+          file_pattern: "data.json"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com
