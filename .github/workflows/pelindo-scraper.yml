@@ -18,6 +18,7 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,15 +30,23 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
+      # 1. Install Python dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # 2. Install Playwright Chromium + system dependencies
+      - name: Install Playwright Chromium
+        run: |
+          python -m playwright install --with-deps chromium
+
+      # 3. Run scraper
       - name: Run Pelindo scraper
         run: |
           python scraper.py
 
+      # 4. Validate hasil scraper
       - name: Validate data.json
         run: |
           python - <<'PY'
@@ -74,6 +83,7 @@ jobs:
               )
           PY
 
+      # 5. Upload HTML debug jika scraper gagal/bermasalah
       - name: Upload debug HTML
         uses: actions/upload-artifact@v4
         with:
@@ -81,6 +91,7 @@ jobs:
           path: debug_pelindo.html
           if-no-files-found: warn
 
+      # 6. Commit hasil data.json
       - name: Commit and push data.json
         run: |
           git config user.name "github-actions[bot]"
