@@ -9,7 +9,6 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased">
 
-<!-- NAVBAR -->
 <header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -34,7 +33,6 @@
     </div>
 </header>
 
-<!-- HERO -->
 <section class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white py-12 px-4">
     <div class="max-w-4xl mx-auto text-center">
         <span id="liveStatus" class="bg-blue-800/80 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block border border-blue-700">
@@ -47,7 +45,6 @@
             Memuat waktu pembaruan data...
         </p>
 
-        <!-- SEARCH -->
         <div class="relative max-w-xl mx-auto">
             <div class="flex items-center bg-white rounded-xl shadow-lg p-1.5 border border-slate-200">
                 <span class="pl-3 text-slate-400">
@@ -59,7 +56,6 @@
     </div>
 </section>
 
-<!-- SUMMARY -->
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
@@ -81,9 +77,7 @@
     </div>
 </section>
 
-<!-- MAIN CONTENT -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-    <!-- SECTION 1 — VESSEL ALONGSIDE -->
     <section id="alongside" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-5 border-b border-slate-100 bg-slate-50/50">
             <h2 class="text-base font-bold text-slate-900 flex items-center">
@@ -106,7 +100,6 @@
         </div>
     </section>
 
-    <!-- SECTION 2 — CONFIRMED VESSEL -->
     <section id="confirmed" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-5 border-b border-slate-100 bg-slate-50/50">
             <h2 class="text-base font-bold text-slate-900 flex items-center">
@@ -132,7 +125,6 @@
         </div>
     </section>
 
-    <!-- SECTION 3 — OPEN STACK -->
     <section id="openstack" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-5 border-b border-slate-100 bg-slate-50/50">
             <h2 class="text-base font-bold text-slate-900 flex items-center">
@@ -159,7 +151,6 @@
         </div>
     </section>
 
-    <!-- SECTION 4 — VESSEL SCHEDULE -->
     <section id="schedule" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-5 border-b border-slate-100 bg-slate-50/50">
             <h2 class="text-base font-bold text-slate-900 flex items-center">
@@ -182,14 +173,12 @@
     </section>
 </main>
 
-<!-- FOOTER -->
 <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-12 text-center text-xs">
     <p>
         &copy; 2026 MProjectSpace (<a href="https://mprojectspace.github.io/logistics-hub-portal/" class="underline text-slate-300 hover:text-white">logistics-hub-portal</a>). Terminal Operations Live Dashboard.
     </p>
 </footer>
 
-<!-- SCRIPT -->
 <script>
 let cachedData = { vesselAlongside: [], confirmedVessel: [], openStack: [], vesselSchedule: [], lastUpdated: "", source: "" };
 
