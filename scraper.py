@@ -1,321 +1,146 @@
 #!/usr/bin/env python3
-"""
-Pelindo TPKS Webaccess Scraper for Logistics Hub Portal.
-
-Repository:
-https://github.com/mprojectspace/logistics-hub-portal
-
-Live Site:
-https://mprojectspace.github.io/logistics-hub-portal/
-"""
-
-import argparse
-import json
-import logging
-import os
-import re
-import sys
+import argparse, json, logging, os, re, sys
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
-
 from bs4 import BeautifulSoup
+import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-try:
-    import requests
-    import urllib3
+SOURCE_URL='https://ibstpks.pelindo.co.id/webaccess/'
+PORTAL_URL='https://mprojectspace.github.io/logistics-hub-portal/'
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s - %(message)s')
 
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-except ImportError:
-    requests = None
+def clean(s): return re.sub(r'\s+',' ',s or '').strip()
 
+def title_parts(s):
+    m=re.match(r'^(.*?)\s*\(([^()]*)\)\s*$',clean(s))
+    return (clean(m.group(1)),clean(m.group(2))) if m else (clean(s),'-')
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(asctime)s] %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+def blocks(container):
+    if not container: return []
+    parts=re.split(r'<hr\b[^>]*\bclass\s*=\s*["\'][^"\']*\bves_along_sched_hr\b[^"\']*["\'][^>]*>',str(container),flags=re.I)
+    return [BeautifulSoup(p,'html.parser') for p in parts if 'ves_along_sched' in p]
 
-SOURCE_URL = "https://ibstpks.pelindo.co.id/webaccess/"
-PORTAL_URL = "https://mprojectspace.github.io/logistics-hub-portal/"
-
-
-def clean_text(text: str) -> str:
-    """Normalize whitespace and trim text."""
-    if not text:
-        return ""
-    return re.sub(r"\s+", " ", text).strip()
-
-
-def split_vessel_name_and_code(title: str) -> tuple[str, str]:
-    """
-    Extract vessel name from a title such as:
-    'VESSEL NAME (CODE)'.
-
-    Returns:
-        (vessel_name, code)
-    """
-    title = clean_text(title)
-    title = re.sub(r"\[.*?\]", "", title).strip()
-
-    match = re.search(r"^(.*?)\s*\((.*?)\)\s*$", title)
-    if match:
-        return clean_text(match.group(1)), clean_text(match.group(2))
-
-    return title, ""
-
-
-def parse_vessel_block(block_soup: BeautifulSoup) -> Dict[str, Any]:
-    """Parse one vessel block from the Pelindo Webaccess HTML."""
-    divs = block_soup.find_all("div", class_="ves_along_sched")
-    if not divs:
-        return {}
-
-    data: Dict[str, Any] = {}
-
-    # The vessel title is normally contained in <b>.
-    b_texts = [
-        clean_text(tag.get_text(" ", strip=True))
-        for tag in block_soup.find_all("b")
-    ]
-    b_texts = [text for text in b_texts if text]
-
-    if b_texts:
-        raw_title = b_texts[0]
-    else:
-        # Avoid calling get_text() on a ResultSet/list.
-        raw_title = clean_text(
-            " ".join(div.get_text(" ", strip=True) for div in divs)
-        )
-
-    vessel_name, vessel_code = split_vessel_name_and_code(raw_title)
-
-    if not vessel_name:
-        return {}
-
-    data["vesselName"] = vessel_name
-    if vessel_code:
-        data["vesselCode"] = vessel_code
-
-    lines: List[str] = []
-
-    for div in divs:
-        # Navigation/detail links can contain unrelated text.
-        if div.find("a", attrs={"data-url": True}):
-            continue
-
-        text = clean_text(div.get_text(" ", strip=True))
-        if text and not text.startswith("["):
-            lines.append(text)
-
+def parse_block(block, history=False):
+    divs=block.select('div.ves_along_sched')
+    if not divs: return {}
+    title=''
+    for b in block.find_all('b'):
+        if clean(b.get_text(' ',strip=True)):
+            title=clean(b.get_text(' ',strip=True)); break
+    if not title: return {}
+    name,code=title_parts(title)
+    item={'vesselName':name,'vesselCode':code,'voyage':'-'}
+    lines=[]
+    for d in divs:
+        if d.find('a',attrs={'data-url':True}): continue
+        t=clean(d.get_text(' ',strip=True))
+        if t and not t.startswith('['): lines.append(t)
     for line in lines:
-        if "ETA :" in line:
-            data["eta"] = clean_text(line.split("ETA :", 1)[1])
+        if '/' in line and ':' not in line and 'box /' not in line.lower() and 'teus' not in line.lower():
+            item['voyage']=line; break
+    for line in lines:
+        u=line.upper()
+        for label,key in [('ETA :','eta'),('ETB :','etb'),('ATB :','atb'),('ETD :','etd'),('ATD :','atd'),('Open Stack :','openStack'),('Closing Time :','closingTime')]:
+            if u.startswith(label.upper()): item[key]=clean(line.split(':',1)[1]); break
+        if 'BOOKING / OPEN / ACTUAL :' in u:
+            p=[clean(x) for x in line.split(':',1)[1].split('/')]
+            p=(p+['-','-','-'])[:3]
+            item.update(booking=p[0],open=p[1],actual=p[2],bookingOpenActual=p)
+        elif 'EXPORT BOX / TEUS :' in u: item['exportBoxTeus']=clean(line.split(':',1)[1])
+        elif 'IMPORT BOX / TEUS :' in u: item['importBoxTeus']=clean(line.split(':',1)[1])
+    for a in block.find_all('a',attrs={'data-url':True}):
+        m=re.search(r'[?&]ves_id=([^&]+)',a.get('data-url',''))
+        if m: item['vesId']=m.group(1); break
+    for k in ('eta','etb','atb','etd','atd','openStack','closingTime','booking','open','actual','exportBoxTeus','importBoxTeus'):
+        item.setdefault(k,'-')
+    item.setdefault('bookingOpenActual',['-','-','-'])
+    if history: item['history']=True
+    return item
 
-        elif "ETB :" in line:
-            data["etb"] = clean_text(line.split("ETB :", 1)[1])
+def parse_section(container,history=False):
+    return [x for b in blocks(container) if (x:=parse_block(b,history)).get('vesselName')]
 
-        elif "ATB :" in line:
-            data["atb"] = clean_text(line.split("ATB :", 1)[1])
+def section(soup,n):
+    for sel in (f'.content_vessel._mCS_{n}',f'#mCSB_{n} .mCSB_container',f'#mCSB_{n}'):
+        x=soup.select_one(sel)
+        if x: return x
+    return None
 
-        elif "ETD :" in line:
-            data["etd"] = clean_text(line.split("ETD :", 1)[1])
-
-        elif "ATD :" in line:
-            data["atd"] = clean_text(line.split("ATD :", 1)[1])
-
-        elif "Open Stack :" in line:
-            data["openStack"] = clean_text(
-                line.split("Open Stack :", 1)[1]
-            )
-
-        elif "Closing Time :" in line:
-            data["closingTime"] = clean_text(
-                line.split("Closing Time :", 1)[1]
-            )
-
-        elif "Booking / Open / Actual :" in line:
-            value = clean_text(
-                line.split("Booking / Open / Actual :", 1)[1]
-            )
-            parts = [part.strip() for part in value.split("/")]
-
-            # Preserve the three expected fields even if one is blank.
-            parts = [part for part in parts if part]
-            if len(parts) == 3:
-                data["booking"] = parts[0]
-                data["open"] = parts[1]
-                data["actual"] = parts[2]
-                data["bookingOpenActual"] = parts
-            else:
-                data["booking"] = "-"
-                data["open"] = "-"
-                data["actual"] = "-"
-                data["bookingOpenActual"] = ["-", "-", "-"]
-
-        elif "/" in line and ":" not in line and "voyage" not in data:
-            data["voyage"] = clean_text(line)
-
-    # Keep a stable schema for the dashboard.
-    for key in (
-        "eta",
-        "etb",
-        "atb",
-        "etd",
-        "atd",
-        "openStack",
-        "closingTime",
-        "voyage",
-        "booking",
-        "open",
-        "actual",
-    ):
-        data.setdefault(key, "-")
-
-    data.setdefault("bookingOpenActual", ["-", "-", "-"])
-
-    return data
+def extract_fragment(html: str, start_pattern: str, end_patterns: List[str]) -> str:
+    """Extract one Pelindo section from raw HTML before BeautifulSoup parses it."""
+    start = re.search(start_pattern, html, flags=re.I | re.S)
+    if not start:
+        return ""
+    fragment = html[start.start():]
+    end_positions = []
+    for pattern in end_patterns:
+        m = re.search(pattern, fragment, flags=re.I | re.S)
+        if m:
+            end_positions.append(m.start())
+    if end_positions:
+        fragment = fragment[:min(end_positions)]
+    return fragment
 
 
-def parse_section(container: Optional[BeautifulSoup]) -> List[Dict[str, Any]]:
-    """Parse all vessel blocks inside one dashboard section."""
-    if not container:
-        return []
+def parse_raw_section(html: str, section_no: int) -> List[Dict[str, Any]]:
+    # Raw extraction avoids relying on BeautifulSoup's recovery behaviour when
+    # Pelindo's generated HTML contains nested/legacy markup.
+    fragment = extract_fragment(
+        html,
+        rf'<div[^>]+class=["\'][^"\']*content_vessel[^"\']*_mCS_{section_no}[^"\']*["\'][^>]*>',
+        [
+            r'<!--\s*##########\s*CONFIRMED VESSEL',
+            r'<!--\s*##########\s*Open Stack',
+            r'<!--\s*##########\s*VESSEL SCHEDULE',
+            r'<!--\s*##########\s*VESSEL HISTORY',
+        ],
+    )
+    return parse_section(BeautifulSoup(fragment, 'html.parser')) if fragment else []
 
-    html_str = str(container)
 
-    # Pelindo separates vessel blocks using ves_along_sched_hr.
-    parts = re.split(
-        r'<hr[^>]*class=["\'][^"\']*ves_along_sched_hr[^"\']*["\'][^>]*>',
-        html_str,
-        flags=re.IGNORECASE,
+def scrape(html):
+    # Parse the four primary sections from their actual Pelindo markers.
+    alongside = parse_raw_section(html, 1)
+    confirmed = parse_raw_section(html, 2)
+    open_stack = parse_raw_section(html, 3)
+
+    schedule_fragment = extract_fragment(
+        html,
+        r'<div[^>]+id=["\']div_ves_schedule["\'][^>]*>',
+        [r'<!--\s*##########\s*VESSEL HISTORY'],
+    )
+    history_fragment = extract_fragment(
+        html,
+        r'<div[^>]+id=["\']div_ves_history["\'][^>]*>',
+        [],
     )
 
-    items: List[Dict[str, Any]] = []
+    schedule = parse_section(BeautifulSoup(schedule_fragment, 'html.parser')) if schedule_fragment else []
+    history = parse_section(BeautifulSoup(history_fragment, 'html.parser'), True) if history_fragment else []
 
-    for part in parts:
-        if not part.strip():
-            continue
+    result = {
+      'vesselAlongside': alongside,
+      'confirmedVessel': confirmed,
+      'openStack': open_stack,
+      'vesselSchedule': schedule,
+      'vesselHistory': history,
+      'lastUpdated': datetime.now(timezone(timedelta(hours=7))).strftime('%d/%m/%Y %H:%M WIB'),
+      'source': 'Pelindo TPKS Webaccess',
+      'portalUrl': PORTAL_URL}
+    logging.info('Alongside=%d Confirmed=%d OpenStack=%d Schedule=%d History=%d',
+                 len(alongside),len(confirmed),len(open_stack),len(schedule),len(history))
+    return result
 
-        sub_soup = BeautifulSoup(part, "html.parser")
-        parsed = parse_vessel_block(sub_soup)
+def fetch(url):
+    r=requests.get(url,headers={'User-Agent':'Mozilla/5.0 Chrome/120 Safari/537.36','Accept':'text/html,application/xhtml+xml'},timeout=30,verify=False)
+    r.raise_for_status(); return r.text
 
-        if parsed.get("vesselName"):
-            items.append(parsed)
-
-    return items
-
-
-def scrape_pelindo_html(html_content: str) -> Dict[str, Any]:
-    """Convert Pelindo HTML into the JSON structure used by the portal."""
-    soup = BeautifulSoup(html_content, "html.parser")
-
-    tz_wib = timezone(timedelta(hours=7))
-    now_wib = datetime.now(tz_wib).strftime("%d/%m/%Y %H:%M WIB")
-
-    return {
-        "vesselAlongside": parse_section(soup.select_one("._mCS_1")),
-        "confirmedVessel": parse_section(soup.select_one("._mCS_2")),
-        "openStack": parse_section(soup.select_one("._mCS_3")),
-        "vesselSchedule": parse_section(soup.select_one("#div_ves_schedule")),
-        "lastUpdated": now_wib,
-        "source": "Pelindo TPKS Webaccess",
-        "portalUrl": PORTAL_URL,
-    }
-
-
-def fetch_url(url: str) -> str:
-    """Fetch HTML from Pelindo Webaccess."""
-    if requests is None:
-        raise ImportError("Package 'requests' belum terinstall.")
-
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/120.0.0.0 Safari/537.36"
-        ),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
-    }
-
-    logging.info("Mengambil data dari URL: %s", url)
-
-    response = requests.get(
-        url,
-        headers=headers,
-        timeout=30,
-        verify=False,
-    )
-    response.raise_for_status()
-
-    logging.info(
-        "HTTP %s | %s bytes",
-        response.status_code,
-        len(response.content),
-    )
-
-    return response.text
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Pelindo TPKS Data Scraper"
-    )
-    parser.add_argument(
-        "-i",
-        "--input",
-        default=SOURCE_URL,
-        help="Path HTML lokal atau URL Pelindo Webaccess",
-    )
-    parser.add_argument(
-        "-o",
-        "--output",
-        default="data.json",
-        help="Path output JSON",
-    )
-
-    args = parser.parse_args()
-
+def main():
+    p=argparse.ArgumentParser(); p.add_argument('-i','--input',default=SOURCE_URL); p.add_argument('-o','--output',default='data.json'); a=p.parse_args()
     try:
-        if args.input.startswith(("http://", "https://")):
-            html_content = fetch_url(args.input)
-        else:
-            if not os.path.exists(args.input):
-                raise FileNotFoundError(
-                    f"File lokal tidak ditemukan: {args.input}"
-                )
-
-            logging.info("Membaca file lokal: %s", args.input)
-            with open(args.input, "r", encoding="utf-8") as file:
-                html_content = file.read()
-
-        data = scrape_pelindo_html(html_content)
-
-        summary = {
-            "vesselAlongside": len(data["vesselAlongside"]),
-            "confirmedVessel": len(data["confirmedVessel"]),
-            "openStack": len(data["openStack"]),
-            "vesselSchedule": len(data["vesselSchedule"]),
-            "lastUpdated": data["lastUpdated"],
-        }
-
-        logging.info("Hasil ekstraksi: %s", summary)
-
-        with open(args.output, "w", encoding="utf-8") as file:
-            json.dump(
-                data,
-                file,
-                ensure_ascii=False,
-                indent=2,
-            )
-            file.write("\n")
-
-        logging.info("Data berhasil disimpan di: %s", args.output)
-
-    except Exception as exc:
-        logging.error("Scraper gagal: %s", exc)
-        sys.exit(1)
-
-
-if __name__ == "__main__":
-    main()
+        html=fetch(a.input) if a.input.startswith(('http://','https://')) else open(a.input,encoding='utf-8').read()
+        with open(a.output,'w',encoding='utf-8') as f: json.dump(scrape(html),f,ensure_ascii=False,indent=2); f.write('\n')
+    except Exception as e: logging.error('Scraper gagal: %s',e); sys.exit(1)
+if __name__=='__main__': main()
