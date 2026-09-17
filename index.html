@@ -98,6 +98,46 @@
         .number-cell {
             font-variant-numeric: tabular-nums;
         }
+
+        /* =====================================================
+           OPEN STACK TABLE
+        ====================================================== */
+
+        .open-stack-table th,
+        .open-stack-table td {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .open-stack-table th {
+            white-space: nowrap;
+        }
+
+        .open-stack-table td {
+            white-space: nowrap;
+        }
+
+        .open-stack-table .datetime-cell {
+            line-height: 1.15;
+        }
+
+        .open-stack-table .datetime-date {
+            font-size: 0.875rem;
+        }
+
+        .open-stack-table .datetime-time {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .open-stack-table .numeric-cell {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
     </style>
 </head>
 
@@ -178,7 +218,6 @@
                px-4 sm:px-6 lg:px-8 py-6"
     >
 
-
         <!-- =================================================
              STATUS CARDS
         ================================================== -->
@@ -187,7 +226,6 @@
             class="grid grid-cols-1
                    lg:grid-cols-3 gap-4 mb-6"
         >
-
 
             <!-- LAST UPDATED / FRESHNESS -->
             <div
@@ -227,7 +265,6 @@
                         </p>
 
                     </div>
-
 
                     <div
                         id="freshnessBadge"
@@ -288,7 +325,6 @@
                         </p>
 
                     </div>
-
 
                     <div
                         class="w-9 h-9 rounded-lg
@@ -353,7 +389,6 @@
                         </p>
 
                     </div>
-
 
                     <div
                         class="w-9 h-9 rounded-lg
@@ -542,12 +577,11 @@
 
                     </div>
 
-
                     <div
                         class="text-xs text-slate-400"
                     >
                         TPKS Vessel Monitoring
-                        Dashboard v2.0.1
+                        Dashboard v2.0.2
                     </div>
 
                 </div>
@@ -582,7 +616,6 @@
                        overflow-hidden"
             >
 
-
                 <!-- MODAL HEADER -->
                 <div
                     class="px-5 py-4
@@ -602,11 +635,8 @@
                                    flex items-center
                                    justify-center"
                         >
-                            <i
-                                class="fa-solid fa-ship"
-                            ></i>
+                            <i class="fa-solid fa-ship"></i>
                         </div>
-
 
                         <div class="min-w-0">
 
@@ -629,7 +659,6 @@
                         </div>
 
                     </div>
-
 
                     <button
                         onclick="closeVesselModal()"
@@ -732,19 +761,9 @@
     const GITHUB_WORKFLOW_API =
         "https://api.github.com/repos/mprojectspace/logistics-hub-portal/actions/workflows/pelindo-scraper.yml/runs?branch=main&per_page=1";
 
-    /*
-     * Browser refresh:
-     * reload data.json every 5 minutes.
-     *
-     * This does NOT start the scraper.
-     */
     const DATA_REFRESH_INTERVAL =
         5 * 60 * 1000;
 
-    /*
-     * Scraper schedule:
-     * every 30 minutes (:00 and :30)
-     */
     const SCRAPER_INTERVAL_MINUTES = 30;
 
 
@@ -978,6 +997,16 @@
         ],
 
 
+        /*
+         * OPEN STACK
+         *
+         * Semua informasi tetap dipertahankan.
+         *
+         * ETA / ETB / ETD / Open Stack / Closing
+         * menggunakan renderer datetime agar tanggal
+         * dan jam tampil bertingkat.
+         */
+
         openStack: [
 
             {
@@ -1001,31 +1030,31 @@
             {
                 key: "eta",
                 label: "ETA",
-                type: "text"
+                type: "datetime"
             },
 
             {
                 key: "etb",
                 label: "ETB",
-                type: "text"
+                type: "datetime"
             },
 
             {
                 key: "etd",
                 label: "ETD",
-                type: "text"
+                type: "datetime"
             },
 
             {
                 key: "openStack",
                 label: "Open Stack",
-                type: "text"
+                type: "datetime"
             },
 
             {
                 key: "closingTime",
                 label: "Closing",
-                type: "text"
+                type: "datetime"
             },
 
             {
@@ -1203,6 +1232,10 @@
     }
 
 
+    /*
+     * Format tanggal + jam untuk status/header.
+     */
+
     function formatDateTime(date) {
 
         if (
@@ -1253,6 +1286,96 @@
             }
 
         ).format(date) + " WIB";
+
+    }
+
+
+    /*
+     * =========================================================
+     * OPEN STACK DATETIME RENDERER
+     * =========================================================
+     *
+     * Input:
+     *   18 Sep 2026 08:00
+     *
+     * Output:
+     *
+     *   18 Sep 2026
+     *   08:00
+     *
+     * Jika data tidak mempunyai pola tanggal + jam,
+     * nilai asli tetap ditampilkan.
+     */
+
+    function renderDateTime(value) {
+
+        if (!value) {
+
+            return `
+                <span class="text-slate-400">-</span>
+            `;
+
+        }
+
+
+        const text =
+            String(value).trim();
+
+
+        /*
+         * Cari bagian waktu di akhir string.
+         *
+         * Mendukung:
+         * HH:MM
+         * HH:MM:SS
+         */
+
+        const match =
+            text.match(
+                /^(.*?)\s+(\d{1,2}:\d{2}(?::\d{2})?)$/
+            );
+
+
+        /*
+         * Jika format tidak cocok,
+         * jangan mengubah data.
+         */
+
+        if (!match) {
+
+            return `
+                <div class="datetime-cell whitespace-nowrap">
+
+                    <div class="datetime-date">
+                        ${escapeHtml(text)}
+                    </div>
+
+                </div>
+            `;
+
+        }
+
+
+        const datePart =
+            match[1];
+
+        const timePart =
+            match[2];
+
+
+        return `
+            <div class="datetime-cell whitespace-nowrap">
+
+                <div class="datetime-date">
+                    ${escapeHtml(datePart)}
+                </div>
+
+                <div class="datetime-time">
+                    ${escapeHtml(timePart)}
+                </div>
+
+            </div>
+        `;
 
     }
 
@@ -1501,9 +1624,9 @@
             );
 
 
-        return `${days} day${
-            days > 1 ? "s" : ""
-        }`;
+        return `$
+            {days > 1 ? `${days} days` : `${days} day`}
+        `;
 
     }
 
@@ -2271,6 +2394,12 @@
             ] || [];
 
 
+        const tableClass =
+            sectionKey === "openStack"
+                ? "w-full text-sm open-stack-table"
+                : "w-full text-sm";
+
+
         return `
 
             <section
@@ -2407,8 +2536,7 @@
                         ? `
 
                             <table
-                                class="w-full
-                                       text-sm"
+                                class="${tableClass}"
                             >
 
                                 <thead
@@ -2565,11 +2693,6 @@
 
     ) {
 
-        /*
-         * JSON.stringify is encoded so that the vessel
-         * object can safely be passed into the modal.
-         */
-
         const encodedVessel =
             encodeURIComponent(
                 JSON.stringify(vessel)
@@ -2621,6 +2744,12 @@
         column
 
     ) {
+
+        /*
+         * =====================================================
+         * VESSEL
+         * =====================================================
+         */
 
         if (
             column.type ===
@@ -2684,6 +2813,12 @@
         }
 
 
+        /*
+         * =====================================================
+         * TYPE
+         * =====================================================
+         */
+
         if (
             column.type ===
             "type"
@@ -2736,6 +2871,44 @@
         }
 
 
+        /*
+         * =====================================================
+         * DATETIME
+         *
+         * Dipakai khusus Open Stack.
+         * =====================================================
+         */
+
+        if (
+            column.type ===
+            "datetime"
+        ) {
+
+            return `
+
+                <td
+                    class="px-3 py-2.5"
+                >
+                    ${
+                        renderDateTime(
+                            vessel[
+                                column.key
+                            ]
+                        )
+                    }
+                </td>
+
+            `;
+
+        }
+
+
+        /*
+         * =====================================================
+         * NUMBER
+         * =====================================================
+         */
+
         if (
             column.type ===
             "number"
@@ -2744,10 +2917,17 @@
             return `
 
                 <td
-                    class="px-4 py-3
+                    class="px-3 py-2.5
                            whitespace-nowrap
                            text-slate-700
-                           number-cell"
+                           number-cell
+                           ${
+                               column.key === "booking" ||
+                               column.key === "open" ||
+                               column.key === "actual"
+                                   ? "numeric-cell"
+                                   : ""
+                           }"
                 >
                     ${
                         formatNumber(
@@ -2762,6 +2942,12 @@
 
         }
 
+
+        /*
+         * =====================================================
+         * DEFAULT TEXT
+         * =====================================================
+         */
 
         return `
 
@@ -2847,10 +3033,7 @@
 
 
             /*
-             * Detail fields.
-             *
-             * Shipping Line is intentionally
-             * excluded from the UI.
+             * Shipping Line intentionally excluded.
              */
 
             const fields = [
