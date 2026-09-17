@@ -2,12 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Pelindo TPKS Dashboard</title>
+    <title>TPKS Vessel Monitoring</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -17,29 +14,24 @@
     >
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family:
-                Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
+            background: #f8fafc;
         }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.9);
-        }
-
-        .table-wrapper {
+        .table-container {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
+            width: 100%;
             min-width: 1100px;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
         th {
@@ -50,6 +42,41 @@
             white-space: nowrap;
         }
 
+        .vessel-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .vessel-code {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.55rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .badge-international {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge-domestic {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .empty-state {
+            min-height: 180px;
+        }
+
         .status-dot {
             width: 8px;
             height: 8px;
@@ -57,67 +84,145 @@
             display: inline-block;
         }
 
-        .section-card {
-            transition:
-                transform 0.15s ease,
-                box-shadow 0.15s ease;
+        .status-online {
+            background: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
         }
 
-        .section-card:hover {
-            transform: translateY(-1px);
+        .status-offline {
+            background: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .status-loading {
+            background: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+        }
+
+        .number-cell {
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .date-cell {
+            font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                min-width: 900px;
+            }
         }
     </style>
 </head>
 
-<body class="bg-slate-100 text-slate-800">
+<body class="text-slate-800">
 
     <!-- HEADER -->
     <header class="bg-slate-900 text-white shadow-lg">
-        <div class="max-w-[1800px] mx-auto px-6 py-5">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-5">
 
                 <div>
                     <div class="flex items-center gap-3">
-                        <div
-                            class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center"
-                        >
+                        <div class="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center">
                             <i class="fa-solid fa-ship text-xl"></i>
                         </div>
 
                         <div>
-                            <h1 class="text-2xl font-bold">
-                                Pelindo TPKS
+                            <h1 class="text-xl sm:text-2xl font-bold">
+                                TPKS Vessel Monitoring
                             </h1>
 
-                            <p class="text-slate-300 text-sm">
-                                Vessel Monitoring Dashboard
+                            <p class="text-sm text-slate-400">
+                                Pelindo Terminal Petikemas Semarang
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-4">
 
                     <div
                         id="connectionStatus"
-                        class="flex items-center gap-2 text-sm bg-white/10 px-4 py-2 rounded-lg"
+                        class="flex items-center gap-2 text-sm text-slate-300"
                     >
                         <span
-                            id="statusDot"
-                            class="status-dot bg-yellow-400"
+                            id="connectionDot"
+                            class="status-dot status-loading"
                         ></span>
 
-                        <span id="statusText">
+                        <span id="connectionText">
                             Loading...
                         </span>
                     </div>
 
+                    <div class="hidden sm:block h-6 w-px bg-slate-700"></div>
+
+                    <div class="text-right">
+                        <div class="text-xs text-slate-400">
+                            Last Updated
+                        </div>
+
+                        <div
+                            id="lastUpdated"
+                            class="text-sm font-semibold"
+                        >
+                            -
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- SEARCH -->
+        <section class="mb-6">
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+
+                <div class="flex flex-col md:flex-row gap-3">
+
+                    <div class="relative flex-1">
+
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                        ></i>
+
+                        <input
+                            id="searchInput"
+                            type="text"
+                            placeholder="Search vessel name, vessel code, voyage, type..."
+                            class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300
+                                   focus:outline-none focus:ring-2 focus:ring-blue-500
+                                   focus:border-blue-500 text-sm"
+                        >
+
+                    </div>
+
                     <button
-                        onclick="loadData(true)"
-                        class="px-4 py-2 rounded-lg bg-white text-slate-900 hover:bg-slate-200 transition font-medium"
+                        id="clearSearch"
+                        onclick="clearSearch()"
+                        class="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200
+                               text-slate-700 font-medium text-sm transition"
                     >
-                        <i class="fa-solid fa-rotate-right mr-2"></i>
+                        <i class="fa-solid fa-xmark mr-2"></i>
+                        Clear
+                    </button>
+
+                    <button
+                        onclick="loadData()"
+                        class="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700
+                               text-white font-medium text-sm transition"
+                    >
+                        <i class="fa-solid fa-rotate mr-2"></i>
                         Refresh
                     </button>
 
@@ -125,541 +230,34 @@
 
             </div>
 
-        </div>
-    </header>
-
-
-    <!-- MAIN -->
-    <main class="max-w-[1800px] mx-auto px-6 py-6">
-
-        <!-- SEARCH -->
-        <section class="glass rounded-2xl shadow-sm p-5 mb-6">
-
-            <div class="flex flex-col lg:flex-row gap-4">
-
-                <div class="flex-1 relative">
-
-                    <i
-                        class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                    ></i>
-
-                    <input
-                        id="searchInput"
-                        type="text"
-                        placeholder="Search vessel name, code, voyage, shipping line, type..."
-                        class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400"
-                        oninput="applySearch()"
-                    >
-
-                </div>
-
-                <button
-                    onclick="clearSearch()"
-                    class="px-5 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 transition"
-                >
-                    <i class="fa-solid fa-xmark mr-2"></i>
-                    Clear
-                </button>
-
-            </div>
-
-            <div class="mt-3 text-sm text-slate-500">
-                <span id="searchInfo">
-                    Showing all vessels
-                </span>
-            </div>
-
         </section>
 
 
         <!-- STATISTICS -->
-        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+        <section class="mb-8">
 
-            <div class="glass rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-slate-500">
-                    Vessel Alongside
-                </p>
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
 
-                <p
-                    id="countAlongside"
-                    class="text-3xl font-bold mt-2"
-                >
-                    0
-                </p>
-            </div>
+                <!-- Alongside -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
 
+                    <div class="flex items-center justify-between">
 
-            <div class="glass rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-slate-500">
-                    Confirmed Vessel
-                </p>
+                        <div>
+                            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                                Vessel Alongside
+                            </p>
 
-                <p
-                    id="countConfirmed"
-                    class="text-3xl font-bold mt-2"
-                >
-                    0
-                </p>
-            </div>
-
-
-            <div class="glass rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-slate-500">
-                    Open Stack
-                </p>
-
-                <p
-                    id="countOpenStack"
-                    class="text-3xl font-bold mt-2"
-                >
-                    0
-                </p>
-            </div>
-
-
-            <div class="glass rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-slate-500">
-                    Vessel Schedule
-                </p>
-
-                <p
-                    id="countSchedule"
-                    class="text-3xl font-bold mt-2"
-                >
-                    0
-                </p>
-            </div>
-
-
-            <div class="glass rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-slate-500">
-                    Vessel History
-                </p>
-
-                <p
-                    id="countHistory"
-                    class="text-3xl font-bold mt-2"
-                >
-                    0
-                </p>
-            </div>
-
-        </section>
-
-
-        <!-- DATA SECTIONS -->
-        <div id="sectionsContainer"></div>
-
-
-        <!-- FOOTER -->
-        <footer class="mt-8 pb-8 text-center text-sm text-slate-500">
-
-            <p>
-                Source:
-                <strong>Pelindo TPKS WebAccess</strong>
-            </p>
-
-            <p class="mt-1">
-                Last update:
-                <span id="lastUpdate">-</span>
-            </p>
-
-        </footer>
-
-    </main>
-
-
-<script>
-
-const DATA_FILE = "data.json";
-
-let DATA = {
-    updatedAt: "",
-    source: "",
-    vesselAlongside: [],
-    confirmedVessel: [],
-    openStack: [],
-    vesselSchedule: [],
-    vesselHistory: [],
-    counts: {}
-};
-
-
-const SECTION_CONFIG = [
-
-    {
-        key: "vesselAlongside",
-        title: "Vessel Alongside",
-        icon: "fa-anchor",
-        description: "Vessels currently alongside."
-    },
-
-    {
-        key: "confirmedVessel",
-        title: "Confirmed Vessel",
-        icon: "fa-circle-check",
-        description: "Confirmed vessel information."
-    },
-
-    {
-        key: "openStack",
-        title: "Open Stack",
-        icon: "fa-box-open",
-        description: "Vessels with open stack information."
-    },
-
-    {
-        key: "vesselSchedule",
-        title: "Vessel Schedule",
-        icon: "fa-calendar-days",
-        description: "Upcoming vessel schedule."
-    },
-
-    {
-        key: "vesselHistory",
-        title: "Vessel History",
-        icon: "fa-clock-rotate-left",
-        description: "Historical vessel movements."
-    }
-
-];
-
-
-function escapeHtml(value) {
-
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-function formatNumber(value) {
-
-    if (
-        value === null ||
-        value === undefined ||
-        value === ""
-    ) {
-        return "0";
-    }
-
-    const number = Number(value);
-
-    if (Number.isNaN(number)) {
-        return escapeHtml(value);
-    }
-
-    return number.toLocaleString("en-US");
-}
-
-
-function normalizeSearchValue(value) {
-
-    return String(value ?? "")
-        .toLowerCase()
-        .trim();
-
-}
-
-
-function vesselMatches(vessel, query) {
-
-    if (!query) {
-        return true;
-    }
-
-    const searchable = Object.values(vessel)
-        .map(value => normalizeSearchValue(value))
-        .join(" ");
-
-    return searchable.includes(query);
-}
-
-
-function renderTable(items) {
-
-    if (!items || items.length === 0) {
-
-        return `
-            <div class="p-8 text-center text-slate-500">
-                <i class="fa-solid fa-database text-3xl mb-3"></i>
-
-                <p>
-                    No data available.
-                </p>
-            </div>
-        `;
-
-    }
-
-
-    return `
-
-        <div class="table-wrapper">
-
-            <table class="w-full text-sm">
-
-                <thead class="bg-slate-100 border-b border-slate-200">
-
-                    <tr>
-
-                        <th class="px-4 py-3 text-left">
-                            Vessel
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            Code
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            Voyage
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            Shipping Line
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            Type
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            ETA
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            ETB
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            ATB
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            ETD
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            ATD
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            Open Stack
-                        </th>
-
-                        <th class="px-4 py-3 text-left">
-                            Closing
-                        </th>
-
-                        <th class="px-4 py-3 text-right">
-                            Booking
-                        </th>
-
-                        <th class="px-4 py-3 text-right">
-                            Open
-                        </th>
-
-                        <th class="px-4 py-3 text-right">
-                            Actual
-                        </th>
-
-                        <th class="px-4 py-3 text-right">
-                            Export
-                        </th>
-
-                        <th class="px-4 py-3 text-right">
-                            Import
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody class="divide-y divide-slate-100">
-
-                    ${items.map(vessel => `
-
-                        <tr class="hover:bg-slate-50 transition">
-
-                            <td class="px-4 py-3 font-semibold text-slate-900">
-                                ${escapeHtml(vessel.vesselName)}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.vesselCode)}
-                            </td>
-
-                            <td class="px-4 py-3 font-medium">
-                                ${escapeHtml(vessel.voyage)}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.shippingLine)}
-                            </td>
-
-                            <td class="px-4 py-3">
-
-                                ${
-                                    vessel.type
-                                    ? `
-                                        <span class="px-2 py-1 rounded-md bg-slate-100">
-                                            ${escapeHtml(vessel.type)}
-                                        </span>
-                                      `
-                                    : "-"
-                                }
-
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.eta)}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.etb)}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.atb)}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.etd)}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.atd)}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.openStack)}
-                            </td>
-
-                            <td class="px-4 py-3">
-                                ${escapeHtml(vessel.closingTime)}
-                            </td>
-
-                            <td class="px-4 py-3 text-right">
-                                ${formatNumber(vessel.booking)}
-                            </td>
-
-                            <td class="px-4 py-3 text-right">
-                                ${formatNumber(vessel.open)}
-                            </td>
-
-                            <td class="px-4 py-3 text-right">
-                                ${formatNumber(vessel.actual)}
-                            </td>
-
-                            <td class="px-4 py-3 text-right">
-                                ${formatNumber(vessel.export)}
-                            </td>
-
-                            <td class="px-4 py-3 text-right">
-                                ${formatNumber(vessel.import)}
-                            </td>
-
-                        </tr>
-
-                    `).join("")}
-
-                </tbody>
-
-            </table>
-
-        </div>
-    `;
-
-}
-
-
-function renderSections() {
-
-    const container =
-        document.getElementById("sectionsContainer");
-
-    const query =
-        normalizeSearchValue(
-            document.getElementById("searchInput").value
-        );
-
-
-    let totalVisible = 0;
-
-
-    container.innerHTML = SECTION_CONFIG.map(section => {
-
-        const source =
-            Array.isArray(DATA[section.key])
-                ? DATA[section.key]
-                : [];
-
-
-        const filtered =
-            source.filter(vessel =>
-                vesselMatches(vessel, query)
-            );
-
-
-        totalVisible += filtered.length;
-
-
-        return `
-
-            <section class="section-card glass rounded-2xl shadow-sm mb-6 overflow-hidden">
-
-                <div class="px-5 py-4 border-b border-slate-200 bg-white">
-
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-
-                        <div class="flex items-center gap-3">
-
-                            <div
-                                class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center"
+                            <p
+                                id="countAlongside"
+                                class="text-3xl font-bold text-slate-900 mt-2"
                             >
-                                <i class="fa-solid ${section.icon}"></i>
-                            </div>
-
-                            <div>
-
-                                <h2 class="font-bold text-lg">
-                                    ${section.title}
-                                </h2>
-
-                                <p class="text-sm text-slate-500">
-                                    ${section.description}
-                                </p>
-
-                            </div>
-
+                                0
+                            </p>
                         </div>
 
-
-                        <div class="text-sm">
-
-                            <span class="px-3 py-1.5 rounded-lg bg-slate-100">
-
-                                ${filtered.length}
-
-                                ${
-                                    query &&
-                                    filtered.length !== source.length
-                                    ? ` / ${source.length}`
-                                    : ""
-                                }
-
-                                records
-
-                            </span>
-
+                        <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <i class="fa-solid fa-anchor"></i>
                         </div>
 
                     </div>
@@ -667,291 +265,1253 @@ function renderSections() {
                 </div>
 
 
-                ${renderTable(filtered)}
+                <!-- Confirmed -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
 
-            </section>
+                    <div class="flex items-center justify-between">
 
-        `;
+                        <div>
+                            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                                Confirmed Vessel
+                            </p>
 
-    }).join("");
+                            <p
+                                id="countConfirmed"
+                                class="text-3xl font-bold text-slate-900 mt-2"
+                            >
+                                0
+                            </p>
+                        </div>
 
+                        <div class="w-11 h-11 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
 
-    const searchInfo =
-        document.getElementById("searchInfo");
+                    </div>
 
+                </div>
 
-    if (query) {
 
-        searchInfo.textContent =
-            `Search "${query}" — ${totalVisible} matching records`;
+                <!-- Open Stack -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
 
-    } else {
+                    <div class="flex items-center justify-between">
 
-        searchInfo.textContent =
-            "Showing all vessels";
+                        <div>
+                            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                                Open Stack
+                            </p>
 
-    }
+                            <p
+                                id="countOpenStack"
+                                class="text-3xl font-bold text-slate-900 mt-2"
+                            >
+                                0
+                            </p>
+                        </div>
 
-}
+                        <div class="w-11 h-11 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
 
+                    </div>
 
-function updateStatistics() {
+                </div>
 
-    const counts = DATA.counts || {};
 
+                <!-- Schedule -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
 
-    document.getElementById("countAlongside").textContent =
-        formatNumber(
-            Array.isArray(DATA.vesselAlongside)
-                ? DATA.vesselAlongside.length
-                : counts.vesselAlongside || 0
-        );
+                    <div class="flex items-center justify-between">
 
+                        <div>
+                            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                                Vessel Schedule
+                            </p>
 
-    document.getElementById("countConfirmed").textContent =
-        formatNumber(
-            Array.isArray(DATA.confirmedVessel)
-                ? DATA.confirmedVessel.length
-                : counts.confirmedVessel || 0
-        );
+                            <p
+                                id="countSchedule"
+                                class="text-3xl font-bold text-slate-900 mt-2"
+                            >
+                                0
+                            </p>
+                        </div>
 
+                        <div class="w-11 h-11 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
 
-    document.getElementById("countOpenStack").textContent =
-        formatNumber(
-            Array.isArray(DATA.openStack)
-                ? DATA.openStack.length
-                : counts.openStack || 0
-        );
+                    </div>
 
+                </div>
 
-    document.getElementById("countSchedule").textContent =
-        formatNumber(
-            Array.isArray(DATA.vesselSchedule)
-                ? DATA.vesselSchedule.length
-                : counts.vesselSchedule || 0
-        );
 
+                <!-- History -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
 
-    document.getElementById("countHistory").textContent =
-        formatNumber(
-            Array.isArray(DATA.vesselHistory)
-                ? DATA.vesselHistory.length
-                : counts.vesselHistory || 0
-        );
+                    <div class="flex items-center justify-between">
 
-}
+                        <div>
+                            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                                Vessel History
+                            </p>
 
+                            <p
+                                id="countHistory"
+                                class="text-3xl font-bold text-slate-900 mt-2"
+                            >
+                                0
+                            </p>
+                        </div>
 
-function updateLastUpdate() {
+                        <div class="w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
 
-    const element =
-        document.getElementById("lastUpdate");
+                    </div>
 
-
-    if (!DATA.updatedAt) {
-
-        element.textContent = "-";
-        return;
-
-    }
-
-
-    const date =
-        new Date(DATA.updatedAt);
-
-
-    if (Number.isNaN(date.getTime())) {
-
-        element.textContent =
-            DATA.updatedAt;
-
-        return;
-
-    }
-
-
-    element.textContent =
-        date.toLocaleString(
-            "id-ID",
-            {
-                dateStyle: "medium",
-                timeStyle: "medium"
-            }
-        );
-
-}
-
-
-function updateConnectionStatus(success) {
-
-    const dot =
-        document.getElementById("statusDot");
-
-    const text =
-        document.getElementById("statusText");
-
-
-    if (success) {
-
-        dot.className =
-            "status-dot bg-green-400";
-
-        text.textContent =
-            "Connected";
-
-    } else {
-
-        dot.className =
-            "status-dot bg-red-400";
-
-        text.textContent =
-            "Connection error";
-
-    }
-
-}
-
-
-async function loadData(manual = false) {
-
-    try {
-
-        if (manual) {
-
-            document.getElementById("statusText")
-                .textContent = "Refreshing...";
-
-        }
-
-
-        const response =
-            await fetch(
-                `${DATA_FILE}?t=${Date.now()}`,
-                {
-                    cache: "no-store"
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-
-        }
-
-
-        const json =
-            await response.json();
-
-
-        DATA = {
-            updatedAt: json.updatedAt || "",
-            source: json.source || "",
-            vesselAlongside:
-                Array.isArray(json.vesselAlongside)
-                    ? json.vesselAlongside
-                    : [],
-            confirmedVessel:
-                Array.isArray(json.confirmedVessel)
-                    ? json.confirmedVessel
-                    : [],
-            openStack:
-                Array.isArray(json.openStack)
-                    ? json.openStack
-                    : [],
-            vesselSchedule:
-                Array.isArray(json.vesselSchedule)
-                    ? json.vesselSchedule
-                    : [],
-            vesselHistory:
-                Array.isArray(json.vesselHistory)
-                    ? json.vesselHistory
-                    : [],
-            counts: json.counts || {}
-        };
-
-
-        updateStatistics();
-        updateLastUpdate();
-        renderSections();
-        updateConnectionStatus(true);
-
-
-    } catch (error) {
-
-        console.error(
-            "Failed to load data.json:",
-            error
-        );
-
-
-        updateConnectionStatus(false);
-
-
-        document.getElementById(
-            "sectionsContainer"
-        ).innerHTML = `
-
-            <div class="glass rounded-2xl p-10 text-center">
-
-                <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4"></i>
-
-                <h2 class="text-xl font-bold mb-2">
-                    Failed to load data
-                </h2>
-
-                <p class="text-slate-500">
-                    ${escapeHtml(error.message)}
-                </p>
+                </div>
 
             </div>
 
-        `;
-
-    }
-
-}
+        </section>
 
 
-function applySearch() {
+        <!-- TABLE SECTIONS -->
+        <section id="sectionsContainer" class="space-y-8">
 
-    renderSections();
+            <!-- Dynamic sections will be inserted here -->
 
-}
+        </section>
 
-
-function clearSearch() {
-
-    document.getElementById(
-        "searchInput"
-    ).value = "";
-
-    renderSections();
-
-}
+    </main>
 
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 bg-white mt-10">
+
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+
+                <div class="text-sm text-slate-500">
+                    TPKS Vessel Monitoring Dashboard
+                </div>
+
+                <div class="text-sm text-slate-400">
+                    Source:
+                    <span id="sourceUrl">
+                        Pelindo TPKS
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script>
+
+        const DATA_FILE = "data.json";
+
+
+        let DATA = {
+            updatedAt: "",
+            source: "",
+            vesselAlongside: [],
+            confirmedVessel: [],
+            openStack: [],
+            vesselSchedule: [],
+            vesselHistory: [],
+            counts: {}
+        };
+
+
+        /*
+         * ============================================================
+         * SECTION CONFIGURATION
+         * ============================================================
+         */
+
+        const SECTION_CONFIG = [
+            {
+                key: "vesselAlongside",
+                title: "Vessel Alongside",
+                icon: "fa-anchor",
+                iconClass: "text-blue-600 bg-blue-100",
+                description: "Vessels currently alongside the terminal."
+            },
+            {
+                key: "confirmedVessel",
+                title: "Confirmed Vessel",
+                icon: "fa-circle-check",
+                iconClass: "text-green-600 bg-green-100",
+                description: "Confirmed vessels and their operational information."
+            },
+            {
+                key: "openStack",
+                title: "Open Stack",
+                icon: "fa-box-open",
+                iconClass: "text-orange-600 bg-orange-100",
+                description: "Vessels currently available for open stack."
+            },
+            {
+                key: "vesselSchedule",
+                title: "Vessel Schedule",
+                icon: "fa-calendar-days",
+                iconClass: "text-purple-600 bg-purple-100",
+                description: "Upcoming vessel schedule."
+            },
+            {
+                key: "vesselHistory",
+                title: "Vessel History",
+                icon: "fa-clock-rotate-left",
+                iconClass: "text-slate-600 bg-slate-100",
+                description: "Historical vessel activity."
+            }
+        ];
+
+
+        /*
+         * ============================================================
+         * TABLE COLUMNS
+         *
+         * IMPORTANT:
+         * Shipping Line is intentionally NOT included.
+         *
+         * Vessel Name + Vessel Code are combined into one column
+         * called "Vessel".
+         * ============================================================
+         */
+
+        const TABLE_COLUMNS = {
+
+            vesselAlongside: [
+                {
+                    key: "vessel",
+                    label: "Vessel",
+                    type: "vessel"
+                },
+                {
+                    key: "voyage",
+                    label: "Voyage",
+                    type: "text"
+                },
+                {
+                    key: "type",
+                    label: "Type",
+                    type: "type"
+                },
+                {
+                    key: "atb",
+                    label: "ATB",
+                    type: "text"
+                },
+                {
+                    key: "etd",
+                    label: "ETD",
+                    type: "text"
+                }
+            ],
+
+
+            confirmedVessel: [
+                {
+                    key: "vessel",
+                    label: "Vessel",
+                    type: "vessel"
+                },
+                {
+                    key: "voyage",
+                    label: "Voyage",
+                    type: "text"
+                },
+                {
+                    key: "type",
+                    label: "Type",
+                    type: "type"
+                },
+                {
+                    key: "etb",
+                    label: "ETB",
+                    type: "text"
+                },
+                {
+                    key: "etd",
+                    label: "ETD",
+                    type: "text"
+                },
+                {
+                    key: "openStack",
+                    label: "Open Stack",
+                    type: "text"
+                },
+                {
+                    key: "closingTime",
+                    label: "Closing",
+                    type: "text"
+                },
+                {
+                    key: "booking",
+                    label: "Booking",
+                    type: "number"
+                },
+                {
+                    key: "open",
+                    label: "Open",
+                    type: "number"
+                },
+                {
+                    key: "actual",
+                    label: "Actual",
+                    type: "number"
+                }
+            ],
+
+
+            openStack: [
+                {
+                    key: "vessel",
+                    label: "Vessel",
+                    type: "vessel"
+                },
+                {
+                    key: "voyage",
+                    label: "Voyage",
+                    type: "text"
+                },
+                {
+                    key: "type",
+                    label: "Type",
+                    type: "type"
+                },
+                {
+                    key: "eta",
+                    label: "ETA",
+                    type: "text"
+                },
+                {
+                    key: "etb",
+                    label: "ETB",
+                    type: "text"
+                },
+                {
+                    key: "etd",
+                    label: "ETD",
+                    type: "text"
+                },
+                {
+                    key: "openStack",
+                    label: "Open Stack",
+                    type: "text"
+                },
+                {
+                    key: "closingTime",
+                    label: "Closing",
+                    type: "text"
+                },
+                {
+                    key: "booking",
+                    label: "Booking",
+                    type: "number"
+                },
+                {
+                    key: "open",
+                    label: "Open",
+                    type: "number"
+                },
+                {
+                    key: "actual",
+                    label: "Actual",
+                    type: "number"
+                }
+            ],
+
+
+            vesselSchedule: [
+                {
+                    key: "vessel",
+                    label: "Vessel",
+                    type: "vessel"
+                },
+                {
+                    key: "voyage",
+                    label: "Voyage",
+                    type: "text"
+                },
+                {
+                    key: "etb",
+                    label: "ETB",
+                    type: "text"
+                }
+            ],
+
+
+            vesselHistory: [
+                {
+                    key: "vessel",
+                    label: "Vessel",
+                    type: "vessel"
+                },
+                {
+                    key: "voyage",
+                    label: "Voyage",
+                    type: "text"
+                },
+                {
+                    key: "type",
+                    label: "Type",
+                    type: "type"
+                },
+                {
+                    key: "etb",
+                    label: "ETB",
+                    type: "text"
+                },
+                {
+                    key: "atd",
+                    label: "ATD",
+                    type: "text"
+                },
+                {
+                    key: "export",
+                    label: "Export",
+                    type: "number"
+                },
+                {
+                    key: "import",
+                    label: "Import",
+                    type: "number"
+                }
+            ]
+
+        };
+
+
+        /*
+         * ============================================================
+         * HELPERS
+         * ============================================================
+         */
+
+        function escapeHtml(value) {
+
+            if (value === null || value === undefined) {
+                return "";
+            }
+
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+
+        function normalizeSearchValue(value) {
+
+            return String(value ?? "")
+                .toLowerCase()
+                .trim();
+
+        }
+
+
+        function formatVessel(vessel) {
+
+            const name = String(vessel.vesselName ?? "").trim();
+            const code = String(vessel.vesselCode ?? "").trim();
+
+            if (!name && !code) {
+                return "-";
+            }
+
+            if (!code) {
+                return escapeHtml(name);
+            }
+
+            if (!name) {
+                return escapeHtml(code);
+            }
+
+            return `
+                <div class="vessel-name">
+                    ${escapeHtml(name)}
+                </div>
+
+                <div class="vessel-code">
+                    ${escapeHtml(code)}
+                </div>
+            `;
+
+        }
+
+
+        function formatNumber(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                String(value).trim() === ""
+            ) {
+                return "-";
+            }
+
+            const number = Number(
+                String(value).replace(/,/g, "")
+            );
+
+            if (Number.isNaN(number)) {
+                return escapeHtml(value);
+            }
+
+            return number.toLocaleString("en-US");
+
+        }
+
+
+        function formatText(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                String(value).trim() === ""
+            ) {
+                return "-";
+            }
+
+            return escapeHtml(value);
+
+        }
+
+
+        function formatType(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                String(value).trim() === ""
+            ) {
+                return "-";
+            }
+
+            const type = String(value).trim().toUpperCase();
+
+            if (type === "INTERNATIONAL") {
+
+                return `
+                    <span class="badge badge-international">
+                        INTERNATIONAL
+                    </span>
+                `;
+
+            }
+
+            if (type === "DOMESTIC") {
+
+                return `
+                    <span class="badge badge-domestic">
+                        DOMESTIC
+                    </span>
+                `;
+
+            }
+
+            return `
+                <span class="badge bg-slate-100 text-slate-600">
+                    ${escapeHtml(type)}
+                </span>
+            `;
+
+        }
+
+
+        /*
+         * ============================================================
+         * CELL RENDERER
+         * ============================================================
+         */
+
+        function renderCell(vessel, column) {
+
+            switch (column.type) {
+
+                case "vessel":
+                    return formatVessel(vessel);
+
+                case "type":
+                    return formatType(vessel[column.key]);
+
+                case "number":
+                    return formatNumber(vessel[column.key]);
+
+                case "text":
+                default:
+                    return formatText(vessel[column.key]);
+
+            }
+
+        }
+
+
+        /*
+         * ============================================================
+         * SEARCH
+         *
+         * Search is limited to fields that are actually displayed
+         * in the corresponding table.
+         *
+         * Therefore shippingLine is no longer searchable.
+         * ============================================================
+         */
+
+        function vesselMatches(vessel, query, sectionKey) {
+
+            if (!query) {
+                return true;
+            }
+
+            const columns = TABLE_COLUMNS[sectionKey] || [];
+
+            const searchableValues = [];
+
+            columns.forEach(column => {
+
+                if (column.type === "vessel") {
+
+                    searchableValues.push(
+                        vessel.vesselName ?? ""
+                    );
+
+                    searchableValues.push(
+                        vessel.vesselCode ?? ""
+                    );
+
+                    return;
+                }
+
+                searchableValues.push(
+                    vessel[column.key] ?? ""
+                );
+
+            });
+
+
+            const searchableText = searchableValues
+                .map(normalizeSearchValue)
+                .join(" ");
+
+            return searchableText.includes(query);
+
+        }
+
+
+        /*
+         * ============================================================
+         * TABLE RENDERER
+         * ============================================================
+         */
+
+        function renderTable(items, sectionKey) {
+
+            const columns = TABLE_COLUMNS[sectionKey] || [];
+
+
+            if (!items || items.length === 0) {
+
+                return `
+                    <div class="empty-state flex flex-col items-center justify-center py-12">
+
+                        <div class="w-14 h-14 rounded-full bg-slate-100
+                                    flex items-center justify-center mb-4">
+
+                            <i class="fa-solid fa-inbox text-slate-400 text-xl"></i>
+
+                        </div>
+
+                        <p class="text-sm font-medium text-slate-600">
+                            No vessel data found
+                        </p>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            Try changing your search keyword.
+                        </p>
+
+                    </div>
+                `;
+
+            }
+
+
+            const headerHtml = columns
+                .map(column => {
+
+                    const alignment =
+                        column.type === "number"
+                            ? "text-center"
+                            : "text-left";
+
+                    return `
+                        <th class="px-4 py-3 ${alignment}
+                                   text-xs font-semibold uppercase tracking-wide
+                                   text-slate-500 bg-slate-50
+                                   border-b border-slate-200">
+                            ${escapeHtml(column.label)}
+                        </th>
+                    `;
+
+                })
+                .join("");
+
+
+            const rowsHtml = items
+                .map((vessel, index) => {
+
+                    const cellsHtml = columns
+                        .map(column => {
+
+                            const alignment =
+                                column.type === "number"
+                                    ? "text-center number-cell"
+                                    : "";
+
+                            const extraClass =
+                                column.type === "vessel"
+                                    ? "min-w-[180px]"
+                                    : "";
+
+                            return `
+                                <td class="px-4 py-3 ${alignment} ${extraClass}
+                                           text-sm border-b border-slate-100">
+                                    ${renderCell(vessel, column)}
+                                </td>
+                            `;
+
+                        })
+                        .join("");
+
+
+                    return `
+                        <tr class="hover:bg-slate-50 transition">
+
+                            ${cellsHtml}
+
+                        </tr>
+                    `;
+
+                })
+                .join("");
+
+
+            return `
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                ${headerHtml}
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            `;
+
+        }
+
+
+        /*
+         * ============================================================
+         * SECTION RENDERER
+         * ============================================================
+         */
+
+        function renderSections() {
+
+            const container =
+                document.getElementById("sectionsContainer");
+
+            const searchInput =
+                document.getElementById("searchInput");
+
+            const query =
+                normalizeSearchValue(searchInput.value);
+
+
+            let html = "";
+
+
+            SECTION_CONFIG.forEach(section => {
+
+                const source =
+                    Array.isArray(DATA[section.key])
+                        ? DATA[section.key]
+                        : [];
+
+
+                const filtered =
+                    source.filter(vessel =>
+                        vesselMatches(
+                            vessel,
+                            query,
+                            section.key
+                        )
+                    );
+
+
+                html += `
+                    <section>
+
+                        <div class="bg-white rounded-2xl border border-slate-200
+                                    shadow-sm overflow-hidden">
+
+                            <!-- Section Header -->
+                            <div class="px-5 py-4 border-b border-slate-200">
+
+                                <div class="flex flex-col sm:flex-row
+                                            sm:items-center sm:justify-between gap-3">
+
+                                    <div class="flex items-center gap-3">
+
+                                        <div
+                                            class="w-10 h-10 rounded-xl
+                                                   ${section.iconClass}
+                                                   flex items-center justify-center"
+                                        >
+                                            <i class="fa-solid ${section.icon}"></i>
+                                        </div>
+
+                                        <div>
+
+                                            <h2 class="text-lg font-bold text-slate-900">
+                                                ${escapeHtml(section.title)}
+                                            </h2>
+
+                                            <p class="text-xs text-slate-500 mt-0.5">
+                                                ${escapeHtml(section.description)}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="flex items-center gap-2">
+
+                                        <span class="text-xs text-slate-400">
+                                            Showing
+                                        </span>
+
+                                        <span
+                                            class="px-2.5 py-1 rounded-full
+                                                   bg-slate-100 text-slate-700
+                                                   text-xs font-semibold"
+                                        >
+                                            ${filtered.length}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Table -->
+                            ${renderTable(
+                                filtered,
+                                section.key
+                            )}
+
+                        </div>
+
+                    </section>
+                `;
+
+            });
+
+
+            container.innerHTML = html;
+
+        }
+
+
+        /*
+         * ============================================================
+         * STATISTICS
+         * ============================================================
+         */
+
+        function updateStatistics() {
+
+            const counts = DATA.counts || {};
+
+
+            document.getElementById("countAlongside").textContent =
+                counts.vesselAlongside ??
+                DATA.vesselAlongside.length ??
+                0;
+
+
+            document.getElementById("countConfirmed").textContent =
+                counts.confirmedVessel ??
+                DATA.confirmedVessel.length ??
+                0;
+
+
+            document.getElementById("countOpenStack").textContent =
+                counts.openStack ??
+                DATA.openStack.length ??
+                0;
+
+
+            document.getElementById("countSchedule").textContent =
+                counts.vesselSchedule ??
+                DATA.vesselSchedule.length ??
+                0;
+
+
+            document.getElementById("countHistory").textContent =
+                counts.vesselHistory ??
+                DATA.vesselHistory.length ??
+                0;
+
+        }
+
+
+        /*
+         * ============================================================
+         * LAST UPDATE
+         * ============================================================
+         */
+
+        function updateLastUpdate() {
+
+            const element =
+                document.getElementById("lastUpdated");
+
+            const value =
+                DATA.updatedAt ||
+                DATA.lastUpdated ||
+                "";
+
+
+            if (!value) {
+
+                element.textContent = "-";
+                return;
+
+            }
+
+
+            const date = new Date(value);
+
+
+            if (Number.isNaN(date.getTime())) {
+
+                element.textContent = value;
+                return;
+
+            }
+
+
+            element.textContent =
+                date.toLocaleString(
+                    "id-ID",
+                    {
+                        dateStyle: "medium",
+                        timeStyle: "medium"
+                    }
+                );
+
+        }
+
+
+        /*
+         * ============================================================
+         * CONNECTION STATUS
+         * ============================================================
+         */
+
+        function updateConnectionStatus(status, message) {
+
+            const dot =
+                document.getElementById("connectionDot");
+
+            const text =
+                document.getElementById("connectionText");
+
+
+            dot.classList.remove(
+                "status-online",
+                "status-offline",
+                "status-loading"
+            );
+
+
+            if (status === "online") {
+
+                dot.classList.add("status-online");
+
+                text.textContent =
+                    message || "Connected";
+
+                text.className =
+                    "text-sm text-green-600 font-medium";
+
+                return;
+
+            }
+
+
+            if (status === "offline") {
+
+                dot.classList.add("status-offline");
+
+                text.textContent =
+                    message || "Offline";
+
+                text.className =
+                    "text-sm text-red-600 font-medium";
+
+                return;
+
+            }
+
+
+            dot.classList.add("status-loading");
+
+            text.textContent =
+                message || "Loading...";
+
+            text.className =
+                "text-sm text-amber-600 font-medium";
+
+        }
+
+
+        /*
+         * ============================================================
+         * SOURCE
+         * ============================================================
+         */
+
+        function updateSource() {
+
+            const sourceElement =
+                document.getElementById("sourceUrl");
+
+
+            if (!DATA.source) {
+
+                sourceElement.textContent =
+                    "Pelindo TPKS";
+
+                return;
+
+            }
+
+
+            try {
+
+                const url =
+                    new URL(DATA.source);
+
+                sourceElement.textContent =
+                    url.hostname;
+
+            } catch (error) {
+
+                sourceElement.textContent =
+                    DATA.source;
+
+            }
+
+        }
+
+
+        /*
+         * ============================================================
+         * LOAD DATA
+         * ============================================================
+         */
+
+        async function loadData() {
+
+            updateConnectionStatus(
+                "loading",
+                "Loading..."
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${DATA_FILE}?t=${Date.now()}`,
+                        {
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `HTTP ${response.status}`
+                    );
+
+                }
+
+
+                const json =
+                    await response.json();
+
+
+                DATA = {
+
+                    updatedAt:
+                        json.updatedAt ||
+                        json.lastUpdated ||
+                        "",
+
+                    source:
+                        json.source || "",
+
+                    vesselAlongside:
+                        Array.isArray(json.vesselAlongside)
+                            ? json.vesselAlongside
+                            : [],
+
+                    confirmedVessel:
+                        Array.isArray(json.confirmedVessel)
+                            ? json.confirmedVessel
+                            : [],
+
+                    openStack:
+                        Array.isArray(json.openStack)
+                            ? json.openStack
+                            : [],
+
+                    vesselSchedule:
+                        Array.isArray(json.vesselSchedule)
+                            ? json.vesselSchedule
+                            : [],
+
+                    vesselHistory:
+                        Array.isArray(json.vesselHistory)
+                            ? json.vesselHistory
+                            : [],
+
+                    counts:
+                        json.counts || {}
+
+                };
+
+
+                updateStatistics();
+                updateLastUpdate();
+                updateSource();
+                renderSections();
+
+
+                updateConnectionStatus(
+                    "online",
+                    "Connected"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load data:",
+                    error
+                );
+
+
+                updateConnectionStatus(
+                    "offline",
+                    "Connection Error"
+                );
+
+            }
+
+        }
+
+
+        /*
+         * ============================================================
+         * SEARCH
+         * ============================================================
+         */
+
+        function applySearch() {
+
+            renderSections();
+
+        }
+
+
+        function clearSearch() {
+
+            const input =
+                document.getElementById("searchInput");
+
+            input.value = "";
+
+            renderSections();
+
+            input.focus();
+
+        }
+
+
+        /*
+         * ============================================================
+         * EVENT LISTENER
+         * ============================================================
+         */
+
+        document
+            .getElementById("searchInput")
+            .addEventListener(
+                "input",
+                applySearch
+            );
+
+
+        /*
+         * ============================================================
+         * INITIAL LOAD
+         * ============================================================
+         */
 
         loadData();
 
+
         /*
-         * Refresh dashboard every 5 minutes.
-         * GitHub Actions updates data.json every 30 minutes.
+         * ============================================================
+         * AUTO REFRESH
+         *
+         * Refresh every 5 minutes.
+         * ============================================================
          */
+
         setInterval(
-            () => loadData(),
+            loadData,
             5 * 60 * 1000
         );
 
-    }
-);
-
-</script>
+    </script>
 
 </body>
 </html>
