@@ -2,8 +2,180 @@
   "vesselAlongside": [],
   "confirmedVessel": [],
   "openStack": [],
-  "vesselSchedule": [],
-  "lastUpdated": "Menunggu pembaruan...",
+  "vesselSchedule": [
+    {
+      "vesselName": "WAN HAI 311",
+      "voyage": "S259 / N260",
+      "etb": "24/09/2026 10:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "vesselName": "EVER OASIS",
+      "voyage": "0493-092S / 0493-092N",
+      "etb": "24/09/2026 08:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "vesselName": "SINAR BINTAN",
+      "voyage": "952S / 952N",
+      "etb": "24/09/2026 21:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "vesselName": "EVER OPTIMA",
+      "voyage": "0494-050S / 0494-050N",
+      "etb": "24/09/2026 18:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "vesselName": "SITC BATANGAS",
+      "voyage": "2618S / 2619N",
+      "etb": "01/10/2026 16:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "vesselName": "MINAS BARU",
+      "voyage": "22/2026 / 22/2026",
+      "etb": "24/09/2026 00:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "vesselName": "TELUK BINTUNI",
+      "voyage": "22/2026 / 22/2026",
+      "etb": "24/09/2026 00:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "vesselName": "EVER CANDID",
+      "voyage": "0554-090S / 0554-090N",
+      "etb": "27/09/2026 14:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "vesselName": "SMOOTH SAILING",
+      "voyage": "089S / 089N",
+      "etb": "23/09/2026 15:00",
+      "eta": "-",
+      "atb": "-",
+      "etd": "-",
+      "atd": "-",
+      "openStack": "-",
+      "closingTime": "-",
+      "booking": "-",
+      "open": "-",
+      "actual": "-",
+      "bookingOpenActual": [
+        "-",
+        "-",
+        "-"
+      ]
+    }
+  ],
+  "lastUpdated": "17/09/2026 13:01 WIB",
   "source": "Pelindo TPKS Webaccess",
   "portalUrl": "https://mprojectspace.github.io/logistics-hub-portal/"
 }
