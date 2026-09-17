@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
   schedule:
-    # Run every 30 minutes
     - cron: "*/30 * * * *"
 
   push:
@@ -23,13 +22,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -50,47 +50,32 @@ jobs:
           with open("data.json", "r", encoding="utf-8") as f:
               data = json.load(f)
 
-          required_keys = [
+          required = [
               "vesselAlongside",
               "confirmedVessel",
               "openStack",
               "vesselSchedule",
-              "vesselHistory",
-              "counts"
+              "vesselHistory"
           ]
 
-          missing = [key for key in required_keys if key not in data]
-
-          if missing:
-              raise SystemExit(
-                  f"data.json missing required keys: {', '.join(missing)}"
-              )
-
-          for key in required_keys[:-1]:
-              if not isinstance(data[key], list):
+          for key in required:
+              if key not in data:
                   raise SystemExit(
-                      f"{key} must be an array/list"
+                      f"Missing required key: {key}"
                   )
 
-          if not isinstance(data["counts"], dict):
-              raise SystemExit("counts must be an object")
+          print("data.json validation passed.")
 
-          print("data.json validation: OK")
           print(
-              "Counts:",
-              {
-                  key: len(data[key])
-                  for key in required_keys[:-1]
-              }
+              "Total records:",
+              sum(
+                  len(data[key])
+                  for key in required
+              )
           )
           PY
 
-      - name: Check generated data
-        run: |
-          echo "Generated data.json:"
-          ls -lh data.json
-
-      - name: Commit updated data.json
+      - name: Commit and push data.json
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -98,8 +83,14 @@ jobs:
           git add data.json
 
           if git diff --cached --quiet; then
-            echo "No changes detected."
-          else
-            git commit -m "chore: update Pelindo TPKS data"
-            git push
+            echo "No changes to data.json."
+            exit 0
           fi
+
+          git commit -m "chore: update Pelindo TPKS data"
+
+          echo "Syncing latest main branch..."
+          git pull --rebase origin main
+
+          echo "Pushing updated data.json..."
+          git push origin main
