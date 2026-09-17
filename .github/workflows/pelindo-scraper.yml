@@ -2,10 +2,8 @@ name: Pelindo TPKS Scraper
 
 on:
   workflow_dispatch:
-
   schedule:
     - cron: "*/30 * * * *"
-
   push:
     branches:
       - main
@@ -20,16 +18,14 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-
     steps:
-
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
