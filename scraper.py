@@ -1,4 +1,3 @@
-```python
 import json
 import re
 import sys
@@ -1339,4 +1338,3 @@ if __name__ == "__main__":
         # Keep GitHub Actions from failing solely
         # because Pelindo changed its HTML.
         sys.exit(0)
-```
