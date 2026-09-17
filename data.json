@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-09-18 02:42:08",
-  "updatedAt": "2026-09-18 02:42:08",
+  "lastUpdated": "2026-09-18 03:16:55",
+  "updatedAt": "2026-09-18 03:16:55",
   "source": "https://ibstpks.pelindo.co.id/webaccess/",
   "allVessels": [
     {
@@ -26,30 +26,6 @@
       "vesId": "SIBI093",
       "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=SIBI093&width=600&height=500",
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=SIBI093&width=900&height=500"
-    },
-    {
-      "vesselName": "WAN HAI 327",
-      "vesselCode": "W327007",
-      "voyage": "S068 / N068",
-      "shippingLine": "WAN HAI 327 (W327007)",
-      "type": "INTERNATIONAL",
-      "eta": "",
-      "etb": "",
-      "atb": "17/09/2026 10:10",
-      "etd": "18/09/2026 07:00",
-      "atd": "",
-      "openStack": "",
-      "closingTime": "",
-      "booking": "",
-      "open": "",
-      "actual": "",
-      "export": "",
-      "exportTeus": "",
-      "import": "",
-      "importTeus": "",
-      "vesId": "W327007",
-      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=W327007&width=600&height=500",
-      "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=W327007&width=900&height=500"
     },
     {
       "vesselName": "MERATUS BARITO",
@@ -135,7 +111,7 @@
       "etd": "19/09/2026 16:00",
       "atd": "",
       "openStack": "13/09/2026 03:00",
-      "closingTime": "18/09/2026 03:00",
+      "closingTime": "",
       "booking": "220",
       "open": "220",
       "actual": "123",
@@ -868,6 +844,30 @@
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MDKN045&width=900&height=500"
     },
     {
+      "vesselName": "WAN HAI 327",
+      "vesselCode": "W327007",
+      "voyage": "S068 / N068",
+      "shippingLine": "WAN HAI 327 (W327007)",
+      "type": "INTERNATIONAL",
+      "eta": "",
+      "etb": "17/09/2026 14:00",
+      "atb": "17/09/2026 10:10",
+      "etd": "",
+      "atd": "18/09/2026 02:17",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "305",
+      "exportTeus": "484",
+      "import": "381",
+      "importTeus": "662",
+      "vesId": "W327007",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=W327007&width=600&height=500",
+      "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=W327007&width=900&height=500"
+    },
+    {
       "vesselName": "MMSS 2711",
       "vesselCode": "2711001",
       "voyage": "261016N / 261016N",
@@ -916,30 +916,6 @@
       "vesId": "SIBI093",
       "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=SIBI093&width=600&height=500",
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=SIBI093&width=900&height=500"
-    },
-    {
-      "vesselName": "WAN HAI 327",
-      "vesselCode": "W327007",
-      "voyage": "S068 / N068",
-      "shippingLine": "WAN HAI 327 (W327007)",
-      "type": "INTERNATIONAL",
-      "eta": "",
-      "etb": "",
-      "atb": "17/09/2026 10:10",
-      "etd": "18/09/2026 07:00",
-      "atd": "",
-      "openStack": "",
-      "closingTime": "",
-      "booking": "",
-      "open": "",
-      "actual": "",
-      "export": "",
-      "exportTeus": "",
-      "import": "",
-      "importTeus": "",
-      "vesId": "W327007",
-      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=W327007&width=600&height=500",
-      "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=W327007&width=900&height=500"
     }
   ],
   "confirmedVessel": [
@@ -1029,7 +1005,7 @@
       "etd": "19/09/2026 16:00",
       "atd": "",
       "openStack": "13/09/2026 03:00",
-      "closingTime": "18/09/2026 03:00",
+      "closingTime": "",
       "booking": "220",
       "open": "220",
       "actual": "123",
@@ -1766,6 +1742,30 @@
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MDKN045&width=900&height=500"
     },
     {
+      "vesselName": "WAN HAI 327",
+      "vesselCode": "W327007",
+      "voyage": "S068 / N068",
+      "shippingLine": "WAN HAI 327 (W327007)",
+      "type": "INTERNATIONAL",
+      "eta": "",
+      "etb": "17/09/2026 14:00",
+      "atb": "17/09/2026 10:10",
+      "etd": "",
+      "atd": "18/09/2026 02:17",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "305",
+      "exportTeus": "484",
+      "import": "381",
+      "importTeus": "662",
+      "vesId": "W327007",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=W327007&width=600&height=500",
+      "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=W327007&width=900&height=500"
+    },
+    {
       "vesselName": "MMSS 2711",
       "vesselCode": "2711001",
       "voyage": "261016N / 261016N",
@@ -1792,10 +1792,10 @@
   ],
   "counts": {
     "allVessels": 37,
-    "vesselAlongside": 2,
+    "vesselAlongside": 1,
     "confirmedVessel": 3,
     "openStack": 17,
     "vesselSchedule": 9,
-    "vesselHistory": 6
+    "vesselHistory": 7
   }
 }
