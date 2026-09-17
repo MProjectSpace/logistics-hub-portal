@@ -1,10 +1,10 @@
 name: Pelindo TPKS Auto Scraper
 
-on:
+'on':
   schedule:
     # Berjalan otomatis setiap 30 menit
     - cron: '*/30 * * * *'
-  workflow_dispatch: # Tombol pemicu manual di tab Actions
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -13,7 +13,7 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Wajib agar bot bisa commit data.json
+      contents: write
 
     steps:
       - name: Checkout Repository
@@ -36,6 +36,7 @@ jobs:
       - name: Commit and Push Updated data.json
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "auto: update Pelindo live vessel data [skip ci]"
-          file_pattern: "data.json"
-          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.co
+          commit_message: 'auto: update Pelindo live vessel data [skip ci]'
+          file_pattern: 'data.json'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
