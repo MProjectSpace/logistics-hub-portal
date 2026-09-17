@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Pelindo TPKS Webaccess Scraper for Logistics Hub Portal
-Repository Portal: https://mprojectspace.github.io/logistics-hub-portal/
+Repository: https://github.com/mprojectspace/logistics-hub-portal
+Live Site: https://mprojectspace.github.io/logistics-hub-portal/
 """
 
 import argparse
@@ -154,7 +155,7 @@ def fetch_url(url: str) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="Pelindo TPKS Data Scraper")
-    parser.add_argument("-i", "--input", default="html_pelindo.html", help="Path HTML lokal atau URL")
+    parser.add_argument("-i", "--input", default="https://ibstpks.pelindo.co.id/webaccess/", help="Path HTML lokal atau URL")
     parser.add_argument("-o", "--output", default="data.json", help="Path output JSON")
     args = parser.parse_args()
 
@@ -162,11 +163,11 @@ def main():
         try:
             html_content = fetch_url(args.input)
         except Exception as e:
-            logging.error(f"Gagal koneksi URL: {e}")
+            logging.error(f"Gagal mengambil dari URL ({args.input}): {e}")
             sys.exit(1)
     else:
         if not os.path.exists(args.input):
-            logging.error(f"File tidak ditemukan: {args.input}")
+            logging.error(f"File lokal tidak ditemukan: {args.input}")
             sys.exit(1)
         logging.info(f"Membaca file lokal: {args.input}")
         with open(args.input, "r", encoding="utf-8") as f:
