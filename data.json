@@ -1,32 +1,8 @@
 {
-  "lastUpdated": "2026-09-19 00:39:43",
-  "updatedAt": "2026-09-19 00:39:43",
+  "lastUpdated": "2026-09-19 01:17:43",
+  "updatedAt": "2026-09-19 01:17:43",
   "source": "https://ibstpks.pelindo.co.id/webaccess/",
   "allVessels": [
-    {
-      "vesselName": "MSC MALENA III",
-      "vesselCode": "MSL3002",
-      "voyage": "HC635R / HC635R",
-      "shippingLine": "MSC MALENA III (MSL3002)",
-      "type": "INTERNATIONAL",
-      "eta": "",
-      "etb": "",
-      "atb": "18/09/2026 05:13",
-      "etd": "18/09/2026 23:00",
-      "atd": "",
-      "openStack": "",
-      "closingTime": "",
-      "booking": "",
-      "open": "",
-      "actual": "",
-      "export": "",
-      "exportTeus": "",
-      "import": "",
-      "importTeus": "",
-      "vesId": "MSL3002",
-      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=MSL3002&width=600&height=500",
-      "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MSL3002&width=900&height=500"
-    },
     {
       "vesselName": "DANUM 171",
       "vesselCode": "D171021",
@@ -770,9 +746,7 @@
       "vesId": "MRTO209",
       "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=MRTO209&width=600&height=500",
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MRTO209&width=900&height=500"
-    }
-  ],
-  "vesselAlongside": [
+    },
     {
       "vesselName": "MSC MALENA III",
       "vesselCode": "MSL3002",
@@ -780,23 +754,25 @@
       "shippingLine": "MSC MALENA III (MSL3002)",
       "type": "INTERNATIONAL",
       "eta": "",
-      "etb": "",
+      "etb": "18/09/2026 05:00",
       "atb": "18/09/2026 05:13",
-      "etd": "18/09/2026 23:00",
-      "atd": "",
+      "etd": "",
+      "atd": "19/09/2026 00:44",
       "openStack": "",
       "closingTime": "",
       "booking": "",
       "open": "",
       "actual": "",
-      "export": "",
-      "exportTeus": "",
-      "import": "",
-      "importTeus": "",
+      "export": "458",
+      "exportTeus": "833",
+      "import": "322",
+      "importTeus": "586",
       "vesId": "MSL3002",
       "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=MSL3002&width=600&height=500",
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MSL3002&width=900&height=500"
-    },
+    }
+  ],
+  "vesselAlongside": [
     {
       "vesselName": "DANUM 171",
       "vesselCode": "D171021",
@@ -1548,14 +1524,38 @@
       "vesId": "MRTO209",
       "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=MRTO209&width=600&height=500",
       "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MRTO209&width=900&height=500"
+    },
+    {
+      "vesselName": "MSC MALENA III",
+      "vesselCode": "MSL3002",
+      "voyage": "HC635R / HC635R",
+      "shippingLine": "MSC MALENA III (MSL3002)",
+      "type": "INTERNATIONAL",
+      "eta": "",
+      "etb": "18/09/2026 05:00",
+      "atb": "18/09/2026 05:13",
+      "etd": "",
+      "atd": "19/09/2026 00:44",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "458",
+      "exportTeus": "833",
+      "import": "322",
+      "importTeus": "586",
+      "vesId": "MSL3002",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel&ves_id=MSL3002&width=600&height=500",
+      "historyUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=vessel_audit&ves_id=MSL3002&width=900&height=500"
     }
   ],
   "counts": {
     "allVessels": 32,
-    "vesselAlongside": 2,
+    "vesselAlongside": 1,
     "confirmedVessel": 2,
     "openStack": 17,
     "vesselSchedule": 8,
-    "vesselHistory": 3
+    "vesselHistory": 4
   }
 }
