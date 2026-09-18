@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-09-18 06:40:00",
-  "updatedAt": "2026-09-18 06:40:00",
+  "lastUpdated": "2026-09-18 07:21:57",
+  "updatedAt": "2026-09-18 07:21:57",
   "source": "https://ibstpks.pelindo.co.id/webaccess/",
   "allVessels": [
     {
@@ -234,7 +234,7 @@
       "closingTime": "20/09/2026 22:00",
       "booking": "1200",
       "open": "1200",
-      "actual": "567",
+      "actual": "573",
       "export": "",
       "exportTeus": "",
       "import": "",
@@ -700,6 +700,30 @@
       "historyUrl": ""
     },
     {
+      "vesselName": "MSC SPARKLE III",
+      "vesselCode": "",
+      "voyage": "HV635A / HV639R",
+      "shippingLine": "[ Detail ]",
+      "type": "",
+      "eta": "",
+      "etb": "25/09/2026 17:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "MSCEHV635AHV639R",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=MSCEHV635AHV639R&width=600&height=270",
+      "historyUrl": ""
+    },
+    {
       "vesselName": "SKY PRIDE",
       "vesselCode": "SKYP011",
       "voyage": "2607S / 2607N",
@@ -1128,7 +1152,7 @@
       "closingTime": "20/09/2026 22:00",
       "booking": "1200",
       "open": "1200",
-      "actual": "567",
+      "actual": "573",
       "export": "",
       "exportTeus": "",
       "import": "",
@@ -1594,6 +1618,30 @@
       "vesId": "SIJO136S136N",
       "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=SIJO136S136N&width=600&height=270",
       "historyUrl": ""
+    },
+    {
+      "vesselName": "MSC SPARKLE III",
+      "vesselCode": "",
+      "voyage": "HV635A / HV639R",
+      "shippingLine": "[ Detail ]",
+      "type": "",
+      "eta": "",
+      "etb": "25/09/2026 17:00",
+      "atb": "",
+      "etd": "",
+      "atd": "",
+      "openStack": "",
+      "closingTime": "",
+      "booking": "",
+      "open": "",
+      "actual": "",
+      "export": "",
+      "exportTeus": "",
+      "import": "",
+      "importTeus": "",
+      "vesId": "MSCEHV635AHV639R",
+      "detailUrl": "https://ibstpks.pelindo.co.id/webaccess/information?do=ves_schedule_det&ves_id=MSCEHV635AHV639R&width=600&height=270",
+      "historyUrl": ""
     }
   ],
   "vesselHistory": [
@@ -1791,11 +1839,11 @@
     }
   ],
   "counts": {
-    "allVessels": 37,
+    "allVessels": 38,
     "vesselAlongside": 2,
     "confirmedVessel": 1,
     "openStack": 17,
-    "vesselSchedule": 9,
+    "vesselSchedule": 10,
     "vesselHistory": 8
   }
 }
