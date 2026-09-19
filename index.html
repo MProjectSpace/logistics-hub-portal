@@ -10,9 +10,8 @@
 
 <script>
 tailwind.config={theme:{extend:{boxShadow:{
-soft:"0 8px 30px rgba(15,23,42,.06)",
-card:"0 4px 20px rgba(15,23,42,.06)",
-glow:"0 0 0 1px rgba(59,130,246,.08),0 12px 35px rgba(15,23,42,.08)"
+ soft:"0 8px 30px rgba(15,23,42,.06)",
+ card:"0 4px 20px rgba(15,23,42,.06)"
 }}}};
 </script>
 
@@ -21,8 +20,8 @@ html{scroll-behavior:smooth}
 
 body{
  background:
- radial-gradient(circle at 10% 0%,rgba(59,130,246,.1),transparent 28%),
- radial-gradient(circle at 90% 10%,rgba(14,165,233,.08),transparent 25%),
+ radial-gradient(circle at 10% 0%,rgba(59,130,246,.08),transparent 28%),
+ radial-gradient(circle at 90% 10%,rgba(14,165,233,.06),transparent 25%),
  #f5f7fb
 }
 
@@ -33,27 +32,34 @@ body{
 ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px}
 ::-webkit-scrollbar-thumb:hover{background:#94a3b8}
 
-/* MAIN HEADER - STICKY */
+/* =========================================================
+   MAIN HEADER
+   ONLY THIS HEADER IS STICKY
+========================================================= */
+
 .header-glass{
- background:rgba(255,255,255,.9);
+ background:rgba(255,255,255,.92);
  backdrop-filter:blur(18px);
  -webkit-backdrop-filter:blur(18px)
 }
 
 .brand-icon{
  background:linear-gradient(135deg,#2563eb,#1d4ed8);
- box-shadow:0 10px 25px rgba(37,99,235,.25)
+ box-shadow:0 8px 22px rgba(37,99,235,.22)
 }
 
-/* HERO */
+/* =========================================================
+   HERO
+========================================================= */
+
 .hero-panel{
  position:relative;
  overflow:hidden;
  background:
- radial-gradient(circle at 85% 20%,rgba(96,165,250,.24),transparent 30%),
- radial-gradient(circle at 100% 100%,rgba(14,165,233,.15),transparent 35%),
+ radial-gradient(circle at 85% 20%,rgba(96,165,250,.22),transparent 30%),
+ radial-gradient(circle at 100% 100%,rgba(14,165,233,.13),transparent 35%),
  linear-gradient(135deg,#0f172a,#172554);
- box-shadow:0 20px 50px rgba(15,23,42,.16)
+ box-shadow:0 18px 45px rgba(15,23,42,.14)
 }
 
 .hero-grid{
@@ -75,21 +81,27 @@ body{
  transform:rotate(-8deg)
 }
 
-/* CARDS */
+/* =========================================================
+   CARDS
+========================================================= */
+
 .dashboard-card{
- background:rgba(255,255,255,.94);
- border:1px solid rgba(226,232,240,.9);
- box-shadow:0 4px 20px rgba(15,23,42,.045);
+ background:rgba(255,255,255,.95);
+ border:1px solid #e2e8f0;
+ box-shadow:0 4px 18px rgba(15,23,42,.045);
  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
 }
 
 .dashboard-card:hover{
- transform:translateY(-2px);
- box-shadow:0 12px 30px rgba(15,23,42,.07);
+ transform:translateY(-1px);
+ box-shadow:0 10px 28px rgba(15,23,42,.065);
  border-color:#cbd5e1
 }
 
-/* KPI */
+/* =========================================================
+   KPI
+========================================================= */
+
 .kpi-card{
  position:relative;
  overflow:hidden;
@@ -99,10 +111,10 @@ body{
 .kpi-card::after{
  content:"";
  position:absolute;
- right:-28px;
- bottom:-32px;
- width:100px;
- height:100px;
+ right:-30px;
+ bottom:-35px;
+ width:105px;
+ height:105px;
  border-radius:999px;
  background:currentColor;
  opacity:.035;
@@ -114,7 +126,10 @@ body{
  outline-offset:2px
 }
 
-/* STATUS */
+/* =========================================================
+   STATUS
+========================================================= */
+
 .status-dot{
  width:8px;
  height:8px;
@@ -134,25 +149,28 @@ body{
  display:inline-flex;
  align-items:center;
  gap:7px;
- padding:6px 10px;
+ padding:5px 9px;
  border-radius:999px;
  background:rgba(16,185,129,.1);
  color:#047857;
- font-size:11px;
+ font-size:10px;
  font-weight:700;
- letter-spacing:.04em;
+ letter-spacing:.05em;
  text-transform:uppercase
 }
 
-/* SEARCH */
+/* =========================================================
+   SEARCH
+========================================================= */
+
 .search-section{
  position:relative;
- z-index:50
+ z-index:30
 }
 
 .search-wrapper{
  position:relative;
- z-index:60
+ z-index:40
 }
 
 .search-wrapper input{
@@ -169,21 +187,24 @@ body{
  left:0;
  right:0;
  top:calc(100% + 7px);
+ max-height:330px;
+ overflow-y:auto;
  background:#fff;
  border:1px solid #e2e8f0;
  border-radius:14px;
  box-shadow:0 18px 40px rgba(15,23,42,.16);
- overflow:hidden
+ padding:5px
 }
 
 .search-suggestion{
  cursor:pointer;
+ border-radius:10px;
  transition:background .12s ease
 }
 
 .search-suggestion:hover,
 .search-suggestion.active{
- background:#f8fafc
+ background:#f1f5f9
 }
 
 .btn{transition:all .18s ease}
@@ -198,133 +219,176 @@ body{
  cursor:not-allowed
 }
 
-/* SECTIONS
-   IMPORTANT:
-   No sticky positioning here.
-*/
+/* =========================================================
+   VESSEL SECTIONS
+   NOTHING BELOW IS STICKY
+========================================================= */
+
 .dashboard-section{
- scroll-margin-top:90px
+ scroll-margin-top:88px
 }
 
 .section-card{
- background:rgba(255,255,255,.96);
+ background:rgba(255,255,255,.97);
  border:1px solid #e2e8f0;
  border-radius:18px;
  overflow:hidden;
- box-shadow:0 5px 22px rgba(15,23,42,.045)
+ box-shadow:0 4px 18px rgba(15,23,42,.045)
 }
 
+/* Section title is NOT sticky */
 .section-header{
- background:linear-gradient(
-  to bottom,
-  rgba(248,250,252,.75),
-  rgba(255,255,255,.95)
- )
+ background:#fff
 }
 
-/* TABLE
-   Header is intentionally NOT sticky.
-*/
+/* =========================================================
+   MODERN TABLE
+========================================================= */
+
 .section-scroll{
  overflow-x:auto;
  -webkit-overflow-scrolling:touch
 }
 
 .section-scroll table{
- min-width:760px
+ width:100%;
+ min-width:760px;
+ border-collapse:separate;
+ border-spacing:0
 }
 
+/* Table header is NOT sticky */
+.table-header{
+ background:#f8fafc
+}
+
+.table-header th{
+ padding:11px 16px;
+ color:#64748b;
+ font-size:9px;
+ font-weight:800;
+ letter-spacing:.09em;
+ text-transform:uppercase;
+ white-space:nowrap;
+ border-bottom:1px solid #e2e8f0
+}
+
+/* Modern rows */
 .table-row-clickable{
  cursor:pointer;
- transition:background-color .15s ease,box-shadow .15s ease
+ transition:background .16s ease,box-shadow .16s ease
 }
 
-.table-row-clickable:hover{
- background:linear-gradient(90deg,#f8fbff,#fff)
+.table-row-clickable td{
+ padding:14px 16px;
+ border-bottom:1px solid #f1f5f9;
+ background:#fff;
+ transition:background .16s ease
+}
+
+.table-row-clickable:nth-child(even) td{
+ background:#fcfdff
+}
+
+.table-row-clickable:hover td{
+ background:#f8fbff
 }
 
 .table-row-clickable:hover td:first-child{
  box-shadow:inset 3px 0 0 #3b82f6
 }
 
-.table-row-clickable td{
- border-bottom:1px solid #f1f5f9
+.table-row-clickable:last-child td{
+ border-bottom:0
 }
 
-.table-header{
- background:#f8fafc
-}
-
-.table-header th{
- color:#64748b;
- font-size:10px;
- font-weight:700;
- letter-spacing:.08em;
- text-transform:uppercase
-}
-
-/* VESSEL */
+/* Vessel */
 .vessel-name{
- color:#0f172a;
+ color:#172033;
  font-weight:700;
+ font-size:13px;
  letter-spacing:-.01em
 }
 
 .vessel-code{
  color:#94a3b8;
- font-size:11px;
- font-weight:500
+ font-size:10px;
+ font-weight:600;
+ margin-top:3px
 }
 
-/* TYPE */
+/* Voyage */
+.voyage-cell{
+ font-size:12px;
+ font-weight:600;
+ color:#475569;
+ white-space:nowrap
+}
+
+/* Type */
 .type-badge{
  display:inline-flex;
  align-items:center;
+ gap:6px;
  padding:5px 9px;
- border-radius:8px;
- background:#f1f5f9;
+ border-radius:7px;
+ background:#f8fafc;
  color:#475569;
- font-size:11px;
- font-weight:600;
- border:1px solid #e2e8f0
+ font-size:10px;
+ font-weight:700;
+ border:1px solid #e2e8f0;
+ white-space:nowrap
 }
 
-/* DATETIME */
-.datetime-cell{line-height:1.15}
+.type-badge::before{
+ content:"";
+ width:5px;
+ height:5px;
+ border-radius:50%;
+ background:#94a3b8
+}
+
+/* Date / time */
+.datetime-cell{
+ line-height:1.15;
+ white-space:nowrap
+}
 
 .datetime-date{
- font-size:13px;
+ font-size:12px;
  font-weight:600;
  color:#334155
 }
 
 .datetime-time{
- font-size:11px;
+ font-size:10px;
  font-weight:500;
  color:#94a3b8;
- margin-top:3px
+ margin-top:4px
 }
 
-/* NUMBERS */
+/* Number */
 .number-cell{
  font-variant-numeric:tabular-nums;
- font-weight:600
+ font-weight:600;
+ font-size:12px;
+ color:#475569
 }
 
 .numeric-cell{text-align:right}
 
-/* OPEN STACK */
+/* Open stack */
 .open-stack-table th,
 .open-stack-table td{
- padding-left:.75rem;
- padding-right:.75rem;
  white-space:nowrap
 }
 
-/* SEARCH RESULT */
-.search-hit{
- animation:searchHit 2.8s ease both;
- position:relative
+/* =========================================================
+   SEARCH RESULT HIGHLIGHT
+========================================================= */
+
+.search-hit td{
+ animation:searchHit 2.8s ease both
 }
 
 .search-hit td:first-child{
@@ -332,25 +396,16 @@ body{
 }
 
 @keyframes searchHit{
- 0%{
-  background:#dbeafe;
-  box-shadow:0 0 0 0 rgba(37,99,235,0)
- }
- 18%{
-  background:#eff6ff;
-  box-shadow:0 0 0 5px rgba(37,99,235,.12)
- }
- 55%{
-  background:#eff6ff;
-  box-shadow:0 0 0 3px rgba(37,99,235,.07)
- }
- 100%{
-  background:transparent;
-  box-shadow:0 0 0 0 rgba(37,99,235,0)
- }
+ 0%{background:#dbeafe!important}
+ 20%{background:#eff6ff!important}
+ 55%{background:#eff6ff!important}
+ 100%{background:inherit}
 }
 
-/* MODAL */
+/* =========================================================
+   MODAL
+========================================================= */
+
 .modal-backdrop{
  background:rgba(15,23,42,.62);
  backdrop-filter:blur(8px);
@@ -377,30 +432,39 @@ body{
  border-color:#cbd5e1
 }
 
-/* MOBILE */
 @media(max-width:640px){
  .hero-ship{font-size:90px;right:-10px}
  .hero-panel{border-radius:18px}
  .section-card{border-radius:15px}
+ .table-row-clickable td{padding:12px}
+ .table-header th{padding:10px 12px}
 }
 </style>
 </head>
 
 <body class="min-h-screen text-slate-800">
 
-<!-- MAIN HEADER : STICKY -->
-<header class="sticky top-0 z-40 border-b border-slate-200/80 header-glass">
+<!-- =======================================================
+     ONLY THIS HEADER IS STICKY
+======================================================== -->
+
+<header class="sticky top-0 z-50 border-b border-slate-200/80 header-glass">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 <div class="h-[72px] flex items-center justify-between gap-4">
 
 <div class="flex items-center gap-3 min-w-0">
+
 <div class="brand-icon w-11 h-11 rounded-[14px] text-white flex items-center justify-center flex-shrink-0">
 <i class="fa-solid fa-ship text-lg"></i>
 </div>
 
 <div class="min-w-0">
+
 <div class="flex items-center gap-2">
-<h1 class="font-bold text-base sm:text-lg tracking-tight truncate">TPKS Vessel Monitoring</h1>
+<h1 class="font-bold text-base sm:text-lg tracking-tight truncate">
+TPKS Vessel Monitoring
+</h1>
+
 <span class="hidden sm:inline-flex live-badge">
 <span id="headerLiveDot" class="status-dot bg-emerald-500"></span>
 Live
@@ -410,6 +474,7 @@ Live
 <p class="text-[11px] sm:text-xs text-slate-500 truncate mt-0.5">
 Pelindo Terminal Petikemas Semarang
 </p>
+
 </div>
 </div>
 
@@ -426,13 +491,16 @@ Pelindo Terminal Petikemas Semarang
 
 <!-- HERO -->
 <section class="hero-panel rounded-[20px] px-5 py-6 sm:px-7 sm:py-7 mb-5">
+
 <div class="hero-grid"></div>
 <i class="fa-solid fa-ship hero-ship"></i>
 
 <div class="relative z-10">
+
 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
 
 <div>
+
 <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 border border-white/10 text-blue-100 text-[10px] font-bold uppercase tracking-[.12em]">
 <i class="fa-solid fa-chart-line text-[9px]"></i>
 Terminal Operations
@@ -445,6 +513,7 @@ Vessel Operations Dashboard
 <p class="mt-2 text-sm text-slate-300 max-w-xl">
 Real-time operational overview of vessel activity at TPKS Terminal Petikemas Semarang.
 </p>
+
 </div>
 
 <div class="flex items-center gap-2 text-xs text-slate-300">
@@ -461,56 +530,89 @@ Automated monitoring active
 
 <div class="dashboard-card rounded-[18px] p-4 sm:p-5">
 <div class="flex items-start justify-between gap-4">
+
 <div>
 <div class="flex items-center gap-2">
-<span class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">Last Updated</span>
-<span id="freshnessBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">Checking</span>
+<span class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">
+Last Updated
+</span>
+<span id="freshnessBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">
+Checking
+</span>
 </div>
-<p id="lastUpdated" class="mt-2 text-base sm:text-lg font-bold tracking-tight text-slate-800">-</p>
-<p id="lastUpdatedRelative" class="mt-1 text-xs text-slate-500">Waiting for data...</p>
+
+<p id="lastUpdated" class="mt-2 text-base sm:text-lg font-bold tracking-tight text-slate-800">
+-
+</p>
+
+<p id="lastUpdatedRelative" class="mt-1 text-xs text-slate-500">
+Waiting for data...
+</p>
 </div>
 
 <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
 <i class="fa-solid fa-arrows-rotate"></i>
 </div>
+
 </div>
 </div>
 
 <div class="dashboard-card rounded-[18px] p-4 sm:p-5">
 <div class="flex items-start justify-between gap-4">
+
 <div>
 <div class="flex items-center gap-2">
-<span class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">Next Update</span>
-<span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold">30 MIN</span>
+<span class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">
+Next Update
+</span>
+
+<span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold">
+30 MIN
+</span>
 </div>
-<p id="nextUpdate" class="mt-2 text-base sm:text-lg font-bold tracking-tight text-slate-800">-</p>
-<p id="nextUpdateCountdown" class="mt-1 text-xs text-slate-500">-</p>
+
+<p id="nextUpdate" class="mt-2 text-base sm:text-lg font-bold tracking-tight text-slate-800">
+-
+</p>
+
+<p id="nextUpdateCountdown" class="mt-1 text-xs text-slate-500">
+-
+</p>
 </div>
 
 <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
 <i class="fa-regular fa-clock"></i>
 </div>
+
 </div>
 </div>
 
 <div class="dashboard-card rounded-[18px] p-4 sm:p-5">
 <div class="flex items-start justify-between gap-4">
+
 <div class="min-w-0">
-<div class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">Scraper Status</div>
+
+<div class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">
+Scraper Status
+</div>
 
 <div class="flex items-center gap-2 mt-2">
 <span id="scraperDot" class="status-dot bg-slate-400"></span>
-<p id="scraperStatus" class="text-base sm:text-lg font-bold tracking-tight text-slate-800 truncate">Checking...</p>
+<p id="scraperStatus" class="text-base sm:text-lg font-bold tracking-tight text-slate-800 truncate">
+Checking...
+</p>
 </div>
 
 <p id="scraperDetail" class="mt-1 text-xs text-slate-500 truncate">
 Checking GitHub Actions...
 </p>
+
 </div>
 
 <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0">
 <i class="fa-solid fa-gears"></i>
 </div>
+
 </div>
 </div>
 
@@ -544,7 +646,6 @@ class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/80 
 </div>
 
 <button
-id="clearSearchButton"
 type="button"
 onclick="clearSearch()"
 class="btn px-4 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-600">
@@ -552,7 +653,6 @@ class="btn px-4 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-
 </button>
 
 <button
-id="searchButton"
 type="button"
 onclick="performSearch()"
 class="btn px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold">
@@ -570,36 +670,48 @@ class="btn refresh-btn px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-w
 </div>
 
 <div class="mt-3 flex flex-wrap items-center justify-between gap-2 px-1">
+
 <p class="text-[11px] text-slate-400">
 <i class="fa-solid fa-circle-info mr-1"></i>
 Refresh reloads the latest <code>data.json</code>.
 </p>
 
-<p id="searchResultInfo" class="text-[11px] font-semibold text-slate-500">-</p>
-</div>
+<p id="searchResultInfo" class="text-[11px] font-semibold text-slate-500">
+-
+</p>
 
+</div>
 </section>
 
 <!-- KPI -->
-<section id="statistics" class="relative z-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-5"></section>
+<section
+id="statistics"
+class="relative z-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
+</section>
 
-<!-- DATA SECTIONS -->
+<!-- ALL VESSEL TABLES -->
 <section id="sections" class="space-y-5"></section>
 
 <!-- SOURCE -->
 <section class="mt-5">
+
 <div class="dashboard-card rounded-[18px] px-4 py-4">
+
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
 <div class="flex items-center gap-3">
+
 <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center">
 <i class="fa-solid fa-database text-sm"></i>
 </div>
 
 <div>
 <p class="text-xs font-bold text-slate-700">Data Source</p>
-<p id="sourceText" class="text-[11px] text-slate-500 mt-0.5">Pelindo TPKS</p>
+<p id="sourceText" class="text-[11px] text-slate-500 mt-0.5">
+Pelindo TPKS
+</p>
 </div>
+
 </div>
 
 <div class="flex items-center gap-2 text-[10px] text-slate-400">
@@ -616,23 +728,32 @@ v2.1.0
 </main>
 
 <!-- MODAL -->
-<div id="vesselModal" class="fixed inset-0 z-50 hidden modal-backdrop p-3 sm:p-4">
+<div id="vesselModal" class="fixed inset-0 z-[100] hidden modal-backdrop p-3 sm:p-4">
 
 <div class="min-h-full flex items-center justify-center">
 
-<div id="vesselModalContent" class="modal-enter bg-white w-full max-w-2xl max-h-[calc(100vh-2rem)] rounded-[20px] shadow-2xl overflow-hidden flex flex-col">
+<div
+id="vesselModalContent"
+class="modal-enter bg-white w-full max-w-2xl max-h-[calc(100vh-2rem)] rounded-[20px] shadow-2xl overflow-hidden flex flex-col">
 
 <div class="px-5 py-4 border-b border-slate-200 bg-white flex items-center justify-between flex-shrink-0">
 
 <div class="flex items-center gap-3 min-w-0">
+
 <div class="w-11 h-11 rounded-[14px] bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
 <i class="fa-solid fa-ship"></i>
 </div>
 
 <div class="min-w-0">
-<h2 id="modalVesselName" class="font-bold text-lg tracking-tight text-slate-800 truncate">Vessel Detail</h2>
-<p id="modalVesselCode" class="text-xs text-slate-500 mt-0.5">-</p>
+<h2 id="modalVesselName" class="font-bold text-lg tracking-tight text-slate-800 truncate">
+Vessel Detail
+</h2>
+
+<p id="modalVesselCode" class="text-xs text-slate-500 mt-0.5">
+-
+</p>
 </div>
+
 </div>
 
 <button
@@ -650,7 +771,10 @@ aria-label="Close">
 </div>
 
 <div class="px-5 py-3 border-t border-slate-200 bg-white flex justify-between items-center flex-shrink-0">
-<p class="text-[10px] text-slate-400">Vessel operational details</p>
+
+<p class="text-[10px] text-slate-400">
+Vessel operational details
+</p>
 
 <button
 type="button"
@@ -658,6 +782,7 @@ onclick="closeVesselModal()"
 class="btn px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold">
 Close
 </button>
+
 </div>
 
 </div>
@@ -665,10 +790,19 @@ Close
 </div>
 
 <footer class="mt-10 border-t border-slate-200">
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
 <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
-<p class="text-[11px] text-slate-400">TPKS Vessel Monitoring Dashboard</p>
-<p class="text-[11px] text-slate-400">Pelindo TPKS <span class="mx-1">•</span> Automated Monitoring</p>
+
+<p class="text-[11px] text-slate-400">
+TPKS Vessel Monitoring Dashboard
+</p>
+
+<p class="text-[11px] text-slate-400">
+Pelindo TPKS <span class="mx-1">•</span> Automated Monitoring
+</p>
+
 </div>
 </div>
 </footer>
@@ -691,7 +825,6 @@ let DATA={
 };
 
 let CURRENT_SEARCH="";
-let CURRENT_MODAL_VESSEL=null;
 let SEARCH_SUGGESTIONS=[];
 let ACTIVE_SUGGESTION=-1;
 
@@ -733,6 +866,8 @@ const SECTION_CONFIG={
  }
 };
 
+const SECTION_ORDER=Object.keys(SECTION_CONFIG);
+
 const TABLE_COLUMNS={
  vesselAlongside:[
   {key:"vessel",label:"Vessel",type:"vessel"},
@@ -741,7 +876,6 @@ const TABLE_COLUMNS={
   {key:"atb",label:"ATB",type:"text"},
   {key:"etd",label:"ETD",type:"text"}
  ],
-
  confirmedVessel:[
   {key:"vessel",label:"Vessel",type:"vessel"},
   {key:"voyage",label:"Voyage",type:"text"},
@@ -754,7 +888,6 @@ const TABLE_COLUMNS={
   {key:"open",label:"Open",type:"number"},
   {key:"actual",label:"Actual",type:"number"}
  ],
-
  openStack:[
   {key:"vessel",label:"Vessel",type:"vessel"},
   {key:"voyage",label:"Voyage",type:"text"},
@@ -768,13 +901,11 @@ const TABLE_COLUMNS={
   {key:"open",label:"Open",type:"number"},
   {key:"actual",label:"Actual",type:"number"}
  ],
-
  vesselSchedule:[
   {key:"vessel",label:"Vessel",type:"vessel"},
   {key:"voyage",label:"Voyage",type:"text"},
   {key:"etb",label:"ETB",type:"text"}
  ],
-
  vesselHistory:[
   {key:"vessel",label:"Vessel",type:"vessel"},
   {key:"voyage",label:"Voyage",type:"text"},
@@ -786,7 +917,9 @@ const TABLE_COLUMNS={
  ]
 };
 
-const SECTION_ORDER=Object.keys(SECTION_CONFIG);
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function escapeHtml(value){
  return String(value??"")
@@ -802,17 +935,24 @@ function normalizeSearchValue(value){
 }
 
 function formatValue(value){
- return value===null||value===undefined||value===""?"-":escapeHtml(value);
+ return value===null||value===undefined||value===""
+  ?"-"
+  :escapeHtml(value);
 }
 
 function formatNumber(value){
  if(value===null||value===undefined||value==="")return "-";
+
  const n=Number(String(value).replace(/,/g,""));
- return Number.isNaN(n)?escapeHtml(value):n.toLocaleString("en-US");
+
+ return Number.isNaN(n)
+  ?escapeHtml(value)
+  :n.toLocaleString("en-US");
 }
 
 function formatDateTime(date){
  if(!date||Number.isNaN(date.getTime()))return "-";
+
  return new Intl.DateTimeFormat("id-ID",{
   dateStyle:"medium",
   timeStyle:"medium",
@@ -822,6 +962,7 @@ function formatDateTime(date){
 
 function formatTime(date){
  if(!date||Number.isNaN(date.getTime()))return "-";
+
  return new Intl.DateTimeFormat("id-ID",{
   hour:"2-digit",
   minute:"2-digit",
@@ -830,48 +971,72 @@ function formatTime(date){
 }
 
 function renderDateTime(value){
- if(!value)return '<span class="text-slate-400">-</span>';
+
+ if(!value){
+  return '<span class="text-slate-400">-</span>';
+ }
 
  const text=String(value).trim();
  const match=text.match(/^(.*?)\s+(\d{1,2}:\d{2}(?::\d{2})?)$/);
 
  if(!match){
-  return `<div class="datetime-cell whitespace-nowrap">
+  return `
+  <div class="datetime-cell">
    <div class="datetime-date">${escapeHtml(text)}</div>
   </div>`;
  }
 
- return `<div class="datetime-cell whitespace-nowrap">
+ return `
+ <div class="datetime-cell">
   <div class="datetime-date">${escapeHtml(match[1])}</div>
   <div class="datetime-time">${escapeHtml(match[2])}</div>
  </div>`;
 }
 
 function getAgeMinutes(){
+
  const timestamp=DATA.updatedAt||DATA.lastUpdated;
+
  if(!timestamp)return null;
 
  const date=new Date(timestamp);
- return Number.isNaN(date.getTime())
-  ?null
-  :Math.max(0,(Date.now()-date.getTime())/60000);
+
+ if(Number.isNaN(date.getTime()))return null;
+
+ return Math.max(
+  0,
+  (Date.now()-date.getTime())/60000
+ );
 }
 
 function formatAge(minutes){
+
  if(minutes==null||Number.isNaN(minutes))return "-";
+
  if(minutes<1)return "just now";
+
  if(minutes<60)return `${Math.floor(minutes)} min`;
 
  const hours=Math.floor(minutes/60);
  const mins=Math.floor(minutes%60);
 
- if(hours<24)return mins?`${hours} hr ${mins} min`:`${hours} hr`;
+ if(hours<24){
+  return mins
+   ?`${hours} hr ${mins} min`
+   :`${hours} hr`;
+ }
 
  const days=Math.floor(hours/24);
+
  return days===1?"1 day":`${days} days`;
 }
 
+/* =========================================================
+   CONNECTION / STATUS
+========================================================= */
+
 function updateConnectionStatus(state,text){
+
  const dot=document.getElementById("connectionDot");
  const label=document.getElementById("connectionText");
 
@@ -880,18 +1045,17 @@ function updateConnectionStatus(state,text){
  label.textContent=text;
  dot.className="status-dot";
 
- dot.classList.add(
-  state==="online"
-   ?"bg-emerald-500"
-   :state==="loading"
-    ?"bg-blue-500"
-    :"bg-red-500"
- );
-
- if(state==="loading")dot.classList.add("pulse");
+ if(state==="online"){
+  dot.classList.add("bg-emerald-500");
+ }else if(state==="loading"){
+  dot.classList.add("bg-blue-500","pulse");
+ }else{
+  dot.classList.add("bg-red-500");
+ }
 }
 
 function updateFreshness(){
+
  const badge=document.getElementById("freshnessBadge");
  const relative=document.getElementById("lastUpdatedRelative");
 
@@ -899,7 +1063,8 @@ function updateFreshness(){
 
  const age=getAgeMinutes();
 
- badge.className="px-2 py-0.5 rounded-full text-[10px] font-bold";
+ badge.className=
+  "px-2 py-0.5 rounded-full text-[10px] font-bold";
 
  if(age===null){
   badge.textContent="Unknown";
@@ -923,6 +1088,7 @@ function updateFreshness(){
 }
 
 function getNextScraperUpdate(){
+
  const now=new Date();
  const next=new Date(now);
 
@@ -936,7 +1102,9 @@ function getNextScraperUpdate(){
 }
 
 function updateNextUpdate(){
+
  const next=getNextScraperUpdate();
+
  const label=document.getElementById("nextUpdate");
  const countdown=document.getElementById("nextUpdateCountdown");
 
@@ -944,7 +1112,10 @@ function updateNextUpdate(){
 
  label.textContent=formatTime(next);
 
- const seconds=Math.floor(Math.max(0,next-Date.now())/1000);
+ const seconds=Math.floor(
+  Math.max(0,next-Date.now())/1000
+ );
+
  const h=Math.floor(seconds/3600);
  const m=Math.floor(seconds%3600/60);
  const s=seconds%60;
@@ -955,7 +1126,12 @@ function updateNextUpdate(){
   :`in ${s}s`;
 }
 
+/* =========================================================
+   GITHUB ACTIONS STATUS
+========================================================= */
+
 async function loadScraperStatus(){
+
  const dot=document.getElementById("scraperDot");
  const status=document.getElementById("scraperStatus");
  const detail=document.getElementById("scraperDetail");
@@ -963,41 +1139,76 @@ async function loadScraperStatus(){
  if(!dot||!status||!detail)return;
 
  try{
-  const response=await fetch(GITHUB_WORKFLOW_API,{cache:"no-store"});
 
-  if(!response.ok)throw new Error(`HTTP ${response.status}`);
+  const response=await fetch(
+   GITHUB_WORKFLOW_API,
+   {cache:"no-store"}
+  );
+
+  if(!response.ok){
+   throw new Error(`HTTP ${response.status}`);
+  }
 
   const run=(await response.json())?.workflow_runs?.[0];
 
-  if(!run)throw new Error("No workflow run found");
+  if(!run){
+   throw new Error("No workflow run found");
+  }
 
   dot.className="status-dot";
 
-  if(run.status==="in_progress"||run.status==="queued"){
+  if(
+   run.status==="in_progress"||
+   run.status==="queued"
+  ){
+
    dot.classList.add("bg-blue-500","pulse");
-   status.textContent=run.status==="queued"?"Queued":"Running";
+
+   status.textContent=
+    run.status==="queued"
+     ?"Queued"
+     :"Running";
+
   }else if(run.conclusion==="success"){
+
    dot.classList.add("bg-emerald-500");
    status.textContent="Operational";
+
   }else{
+
    dot.classList.add("bg-red-500");
    status.textContent="Failed";
   }
 
-  detail.textContent=`Last run: ${formatDateTime(new Date(run.updated_at||run.created_at))}`;
+  detail.textContent=
+   `Last run: ${formatDateTime(
+    new Date(run.updated_at||run.created_at)
+   )}`;
 
  }catch(error){
-  console.error("Failed to load scraper status:",error);
+
+  console.error(
+   "Failed to load scraper status:",
+   error
+  );
 
   dot.className="status-dot bg-slate-400";
   status.textContent="Unavailable";
-  detail.textContent="GitHub Actions status unavailable.";
+  detail.textContent=
+   "GitHub Actions status unavailable.";
  }
 }
 
-/* KPI -> SECTION */
+/* =========================================================
+   KPI
+========================================================= */
+
 function scrollToSection(sectionKey){
- const target=document.getElementById(`section-${sectionKey}`);
+
+ const target=
+  document.getElementById(
+   `section-${sectionKey}`
+  );
 
  if(!target)return;
 
@@ -1008,6 +1219,7 @@ function scrollToSection(sectionKey){
 }
 
 function updateStatistics(){
+
  const container=document.getElementById("statistics");
 
  if(!container)return;
@@ -1061,11 +1273,14 @@ function updateStatistics(){
  ];
 
  container.innerHTML=items.map(item=>{
-  const count=Array.isArray(DATA[item.key])
-   ?DATA[item.key].length
-   :Number(DATA.counts?.[item.key]||0);
 
-  return `<button
+  const count=
+   Array.isArray(DATA[item.key])
+    ?DATA[item.key].length
+    :Number(DATA.counts?.[item.key]||0);
+
+  return `
+  <button
    type="button"
    class="dashboard-card kpi-card ${item.accent} border-l-[3px] rounded-[16px] p-4 ${item.iconClass} text-left w-full"
    onclick="scrollToSection('${item.key}')"
@@ -1074,6 +1289,7 @@ function updateStatistics(){
    <div class="flex items-center justify-between gap-3">
 
     <div>
+
      <p class="text-[10px] font-bold uppercase tracking-[.08em] text-slate-500">
       ${escapeHtml(item.label)}
      </p>
@@ -1085,6 +1301,7 @@ function updateStatistics(){
      <p class="mt-0.5 text-[10px] text-slate-400">
       ${escapeHtml(item.subtitle)}
      </p>
+
     </div>
 
     <div class="w-10 h-10 rounded-xl ${item.bgClass} ${item.iconClass} flex items-center justify-center">
@@ -1096,37 +1313,58 @@ function updateStatistics(){
  }).join("");
 }
 
-/* SEARCH */
+/* =========================================================
+   SEARCH
+========================================================= */
+
 function getSearchFields(vessel,sectionKey){
+
  const values=[];
 
- Object.entries(vessel||{}).forEach(([key,value])=>{
-  if(value!==null&&value!==undefined)values.push(String(value));
- });
+ Object.entries(vessel||{}).forEach(
+  ([key,value])=>{
+   if(
+    value!==null&&
+    value!==undefined
+   ){
+    values.push(String(value));
+   }
+  }
+ );
 
- values.push(SECTION_CONFIG[sectionKey]?.title||"");
+ values.push(
+  SECTION_CONFIG[sectionKey]?.title||""
+ );
 
  return values;
 }
 
 function vesselMatches(vessel,query,sectionKey){
+
  if(!query)return true;
 
  return normalizeSearchValue(
-  getSearchFields(vessel,sectionKey).join(" ")
+  getSearchFields(
+   vessel,
+   sectionKey
+  ).join(" ")
  ).includes(query);
 }
 
 /*
- Unique identity for each rendered vessel.
+ Unique key:
+ section + vesId + vesselName + vesselCode + voyage
 
- Important:
- vessel name + voyage are included so:
+ This keeps:
  SINAR BINTAN / 951S
+ and
  SINAR BINTAN / 951N
- remain separate search targets.
+
+ as separate records.
 */
+
 function getVesselKey(vessel,sectionKey){
+
  return [
   sectionKey,
   vessel?.vesId||"",
@@ -1136,24 +1374,38 @@ function getVesselKey(vessel,sectionKey){
  ].map(normalizeSearchValue).join("|");
 }
 
+/* =========================================================
+   BUILD SEARCH SUGGESTIONS
+========================================================= */
+
 function buildSuggestions(query){
+
  if(!query)return [];
 
+ const q=normalizeSearchValue(query);
  const results=[];
  const seen=new Set();
- const q=normalizeSearchValue(query);
 
  for(const sectionKey of SECTION_ORDER){
 
-  const records=Array.isArray(DATA[sectionKey])
-   ?DATA[sectionKey]
-   :[];
+  const records=
+   Array.isArray(DATA[sectionKey])
+    ?DATA[sectionKey]
+    :[];
 
   records.forEach(vessel=>{
 
-   if(!vesselMatches(vessel,q,sectionKey))return;
+   if(!vesselMatches(
+    vessel,
+    q,
+    sectionKey
+   ))return;
 
-   const key=getVesselKey(vessel,sectionKey);
+   const key=
+    getVesselKey(
+     vessel,
+     sectionKey
+    );
 
    if(seen.has(key))return;
 
@@ -1168,100 +1420,152 @@ function buildSuggestions(query){
  }
 
  results.sort((a,b)=>{
-  const an=normalizeSearchValue(a.vessel.vesselName);
-  const bn=normalizeSearchValue(b.vessel.vesselName);
 
-  const av=normalizeSearchValue(a.vessel.voyage);
-  const bv=normalizeSearchValue(b.vessel.voyage);
+  function score(v){
 
-  const score=v=>{
-   const name=normalizeSearchValue(v.vesselName);
-   const code=normalizeSearchValue(v.vesselCode);
-   const voyage=normalizeSearchValue(v.voyage);
+   const name=
+    normalizeSearchValue(
+     v.vesselName
+    );
 
-   if(name===q||`${name} ${voyage}`===q)return 0;
-   if(code===q||voyage===q)return 1;
-   if(name.startsWith(q)||code.startsWith(q)||voyage.startsWith(q))return 2;
+   const code=
+    normalizeSearchValue(
+     v.vesselCode
+    );
+
+   const voyage=
+    normalizeSearchValue(
+     v.voyage
+    );
+
+   if(
+    name===q||
+    `${name} ${voyage}`===q
+   )return 0;
+
+   if(
+    code===q||
+    voyage===q
+   )return 1;
+
+   if(
+    name.startsWith(q)||
+    code.startsWith(q)||
+    voyage.startsWith(q)
+   )return 2;
 
    return 3;
-  };
+  }
 
-  return score(a.vessel)-score(b.vessel)||an.localeCompare(bn)||av.localeCompare(bv);
+  return score(a.vessel)-score(b.vessel);
  });
 
  return results.slice(0,8);
 }
 
 function renderSearchSuggestions(query){
- const box=document.getElementById("searchSuggestions");
+
+ const box=
+  document.getElementById(
+   "searchSuggestions"
+  );
 
  if(!box)return;
 
- SEARCH_SUGGESTIONS=buildSuggestions(query);
+ SEARCH_SUGGESTIONS=
+  buildSuggestions(query);
+
  ACTIVE_SUGGESTION=-1;
 
- if(!query||!SEARCH_SUGGESTIONS.length){
+ if(
+  !query||
+  !SEARCH_SUGGESTIONS.length
+ ){
+
   box.classList.add("hidden");
   box.innerHTML="";
   return;
  }
 
- box.innerHTML=SEARCH_SUGGESTIONS.map((item,index)=>{
-  const v=item.vessel;
-  const cfg=SECTION_CONFIG[item.sectionKey];
+ box.innerHTML=
+  SEARCH_SUGGESTIONS.map(
+   (item,index)=>{
 
-  const details=[
-   v.vesselCode,
-   v.voyage?`Voyage ${v.voyage}`:"",
-   cfg.title
-  ].filter(Boolean).join(" · ");
+    const v=item.vessel;
+    const cfg=
+     SECTION_CONFIG[item.sectionKey];
 
-  return `<div
-   class="search-suggestion px-4 py-3 flex items-center gap-3"
-   data-suggestion-index="${index}">
+    const details=[
+     v.vesselCode,
+     v.voyage
+      ?`Voyage ${v.voyage}`
+      :"",
+     cfg.title
+    ].filter(Boolean).join(" · ");
 
-   <div class="w-8 h-8 rounded-lg ${cfg.bgClass} ${cfg.iconClass} flex items-center justify-center flex-shrink-0">
-    <i class="fa-solid ${cfg.icon} text-xs"></i>
-   </div>
+    return `
+    <div
+     class="search-suggestion px-4 py-3 flex items-center gap-3"
+     data-suggestion-index="${index}">
 
-   <div class="min-w-0 flex-1">
-    <div class="text-sm font-bold text-slate-800 truncate">
-     ${escapeHtml(v.vesselName||"-")}
-    </div>
+     <div class="w-8 h-8 rounded-lg ${cfg.bgClass} ${cfg.iconClass} flex items-center justify-center flex-shrink-0">
+      <i class="fa-solid ${cfg.icon} text-xs"></i>
+     </div>
 
-    <div class="text-[11px] text-slate-500 truncate">
-     ${escapeHtml(details)}
-    </div>
-   </div>
+     <div class="min-w-0 flex-1">
 
-   <i class="fa-solid fa-arrow-turn-down-left text-[10px] text-slate-300"></i>
+      <div class="text-sm font-bold text-slate-800 truncate">
+       ${escapeHtml(v.vesselName||"-")}
+      </div>
 
-  </div>`;
- }).join("");
+      <div class="text-[11px] text-slate-500 truncate">
+       ${escapeHtml(details)}
+      </div>
+
+     </div>
+
+     <i class="fa-solid fa-arrow-turn-down-left text-[10px] text-slate-300"></i>
+
+    </div>`;
+   }
+  ).join("");
 
  box.classList.remove("hidden");
 
- box.querySelectorAll("[data-suggestion-index]").forEach(element=>{
-  element.addEventListener("mousedown",event=>{
-   event.preventDefault();
-   selectSuggestion(Number(element.dataset.suggestionIndex));
-  });
+ box.querySelectorAll(
+  "[data-suggestion-index]"
+ ).forEach(element=>{
+
+  element.addEventListener(
+   "mousedown",
+   event=>{
+
+    event.preventDefault();
+
+    selectSuggestion(
+     Number(
+      element.dataset.suggestionIndex
+     )
+    );
+   }
+  );
  });
 }
 
 function selectSuggestion(index){
- const item=SEARCH_SUGGESTIONS[index];
+
+ const item=
+  SEARCH_SUGGESTIONS[index];
 
  if(!item)return;
 
- const input=document.getElementById("searchInput");
+ const input=
+  document.getElementById(
+   "searchInput"
+  );
+
  const v=item.vessel;
 
- /*
- Use a sufficiently unique query.
- Vessel name + code + voyage allows different voyages
- of the same vessel to remain distinguishable.
- */
  const query=[
   v.vesselName,
   v.vesselCode,
@@ -1269,71 +1573,56 @@ function selectSuggestion(index){
  ].filter(Boolean).join(" ");
 
  input.value=query;
- CURRENT_SEARCH=normalizeSearchValue(query);
+
+ CURRENT_SEARCH=
+  normalizeSearchValue(query);
 
  hideSuggestions();
+
  renderSections();
 
  /*
- Directly jump to THIS suggestion's row.
+ Directly jump to the exact
+ suggestion record.
  */
- jumpToSearchResult(item.vessel,item.sectionKey,true);
+
+ jumpToSearchResult(
+  v,
+  item.sectionKey,
+  true
+ );
 }
 
 function hideSuggestions(){
- const box=document.getElementById("searchSuggestions");
 
- if(box)box.classList.add("hidden");
+ const box=
+  document.getElementById(
+   "searchSuggestions"
+  );
+
+ if(box){
+  box.classList.add("hidden");
+ }
 
  ACTIVE_SUGGESTION=-1;
 }
 
-function performSearch(){
- const input=document.getElementById("searchInput");
-
- CURRENT_SEARCH=normalizeSearchValue(input?.value||"");
-
- hideSuggestions();
- renderSections();
-
- if(!CURRENT_SEARCH){
-  const info=document.getElementById("searchResultInfo");
-
-  if(info){
-   const total=SECTION_ORDER.reduce(
-    (sum,key)=>sum+(DATA[key]?.length||0),0
-   );
-
-   info.textContent=`${total.toLocaleString("en-US")} total records`;
-  }
-
-  return;
- }
-
- const found=findFirstSearchResult(CURRENT_SEARCH);
-
- if(found){
-  jumpToSearchResult(found.vessel,found.sectionKey,true);
- }else{
-  const info=document.getElementById("searchResultInfo");
-
-  if(info)info.textContent="Data tidak ditemukan";
- }
-}
-
 function findFirstSearchResult(query){
- const q=normalizeSearchValue(query);
 
- /*
- First try exact combinations.
- */
+ const q=
+  normalizeSearchValue(query);
+
+ /* Exact combination first */
+
  for(const sectionKey of SECTION_ORDER){
 
-  const records=Array.isArray(DATA[sectionKey])
-   ?DATA[sectionKey]
-   :[];
+  const records=
+   Array.isArray(DATA[sectionKey])
+    ?DATA[sectionKey]
+    :[];
 
   const exact=records.find(v=>{
+
    const combinations=[
     `${v.vesselName||""} ${v.voyage||""}`,
     `${v.vesselName||""} ${v.vesselCode||""} ${v.voyage||""}`,
@@ -1341,7 +1630,8 @@ function findFirstSearchResult(query){
    ];
 
    return combinations.some(
-    value=>normalizeSearchValue(value)===q
+    value=>
+     normalizeSearchValue(value)===q
    );
   });
 
@@ -1353,16 +1643,23 @@ function findFirstSearchResult(query){
   }
  }
 
- /*
- Then fallback to general field search.
- */
+ /* General search */
+
  for(const sectionKey of SECTION_ORDER){
 
-  const records=Array.isArray(DATA[sectionKey])
-   ?DATA[sectionKey]
-   :[];
+  const records=
+   Array.isArray(DATA[sectionKey])
+    ?DATA[sectionKey]
+    :[];
 
-  const found=records.find(v=>vesselMatches(v,q,sectionKey));
+  const found=
+   records.find(v=>
+    vesselMatches(
+     v,
+     q,
+     sectionKey
+    )
+   );
 
   if(found){
    return{
@@ -1375,23 +1672,38 @@ function findFirstSearchResult(query){
  return null;
 }
 
-function jumpToSearchResult(vessel,sectionKey,highlight=true){
- const section=document.getElementById(`section-${sectionKey}`);
+function jumpToSearchResult(
+ vessel,
+ sectionKey,
+ highlight=true
+){
+
+ const section=
+  document.getElementById(
+   `section-${sectionKey}`
+  );
 
  if(!section)return;
 
- const targetKey=getVesselKey(vessel,sectionKey);
+ const key=
+  getVesselKey(
+   vessel,
+   sectionKey
+  );
 
- /*
- Search by data-vessel-key rather than array index.
- This prevents wrong rows when the table is filtered.
- */
- const row=[...section.querySelectorAll("tbody tr[data-vessel-key]")]
-  .find(element=>element.dataset.vesselKey===targetKey);
+ const row=[
+  ...section.querySelectorAll(
+   "tbody tr[data-vessel-key]"
+  )
+ ].find(
+  element=>
+   element.dataset.vesselKey===key
+ );
 
  if(!row)return;
 
  setTimeout(()=>{
+
   row.scrollIntoView({
    behavior:"smooth",
    block:"center",
@@ -1399,146 +1711,223 @@ function jumpToSearchResult(vessel,sectionKey,highlight=true){
   });
 
   if(highlight){
-   row.classList.remove("search-hit");
+
+   row.classList.remove(
+    "search-hit"
+   );
 
    void row.offsetWidth;
 
-   row.classList.add("search-hit");
+   row.classList.add(
+    "search-hit"
+   );
 
    setTimeout(()=>{
-    row.classList.remove("search-hit");
+    row.classList.remove(
+     "search-hit"
+    );
    },3000);
   }
+
  },100);
 }
 
-function updateSuggestionActive(){
- const box=document.getElementById("searchSuggestions");
+function performSearch(){
 
- if(!box)return;
-
- box.querySelectorAll(".search-suggestion").forEach((element,index)=>{
-  element.classList.toggle(
-   "active",
-   index===ACTIVE_SUGGESTION
+ const input=
+  document.getElementById(
+   "searchInput"
   );
- });
+
+ CURRENT_SEARCH=
+  normalizeSearchValue(
+   input?.value||""
+  );
+
+ hideSuggestions();
+
+ renderSections();
+
+ if(!CURRENT_SEARCH){
+
+  const info=
+   document.getElementById(
+    "searchResultInfo"
+   );
+
+  const total=
+   SECTION_ORDER.reduce(
+    (sum,key)=>
+     sum+(DATA[key]?.length||0),
+    0
+   );
+
+  if(info){
+   info.textContent=
+    `${total.toLocaleString(
+     "en-US"
+    )} total records`;
+  }
+
+  return;
+ }
+
+ const found=
+  findFirstSearchResult(
+   CURRENT_SEARCH
+  );
+
+ if(found){
+
+  jumpToSearchResult(
+   found.vessel,
+   found.sectionKey,
+   true
+  );
+
+ }else{
+
+  const info=
+   document.getElementById(
+    "searchResultInfo"
+   );
+
+  if(info){
+   info.textContent=
+    "Data tidak ditemukan";
+  }
+ }
 }
 
 function clearSearch(){
- const input=document.getElementById("searchInput");
+
+ const input=
+  document.getElementById(
+   "searchInput"
+  );
 
  if(input)input.value="";
 
  CURRENT_SEARCH="";
 
  hideSuggestions();
+
  renderSections();
 }
 
-/* SECTIONS */
+function updateSuggestionActive(){
+
+ const box=
+  document.getElementById(
+   "searchSuggestions"
+  );
+
+ if(!box)return;
+
+ box.querySelectorAll(
+  ".search-suggestion"
+ ).forEach(
+  (element,index)=>{
+   element.classList.toggle(
+    "active",
+    index===ACTIVE_SUGGESTION
+   );
+  }
+ );
+}
+
+/* =========================================================
+   RENDER SECTIONS
+========================================================= */
+
 function renderSections(){
- const container=document.getElementById("sections");
+
+ const container=
+  document.getElementById(
+   "sections"
+  );
 
  if(!container)return;
 
  let totalVisible=0;
  let totalRecords=0;
 
- container.innerHTML=SECTION_ORDER.map(sectionKey=>{
+ container.innerHTML=
+  SECTION_ORDER.map(
+   sectionKey=>{
 
-  const config=SECTION_CONFIG[sectionKey];
+    const config=
+     SECTION_CONFIG[sectionKey];
 
-  const records=Array.isArray(DATA[sectionKey])
-   ?DATA[sectionKey]
-   :[];
+    const records=
+     Array.isArray(DATA[sectionKey])
+      ?DATA[sectionKey]
+      :[];
 
-  totalRecords+=records.length;
+    totalRecords+=records.length;
 
-  const filtered=records.filter(vessel=>
-   vesselMatches(vessel,CURRENT_SEARCH,sectionKey)
+    const filtered=
+     records.filter(vessel=>
+      vesselMatches(
+       vessel,
+       CURRENT_SEARCH,
+       sectionKey
+      )
+     );
+
+    totalVisible+=filtered.length;
+
+    return renderSection(
+     sectionKey,
+     config,
+     filtered,
+     records.length
+    );
+   }
+  ).join("");
+
+ const info=
+  document.getElementById(
+   "searchResultInfo"
   );
-
-  totalVisible+=filtered.length;
-
-  return renderSection(
-   sectionKey,
-   config,
-   filtered,
-   records.length
-  );
-
- }).join("");
-
- const info=document.getElementById("searchResultInfo");
 
  if(info){
-  info.textContent=CURRENT_SEARCH
-   ?`Showing ${totalVisible.toLocaleString("en-US")} of ${totalRecords.toLocaleString("en-US")} records`
-   :`${totalRecords.toLocaleString("en-US")} total records`;
+
+  info.textContent=
+   CURRENT_SEARCH
+    ?`Showing ${totalVisible.toLocaleString(
+      "en-US"
+     )} of ${totalRecords.toLocaleString(
+      "en-US"
+     )} records`
+    :`${totalRecords.toLocaleString(
+      "en-US"
+     )} total records`;
  }
 }
 
-function renderDataError(message){
- const statistics=document.getElementById("statistics");
- const sections=document.getElementById("sections");
+function renderSection(
+ sectionKey,
+ config,
+ records,
+ totalCount
+){
 
- if(statistics)statistics.innerHTML="";
-
- if(sections){
-
-  sections.innerHTML=`
-  <section class="section-card border-red-200">
-
-   <div class="p-6 sm:p-8">
-
-    <div class="flex items-start gap-4">
-
-     <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-     </div>
-
-     <div class="min-w-0">
-
-      <h2 class="font-bold text-slate-800">
-       Unable to Load Data
-      </h2>
-
-      <p class="mt-1 text-sm text-slate-500">
-       The dashboard could not load the latest <code>data.json</code>.
-      </p>
-
-      <p class="mt-2 text-xs text-red-600 break-words">
-       ${escapeHtml(message)}
-      </p>
-
-      <button
-       type="button"
-       onclick="loadData()"
-       class="btn mt-4 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
-       <i class="fa-solid fa-rotate mr-2"></i>
-       Try Again
-      </button>
-
-     </div>
-    </div>
-   </div>
-  </section>`;
- }
-}
-
-function renderSection(sectionKey,config,records,totalCount){
- const columns=TABLE_COLUMNS[sectionKey]||[];
+ const columns=
+  TABLE_COLUMNS[sectionKey]||[];
 
  const tableClass=
   sectionKey==="openStack"
-   ?"w-full text-sm open-stack-table"
-   :"w-full text-sm";
+   ?"w-full open-stack-table"
+   :"w-full";
 
  return `
- <section id="section-${sectionKey}" class="section-card dashboard-section">
+ <section
+  id="section-${sectionKey}"
+  class="section-card dashboard-section">
 
-  <!-- SECTION TITLE : NOT STICKY -->
+  <!-- SECTION TITLE IS NOT STICKY -->
+
   <div class="section-header px-4 sm:px-5 py-4 border-b border-slate-200">
 
    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -1572,8 +1961,12 @@ function renderSection(sectionKey,config,records,totalCount){
     </div>
 
     ${
-     CURRENT_SEARCH&&totalCount!==records.length
-      ?`<p class="text-[10px] font-semibold text-slate-400">${records.length} matching</p>`
+     CURRENT_SEARCH&&
+     totalCount!==records.length
+      ?`
+       <p class="text-[10px] font-semibold text-slate-400">
+        ${records.length} matching
+       </p>`
       :""
     }
 
@@ -1582,32 +1975,38 @@ function renderSection(sectionKey,config,records,totalCount){
 
   <div class="section-scroll">
 
-   ${
-    records.length
+  ${
+   records.length
 
-    ?`
+   ?`
     <table class="${tableClass}">
 
-     <!-- TABLE HEADER : NOT STICKY -->
-     <thead class="table-header border-b border-slate-200">
+     <!-- TABLE HEADER IS NOT STICKY -->
+
+     <thead class="table-header">
       <tr>
-       ${columns.map(column=>
-        `<th class="px-4 py-3 text-left whitespace-nowrap">
+       ${columns.map(column=>`
+        <th class="text-left">
          ${escapeHtml(column.label)}
-        </th>`
-       ).join("")}
+        </th>
+       `).join("")}
       </tr>
      </thead>
 
      <tbody>
-      ${records.map(vessel=>
-       renderTableRow(vessel,sectionKey,columns)
+      ${records.map(
+       vessel=>
+        renderTableRow(
+         vessel,
+         sectionKey,
+         columns
+        )
       ).join("")}
      </tbody>
 
     </table>`
 
-    :`
+   :`
     <div class="py-14 text-center">
 
      <div class="w-12 h-12 rounded-2xl bg-slate-100 mx-auto flex items-center justify-center">
@@ -1615,66 +2014,93 @@ function renderSection(sectionKey,config,records,totalCount){
      </div>
 
      <p class="mt-3 text-sm font-semibold text-slate-600">
-      ${CURRENT_SEARCH?"No matching vessel found":"No vessel data available"}
+      ${CURRENT_SEARCH
+       ?"No matching vessel found"
+       :"No vessel data available"}
      </p>
 
      <p class="mt-1 text-xs text-slate-400">
-      ${
-       CURRENT_SEARCH
-        ?"Try another search keyword."
-        :"The scraper did not return records for this section."
-      }
+      ${CURRENT_SEARCH
+       ?"Try another search keyword."
+       :"The scraper did not return records for this section."}
      </p>
 
     </div>`
-   }
+  }
 
   </div>
-
  </section>`;
 }
 
-function renderTableRow(vessel,sectionKey,columns){
+function renderTableRow(
+ vessel,
+ sectionKey,
+ columns
+){
+
  let encoded="";
 
  try{
-  encoded=encodeURIComponent(JSON.stringify(vessel));
+  encoded=
+   encodeURIComponent(
+    JSON.stringify(vessel)
+   );
  }catch(error){
-  console.error("Failed to encode vessel:",error);
+  console.error(
+   "Failed to encode vessel:",
+   error
+  );
  }
 
- const vesselKey=getVesselKey(vessel,sectionKey);
+ const vesselKey=
+  getVesselKey(
+   vessel,
+   sectionKey
+  );
 
  return `
  <tr
   class="table-row-clickable"
   data-vessel-key="${escapeHtml(vesselKey)}"
-  data-vessel-name="${escapeHtml(vessel.vesselName||"")}"
-  data-voyage="${escapeHtml(vessel.voyage||"")}"
-  ${encoded?`onclick="openVesselModal('${encoded}')"`:""}
+  ${encoded
+   ?`onclick="openVesselModal('${encoded}')"`
+   :""}
   title="Click to view vessel details">
 
-  ${columns.map(column=>
-   renderCell(vessel,column)
+  ${columns.map(
+   column=>
+    renderCell(
+     vessel,
+     column
+    )
   ).join("")}
 
  </tr>`;
 }
 
-function renderCell(vessel,column){
+function renderCell(
+ vessel,
+ column
+){
 
  if(column.type==="vessel"){
-  return `
-  <td class="px-4 py-3.5">
 
-   <div class="vessel-name text-sm">
-    ${escapeHtml(vessel.vesselName||"-")}
+  return `
+  <td>
+
+   <div class="vessel-name">
+    ${escapeHtml(
+     vessel.vesselName||"-"
+    )}
    </div>
 
    ${
     vessel.vesselCode
-     ?`<div class="vessel-code mt-1">
-       ${escapeHtml(vessel.vesselCode)}
+     ?`
+      <div class="vessel-code">
+       ${escapeHtml(
+        vessel.vesselCode
+       )}
       </div>`
      :""
    }
@@ -1683,68 +2109,107 @@ function renderCell(vessel,column){
  }
 
  if(column.type==="type"){
-  const value=vessel[column.key];
+
+  const value=
+   vessel[column.key];
 
   return `
-  <td class="px-4 py-3.5 whitespace-nowrap">
+  <td>
 
    ${
     value
-     ?`<span class="type-badge">
-       <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
+     ?`
+      <span class="type-badge">
        ${escapeHtml(value)}
       </span>`
-     :"-"
+     :`<span class="text-slate-400">-</span>`
    }
 
   </td>`;
  }
 
  if(column.type==="datetime"){
+
   return `
-  <td class="px-3 py-2.5">
-   ${renderDateTime(vessel[column.key])}
+  <td>
+   ${renderDateTime(
+    vessel[column.key]
+   )}
   </td>`;
  }
 
  if(column.type==="number"){
+
   return `
-  <td class="px-3 py-3.5 whitespace-nowrap text-slate-700 number-cell ${
-   ["booking","open","actual"].includes(column.key)
+  <td class="number-cell ${
+   ["booking","open","actual"].includes(
+    column.key
+   )
     ?"numeric-cell"
     :""
   }">
-   ${formatNumber(vessel[column.key])}
+   ${formatNumber(
+    vessel[column.key]
+   )}
   </td>`;
  }
 
  return `
- <td class="px-4 py-3.5 whitespace-nowrap text-slate-600 text-xs font-medium">
-  ${formatValue(vessel[column.key])}
+ <td class="whitespace-nowrap text-slate-600 text-xs font-medium">
+  ${formatValue(
+   vessel[column.key]
+  )}
  </td>`;
 }
 
-/* MODAL */
+/* =========================================================
+   MODAL
+========================================================= */
+
 function openVesselModal(encodedVessel){
+
  try{
 
-  const vessel=JSON.parse(
-   decodeURIComponent(encodedVessel)
-  );
+  const vessel=
+   JSON.parse(
+    decodeURIComponent(
+     encodedVessel
+    )
+   );
 
-  CURRENT_MODAL_VESSEL=vessel;
+  const modal=
+   document.getElementById(
+    "vesselModal"
+   );
 
-  const modal=document.getElementById("vesselModal");
-  const name=document.getElementById("modalVesselName");
-  const code=document.getElementById("modalVesselCode");
-  const grid=document.getElementById("modalVesselGrid");
+  const name=
+   document.getElementById(
+    "modalVesselName"
+   );
+
+  const code=
+   document.getElementById(
+    "modalVesselCode"
+   );
+
+  const grid=
+   document.getElementById(
+    "modalVesselGrid"
+   );
 
   if(!modal||!name||!code||!grid){
-   throw new Error("Modal elements not found");
+   throw new Error(
+    "Modal elements not found"
+   );
   }
 
-  name.textContent=vessel.vesselName||"Vessel Detail";
-  code.textContent=vessel.vesselCode||"No vessel code";
+  name.textContent=
+   vessel.vesselName||
+   "Vessel Detail";
+
+  code.textContent=
+   vessel.vesselCode||
+   "No vessel code";
 
   const fields=[
    ["Vessel Name",vessel.vesselName],
@@ -1777,60 +2242,89 @@ function openVesselModal(encodedVessel){
    "Import TEUs"
   ];
 
-  grid.innerHTML=fields
-   .filter(([,value])=>
-    value!==null&&
-    value!==undefined&&
-    String(value).trim()!==""
-   )
-   .map(([label,value])=>`
-    <div class="modal-field rounded-xl px-3.5 py-3">
+  grid.innerHTML=
+   fields
+    .filter(([,value])=>
+     value!==null&&
+     value!==undefined&&
+     String(value).trim()!==""
+    )
+    .map(
+     ([label,value])=>`
 
-     <p class="text-[9px] font-bold uppercase tracking-[.1em] text-slate-400">
-      ${escapeHtml(label)}
-     </p>
+      <div class="modal-field rounded-xl px-3.5 py-3">
 
-     <p class="mt-1 text-sm font-semibold text-slate-800 break-words leading-tight">
-      ${
-       numeric.includes(label)
-        ?formatNumber(value)
-        :formatValue(value)
-      }
-     </p>
+       <p class="text-[9px] font-bold uppercase tracking-[.1em] text-slate-400">
+        ${escapeHtml(label)}
+       </p>
 
-    </div>
-   `).join("");
+       <p class="mt-1 text-sm font-semibold text-slate-800 break-words leading-tight">
+        ${
+         numeric.includes(label)
+          ?formatNumber(value)
+          :formatValue(value)
+        }
+       </p>
 
-  modal.classList.remove("hidden");
-  document.body.classList.add("overflow-hidden");
+      </div>
+     `
+    ).join("");
+
+  modal.classList.remove(
+   "hidden"
+  );
+
+  document.body.classList.add(
+   "overflow-hidden"
+  );
 
  }catch(error){
-  console.error("Failed to open vessel modal:",error);
+
+  console.error(
+   "Failed to open vessel modal:",
+   error
+  );
  }
 }
 
 function closeVesselModal(){
- const modal=document.getElementById("vesselModal");
 
- if(modal)modal.classList.add("hidden");
+ const modal=
+  document.getElementById(
+   "vesselModal"
+  );
 
- document.body.classList.remove("overflow-hidden");
- CURRENT_MODAL_VESSEL=null;
+ if(modal){
+  modal.classList.add(
+   "hidden"
+  );
+ }
+
+ document.body.classList.remove(
+  "overflow-hidden"
+ );
 }
 
 function updateLastUpdate(){
- const label=document.getElementById("lastUpdated");
+
+ const label=
+  document.getElementById(
+   "lastUpdated"
+  );
 
  if(!label)return;
 
- const timestamp=DATA.updatedAt||DATA.lastUpdated;
+ const timestamp=
+  DATA.updatedAt||
+  DATA.lastUpdated;
 
  if(!timestamp){
   label.textContent="-";
   return;
  }
 
- const date=new Date(timestamp);
+ const date=
+  new Date(timestamp);
 
  label.textContent=
   Number.isNaN(date.getTime())
@@ -1839,51 +2333,77 @@ function updateLastUpdate(){
 }
 
 function updateSource(){
- const element=document.getElementById("sourceText");
+
+ const element=
+  document.getElementById(
+   "sourceText"
+  );
 
  if(element){
-  element.textContent=DATA.source||"Pelindo TPKS";
+  element.textContent=
+   DATA.source||
+   "Pelindo TPKS";
  }
 }
 
-/* LOAD DATA */
+/* =========================================================
+   LOAD DATA
+========================================================= */
+
 async function loadData(){
 
- const refreshButton=document.getElementById("refreshButton");
+ const refreshButton=
+  document.getElementById(
+   "refreshButton"
+  );
 
- updateConnectionStatus("loading","Loading...");
+ updateConnectionStatus(
+  "loading",
+  "Loading..."
+ );
 
  if(refreshButton){
+
   refreshButton.disabled=true;
+
   refreshButton.innerHTML=
    '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Refreshing...';
  }
 
  try{
 
-  const response=await fetch(
-   `${DATA_FILE}?t=${Date.now()}`,
-   {cache:"no-store"}
-  );
+  const response=
+   await fetch(
+    `${DATA_FILE}?t=${Date.now()}`,
+    {cache:"no-store"}
+   );
 
   if(!response.ok){
+
    throw new Error(
     `HTTP ${response.status} while loading ${DATA_FILE}`
    );
   }
 
-  const responseText=await response.text();
+  const responseText=
+   await response.text();
 
   if(!responseText.trim()){
-   throw new Error("data.json is empty");
+   throw new Error(
+    "data.json is empty"
+   );
   }
 
   let json;
 
   try{
-   json=JSON.parse(responseText);
+   json=JSON.parse(
+    responseText
+   );
   }catch(error){
-   throw new Error("data.json is not valid JSON");
+   throw new Error(
+    "data.json is not valid JSON"
+   );
   }
 
   if(
@@ -1891,54 +2411,77 @@ async function loadData(){
    typeof json!=="object"||
    Array.isArray(json)
   ){
+
    throw new Error(
     "data.json has an invalid root structure"
    );
   }
 
   DATA={
-   updatedAt:json.updatedAt||json.lastUpdated||"",
-   source:json.source||"",
+   updatedAt:
+    json.updatedAt||
+    json.lastUpdated||
+    "",
+
+   source:
+    json.source||
+    "",
 
    vesselAlongside:
-    Array.isArray(json.vesselAlongside)
+    Array.isArray(
+     json.vesselAlongside
+    )
      ?json.vesselAlongside
      :[],
 
    confirmedVessel:
-    Array.isArray(json.confirmedVessel)
+    Array.isArray(
+     json.confirmedVessel
+    )
      ?json.confirmedVessel
      :[],
 
    openStack:
-    Array.isArray(json.openStack)
+    Array.isArray(
+     json.openStack
+    )
      ?json.openStack
      :[],
 
    vesselSchedule:
-    Array.isArray(json.vesselSchedule)
+    Array.isArray(
+     json.vesselSchedule
+    )
      ?json.vesselSchedule
      :[],
 
    vesselHistory:
-    Array.isArray(json.vesselHistory)
+    Array.isArray(
+     json.vesselHistory
+    )
      ?json.vesselHistory
      :[],
 
    counts:
-    json.counts&&typeof json.counts==="object"
+    json.counts&&
+    typeof json.counts==="object"
      ?json.counts
      :{}
   };
 
   console.log(
-   "TPKS data loaded successfully:",
+   "TPKS data loaded:",
    {
-    vesselAlongside:DATA.vesselAlongside.length,
-    confirmedVessel:DATA.confirmedVessel.length,
-    openStack:DATA.openStack.length,
-    vesselSchedule:DATA.vesselSchedule.length,
-    vesselHistory:DATA.vesselHistory.length
+    vesselAlongside:
+     DATA.vesselAlongside.length,
+    confirmedVessel:
+     DATA.confirmedVessel.length,
+    openStack:
+     DATA.openStack.length,
+    vesselSchedule:
+     DATA.vesselSchedule.length,
+    vesselHistory:
+     DATA.vesselHistory.length
    }
   );
 
@@ -1949,11 +2492,17 @@ async function loadData(){
   updateSource();
   renderSections();
 
-  updateConnectionStatus("online","Connected");
+  updateConnectionStatus(
+   "online",
+   "Connected"
+  );
 
  }catch(error){
 
-  console.error("Failed to load data:",error);
+  console.error(
+   "Failed to load data:",
+   error
+  );
 
   updateConnectionStatus(
    "offline",
@@ -1961,117 +2510,252 @@ async function loadData(){
   );
 
   renderDataError(
-   error?.message||"Unknown data loading error"
+   error?.message||
+   "Unknown data loading error"
   );
 
  }finally{
 
   if(refreshButton){
+
    refreshButton.disabled=false;
+
    refreshButton.innerHTML=
     '<i class="fa-solid fa-rotate mr-2"></i>Refresh Data';
   }
  }
 }
 
-/* SEARCH EVENTS */
-const searchInput=document.getElementById("searchInput");
+function renderDataError(message){
+
+ const statistics=
+  document.getElementById(
+   "statistics"
+  );
+
+ const sections=
+  document.getElementById(
+   "sections"
+  );
+
+ if(statistics){
+  statistics.innerHTML="";
+ }
+
+ if(sections){
+
+  sections.innerHTML=`
+  <section class="section-card border-red-200">
+
+   <div class="p-6 sm:p-8">
+
+    <div class="flex items-start gap-4">
+
+     <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+     </div>
+
+     <div class="min-w-0">
+
+      <h2 class="font-bold text-slate-800">
+       Unable to Load Data
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+       The dashboard could not load the latest
+       <code>data.json</code>.
+      </p>
+
+      <p class="mt-2 text-xs text-red-600 break-words">
+       ${escapeHtml(message)}
+      </p>
+
+      <button
+       type="button"
+       onclick="loadData()"
+       class="btn mt-4 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
+       <i class="fa-solid fa-rotate mr-2"></i>
+       Try Again
+      </button>
+
+     </div>
+    </div>
+   </div>
+  </section>`;
+ }
+}
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+const searchInput=
+ document.getElementById(
+  "searchInput"
+ );
 
 if(searchInput){
 
- searchInput.addEventListener("input",event=>{
-  const value=event.target.value;
+ searchInput.addEventListener(
+  "input",
+  event=>{
 
-  CURRENT_SEARCH=normalizeSearchValue(value);
+   const value=
+    event.target.value;
 
-  renderSections();
-  renderSearchSuggestions(value);
- });
+   CURRENT_SEARCH=
+    normalizeSearchValue(
+     value
+    );
 
- searchInput.addEventListener("keydown",event=>{
+   renderSections();
+   renderSearchSuggestions(
+    value
+   );
+  }
+ );
 
-  if(event.key==="Enter"){
-   event.preventDefault();
+ searchInput.addEventListener(
+  "keydown",
+  event=>{
 
-   if(
-    ACTIVE_SUGGESTION>=0&&
-    SEARCH_SUGGESTIONS[ACTIVE_SUGGESTION]
-   ){
-    selectSuggestion(ACTIVE_SUGGESTION);
-   }else{
-    performSearch();
+   if(event.key==="Enter"){
+
+    event.preventDefault();
+
+    if(
+     ACTIVE_SUGGESTION>=0&&
+     SEARCH_SUGGESTIONS[
+      ACTIVE_SUGGESTION
+     ]
+    ){
+
+     selectSuggestion(
+      ACTIVE_SUGGESTION
+     );
+
+    }else{
+
+     performSearch();
+    }
+
+    return;
    }
 
-   return;
+   if(event.key==="Escape"){
+
+    hideSuggestions();
+    return;
+   }
+
+   if(
+    event.key==="ArrowDown"&&
+    SEARCH_SUGGESTIONS.length
+   ){
+
+    event.preventDefault();
+
+    ACTIVE_SUGGESTION=
+     (
+      ACTIVE_SUGGESTION+1
+     )%
+     SEARCH_SUGGESTIONS.length;
+
+    updateSuggestionActive();
+
+    return;
+   }
+
+   if(
+    event.key==="ArrowUp"&&
+    SEARCH_SUGGESTIONS.length
+   ){
+
+    event.preventDefault();
+
+    ACTIVE_SUGGESTION=
+     (
+      ACTIVE_SUGGESTION-1+
+      SEARCH_SUGGESTIONS.length
+     )%
+     SEARCH_SUGGESTIONS.length;
+
+    updateSuggestionActive();
+   }
   }
-
-  if(event.key==="Escape"){
-   hideSuggestions();
-   return;
-  }
-
-  if(
-   event.key==="ArrowDown"&&
-   SEARCH_SUGGESTIONS.length
-  ){
-   event.preventDefault();
-
-   ACTIVE_SUGGESTION=
-    (ACTIVE_SUGGESTION+1)%SEARCH_SUGGESTIONS.length;
-
-   updateSuggestionActive();
-   return;
-  }
-
-  if(
-   event.key==="ArrowUp"&&
-   SEARCH_SUGGESTIONS.length
-  ){
-   event.preventDefault();
-
-   ACTIVE_SUGGESTION=
-    (ACTIVE_SUGGESTION-1+SEARCH_SUGGESTIONS.length)%
-    SEARCH_SUGGESTIONS.length;
-
-   updateSuggestionActive();
-   return;
-  }
- });
+ );
 }
 
-/* CLICK OUTSIDE SEARCH */
-document.addEventListener("click",event=>{
- const wrapper=document.querySelector(".search-wrapper");
+/* Close suggestion when clicking outside */
 
- if(wrapper&&!wrapper.contains(event.target)){
-  hideSuggestions();
+document.addEventListener(
+ "click",
+ event=>{
+
+  const wrapper=
+   document.querySelector(
+    ".search-wrapper"
+   );
+
+  if(
+   wrapper&&
+   !wrapper.contains(
+    event.target
+   )
+  ){
+   hideSuggestions();
+  }
  }
-});
+);
 
-/* MODAL */
-const vesselModal=document.getElementById("vesselModal");
+/* Modal click outside */
+
+const vesselModal=
+ document.getElementById(
+  "vesselModal"
+ );
 
 if(vesselModal){
- vesselModal.addEventListener("click",event=>{
-  if(event.target===vesselModal){
-   closeVesselModal();
+
+ vesselModal.addEventListener(
+  "click",
+  event=>{
+
+   if(
+    event.target===
+    vesselModal
+   ){
+    closeVesselModal();
+   }
   }
- });
+ );
 }
 
 /* ESC */
-document.addEventListener("keydown",event=>{
- if(event.key==="Escape"){
 
-  hideSuggestions();
+document.addEventListener(
+ "keydown",
+ event=>{
 
-  if(!vesselModal?.classList.contains("hidden")){
-   closeVesselModal();
+  if(event.key==="Escape"){
+
+   hideSuggestions();
+
+   if(
+    !vesselModal?.classList.contains(
+     "hidden"
+    )
+   ){
+    closeVesselModal();
+   }
   }
  }
-});
+);
 
-/* TIMERS */
+/* =========================================================
+   TIMERS
+========================================================= */
+
 setInterval(
  loadData,
  DATA_REFRESH_INTERVAL
@@ -2093,6 +2777,7 @@ setInterval(
 );
 
 /* INITIAL */
+
 loadData();
 loadScraperStatus();
 updateNextUpdate();
