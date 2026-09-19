@@ -2,8 +2,10 @@ name: Pelindo TPKS Scraper
 
 on:
   workflow_dispatch:
+
   schedule:
     - cron: "*/30 * * * *"
+
   push:
     branches:
       - main
@@ -20,42 +22,89 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # ======================================================
+      # 1. CHECKOUT
+      # ======================================================
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+
+      # ======================================================
+      # 2. SETUP PYTHON
+      # ======================================================
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      # 1. Install Python dependencies
+
+      # ======================================================
+      # 3. INSTALL PYTHON DEPENDENCIES
+      # ======================================================
+
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 2. Install Playwright Chromium + system dependencies
+
+      # ======================================================
+      # 4. INSTALL PLAYWRIGHT
+      # ======================================================
+
       - name: Install Playwright Chromium
         run: |
           python -m playwright install --with-deps chromium
 
-      # 3. Run scraper
+
+      # ======================================================
+      # 5. RUN SCRAPER
+      # ======================================================
+
       - name: Run Pelindo scraper
         run: |
           python scraper.py
 
-      # 4. Validate hasil scraper
+
+      # ======================================================
+      # 6. VALIDATE DATA.JSON
+      # ======================================================
+
       - name: Validate data.json
         run: |
           python - <<'PY'
           import json
+          from pathlib import Path
 
-          with open("data.json", "r", encoding="utf-8") as f:
+          file = Path("data.json")
+
+          if not file.exists():
+              raise SystemExit(
+                  "ERROR: data.json tidak ditemukan."
+              )
+
+          if file.stat().st_size == 0:
+              raise SystemExit(
+                  "ERROR: data.json kosong."
+              )
+
+          with open(
+              file,
+              "r",
+              encoding="utf-8"
+          ) as f:
               data = json.load(f)
 
           required = [
+              "lastUpdated",
+              "updatedAt",
+              "source",
+              "allVessels",
               "vesselAlongside",
               "confirmedVessel",
               "openStack",
@@ -65,7 +114,8 @@ jobs:
           ]
 
           missing = [
-              key for key in required
+              key
+              for key in required
               if key not in data
           ]
 
@@ -74,16 +124,82 @@ jobs:
                   f"Missing required keys: {missing}"
               )
 
-          print("data.json validation passed.")
+          print("======================================")
+          print("DATA.JSON VALIDATION PASSED")
+          print("======================================")
 
-          for key in required[:-1]:
-              print(
-                  f"{key}: "
-                  f"{len(data[key])}"
-              )
+          print(
+              f"Last Updated : "
+              f"{data.get('lastUpdated', '')}"
+          )
+
+          print(
+              f"Updated At   : "
+              f"{data.get('updatedAt', '')}"
+          )
+
+          print(
+              f"Alongside    : "
+              f"{len(data['vesselAlongside'])}"
+          )
+
+          print(
+              f"Confirmed    : "
+              f"{len(data['confirmedVessel'])}"
+          )
+
+          print(
+              f"Open Stack   : "
+              f"{len(data['openStack'])}"
+          )
+
+          print(
+              f"Schedule     : "
+              f"{len(data['vesselSchedule'])}"
+          )
+
+          print(
+              f"History      : "
+              f"{len(data['vesselHistory'])}"
+          )
+
+          print(
+              f"All Vessels  : "
+              f"{len(data['allVessels'])}"
+          )
+
+          print("======================================")
           PY
 
-      # 5. Upload HTML debug jika scraper gagal/bermasalah
+
+      # ======================================================
+      # 7. SHOW GENERATED DATA
+      # ======================================================
+
+      - name: Show generated data.json
+        run: |
+          echo "======================================"
+          echo "GENERATED DATA.JSON"
+          echo "======================================"
+
+          ls -lh data.json
+
+          echo ""
+          echo "Timestamp:"
+          grep -E '"lastUpdated"|"updatedAt"' data.json || true
+
+          echo ""
+          echo "Git status BEFORE commit:"
+          git status --short
+
+          echo ""
+          echo "======================================"
+
+
+      # ======================================================
+      # 8. UPLOAD DEBUG HTML
+      # ======================================================
+
       - name: Upload debug HTML
         uses: actions/upload-artifact@v4
         with:
@@ -91,26 +207,89 @@ jobs:
           path: debug_pelindo.html
           if-no-files-found: warn
 
-      # 6. Commit hasil data.json
+
+      # ======================================================
+      # 9. COMMIT AND PUSH DATA.JSON
+      # ======================================================
+
       - name: Commit and push data.json
         run: |
+
+          echo "======================================"
+          echo "PREPARING GIT COMMIT"
+          echo "======================================"
+
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+
+          # --------------------------------------------------
+          # Add data.json
+          # --------------------------------------------------
 
           git add data.json
 
+
+          # --------------------------------------------------
+          # Check staged changes
+          # --------------------------------------------------
+
+          echo ""
+          echo "Git status AFTER git add:"
+
+          git status --short
+
+
+          echo ""
+          echo "Staged changes:"
+
+          git diff --cached --stat
+
+
+          # --------------------------------------------------
+          # Check whether data.json changed
+          # --------------------------------------------------
+
           if git diff --cached --quiet; then
-            echo "No changes to data.json."
+
+            echo ""
+            echo "======================================"
+            echo "NO CHANGES TO DATA.JSON"
+            echo "======================================"
+
             exit 0
+
           fi
 
-          git commit -m "chore: update Pelindo TPKS data"
 
-          echo "Fetching latest main..."
-          git fetch origin main
+          # --------------------------------------------------
+          # Commit
+          # --------------------------------------------------
 
-          echo "Merging latest main..."
-          git merge origin/main -X ours --no-edit
+          echo ""
+          echo "======================================"
+          echo "COMMITTING DATA.JSON"
+          echo "======================================"
 
-          echo "Pushing updated data.json..."
-          git push origin main
+          git commit \
+            -m "chore: update Pelindo TPKS data"
+
+
+          # --------------------------------------------------
+          # Push
+          # --------------------------------------------------
+
+          echo ""
+          echo "======================================"
+          echo "PUSHING TO MAIN"
+          echo "======================================"
+
+          git push origin HEAD:main
+
+
+          echo ""
+          echo "======================================"
+          echo "PUSH SUCCESSFUL"
+          echo "======================================"
