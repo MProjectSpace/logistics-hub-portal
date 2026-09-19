@@ -6,7 +6,6 @@
 <title>Pelindo TPKS Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
 <style>
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:12px}
@@ -16,121 +15,130 @@ body{
         radial-gradient(circle at 0% 0%,rgba(14,165,233,.10),transparent 28%),
         radial-gradient(circle at 100% 10%,rgba(99,102,241,.10),transparent 25%),
         #f1f5f9;
-    color:#0f172a;
+    color:#0f172a
 }
 button,input{font:inherit}
-
 .glass{
     background:rgba(255,255,255,.88);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
-    border:1px solid rgba(226,232,240,.9);
+    border:1px solid rgba(226,232,240,.9)
 }
-
 .section-card{
     position:relative;
-    --section-header-height:78px;
-    isolation:isolate;
     transition:transform .18s ease,box-shadow .18s ease;
+    isolation:isolate
 }
-
-.section-card:hover{
-    box-shadow:0 18px 40px -24px rgba(15,23,42,.35);
-}
-
-/* =========================================================
-   SECTION HEADER
-========================================================= */
-
-.section-header{
-    position:sticky;
-    top:0;
-    z-index:50;
-    background:rgba(255,255,255,.98);
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-    border-bottom:1px solid #e2e8f0;
-    box-shadow:0 2px 8px -6px rgba(15,23,42,.35);
-}
-
-/* =========================================================
-   TABLE
-========================================================= */
-
+.section-card:hover{box-shadow:0 18px 40px -24px rgba(15,23,42,.35)}
 .table-wrapper{
+    width:100%;
     overflow-x:auto;
     overflow-y:visible;
-    -webkit-overflow-scrolling:touch;
+    -webkit-overflow-scrolling:touch
 }
-
 table{
     width:100%;
     min-width:900px;
     border-collapse:separate;
     border-spacing:0;
+    table-layout:auto
 }
-
-/*
-   IMPORTANT:
-   Thead itself is NOT sticky.
-   Only each TH is sticky and sits exactly
-   underneath the section header.
-*/
-
-thead{
-    position:static;
-}
-
-thead th{
+.section-title-row th{
     position:sticky;
-    top:var(--section-header-height);
+    top:0;
+    z-index:50;
+    padding:0;
+    background:rgba(255,255,255,.98);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px)
+}
+.column-header-row th{
+    position:sticky;
+    top:76px;
     z-index:40;
-    background:rgba(248,250,252,.98);
+    background:#f8fafc;
     box-shadow:0 1px 0 #e2e8f0;
-    white-space:nowrap;
+    white-space:nowrap
 }
-
+.section-head{
+    padding:14px 18px 13px;
+    border-bottom:1px solid #e2e8f0
+}
+.section-head-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px
+}
+.section-head-main{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0
+}
+.section-icon{
+    width:40px;
+    height:40px;
+    flex:none;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid
+}
+.section-title{
+    font-size:15px;
+    line-height:1.2;
+    font-weight:800;
+    color:#0f172a
+}
+.section-description{
+    margin-top:3px;
+    font-size:10px;
+    line-height:1.35;
+    color:#64748b
+}
+.section-records{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex:none
+}
+.column-header-row th{
+    padding:10px 16px;
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:#94a3b8;
+    font-weight:800
+}
 tbody tr{
-    scroll-margin-top:calc(var(--section-header-height) + 60px);
+    scroll-margin-top:100px
 }
-
 .vessel-row{
     cursor:pointer;
-    transition:background .15s ease,box-shadow .15s ease;
+    transition:background .15s ease,box-shadow .15s ease
 }
-
-.vessel-row:hover{
-    background:rgba(14,165,233,.055);
-}
-
+.vessel-row:hover{background:rgba(14,165,233,.055)}
 .vessel-row.search-target{
     background:rgba(14,165,233,.12);
     box-shadow:inset 4px 0 0 #0284c7;
-    animation:targetPulse 1.8s ease;
+    animation:targetPulse 1.8s ease
 }
-
 @keyframes targetPulse{
     0%{background:rgba(14,165,233,.28)}
     100%{background:rgba(14,165,233,.06)}
 }
-
-/* =========================================================
-   KPI
-========================================================= */
-
 .kpi-card{
     position:relative;
     overflow:hidden;
-    transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+    transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
 }
-
 .kpi-card:hover{
     transform:translateY(-3px);
-    box-shadow:0 18px 36px -22px rgba(15,23,42,.4);
+    box-shadow:0 18px 36px -22px rgba(15,23,42,.4)
 }
-
 .kpi-card:active{transform:translateY(-1px)}
-
 .kpi-glow{
     position:absolute;
     right:-35px;
@@ -138,24 +146,15 @@ tbody tr{
     width:110px;
     height:110px;
     border-radius:999px;
-    opacity:.12;
+    opacity:.12
 }
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-.search-box{
-    box-shadow:0 10px 35px -24px rgba(15,23,42,.35);
-}
-
+.search-box{box-shadow:0 10px 35px -24px rgba(15,23,42,.35)}
 .search-box:focus-within{
     border-color:#38bdf8;
     box-shadow:
         0 0 0 4px rgba(56,189,248,.10),
-        0 15px 40px -25px rgba(15,23,42,.4);
+        0 15px 40px -25px rgba(15,23,42,.4)
 }
-
 .search-suggestions{
     position:absolute;
     top:calc(100% + 8px);
@@ -167,25 +166,18 @@ tbody tr{
     border-radius:16px;
     box-shadow:0 25px 50px -25px rgba(15,23,42,.45);
     max-height:360px;
-    overflow-y:auto;
+    overflow-y:auto
 }
-
 .search-item{
     padding:12px 14px;
     border-bottom:1px solid #f1f5f9;
     cursor:pointer;
-    transition:background .12s ease;
+    transition:background .12s ease
 }
-
 .search-item:last-child{border-bottom:0}
 .search-item:hover{background:#f0f9ff}
 .search-item.active{background:#e0f2fe}
 .search-match{color:#0369a1;font-weight:800}
-
-/* =========================================================
-   MODAL
-========================================================= */
-
 .modal-backdrop{
     position:fixed;
     inset:0;
@@ -196,92 +188,154 @@ tbody tr{
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:14px;
+    padding:12px
 }
-
 .modal-panel{
     width:100%;
-    max-width:820px;
-    max-height:92vh;
+    max-width:980px;
+    max-height:calc(100vh - 24px);
     background:#fff;
-    border-radius:24px;
-    overflow:auto;
+    border-radius:22px;
+    overflow:hidden;
     box-shadow:0 30px 80px -25px rgba(15,23,42,.55);
-    animation:modalIn .2s ease;
+    animation:modalIn .2s ease
 }
-
 @keyframes modalIn{
     from{opacity:0;transform:translateY(12px) scale(.985)}
     to{opacity:1;transform:translateY(0) scale(1)}
 }
-
 .modal-header{
-    position:sticky;
-    top:0;
-    z-index:10;
-    background:rgba(255,255,255,.96);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    border-bottom:1px solid #e2e8f0;
+    background:rgba(255,255,255,.97);
+    border-bottom:1px solid #e2e8f0
 }
-
+.modal-body{
+    padding:16px 18px 18px;
+    max-height:calc(100vh - 135px);
+    overflow:auto
+}
+.modal-section-label{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin-bottom:9px;
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-weight:800;
+    color:#94a3b8
+}
+.modal-info-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:8px
+}
+.modal-info-card{
+    padding:9px 11px;
+    min-width:0;
+    border-radius:11px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0
+}
+.modal-info-label{
+    display:block;
+    font-size:8px;
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    color:#94a3b8;
+    font-weight:800
+}
+.modal-info-value{
+    display:block;
+    margin-top:3px;
+    font-size:11px;
+    line-height:1.3;
+    color:#1e293b;
+    font-weight:800;
+    overflow-wrap:anywhere
+}
+.modal-bottom-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:12px
+}
+.modal-status-box{
+    padding:12px;
+    border-radius:15px
+}
+.modal-stat-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    text-align:center
+}
+.modal-stat{
+    padding:9px 5px;
+    border-radius:10px;
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(255,255,255,.9)
+}
+.modal-stat-label{
+    font-size:8px;
+    color:#94a3b8;
+    font-weight:700
+}
+.modal-stat-value{
+    margin-top:2px;
+    font-size:17px;
+    line-height:1.1;
+    font-weight:800
+}
 .fade-in{animation:fadeIn .22s ease}
-
 @keyframes fadeIn{
     from{opacity:0;transform:translateY(4px)}
     to{opacity:1;transform:translateY(0)}
 }
-
-.freshness-bar{
-    height:4px;
-    border-radius:999px;
-    background:#e2e8f0;
-    overflow:hidden;
+@media(max-width:900px){
+    .modal-info-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
-
-.freshness-progress{
-    height:100%;
-    border-radius:999px;
-    transition:width .4s ease;
-}
-
 @media(max-width:767px){
     html{scroll-padding-top:8px}
     table{min-width:850px}
-    .modal-panel{max-height:94vh;border-radius:20px}
+    .section-head{padding:12px 13px}
+    .section-head-inner{align-items:flex-start}
+    .section-icon{width:36px;height:36px}
+    .section-title{font-size:14px}
+    .column-header-row th{top:69px;padding:9px 12px}
+    .modal-panel{
+        max-height:calc(100vh - 16px);
+        border-radius:18px
+    }
+    .modal-header{padding:13px 14px!important}
+    .modal-body{
+        padding:12px;
+        max-height:calc(100vh - 110px)
+    }
+    .modal-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .modal-bottom-grid{grid-template-columns:1fr}
 }
-
 @media(prefers-reduced-motion:reduce){
-    *,
-    *::before,
-    *::after{
+    *,*::before,*::after{
         scroll-behavior:auto!important;
         animation:none!important;
-        transition:none!important;
+        transition:none!important
     }
 }
 </style>
 </head>
-
 <body>
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
 
 <header class="relative overflow-hidden bg-gradient-to-r from-blue-700 via-sky-600 to-indigo-700 text-white shadow-xl">
 <div class="absolute inset-0 opacity-20">
     <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-cyan-300 blur-3xl"></div>
     <div class="absolute -bottom-28 left-1/3 w-80 h-80 rounded-full bg-indigo-300 blur-3xl"></div>
 </div>
-
 <div class="relative max-w-[1800px] mx-auto px-4 sm:px-6 py-5">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
         <div class="flex items-center gap-4 min-w-0">
             <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shadow-lg">
                 <i class="fa-solid fa-ship text-xl sm:text-2xl"></i>
             </div>
-
             <div class="min-w-0">
                 <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                     <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Pelindo TPKS</h1>
@@ -293,217 +347,127 @@ tbody tr{
                 <p class="text-blue-100 text-xs sm:text-sm mt-1">Vessel Monitoring Dashboard</p>
             </div>
         </div>
-
         <div class="flex flex-wrap items-center gap-2">
-            <div id="connectionTime" class="text-[10px] text-blue-100 bg-white/10 border border-white/10 px-3 py-2 rounded-xl">
-                Last check: —
-            </div>
-
+            <div id="connectionTime" class="text-[10px] text-blue-100 bg-white/10 border border-white/10 px-3 py-2 rounded-xl">Last check: —</div>
             <button id="refreshButton" onclick="loadData(true)" class="px-4 py-2.5 rounded-xl bg-white text-blue-700 hover:bg-blue-50 active:scale-[.98] transition font-bold text-sm shadow-lg">
-                <i id="refreshIcon" class="fa-solid fa-rotate-right mr-2"></i>
-                Refresh
+                <i id="refreshIcon" class="fa-solid fa-rotate-right mr-2"></i>Refresh
             </button>
         </div>
     </div>
 </div>
 </header>
 
-<!-- =========================================================
-     MAIN
-========================================================= -->
-
 <main class="max-w-[1800px] mx-auto px-3 sm:px-5 lg:px-6 py-5 sm:py-6">
 
-<!-- =========================================================
-     SEARCH
-========================================================= -->
-
 <section class="glass search-box rounded-2xl sm:rounded-3xl p-3 sm:p-5 mb-5">
-<div class="flex flex-col lg:flex-row gap-3">
-
-    <div class="flex-1 relative">
-        <div class="relative">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-
-            <input
-                id="searchInput"
-                type="text"
-                autocomplete="off"
-                placeholder="Search vessel, voyage, code, shipping line..."
-                class="w-full pl-11 pr-12 py-3.5 rounded-xl sm:rounded-2xl border border-slate-200 bg-white focus:outline-none text-sm"
-                oninput="applySearch()">
-
-            <button id="clearSearchButton" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+    <div class="flex flex-col lg:flex-row gap-3">
+        <div class="flex-1 relative">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input id="searchInput" type="text" autocomplete="off" placeholder="Search vessel, voyage, code, shipping line..." class="w-full pl-11 pr-12 py-3.5 rounded-xl sm:rounded-2xl border border-slate-200 bg-white focus:outline-none text-sm" oninput="applySearch()">
+                <button id="clearSearchButton" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="searchSuggestions" class="search-suggestions hidden"></div>
         </div>
-
-        <div id="searchSuggestions" class="search-suggestions hidden"></div>
+        <button onclick="executeSearch()" class="px-5 py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition font-bold text-sm shadow-lg shadow-blue-600/15">
+            <i class="fa-solid fa-magnifying-glass mr-2"></i>Search
+        </button>
+        <button onclick="clearSearch()" class="px-5 py-3.5 rounded-xl sm:rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 transition text-sm font-semibold">
+            <i class="fa-solid fa-xmark mr-2"></i>Clear
+        </button>
     </div>
-
-    <button onclick="executeSearch()" class="px-5 py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition font-bold text-sm shadow-lg shadow-blue-600/15">
-        <i class="fa-solid fa-magnifying-glass mr-2"></i>
-        Search
-    </button>
-
-    <button onclick="clearSearch()" class="px-5 py-3.5 rounded-xl sm:rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 transition text-sm font-semibold">
-        <i class="fa-solid fa-xmark mr-2"></i>
-        Clear
-    </button>
-</div>
-
-<div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-    <div id="searchInfo" class="text-[11px] sm:text-xs text-slate-500">Showing all vessels</div>
-
-    <div class="flex items-center gap-2">
+    <div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div id="searchInfo" class="text-[11px] sm:text-xs text-slate-500">Showing all vessels</div>
         <span id="freshnessBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold">
-            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-            Data: —
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Data: —
         </span>
     </div>
-</div>
 </section>
-
-<!-- =========================================================
-     KPI
-========================================================= -->
 
 <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
-
-<div onclick="scrollToSection('vesselAlongside')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-blue-100">
-    <div class="kpi-glow bg-blue-500"></div>
-    <div class="relative flex items-center justify-between gap-2">
-        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Vessel Alongside</p>
-        <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-            <i class="fa-solid fa-anchor"></i>
+    <div onclick="scrollToSection('vesselAlongside')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-blue-100">
+        <div class="kpi-glow bg-blue-500"></div>
+        <div class="relative flex items-center justify-between gap-2">
+            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Vessel Alongside</p>
+            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-anchor"></i></div>
         </div>
+        <p id="countAlongside" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-blue-700">0</p>
+        <p class="relative text-[9px] text-slate-400 mt-1">Currently alongside</p>
     </div>
-    <p id="countAlongside" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-blue-700">0</p>
-    <p class="relative text-[9px] text-slate-400 mt-1">Currently alongside</p>
-</div>
 
-<div onclick="scrollToSection('confirmedVessel')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-emerald-100">
-    <div class="kpi-glow bg-emerald-500"></div>
-    <div class="relative flex items-center justify-between gap-2">
-        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Confirmed Vessel</p>
-        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-            <i class="fa-solid fa-circle-check"></i>
+    <div onclick="scrollToSection('confirmedVessel')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-emerald-100">
+        <div class="kpi-glow bg-emerald-500"></div>
+        <div class="relative flex items-center justify-between gap-2">
+            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Confirmed Vessel</p>
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-circle-check"></i></div>
         </div>
+        <p id="countConfirmed" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-emerald-700">0</p>
+        <p class="relative text-[9px] text-slate-400 mt-1">Confirmed calls</p>
     </div>
-    <p id="countConfirmed" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-emerald-700">0</p>
-    <p class="relative text-[9px] text-slate-400 mt-1">Confirmed calls</p>
-</div>
 
-<div onclick="scrollToSection('openStack')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-amber-100">
-    <div class="kpi-glow bg-amber-500"></div>
-    <div class="relative flex items-center justify-between gap-2">
-        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Open Stack</p>
-        <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-            <i class="fa-solid fa-box-open"></i>
+    <div onclick="scrollToSection('openStack')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-amber-100">
+        <div class="kpi-glow bg-amber-500"></div>
+        <div class="relative flex items-center justify-between gap-2">
+            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Open Stack</p>
+            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-box-open"></i></div>
         </div>
+        <p id="countOpenStack" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-amber-600">0</p>
+        <p class="relative text-[9px] text-slate-400 mt-1">Open stack vessels</p>
     </div>
-    <p id="countOpenStack" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-amber-600">0</p>
-    <p class="relative text-[9px] text-slate-400 mt-1">Open stack vessels</p>
-</div>
 
-<div onclick="scrollToSection('vesselSchedule')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-sky-100">
-    <div class="kpi-glow bg-sky-500"></div>
-    <div class="relative flex items-center justify-between gap-2">
-        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Vessel Schedule</p>
-        <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
-            <i class="fa-solid fa-calendar-days"></i>
+    <div onclick="scrollToSection('vesselSchedule')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-sky-100">
+        <div class="kpi-glow bg-sky-500"></div>
+        <div class="relative flex items-center justify-between gap-2">
+            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Vessel Schedule</p>
+            <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-calendar-days"></i></div>
         </div>
+        <p id="countSchedule" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-sky-700">0</p>
+        <p class="relative text-[9px] text-slate-400 mt-1">Upcoming schedule</p>
     </div>
-    <p id="countSchedule" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-sky-700">0</p>
-    <p class="relative text-[9px] text-slate-400 mt-1">Upcoming schedule</p>
-</div>
 
-<div onclick="scrollToSection('vesselHistory')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-indigo-100">
-    <div class="kpi-glow bg-indigo-500"></div>
-    <div class="relative flex items-center justify-between gap-2">
-        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Vessel History</p>
-        <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-            <i class="fa-solid fa-clock-rotate-left"></i>
+    <div onclick="scrollToSection('vesselHistory')" class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-indigo-100">
+        <div class="kpi-glow bg-indigo-500"></div>
+        <div class="relative flex items-center justify-between gap-2">
+            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">Vessel History</p>
+            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-clock-rotate-left"></i></div>
         </div>
+        <p id="countHistory" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-indigo-700">0</p>
+        <p class="relative text-[9px] text-slate-400 mt-1">Historical movements</p>
     </div>
-    <p id="countHistory" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-indigo-700">0</p>
-    <p class="relative text-[9px] text-slate-400 mt-1">Historical movements</p>
-</div>
-
 </section>
-
-<!-- =========================================================
-     DATA SECTIONS
-========================================================= -->
 
 <div id="sectionsContainer"></div>
 
-<!-- =========================================================
-     FOOTER
-========================================================= -->
-
 <footer class="mt-8 pb-8 border-t border-slate-200 pt-5">
-<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-[10px] sm:text-xs text-slate-500">
-
-    <p>
-        Source:
-        <a href="https://ibstpks.pelindo.co.id/webaccess/" target="_blank" rel="noopener noreferrer" class="font-bold text-blue-600 hover:text-blue-800">
-            Pelindo TPKS WebAccess
-        </a>
-    </p>
-
-    <p>
-        Last update:
-        <span id="lastUpdate" class="font-bold text-slate-700">-</span>
-    </p>
-
-    <p class="inline-flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-        Auto refresh:
-        <span class="font-bold text-slate-700">5 minutes</span>
-    </p>
-
-</div>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-[10px] sm:text-xs text-slate-500">
+        <p>Source: <a href="https://ibstpks.pelindo.co.id/webaccess/" target="_blank" rel="noopener noreferrer" class="font-bold text-blue-600 hover:text-blue-800">Pelindo TPKS WebAccess</a></p>
+        <p>Last update: <span id="lastUpdate" class="font-bold text-slate-700">-</span></p>
+        <p class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Auto refresh: <span class="font-bold text-slate-700">5 minutes</span></p>
+    </div>
 </footer>
-
 </main>
 
-<!-- =========================================================
-     MODAL
-========================================================= -->
-
 <div id="modal" class="modal-backdrop hidden" onclick="handleModalBackdrop(event)">
-<div class="modal-panel">
-
-    <div class="modal-header px-4 sm:px-6 py-4">
-        <div class="flex items-start justify-between gap-4">
-
-            <div class="min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-
-                    <span id="modalSection" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-[9px] uppercase tracking-wider font-extrabold"></span>
-
-                    <span id="modalType" class="inline-flex px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[9px] uppercase tracking-wider font-extrabold"></span>
-
+    <div class="modal-panel">
+        <div class="modal-header px-4 sm:px-5 py-3.5">
+            <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span id="modalSection" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-[9px] uppercase tracking-wider font-extrabold"></span>
+                        <span id="modalType" class="inline-flex px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[9px] uppercase tracking-wider font-extrabold"></span>
+                    </div>
+                    <h2 id="modalTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 mt-1.5 truncate">Vessel Detail</h2>
+                    <p id="modalSubtitle" class="text-[10px] text-slate-500 mt-0.5"></p>
                 </div>
-
-                <h2 id="modalTitle" class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2 truncate">
-                    Vessel Detail
-                </h2>
-
-                <p id="modalSubtitle" class="text-xs text-slate-500 mt-1"></p>
+                <button onclick="closeModal()" class="w-8 h-8 shrink-0 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-
-            <button onclick="closeModal()" class="w-9 h-9 shrink-0 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
         </div>
+        <div id="modalBody" class="modal-body"></div>
     </div>
-
-    <div id="modalBody" class="p-4 sm:p-6"></div>
-
-</div>
 </div>
 
 <script>
@@ -520,14 +484,8 @@ let DATA={
     vesselHistory:[],
     counts:{}
 };
-
 let CURRENT_RESULTS=[];
 let suggestionIndex=-1;
-let sectionHeaderResizeObserver=null;
-
-/* =========================================================
-   SECTION CONFIG
-========================================================= */
 
 const SECTION_CONFIG=[
     {
@@ -616,10 +574,6 @@ const SECTION_CONFIG=[
     }
 ];
 
-/* =========================================================
-   HELPERS
-========================================================= */
-
 function escapeHtml(value){
     if(value===null||value===undefined||value==="")return "-";
     return String(value)
@@ -636,18 +590,13 @@ function normalizeSearchValue(value){
 
 function formatNumber(value){
     if(value===null||value===undefined||value==="")return "-";
-
     const numeric=Number(String(value).replace(/,/g,""));
-
     if(Number.isNaN(numeric))return escapeHtml(value);
-
     return numeric.toLocaleString("en-US");
 }
 
 function getColumnClass(key){
-    if(["booking","open","actual","export","import"].includes(key)){
-        return "text-right";
-    }
+    if(["booking","open","actual","export","import"].includes(key))return "text-right";
     return "text-left";
 }
 
@@ -664,59 +613,6 @@ function getRecordIdentity(section,vessel){
     ].join("|");
 }
 
-/* =========================================================
-   SECTION HEADER HEIGHT
-========================================================= */
-
-function updateSectionHeaderOffsets(){
-    document.querySelectorAll(".section-card").forEach(section=>{
-        const header=section.querySelector(".section-header");
-
-        if(!header)return;
-
-        const height=header.getBoundingClientRect().height;
-
-        section.style.setProperty(
-            "--section-header-height",
-            `${Math.ceil(height)}px`
-        );
-    });
-}
-
-function observeSectionHeaders(){
-    if(sectionHeaderResizeObserver){
-        sectionHeaderResizeObserver.disconnect();
-    }
-
-    if("ResizeObserver" in window){
-        sectionHeaderResizeObserver=new ResizeObserver(entries=>{
-            entries.forEach(entry=>{
-                const header=entry.target;
-                const section=header.closest(".section-card");
-
-                if(section){
-                    const height=header.getBoundingClientRect().height;
-
-                    section.style.setProperty(
-                        "--section-header-height",
-                        `${Math.ceil(height)}px`
-                    );
-                }
-            });
-        });
-
-        document.querySelectorAll(".section-header").forEach(header=>{
-            sectionHeaderResizeObserver.observe(header);
-        });
-    }
-
-    requestAnimationFrame(updateSectionHeaderOffsets);
-}
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
 function vesselSearchText(vessel){
     return Object.values(vessel||{})
         .map(value=>normalizeSearchValue(value))
@@ -730,14 +626,9 @@ function vesselMatches(vessel,query){
 
 function getSearchResults(query){
     if(!query)return [];
-
     const results=[];
-
     SECTION_CONFIG.forEach(section=>{
-        const list=Array.isArray(DATA[section.key])
-            ?DATA[section.key]
-            :[];
-
+        const list=Array.isArray(DATA[section.key])?DATA[section.key]:[];
         list.forEach((vessel,originalIndex)=>{
             if(vesselMatches(vessel,query)){
                 results.push({
@@ -749,88 +640,53 @@ function getSearchResults(query){
             }
         });
     });
-
     return results;
 }
 
 function highlightText(value,query){
     const safe=escapeHtml(value??"-");
-
     if(!query)return safe;
-
-    const escapedQuery=String(query)
-        .replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-
-    return safe.replace(
-        new RegExp(`(${escapedQuery})`,"ig"),
-        '<span class="search-match">$1</span>'
-    );
+    const escapedQuery=String(query).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    return safe.replace(new RegExp(`(${escapedQuery})`,"ig"),'<span class="search-match">$1</span>');
 }
-
-/* =========================================================
-   FORMAT TABLE CELL
-========================================================= */
 
 function formatCell(vessel,key,query=""){
     const value=vessel?.[key];
 
     if(key==="vesselName"){
         return `
-            <div class="flex flex-col min-w-[190px]">
-                <span class="font-extrabold text-slate-900 truncate">
-                    ${highlightText(value,query)}
-                </span>
-
-                ${
-                    vessel.vesselCode
-                    ?`
-                    <span class="text-[10px] text-slate-400 mt-0.5 font-semibold">
-                        <i class="fa-solid fa-hashtag mr-1 text-[8px]"></i>
-                        ${highlightText(vessel.vesselCode,query)}
-                    </span>
-                    `
-                    :""
-                }
+            <div class="flex flex-col min-w-[180px]">
+                <span class="font-extrabold text-slate-900 truncate">${highlightText(value,query)}</span>
+                ${vessel.vesselCode?`
+                    <span class="text-[9px] text-slate-400 mt-0.5 font-semibold">
+                        <i class="fa-solid fa-hashtag mr-1"></i>${highlightText(vessel.vesselCode,query)}
+                    </span>`:""}
             </div>
         `;
     }
 
     if(key==="voyage"){
-        return `
-            <span class="inline-flex px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 font-bold whitespace-nowrap">
-                ${highlightText(value,query)}
-            </span>
-        `;
+        return `<span class="inline-flex px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 font-bold whitespace-nowrap">${highlightText(value,query)}</span>`;
     }
 
     if(key==="type"){
         if(!value)return "-";
-
         const type=String(value).toUpperCase();
         let cls="bg-slate-100 text-slate-600 border-slate-200";
-
-        if(type==="INTERNATIONAL"){
-            cls="bg-indigo-50 text-indigo-600 border-indigo-100";
-        }else if(type==="DOMESTIC"){
-            cls="bg-amber-50 text-amber-600 border-amber-100";
-        }
-
-        return `
-            <span class="inline-flex px-2 py-1 rounded-md border text-[10px] font-extrabold ${cls}">
-                ${escapeHtml(type)}
-            </span>
-        `;
+        if(type==="INTERNATIONAL")cls="bg-indigo-50 text-indigo-600 border-indigo-100";
+        else if(type==="DOMESTIC")cls="bg-amber-50 text-amber-600 border-amber-100";
+        return `<span class="inline-flex px-2 py-1 rounded-md border text-[10px] font-extrabold ${cls}">${escapeHtml(type)}</span>`;
     }
 
-    if(["booking","open","actual","export","import"].includes(key)){
-        return formatNumber(value);
-    }
+    if(["booking","open","actual","export","import"].includes(key))return formatNumber(value);
 
     return highlightText(value,query);
 }
 
 /* =========================================================
    TABLE
+   Section title + column header are now inside ONE table.
+   This guarantees correct sticky stacking.
 ========================================================= */
 
 function renderTable(section,items,query=""){
@@ -840,49 +696,68 @@ function renderTable(section,items,query=""){
                 <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-100 flex items-center justify-center">
                     <i class="fa-solid fa-inbox text-lg"></i>
                 </div>
-
                 <p class="text-sm font-bold">No matching data</p>
-
-                ${
-                    query
-                    ?`
-                    <p class="text-[11px] mt-1">
-                        Try another vessel name, voyage, or code.
-                    </p>
-                    `
-                    :""
-                }
+                ${query?`<p class="text-[11px] mt-1">Try another vessel name, voyage, or code.</p>`:""}
             </div>
         `;
     }
+
+    const colorMap={
+        blue:{bg:"bg-blue-50",text:"text-blue-600",border:"border-blue-100",badge:"text-blue-700"},
+        emerald:{bg:"bg-emerald-50",text:"text-emerald-600",border:"border-emerald-100",badge:"text-emerald-700"},
+        amber:{bg:"bg-amber-50",text:"text-amber-600",border:"border-amber-100",badge:"text-amber-700"},
+        sky:{bg:"bg-sky-50",text:"text-sky-600",border:"border-sky-100",badge:"text-sky-700"},
+        indigo:{bg:"bg-indigo-50",text:"text-indigo-600",border:"border-indigo-100",badge:"text-indigo-700"}
+    };
+
+    const c=colorMap[section.color]||colorMap.blue;
 
     return `
         <div class="table-wrapper">
             <table class="text-xs">
                 <thead>
-                    <tr>
+                    <tr class="section-title-row">
+                        <th colspan="${section.columns.length}">
+                            <div class="section-head">
+                                <div class="section-head-inner">
+                                    <div class="section-head-main">
+                                        <div class="section-icon ${c.bg} ${c.text} ${c.border}">
+                                            <i class="fa-solid ${section.icon}"></i>
+                                        </div>
+                                        <div class="min-w-0 text-left">
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <span class="section-title">${escapeHtml(section.title)}</span>
+                                                ${query?`<span class="text-[8px] font-bold px-2 py-1 rounded-full bg-sky-50 text-sky-600 border border-sky-100">Filtered</span>`:""}
+                                            </div>
+                                            <p class="section-description">${escapeHtml(section.description)}</p>
+                                        </div>
+                                    </div>
+                                    <div class="section-records">
+                                        <span class="text-[8px] font-extrabold uppercase tracking-wider text-slate-400">Records</span>
+                                        <span class="px-2.5 py-1.5 rounded-lg ${c.bg} ${c.badge} ${c.border} border text-[10px] font-extrabold whitespace-nowrap">
+                                            ${query?`${items.length} / ${DATA[section.key]?.length||0}`:items.length}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr class="column-header-row">
                         ${section.columns.map(column=>`
-                            <th class="px-4 py-3 ${getColumnClass(column[0])} text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-400 font-extrabold">
+                            <th class="${getColumnClass(column[0])}">
                                 ${escapeHtml(column[1])}
                             </th>
                         `).join("")}
                     </tr>
                 </thead>
-
                 <tbody class="divide-y divide-slate-100">
                     ${items.map(item=>`
-                        <tr
-                            class="vessel-row"
-                            data-section="${escapeHtml(section.key)}"
-                            data-index="${item.originalIndex}"
-                            data-identity="${escapeHtml(item.identity)}">
-
+                        <tr class="vessel-row" data-section="${escapeHtml(section.key)}" data-index="${item.originalIndex}" data-identity="${escapeHtml(item.identity)}">
                             ${section.columns.map(column=>`
                                 <td class="px-4 py-3 ${getColumnClass(column[0])}">
                                     ${formatCell(item.vessel,column[0],query)}
                                 </td>
                             `).join("")}
-
                         </tr>
                     `).join("")}
                 </tbody>
@@ -899,13 +774,10 @@ function renderSections(){
     const container=document.getElementById("sectionsContainer");
     const input=document.getElementById("searchInput");
     const query=normalizeSearchValue(input?.value);
-
     let totalVisible=0;
 
     container.innerHTML=SECTION_CONFIG.map(section=>{
-        const source=Array.isArray(DATA[section.key])
-            ?DATA[section.key]
-            :[];
+        const source=Array.isArray(DATA[section.key])?DATA[section.key]:[];
 
         const filtered=source
             .map((vessel,originalIndex)=>({
@@ -919,89 +791,23 @@ function renderSections(){
         totalVisible+=filtered.length;
 
         return `
-            <section
-                id="section-${section.key}"
-                class="section-card glass rounded-2xl sm:rounded-3xl shadow-sm mb-5 overflow-visible fade-in">
-
-                <!-- SECTION HEADER -->
-
-                <div class="section-header px-4 sm:px-5 py-3.5 sm:py-4">
-
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-
-                        <div class="flex items-center gap-3">
-
-                            <div class="w-10 h-10 shrink-0 rounded-xl bg-${section.color}-50 text-${section.color}-600 flex items-center justify-center border border-${section.color}-100 shadow-sm">
-                                <i class="fa-solid ${section.icon}"></i>
-                            </div>
-
-                            <div class="min-w-0">
-
-                                <div class="flex items-center gap-2 flex-wrap">
-
-                                    <h2 class="font-extrabold text-base sm:text-lg text-slate-900">
-                                        ${section.title}
-                                    </h2>
-
-                                    ${
-                                        query
-                                        ?`
-                                        <span class="text-[9px] font-bold px-2 py-1 rounded-full bg-sky-50 text-sky-600 border border-sky-100">
-                                            Filtered
-                                        </span>
-                                        `
-                                        :""
-                                    }
-
-                                </div>
-
-                                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">
-                                    ${section.description}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <div class="flex items-center gap-2">
-
-                            <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
-                                Records
-                            </span>
-
-                            <span class="px-2.5 py-1.5 rounded-lg bg-${section.color}-50 text-${section.color}-700 border border-${section.color}-100 text-[10px] font-extrabold">
-                                ${query?`${filtered.length} / ${source.length}`:filtered.length}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- TABLE -->
-
+            <section id="section-${section.key}" class="section-card glass rounded-2xl sm:rounded-3xl shadow-sm mb-5 overflow-visible fade-in">
                 ${renderTable(section,filtered,query)}
-
             </section>
         `;
     }).join("");
 
     attachRowEvents();
-    observeSectionHeaders();
 
     const searchInfo=document.getElementById("searchInfo");
 
     if(query){
-        searchInfo.innerHTML=
-            `Search <strong class="text-slate-800">"${escapeHtml(input.value.trim())}"</strong> — ${totalVisible} matching records`;
+        searchInfo.innerHTML=`Search <strong class="text-slate-800">"${escapeHtml(input.value.trim())}"</strong> — ${totalVisible} matching records`;
     }else{
         searchInfo.textContent="Showing all vessels";
     }
 
-    const clearButton=document.getElementById("clearSearchButton");
-
-    clearButton?.classList.toggle("hidden",!query);
+    document.getElementById("clearSearchButton")?.classList.toggle("hidden",!query);
 }
 
 /* =========================================================
@@ -1017,9 +823,7 @@ function attachRowEvents(){
             const vessel=list[index];
             const section=getSection(sectionKey);
 
-            if(vessel&&section){
-                openModal(vessel,section);
-            }
+            if(vessel&&section)openModal(vessel,section);
         });
     });
 }
@@ -1037,24 +841,16 @@ function openModal(vessel,section){
     const body=document.getElementById("modalBody");
 
     title.textContent=vessel.vesselName||"Vessel Detail";
-
-    sectionBadge.innerHTML=
-        `<i class="fa-solid ${section.icon}"></i> ${escapeHtml(section.title)}`;
-
+    sectionBadge.innerHTML=`<i class="fa-solid ${section.icon}"></i> ${escapeHtml(section.title)}`;
     type.textContent=vessel.type||"Vessel";
-
-    subtitle.textContent=
-        `Voyage: ${vessel.voyage||"-"}${vessel.vesselCode?" • "+vessel.vesselCode:""}`;
+    subtitle.textContent=`Voyage: ${vessel.voyage||"-"}${vessel.vesselCode?" • "+vessel.vesselCode:""}`;
 
     let html=`
-        <div class="mb-5">
-
-            <div class="flex items-center gap-2 text-[10px] uppercase tracking-wider font-extrabold text-slate-400 mb-3">
-                <i class="fa-solid fa-circle-info text-blue-500"></i>
-                Vessel Information
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="modal-section-label">
+            <i class="fa-solid fa-circle-info text-blue-500"></i>
+            Vessel Information
+        </div>
+        <div class="modal-info-grid">
     `;
 
     const fields=[
@@ -1071,148 +867,101 @@ function openModal(vessel,section){
     ];
 
     fields.forEach(([label,key])=>{
-        if(
-            vessel[key]===undefined||
-            vessel[key]===null||
-            vessel[key]===""
-        )return;
+        if(vessel[key]===undefined||vessel[key]===null||vessel[key]==="")return;
 
         html+=`
-            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
-
-                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-extrabold">
-                    ${label}
-                </span>
-
-                <span class="block mt-1 text-sm font-extrabold text-slate-800 break-words">
-                    ${escapeHtml(vessel[key])}
-                </span>
-
+            <div class="modal-info-card">
+                <span class="modal-info-label">${label}</span>
+                <span class="modal-info-value">${escapeHtml(vessel[key])}</span>
             </div>
         `;
     });
 
-    html+=`
-            </div>
-        </div>
-    `;
+    html+=`</div>`;
 
-    /* CARGO STATUS */
-
-    if(
+    const hasCargo=
         vessel.booking!==undefined||
         vessel.open!==undefined||
-        vessel.actual!==undefined
-    ){
-        html+=`
-            <div class="mb-5 p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100">
+        vessel.actual!==undefined;
 
-                <div class="flex items-center gap-2 text-[9px] uppercase tracking-wider text-blue-600 font-extrabold mb-4">
-                    <i class="fa-solid fa-chart-column"></i>
-                    Cargo Status
-                </div>
-
-                <div class="grid grid-cols-3 gap-2 sm:gap-4 text-center">
-
-                    <div class="p-3 rounded-xl bg-white/75 border border-white">
-                        <div class="text-[9px] text-slate-400 font-bold">Booking</div>
-                        <div class="text-lg sm:text-xl font-extrabold text-blue-700 mt-1">
-                            ${formatNumber(vessel.booking)}
-                        </div>
-                    </div>
-
-                    <div class="p-3 rounded-xl bg-white/75 border border-white">
-                        <div class="text-[9px] text-slate-400 font-bold">Open</div>
-                        <div class="text-lg sm:text-xl font-extrabold text-cyan-700 mt-1">
-                            ${formatNumber(vessel.open)}
-                        </div>
-                    </div>
-
-                    <div class="p-3 rounded-xl bg-white/75 border border-white">
-                        <div class="text-[9px] text-slate-400 font-bold">Actual</div>
-                        <div class="text-lg sm:text-xl font-extrabold text-indigo-700 mt-1">
-                            ${formatNumber(vessel.actual)}
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        `;
-    }
-
-    /* CONTAINER MOVEMENT */
-
-    if(
+    const hasMovement=
         vessel.export!==undefined||
-        vessel.import!==undefined
-    ){
-        html+=`
-            <div class="p-4 sm:p-5 rounded-2xl bg-indigo-50/60 border border-indigo-100">
+        vessel.import!==undefined;
 
-                <div class="flex items-center gap-2 text-[9px] uppercase tracking-wider text-indigo-600 font-extrabold mb-4">
-                    <i class="fa-solid fa-right-left"></i>
-                    Container Movement
-                </div>
+    if(hasCargo||hasMovement){
+        html+=`<div class="modal-bottom-grid">`;
 
-                <div class="grid grid-cols-2 gap-3 sm:gap-5 text-center">
-
-                    <div class="p-4 rounded-xl bg-white/80">
-                        <div class="text-[9px] text-slate-400 font-bold">Export</div>
-
-                        <div class="text-xl font-extrabold text-indigo-700 mt-1">
-                            ${formatNumber(vessel.export)}
-                            <span class="text-[10px] font-bold text-slate-400">Box</span>
-                        </div>
-
-                        ${
-                            vessel.exportTeus!==undefined
-                            ?`
-                            <div class="text-[9px] text-slate-400 mt-1">
-                                ${formatNumber(vessel.exportTeus)} TEUs
-                            </div>
-                            `
-                            :""
-                        }
+        if(hasCargo){
+            html+=`
+                <div class="modal-status-box bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100">
+                    <div class="modal-section-label text-blue-600 mb-3">
+                        <i class="fa-solid fa-chart-column"></i>
+                        Cargo Status
                     </div>
-
-                    <div class="p-4 rounded-xl bg-white/80">
-                        <div class="text-[9px] text-slate-400 font-bold">Import</div>
-
-                        <div class="text-xl font-extrabold text-blue-700 mt-1">
-                            ${formatNumber(vessel.import)}
-                            <span class="text-[10px] font-bold text-slate-400">Box</span>
+                    <div class="modal-stat-grid">
+                        <div class="modal-stat">
+                            <div class="modal-stat-label">Booking</div>
+                            <div class="modal-stat-value text-blue-700">${formatNumber(vessel.booking)}</div>
                         </div>
-
-                        ${
-                            vessel.importTeus!==undefined
-                            ?`
-                            <div class="text-[9px] text-slate-400 mt-1">
-                                ${formatNumber(vessel.importTeus)} TEUs
-                            </div>
-                            `
-                            :""
-                        }
+                        <div class="modal-stat">
+                            <div class="modal-stat-label">Open</div>
+                            <div class="modal-stat-value text-cyan-700">${formatNumber(vessel.open)}</div>
+                        </div>
+                        <div class="modal-stat">
+                            <div class="modal-stat-label">Actual</div>
+                            <div class="modal-stat-value text-indigo-700">${formatNumber(vessel.actual)}</div>
+                        </div>
                     </div>
-
                 </div>
-            </div>
-        `;
+            `;
+        }
+
+        if(hasMovement){
+            html+=`
+                <div class="modal-status-box bg-indigo-50/60 border border-indigo-100">
+                    <div class="modal-section-label text-indigo-600 mb-3">
+                        <i class="fa-solid fa-right-left"></i>
+                        Container Movement
+                    </div>
+                    <div class="modal-stat-grid">
+                        <div class="modal-stat">
+                            <div class="modal-stat-label">Export</div>
+                            <div class="modal-stat-value text-indigo-700">
+                                ${formatNumber(vessel.export)}
+                                <span class="text-[8px] text-slate-400">Box</span>
+                            </div>
+                            ${vessel.exportTeus!==undefined?`<div class="text-[8px] text-slate-400 mt-1">${formatNumber(vessel.exportTeus)} TEUs</div>`:""}
+                        </div>
+                        <div class="modal-stat">
+                            <div class="modal-stat-label">Import</div>
+                            <div class="modal-stat-value text-blue-700">
+                                ${formatNumber(vessel.import)}
+                                <span class="text-[8px] text-slate-400">Box</span>
+                            </div>
+                            ${vessel.importTeus!==undefined?`<div class="text-[8px] text-slate-400 mt-1">${formatNumber(vessel.importTeus)} TEUs</div>`:""}
+                        </div>
+                        <div class="modal-stat flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-ship text-indigo-400 text-sm mb-1"></i>
+                            <span class="text-[8px] text-slate-400 font-bold">Movement</span>
+                            <span class="text-[9px] text-slate-600 font-extrabold mt-0.5">Recorded</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        html+=`</div>`;
     }
 
     html+=`
-        <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-
-            <div class="text-[9px] text-slate-400">
+        <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+            <div class="text-[8px] text-slate-400">
                 Section:
-                <span class="font-bold text-slate-600">
-                    ${escapeHtml(section.title)}
-                </span>
+                <span class="font-bold text-slate-600">${escapeHtml(section.title)}</span>
             </div>
-
-            <div class="text-[9px] text-slate-400">
+            <div class="text-[8px] text-slate-400">
                 ${vessel.voyage?`Voyage ${escapeHtml(vessel.voyage)}`:""}
             </div>
-
         </div>
     `;
 
@@ -1251,64 +1000,40 @@ function showSuggestions(){
     if(!CURRENT_RESULTS.length){
         box.innerHTML=`
             <div class="p-5 text-center text-xs text-slate-400">
-
                 <div class="w-10 h-10 mx-auto mb-2 rounded-xl bg-slate-100 flex items-center justify-center">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
-
                 <div class="font-semibold">No matching vessel</div>
-
-                <div class="text-[10px] mt-1">
-                    Try vessel name, voyage, or code.
-                </div>
-
+                <div class="text-[10px] mt-1">Try vessel name, voyage, or code.</div>
             </div>
         `;
-
         box.classList.remove("hidden");
         return;
     }
 
     box.innerHTML=CURRENT_RESULTS.map((item,index)=>`
         <div class="search-item" data-suggestion="${index}">
-
             <div class="flex items-center gap-3">
-
                 <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-sky-50 to-indigo-50 text-blue-600 flex items-center justify-center">
                     <i class="fa-solid ${item.section.icon} text-sm"></i>
                 </div>
-
                 <div class="min-w-0 flex-1">
-
                     <div class="font-extrabold text-sm text-slate-800 truncate">
                         ${highlightText(item.vessel.vesselName,query)}
                     </div>
-
                     <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-slate-400 mt-1">
-
                         <span class="font-bold text-indigo-600">
-                            Voyage:
-                            ${highlightText(item.vessel.voyage,query)}
+                            Voyage: ${highlightText(item.vessel.voyage,query)}
                         </span>
-
-                        ${
-                            item.vessel.vesselCode
-                            ?`
+                        ${item.vessel.vesselCode?`
                             <span>•</span>
-                            <span>
-                                ${highlightText(item.vessel.vesselCode,query)}
-                            </span>
-                            `
-                            :""
-                        }
-
+                            <span>${highlightText(item.vessel.vesselCode,query)}</span>
+                        `:""}
                     </div>
                 </div>
-
                 <span class="shrink-0 text-[8px] sm:text-[9px] px-2 py-1.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 font-extrabold">
                     ${escapeHtml(item.section.title)}
                 </span>
-
             </div>
         </div>
     `).join("");
@@ -1319,7 +1044,6 @@ function showSuggestions(){
         element.addEventListener("click",()=>{
             const index=Number(element.dataset.suggestion);
             const item=CURRENT_RESULTS[index];
-
             if(item)selectSuggestion(item);
         });
     });
@@ -1331,16 +1055,11 @@ function selectSuggestion(item){
 
     input.value=item.vessel.vesselName||"";
     box.classList.add("hidden");
-
     CURRENT_RESULTS=[];
     suggestionIndex=-1;
 
     openModal(item.vessel,item.section);
 }
-
-/* =========================================================
-   SEARCH ACTION
-========================================================= */
 
 function applySearch(){
     renderSections();
@@ -1360,35 +1079,24 @@ function executeSearch(){
     const results=getSearchResults(query);
 
     if(!results.length){
-        document.getElementById("searchInfo").textContent=
-            `No results for "${input.value.trim()}"`;
+        document.getElementById("searchInfo").textContent=`No results for "${input.value.trim()}"`;
         return;
     }
 
     const first=results[0];
-
     renderSections();
 
     requestAnimationFrame(()=>{
-        const row=[
-            ...document.querySelectorAll(".vessel-row")
-        ].find(element=>
-            element.dataset.identity===first.identity
-        );
+        const row=[...document.querySelectorAll(".vessel-row")]
+            .find(element=>element.dataset.identity===first.identity);
 
         if(row){
-            row.scrollIntoView({
-                behavior:"smooth",
-                block:"center"
-            });
-
+            row.scrollIntoView({behavior:"smooth",block:"center"});
             row.classList.remove("search-target");
             void row.offsetWidth;
             row.classList.add("search-target");
 
-            setTimeout(()=>{
-                row.classList.remove("search-target");
-            },2200);
+            setTimeout(()=>row.classList.remove("search-target"),2200);
         }
     });
 }
@@ -1401,7 +1109,6 @@ function clearSearch(){
     box.classList.add("hidden");
     CURRENT_RESULTS=[];
     suggestionIndex=-1;
-
     renderSections();
     input.focus();
 }
@@ -1431,20 +1138,11 @@ function updateStatistics(){
         ?DATA[key].length
         :(DATA.counts?.[key]||0);
 
-    document.getElementById("countAlongside").textContent=
-        formatNumber(getCount("vesselAlongside"));
-
-    document.getElementById("countConfirmed").textContent=
-        formatNumber(getCount("confirmedVessel"));
-
-    document.getElementById("countOpenStack").textContent=
-        formatNumber(getCount("openStack"));
-
-    document.getElementById("countSchedule").textContent=
-        formatNumber(getCount("vesselSchedule"));
-
-    document.getElementById("countHistory").textContent=
-        formatNumber(getCount("vesselHistory"));
+    document.getElementById("countAlongside").textContent=formatNumber(getCount("vesselAlongside"));
+    document.getElementById("countConfirmed").textContent=formatNumber(getCount("confirmedVessel"));
+    document.getElementById("countOpenStack").textContent=formatNumber(getCount("openStack"));
+    document.getElementById("countSchedule").textContent=formatNumber(getCount("vesselSchedule"));
+    document.getElementById("countHistory").textContent=formatNumber(getCount("vesselHistory"));
 }
 
 /* =========================================================
@@ -1457,12 +1155,7 @@ function updateLastUpdate(){
 
     if(!DATA.updatedAt){
         element.textContent="-";
-
-        freshness.innerHTML=`
-            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-            Data: —
-        `;
-
+        freshness.innerHTML=`<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Data: —`;
         return;
     }
 
@@ -1470,34 +1163,17 @@ function updateLastUpdate(){
 
     if(Number.isNaN(date.getTime())){
         element.textContent=DATA.updatedAt;
-
-        freshness.innerHTML=`
-            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-            Data: ${escapeHtml(DATA.updatedAt)}
-        `;
-
+        freshness.innerHTML=`<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Data: ${escapeHtml(DATA.updatedAt)}`;
         return;
     }
 
-    const formatted=date.toLocaleString(
-        "id-ID",
-        {
-            dateStyle:"medium",
-            timeStyle:"medium"
-        }
-    );
-
-    element.textContent=formatted;
+    element.textContent=date.toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"medium"});
     updateFreshnessBadge(date);
 }
 
 function updateFreshnessBadge(date){
     const freshness=document.getElementById("freshnessBadge");
-
-    const ageMinutes=Math.max(
-        0,
-        (Date.now()-date.getTime())/60000
-    );
+    const ageMinutes=Math.max(0,(Date.now()-date.getTime())/60000);
 
     let label;
     let dotClass;
@@ -1513,10 +1189,7 @@ function updateFreshnessBadge(date){
         dotClass="bg-red-500";
     }
 
-    freshness.innerHTML=`
-        <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
-        ${label}
-    `;
+    freshness.innerHTML=`<span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>${label}`;
 }
 
 /* =========================================================
@@ -1531,8 +1204,7 @@ function updateConnectionStatus(success){
     if(success){
         dot.className="w-1.5 h-1.5 rounded-full bg-emerald-300";
         text.textContent="Connected";
-        time.textContent=
-            `Last check: ${new Date().toLocaleTimeString("id-ID")}`;
+        time.textContent=`Last check: ${new Date().toLocaleTimeString("id-ID")}`;
     }else{
         dot.className="w-1.5 h-1.5 rounded-full bg-red-300";
         text.textContent="Connection error";
@@ -1551,64 +1223,27 @@ async function loadData(manual=false){
     try{
         if(manual){
             refreshButton.disabled=true;
-            refreshButton.classList.add(
-                "opacity-70",
-                "cursor-not-allowed"
-            );
+            refreshButton.classList.add("opacity-70","cursor-not-allowed");
         }
 
         refreshIcon.classList.add("fa-spin");
-
         document.getElementById("statusText").textContent="Loading...";
 
-        const response=await fetch(
-            `${DATA_FILE}?t=${Date.now()}`,
-            {cache:"no-store"}
-        );
+        const response=await fetch(`${DATA_FILE}?t=${Date.now()}`,{cache:"no-store"});
 
-        if(!response.ok){
-            throw new Error(`HTTP ${response.status}`);
-        }
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
 
         const json=await response.json();
 
         DATA={
-            updatedAt:
-                json.updatedAt||
-                json.lastUpdated||
-                "",
-
-            source:
-                json.source||
-                "",
-
-            vesselAlongside:
-                Array.isArray(json.vesselAlongside)
-                ?json.vesselAlongside
-                :[],
-
-            confirmedVessel:
-                Array.isArray(json.confirmedVessel)
-                ?json.confirmedVessel
-                :[],
-
-            openStack:
-                Array.isArray(json.openStack)
-                ?json.openStack
-                :[],
-
-            vesselSchedule:
-                Array.isArray(json.vesselSchedule)
-                ?json.vesselSchedule
-                :[],
-
-            vesselHistory:
-                Array.isArray(json.vesselHistory)
-                ?json.vesselHistory
-                :[],
-
-            counts:
-                json.counts||{}
+            updatedAt:json.updatedAt||json.lastUpdated||"",
+            source:json.source||"",
+            vesselAlongside:Array.isArray(json.vesselAlongside)?json.vesselAlongside:[],
+            confirmedVessel:Array.isArray(json.confirmedVessel)?json.confirmedVessel:[],
+            openStack:Array.isArray(json.openStack)?json.openStack:[],
+            vesselSchedule:Array.isArray(json.vesselSchedule)?json.vesselSchedule:[],
+            vesselHistory:Array.isArray(json.vesselHistory)?json.vesselHistory:[],
+            counts:json.counts||{}
         };
 
         updateStatistics();
@@ -1618,48 +1253,25 @@ async function loadData(manual=false){
 
     }catch(error){
         console.error("Failed to load data.json:",error);
-
         updateConnectionStatus(false);
 
         document.getElementById("sectionsContainer").innerHTML=`
             <div class="glass rounded-3xl p-10 sm:p-14 text-center shadow-sm">
-
                 <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center">
                     <i class="fa-solid fa-triangle-exclamation text-xl"></i>
                 </div>
-
-                <h2 class="text-lg font-extrabold text-slate-900">
-                    Failed to load data
-                </h2>
-
-                <p class="text-sm text-slate-500 mt-1">
-                    Unable to read data.json
-                </p>
-
-                <p class="text-xs text-red-400 mt-2">
-                    ${escapeHtml(error.message)}
-                </p>
-
-                <button
-                    onclick="loadData(true)"
-                    class="mt-5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold hover:from-blue-700 hover:to-indigo-700">
-
-                    <i class="fa-solid fa-rotate-right mr-1"></i>
-                    Try Again
-
+                <h2 class="text-lg font-extrabold text-slate-900">Failed to load data</h2>
+                <p class="text-sm text-slate-500 mt-1">Unable to read data.json</p>
+                <p class="text-xs text-red-400 mt-2">${escapeHtml(error.message)}</p>
+                <button onclick="loadData(true)" class="mt-5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold hover:from-blue-700 hover:to-indigo-700">
+                    <i class="fa-solid fa-rotate-right mr-1"></i>Try Again
                 </button>
-
             </div>
         `;
     }finally{
         refreshIcon.classList.remove("fa-spin");
-
         refreshButton.disabled=false;
-
-        refreshButton.classList.remove(
-            "opacity-70",
-            "cursor-not-allowed"
-        );
+        refreshButton.classList.remove("opacity-70","cursor-not-allowed");
     }
 }
 
@@ -1671,8 +1283,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     const input=document.getElementById("searchInput");
     const suggestions=document.getElementById("searchSuggestions");
 
-    /* GLOBAL KEYBOARD */
-
     document.addEventListener("keydown",event=>{
         if(event.key==="Escape"){
             closeModal();
@@ -1681,21 +1291,14 @@ document.addEventListener("DOMContentLoaded",()=>{
         }
     });
 
-    /* CLOSE SUGGESTION WHEN CLICKING OUTSIDE */
-
     document.addEventListener("click",event=>{
         const searchArea=input?.closest(".relative");
 
-        if(
-            searchArea&&
-            !searchArea.contains(event.target)
-        ){
+        if(searchArea&&!searchArea.contains(event.target)){
             suggestions.classList.add("hidden");
             suggestionIndex=-1;
         }
     });
-
-    /* SEARCH KEYBOARD */
 
     input.addEventListener("keydown",event=>{
         if(event.key==="Enter"){
@@ -1705,88 +1308,35 @@ document.addEventListener("DOMContentLoaded",()=>{
         }
 
         if(event.key==="ArrowDown"){
-            if(
-                CURRENT_RESULTS.length&&
-                !suggestions.classList.contains("hidden")
-            ){
+            if(CURRENT_RESULTS.length&&!suggestions.classList.contains("hidden")){
                 event.preventDefault();
-
-                suggestionIndex=Math.min(
-                    suggestionIndex+1,
-                    CURRENT_RESULTS.length-1
-                );
-
+                suggestionIndex=Math.min(suggestionIndex+1,CURRENT_RESULTS.length-1);
                 updateSuggestionSelection();
             }
-
             return;
         }
 
         if(event.key==="ArrowUp"){
-            if(
-                CURRENT_RESULTS.length&&
-                !suggestions.classList.contains("hidden")
-            ){
+            if(CURRENT_RESULTS.length&&!suggestions.classList.contains("hidden")){
                 event.preventDefault();
-
-                suggestionIndex=Math.max(
-                    suggestionIndex-1,
-                    0
-                );
-
+                suggestionIndex=Math.max(suggestionIndex-1,0);
                 updateSuggestionSelection();
             }
         }
     });
 
-    /* INITIAL LOAD */
-
     loadData();
-
-    /* AUTO REFRESH */
-
-    setInterval(
-        ()=>loadData(),
-        AUTO_REFRESH_MS
-    );
-
-    /* RESIZE */
-
-    let resizeTimer;
-
-    window.addEventListener("resize",()=>{
-        clearTimeout(resizeTimer);
-
-        resizeTimer=setTimeout(
-            updateSectionHeaderOffsets,
-            80
-        );
-    });
+    setInterval(()=>loadData(),AUTO_REFRESH_MS);
 });
 
-/* =========================================================
-   SUGGESTION KEYBOARD SELECTION
-========================================================= */
-
 function updateSuggestionSelection(){
-    document.querySelectorAll(".search-item").forEach(
-        (element,index)=>{
-            element.classList.toggle(
-                "active",
-                index===suggestionIndex
-            );
-        }
-    );
-
-    const active=document.querySelector(
-        `.search-item[data-suggestion="${suggestionIndex}"]`
-    );
-
-    active?.scrollIntoView({
-        block:"nearest"
+    document.querySelectorAll(".search-item").forEach((element,index)=>{
+        element.classList.toggle("active",index===suggestionIndex);
     });
+
+    const active=document.querySelector(`.search-item[data-suggestion="${suggestionIndex}"]`);
+    active?.scrollIntoView({block:"nearest"});
 }
 </script>
-
 </body>
 </html>
