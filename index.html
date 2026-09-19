@@ -2,18 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>TPKS Vessel Monitoring</title>
 
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Font Awesome -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
     <style>
+        /* =========================================================
+           BASE
+           ========================================================= */
+
         * {
             box-sizing: border-box;
         }
@@ -24,13 +33,26 @@
 
         body {
             margin: 0;
+            min-height: 100vh;
+
             background:
-                linear-gradient(
-                    180deg,
-                    #f8fafc 0%,
-                    #f1f5f9 45%,
-                    #f8fafc 100%
-                );
+                radial-gradient(
+                    circle at 0% 0%,
+                    rgba(59, 130, 246, 0.09),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 100% 8%,
+                    rgba(14, 165, 233, 0.08),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 50% 100%,
+                    rgba(99, 102, 241, 0.05),
+                    transparent 30%
+                ),
+                #f1f5f9;
+
             color: #0f172a;
             font-family:
                 Inter,
@@ -42,17 +64,111 @@
                 sans-serif;
         }
 
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        ::selection {
+            background: #bfdbfe;
+            color: #1e3a8a;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
         /* =========================================================
-           HEADER UTAMA
-           TIDAK STICKY
+           MAIN HEADER
+           NOT STICKY
            ========================================================= */
 
         .main-header {
             position: relative;
             z-index: 10;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.97),
+                    rgba(239, 246, 255, 0.94)
+                );
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+
+            border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #0891b2
+                );
+
+            box-shadow:
+                0 8px 20px rgba(37, 99, 235, 0.20);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .pulse-dot {
+            background: #10b981;
+            box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+            animation: pulseLive 2s infinite;
+        }
+
+        @keyframes pulseLive {
+            0% {
+                box-shadow:
+                    0 0 0 0 rgba(16, 185, 129, 0.45);
+            }
+
+            70% {
+                box-shadow:
+                    0 0 0 7px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow:
+                    0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
 
         /* =========================================================
@@ -67,83 +183,251 @@
         .search-wrapper {
             position: relative;
             z-index: 50;
+
+            padding: 14px;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.98),
+                    rgba(239, 246, 255, 0.94)
+                );
+
+            border: 1px solid rgba(148, 163, 184, 0.20);
+
+            box-shadow:
+                0 10px 30px rgba(15, 23, 42, 0.06),
+                0 2px 8px rgba(59, 130, 246, 0.04);
+        }
+
+        .search-input-wrap {
+            position: relative;
         }
 
         .search-input {
+            width: 100%;
+            height: 44px;
+
+            padding-left: 42px;
+            padding-right: 42px;
+
+            border-radius: 13px;
+
+            background: white;
+            border: 1px solid #dbeafe;
+
+            color: #0f172a;
+
+            outline: none;
+
             transition:
                 border-color 0.2s ease,
-                box-shadow 0.2s ease,
-                background-color 0.2s ease;
+                box-shadow 0.2s ease;
+        }
+
+        .search-input::placeholder {
+            color: #94a3b8;
         }
 
         .search-input:focus {
-            outline: none;
-            border-color: #94a3b8;
+            border-color: #60a5fa;
+
             box-shadow:
-                0 0 0 3px rgba(148, 163, 184, 0.18);
-            background: #ffffff;
+                0 0 0 4px rgba(59, 130, 246, 0.10),
+                0 5px 15px rgba(59, 130, 246, 0.06);
         }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            color: #64748b;
+
+            pointer-events: none;
+        }
+
+        .clear-search-button {
+            position: absolute;
+
+            right: 10px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 28px;
+            height: 28px;
+
+            border-radius: 9px;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            color: #64748b;
+            background: #f8fafc;
+
+            transition: all 0.15s ease;
+        }
+
+        .clear-search-button:hover {
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .search-button {
+            height: 44px;
+
+            padding: 0 18px;
+
+            border-radius: 13px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            color: white;
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #0284c7
+                );
+
+            border: 1px solid rgba(37, 99, 235, 0.3);
+
+            box-shadow:
+                0 7px 16px rgba(37, 99, 235, 0.18);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            transition:
+                transform 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .search-button:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 10px 22px rgba(37, 99, 235, 0.23);
+        }
+
+        .refresh-button {
+            height: 44px;
+
+            padding: 0 16px;
+
+            border-radius: 13px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            color: #334155;
+            background: white;
+
+            border: 1px solid #dbeafe;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            transition: all 0.15s ease;
+        }
+
+        .refresh-button:hover {
+            color: #2563eb;
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .refresh-button.loading i {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =========================================================
+           SEARCH SUGGESTIONS
+           ========================================================= */
 
         .search-suggestions {
             position: absolute;
+
             top: calc(100% + 8px);
             left: 0;
             right: 0;
+
             z-index: 100;
-            overflow: hidden;
+
+            max-height: 390px;
+            overflow-y: auto;
+
+            border-radius: 17px;
 
             background: rgba(255, 255, 255, 0.98);
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
+
+            border: 1px solid #dbeafe;
 
             box-shadow:
-                0 20px 45px rgba(15, 23, 42, 0.12),
-                0 4px 12px rgba(15, 23, 42, 0.06);
+                0 20px 45px rgba(15, 23, 42, 0.14),
+                0 5px 15px rgba(59, 130, 246, 0.08);
 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+
+            overflow-x: hidden;
         }
 
         .suggestion-item {
-            width: 100%;
-            text-align: left;
             padding: 12px 14px;
-            background: transparent;
-            border: 0;
+
             cursor: pointer;
-            transition: background 0.15s ease;
+
+            border-bottom: 1px solid #f1f5f9;
+
+            transition:
+                background 0.15s ease,
+                transform 0.15s ease;
         }
 
         .suggestion-item:hover,
         .suggestion-item.active {
-            background: #f8fafc;
+            background: #eff6ff;
         }
 
-        .suggestion-title {
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-icon {
+            width: 38px;
+            height: 38px;
+
+            flex-shrink: 0;
+
             display: flex;
             align-items: center;
-            gap: 8px;
-            min-width: 0;
-        }
+            justify-content: center;
 
-        .suggestion-vessel {
-            font-size: 13px;
-            font-weight: 700;
-            color: #0f172a;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+            border-radius: 11px;
 
-        .suggestion-meta {
-            margin-top: 3px;
-            padding-left: 20px;
-            font-size: 11px;
-            color: #64748b;
+            color: #2563eb;
+            background: #eff6ff;
         }
 
         /* =========================================================
-           KPI
+           KPI / STATISTICS
            ========================================================= */
 
         .statistics-wrapper {
@@ -153,75 +437,107 @@
 
         .stat-card {
             position: relative;
-            z-index: 1;
 
-            width: 100%;
-            border: 1px solid #e2e8f0;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 14px;
+            overflow: hidden;
+
+            border-radius: 18px;
+
+            background: rgba(255, 255, 255, 0.96);
+
+            border: 1px solid rgba(148, 163, 184, 0.18);
+
+            box-shadow:
+                0 8px 25px rgba(15, 23, 42, 0.05);
 
             transition:
-                transform 0.18s ease,
-                box-shadow 0.18s ease,
-                border-color 0.18s ease,
-                background 0.18s ease;
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .stat-card::before {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 4px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--accent-a),
+                    var(--accent-b)
+                );
         }
 
         .stat-card:hover {
-            transform: translateY(-2px);
-            border-color: #cbd5e1;
-            background: #ffffff;
+            transform: translateY(-3px);
+
             box-shadow:
-                0 10px 25px rgba(15, 23, 42, 0.07);
+                0 14px 35px rgba(15, 23, 42, 0.09);
+
+            border-color: #bfdbfe;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+
+            color: var(--accent-a);
+            background: var(--accent-bg);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            line-height: 1;
+
+            font-weight: 800;
+
+            color: #0f172a;
         }
 
         /* =========================================================
            SECTION
-           
-           PENTING:
-           Section TIDAK diberi overflow hidden/auto.
-           Sticky section header harus mengikuti scroll halaman.
            ========================================================= */
 
         .dashboard-section {
             position: relative;
+
             scroll-margin-top: 8px;
 
-            /* Jangan gunakan overflow:hidden/auto di sini */
             overflow: visible;
         }
 
         .section-card {
             position: relative;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
+
+            background: rgba(255, 255, 255, 0.97);
+
+            border: 1px solid rgba(148, 163, 184, 0.20);
+
+            border-radius: 20px;
+
+            overflow: visible;
 
             box-shadow:
-                0 2px 8px rgba(15, 23, 42, 0.035);
+                0 10px 30px rgba(15, 23, 42, 0.05);
         }
 
-        /*
-         * HEADER SECTION STICKY
-         *
-         * Header utama tidak sticky.
-         * Karena itu section header cukup top: 0.
-         *
-         * Ketika Open Stack sedang panjang:
-         *
-         * OPEN STACK
-         * ─────────────────────────
-         * Vessel | Voyage | ...
-         * ─────────────────────────
-         * data
-         * data
-         * data
-         *
-         * Header Open Stack tetap berada di atas.
-         */
         .section-header {
             position: sticky;
+
             top: 0;
+
             z-index: 30;
 
             min-height: 68px;
@@ -229,257 +545,259 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 16px;
 
             padding: 14px 18px;
 
-            background: rgba(255, 255, 255, 0.97);
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.98),
+                    rgba(239, 246, 255, 0.96)
+                );
 
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
 
-            border-bottom: 1px solid #e2e8f0;
-        }
+            border-bottom: 1px solid #dbeafe;
 
-        .section-header-left {
-            min-width: 0;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-
-            margin: 0;
-
-            font-size: 15px;
-            line-height: 20px;
-            font-weight: 750;
-            letter-spacing: -0.01em;
-            color: #0f172a;
+            border-radius: 20px 20px 0 0;
         }
 
         .section-title-icon {
-            width: 30px;
-            height: 30px;
+            width: 38px;
+            height: 38px;
+
+            flex-shrink: 0;
 
             display: inline-flex;
             align-items: center;
             justify-content: center;
 
-            border-radius: 9px;
-            background: #f1f5f9;
-            color: #475569;
+            border-radius: 12px;
 
-            flex: 0 0 auto;
-        }
+            background:
+                linear-gradient(
+                    135deg,
+                    #dbeafe,
+                    #e0f2fe
+                );
 
-        .section-subtitle {
-            margin: 3px 0 0 39px;
+            color: #2563eb;
 
-            font-size: 11px;
-            line-height: 16px;
-            color: #64748b;
+            box-shadow:
+                0 5px 12px rgba(37, 99, 235, 0.10);
         }
 
         .section-count {
-            flex: 0 0 auto;
+            padding: 5px 10px;
 
-            padding: 5px 9px;
-
-            border: 1px solid #e2e8f0;
             border-radius: 999px;
 
-            background: #f8fafc;
+            background: #eff6ff;
 
-            font-size: 11px;
-            font-weight: 700;
-            color: #475569;
+            color: #2563eb;
+
+            border: 1px solid #dbeafe;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
         }
-
-        /* =========================================================
-           TABLE
-           ========================================================= */
 
         .section-scroll {
             width: 100%;
 
-            /*
-             * Hanya horizontal scroll jika diperlukan.
-             * Jangan beri vertical overflow / max-height.
-             */
             overflow-x: auto;
             overflow-y: visible;
 
             -webkit-overflow-scrolling: touch;
         }
 
-        table {
-            width: 100%;
+        .section-scroll table {
             min-width: 760px;
-
+            width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-
-            font-size: 12px;
         }
 
-        /*
-         * TABLE HEADER STICKY
-         *
-         * Karena section-header tingginya sekitar 68px,
-         * header tabel berada di bawahnya.
-         */
         .section-scroll thead {
             position: sticky;
+
             top: 68px;
+
             z-index: 20;
         }
 
         .section-scroll thead th {
-            padding: 10px 14px;
+            padding: 11px 14px;
 
-            background: #f8fafc;
+            background:
+                linear-gradient(
+                    180deg,
+                    #f8fbff,
+                    #eff6ff
+                );
 
-            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
 
-            color: #64748b;
+            border-bottom: 1px solid #dbeafe;
+
             font-size: 10px;
-            font-weight: 750;
-            letter-spacing: 0.045em;
+            font-weight: 800;
+
             text-transform: uppercase;
+            letter-spacing: 0.04em;
 
             white-space: nowrap;
-            text-align: left;
         }
 
         .section-scroll tbody td {
-            padding: 11px 14px;
+            padding: 12px 14px;
 
             border-bottom: 1px solid #f1f5f9;
 
-            color: #334155;
-            vertical-align: middle;
+            color: #475569;
 
-            white-space: nowrap;
+            font-size: 11px;
+
+            vertical-align: middle;
         }
 
         .section-scroll tbody tr {
-            background: #ffffff;
+            cursor: pointer;
+
             transition:
                 background 0.15s ease,
-                box-shadow 0.15s ease;
-        }
-
-        .section-scroll tbody tr:nth-child(even) {
-            background: #fcfdff;
+                transform 0.15s ease;
         }
 
         .section-scroll tbody tr:hover {
-            background: #f8fafc;
+            background: #f8fbff;
         }
 
         .section-scroll tbody tr:last-child td {
-            border-bottom: 0;
+            border-bottom: none;
         }
 
-        .vessel-main {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            min-width: 150px;
-        }
-
-        .vessel-name {
-            font-weight: 700;
+        .vessel-primary {
             color: #0f172a;
+            font-size: 11px;
+            font-weight: 800;
         }
 
-        .vessel-code {
-            font-size: 10px;
+        .vessel-secondary {
+            margin-top: 2px;
+
             color: #94a3b8;
-            letter-spacing: 0.025em;
+
+            font-size: 9px;
         }
 
-        .voyage-text {
-            font-weight: 650;
-            color: #334155;
+        .voyage-badge {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 4px 7px;
+
+            border-radius: 7px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            color: #475569;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            white-space: nowrap;
         }
 
         .type-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
 
-            padding: 4px 8px;
+            padding: 4px 7px;
 
-            border: 1px solid #e2e8f0;
-            border-radius: 999px;
+            border-radius: 7px;
 
-            background: #f8fafc;
+            background: #f0fdfa;
 
-            color: #475569;
-            font-size: 10px;
+            border: 1px solid #ccfbf1;
+
+            color: #0f766e;
+
+            font-size: 9px;
             font-weight: 700;
+
+            white-space: nowrap;
         }
 
-        .type-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 999px;
-            background: #94a3b8;
-        }
-
-        .datetime-text {
-            color: #475569;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .number-text {
+        .datetime-value {
             color: #334155;
-            font-weight: 650;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .muted-text {
-            color: #94a3b8;
-        }
-
-        .empty-section {
-            padding: 40px 20px;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 12px;
+            font-size: 10px;
+            white-space: nowrap;
         }
 
         /* =========================================================
-           SEARCH RESULT HIGHLIGHT
+           EMPTY STATE
            ========================================================= */
 
-        .search-hit td {
-            animation: searchHit 2.8s ease both;
+        .empty-state {
+            padding: 38px 20px;
+
+            text-align: center;
+
+            color: #94a3b8;
         }
 
-        .search-hit td:first-child {
-            box-shadow:
-                inset 4px 0 0 #2563eb !important;
+        .empty-icon {
+            width: 46px;
+            height: 46px;
+
+            margin: 0 auto 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: #f8fafc;
+
+            color: #94a3b8;
+        }
+
+        /* =========================================================
+           SEARCH HIT
+           ========================================================= */
+
+        .search-hit {
+            animation: searchHit 3s ease;
         }
 
         @keyframes searchHit {
             0% {
-                background: #dbeafe !important;
+                background: #bfdbfe;
+
+                box-shadow:
+                    inset 0 0 0 2px #60a5fa;
             }
 
-            20% {
-                background: #eff6ff !important;
-            }
+            35% {
+                background: #dbeafe;
 
-            55% {
-                background: #eff6ff !important;
+                box-shadow:
+                    inset 0 0 0 2px #93c5fd;
             }
 
             100% {
-                background: inherit;
+                background: transparent;
+
+                box-shadow: none;
             }
         }
 
@@ -488,139 +806,202 @@
            ========================================================= */
 
         .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
+            background:
+                rgba(15, 23, 42, 0.50);
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding: 20px;
-
-            background: rgba(15, 23, 42, 0.48);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(7px);
+            -webkit-backdrop-filter: blur(7px);
         }
 
-        .modal-panel {
-            width: min(720px, 100%);
-            max-height: 88vh;
+        .modal-card {
+            width: min(700px, calc(100vw - 28px));
 
-            overflow-y: auto;
+            max-height: min(88vh, 800px);
+
+            overflow: hidden;
 
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 18px;
+
+            border: 1px solid rgba(147, 197, 253, 0.35);
+
+            border-radius: 24px;
 
             box-shadow:
-                0 30px 80px rgba(15, 23, 42, 0.2);
+                0 30px 80px rgba(15, 23, 42, 0.22),
+                0 10px 30px rgba(37, 99, 235, 0.08);
+
+            animation: modalIn 0.20s ease-out;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .modal-header {
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            padding: 20px;
 
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #f0f9ff,
+                    #eef2ff
+                );
 
-            padding: 18px 20px;
-
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #dbeafe;
         }
 
-        .modal-title {
-            margin: 0;
-
-            font-size: 17px;
-            font-weight: 750;
-            color: #0f172a;
-        }
-
-        .modal-subtitle {
-            margin-top: 3px;
-
-            font-size: 11px;
-            color: #64748b;
-        }
-
-        .modal-close {
-            width: 34px;
-            height: 34px;
-
+        .modal-section-badge {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
+            gap: 7px;
 
-            flex: 0 0 auto;
+            padding: 6px 10px;
 
-            border: 0;
-            border-radius: 10px;
+            border-radius: 999px;
 
-            background: #f1f5f9;
-            color: #64748b;
+            background: #dbeafe;
 
-            cursor: pointer;
+            color: #1d4ed8;
 
-            transition:
-                background 0.15s ease,
-                color 0.15s ease;
+            border: 1px solid #bfdbfe;
+
+            font-size: 10px;
+            font-weight: 800;
         }
 
-        .modal-close:hover {
-            background: #e2e8f0;
+        .modal-vessel-name {
+            margin-top: 10px;
+
+            font-size: 21px;
+            line-height: 1.2;
+
+            font-weight: 800;
+
             color: #0f172a;
+        }
+
+        .modal-voyage {
+            margin-top: 5px;
+
+            font-size: 11px;
+
+            color: #64748b;
         }
 
         .modal-body {
-            padding: 18px 20px 22px;
+            padding: 18px;
+
+            max-height: calc(88vh - 150px);
+
+            overflow-y: auto;
         }
 
-        .detail-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
-        }
-
-        .detail-item {
+        .modal-field {
             padding: 11px 12px;
 
+            border-radius: 12px;
+
             background: #f8fafc;
+
             border: 1px solid #f1f5f9;
-            border-radius: 10px;
+
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease;
         }
 
-        .detail-label {
-            margin-bottom: 4px;
+        .modal-field:hover {
+            background: #f0f9ff;
+            border-color: #dbeafe;
+        }
 
+        .modal-field-label {
             font-size: 9px;
-            font-weight: 750;
+
+            font-weight: 800;
+
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+
+            letter-spacing: 0.04em;
 
             color: #94a3b8;
         }
 
-        .detail-value {
+        .modal-field-value {
+            margin-top: 3px;
+
             font-size: 12px;
-            font-weight: 650;
+
+            font-weight: 600;
+
             color: #334155;
 
             word-break: break-word;
         }
 
         /* =========================================================
-           RESPONSIVE
+           CONNECTION STATUS
+           ========================================================= */
+
+        .connection-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            padding: 5px 9px;
+
+            border-radius: 999px;
+
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .connection-online {
+            color: #047857;
+            background: #ecfdf5;
+            border: 1px solid #d1fae5;
+        }
+
+        .connection-loading {
+            color: #0369a1;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+        }
+
+        .connection-offline {
+            color: #b91c1c;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+
+        .footer-link {
+            color: #2563eb;
+            transition: color 0.15s ease;
+        }
+
+        .footer-link:hover {
+            color: #1d4ed8;
+        }
+
+        /* =========================================================
+           MOBILE
            ========================================================= */
 
         @media (max-width: 768px) {
+
             .section-header {
                 min-height: 62px;
                 padding: 12px 14px;
@@ -630,81 +1011,46 @@
                 top: 62px;
             }
 
-            .section-title {
-                font-size: 14px;
+            .section-card {
+                border-radius: 16px;
             }
 
-            .section-subtitle {
-                display: none;
+            .modal-card {
+                width: calc(100vw - 20px);
+                border-radius: 20px;
             }
 
-            .detail-grid {
-                grid-template-columns: 1fr;
+            .modal-header {
+                padding: 16px;
             }
 
-            .modal-backdrop {
+            .modal-body {
+                padding: 14px;
+            }
+
+            .search-wrapper {
                 padding: 10px;
             }
-
-            .modal-panel {
-                max-height: 92vh;
-            }
         }
 
-        /* =========================================================
-           CONNECTION STATUS
-           ========================================================= */
+        @media (max-width: 640px) {
 
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 999px;
-            background: #22c55e;
-        }
-
-        .status-dot.offline {
-            background: #ef4444;
-        }
-
-        .status-dot.loading {
-            background: #f59e0b;
-        }
-
-        .pulse-dot {
-            animation: pulseDot 1.8s infinite;
-        }
-
-        @keyframes pulseDot {
-            0%,
-            100% {
-                opacity: 1;
+            .stat-number {
+                font-size: 21px;
             }
 
-            50% {
-                opacity: 0.45;
+            .section-title-icon {
+                width: 34px;
+                height: 34px;
             }
-        }
 
-        /* =========================================================
-           SCROLLBAR
-           ========================================================= */
+            .section-header {
+                gap: 10px;
+            }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 999px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            .section-count {
+                padding: 4px 8px;
+            }
         }
     </style>
 </head>
@@ -712,48 +1058,89 @@
 <body>
 
     <!-- =========================================================
-         HEADER UTAMA
-         
-         TIDAK STICKY.
-         Header ini akan ikut hilang ketika halaman di-scroll.
+         MAIN HEADER
          ========================================================= -->
 
-    <header class="main-header border-b border-slate-200/80">
+    <header class="main-header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
             <div class="py-5 flex items-center justify-between gap-4">
 
-                <div class="min-w-0">
-                    <div class="flex items-center gap-3">
-                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
-                            TPKS Vessel Monitoring
-                        </h1>
+                <div class="flex items-center gap-3 min-w-0">
 
-                        <span
-                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-[10px] font-bold"
-                        >
-                            <span
-                                id="liveDot"
-                                class="status-dot pulse-dot"
-                            ></span>
-                            Live
-                        </span>
+                    <div class="brand-mark">
+                        <i class="fa-solid fa-ship"></i>
                     </div>
 
-                    <p class="mt-1 text-xs text-slate-500">
-                        Pelindo Terminal Petikemas Semarang
-                    </p>
+                    <div class="min-w-0">
+
+                        <div class="flex items-center gap-3 flex-wrap">
+
+                            <h1
+                                class="
+                                    text-lg
+                                    sm:text-xl
+                                    font-extrabold
+                                    tracking-tight
+                                    text-slate-900
+                                "
+                            >
+                                TPKS Vessel Monitoring
+                            </h1>
+
+                            <span
+                                class="
+                                    inline-flex
+                                    items-center
+                                    gap-1.5
+                                    px-2
+                                    py-1
+                                    rounded-full
+                                    bg-emerald-50
+                                    border
+                                    border-emerald-100
+                                    text-emerald-700
+                                    text-[10px]
+                                    font-bold
+                                "
+                            >
+                                <span
+                                    id="liveDot"
+                                    class="status-dot pulse-dot"
+                                ></span>
+
+                                Live
+                            </span>
+
+                        </div>
+
+                        <p class="mt-1 text-xs text-slate-500">
+                            Pelindo Terminal Petikemas Semarang
+                        </p>
+
+                    </div>
+
                 </div>
 
                 <div class="hidden sm:flex items-center gap-2">
+
                     <span
-                        id="connectionText"
-                        class="text-[10px] text-slate-400"
+                        id="connectionPill"
+                        class="
+                            connection-pill
+                            connection-loading
+                        "
                     >
-                        Connecting...
+                        <span class="status-dot bg-sky-500"></span>
+                        <span id="connectionText">
+                            Connecting...
+                        </span>
                     </span>
+
                 </div>
 
             </div>
+
         </div>
     </header>
 
@@ -762,7 +1149,7 @@
          MAIN
          ========================================================= -->
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
 
         <!-- =====================================================
              SEARCH
@@ -776,36 +1163,39 @@
 
                     <div class="relative flex-1">
 
-                        <button
-                            id="searchButtonIcon"
-                            type="button"
-                            onclick="performSearch()"
-                            class="absolute left-3 top-1/2 -translate-y-1/2 z-10 text-slate-400 hover:text-slate-700 transition"
-                            aria-label="Search"
-                        >
-                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                        </button>
+                        <div class="search-input-wrap">
 
-                        <input
-                            id="searchInput"
-                            type="text"
-                            autocomplete="off"
-                            placeholder="Search vessel, voyage, code, type..."
-                            class="search-input w-full h-11 pl-10 pr-10 rounded-xl border border-slate-200 bg-white/90 text-sm text-slate-800 placeholder:text-slate-400"
-                        >
+                            <i
+                                class="
+                                    fa-solid
+                                    fa-magnifying-glass
+                                    search-icon
+                                    text-sm
+                                "
+                            ></i>
 
-                        <button
-                            id="clearSearchButton"
-                            type="button"
-                            onclick="clearSearch()"
-                            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition"
-                            aria-label="Clear search"
-                        >
-                            <i class="fa-solid fa-xmark text-sm"></i>
-                        </button>
+                            <input
+                                id="searchInput"
+                                class="search-input"
+                                type="text"
+                                autocomplete="off"
+                                placeholder="Search vessel, voyage, code, type..."
+                                aria-label="Search vessel"
+                            >
 
-                        <!-- SEARCH SUGGESTIONS -->
+                            <button
+                                id="clearSearchButton"
+                                class="clear-search-button"
+                                type="button"
+                                onclick="clearSearch()"
+                                aria-label="Clear search"
+                            >
+                                <i class="fa-solid fa-xmark text-sm"></i>
+                            </button>
 
+                        </div>
+
+                        <!-- Suggestions -->
                         <div
                             id="searchSuggestions"
                             class="search-suggestions hidden"
@@ -814,21 +1204,23 @@
                     </div>
 
                     <button
+                        id="searchButton"
                         type="button"
+                        class="search-button"
                         onclick="performSearch()"
-                        class="h-11 px-5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center justify-center gap-2"
                     >
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        Search
+                        <span>Search</span>
                     </button>
 
                     <button
+                        id="refreshButton"
                         type="button"
+                        class="refresh-button"
                         onclick="loadData()"
-                        class="h-11 px-5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-2"
                     >
                         <i class="fa-solid fa-rotate-right"></i>
-                        Refresh
+                        <span>Refresh</span>
                     </button>
 
                 </div>
@@ -836,6 +1228,7 @@
             </div>
 
             <div class="mt-2 flex items-center justify-between gap-3">
+
                 <p
                     id="searchStatus"
                     class="text-[10px] text-slate-400"
@@ -843,32 +1236,42 @@
 
                 <p
                     id="freshnessText"
-                    class="text-[10px] text-slate-400 text-right"
+                    class="
+                        text-[10px]
+                        text-slate-400
+                        text-right
+                    "
                 >
                     —
                 </p>
+
             </div>
 
         </section>
 
 
         <!-- =====================================================
-             STATISTICS / KPI
+             STATISTICS
              ===================================================== -->
 
-        <section
-            id="statistics"
-            class="statistics-wrapper mb-7"
-        >
+        <section class="statistics-wrapper mb-6">
+
             <div
-                id="statisticsGrid"
-                class="grid grid-cols-2 lg:grid-cols-5 gap-3"
+                id="statistics"
+                class="
+                    grid
+                    grid-cols-2
+                    sm:grid-cols-3
+                    lg:grid-cols-5
+                    gap-3
+                "
             ></div>
+
         </section>
 
 
         <!-- =====================================================
-             DATA SECTIONS
+             DASHBOARD SECTIONS
              ===================================================== -->
 
         <div
@@ -878,82 +1281,136 @@
 
 
         <!-- =====================================================
-             FOOTER STATUS
+             FOOTER
              ===================================================== -->
 
-        <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-slate-400">
+        <footer class="pt-7 pb-3">
 
-            <div>
-                Source:
-                <a
-                    id="sourceLink"
-                    href="https://ibstpks.pelindo.co.id/webaccess/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="hover:text-slate-600 underline underline-offset-2"
-                >
-                    Pelindo TPKS Webaccess
-                </a>
+            <div
+                class="
+                    flex
+                    flex-col
+                    sm:flex-row
+                    items-center
+                    justify-between
+                    gap-2
+                    text-[10px]
+                    text-slate-400
+                "
+            >
+
+                <div>
+                    TPKS Vessel Monitoring
+                </div>
+
+                <div class="text-center sm:text-right">
+
+                    <span>
+                        Source:
+                    </span>
+
+                    <a
+                        href="https://ibstpks.pelindo.co.id/webaccess/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="footer-link"
+                    >
+                        Pelindo TPKS Webaccess
+                    </a>
+
+                </div>
+
             </div>
 
-            <div class="flex items-center gap-2">
-                <span>Last update:</span>
-                <span id="lastUpdateText">—</span>
-            </div>
-
-            <div>
-                Next scraper:
-                <span id="nextUpdateText">—</span>
-            </div>
-
-        </div>
+        </footer>
 
     </main>
 
 
     <!-- =========================================================
-         MODAL
+         VESSEL MODAL
          ========================================================= -->
 
     <div
         id="vesselModal"
-        class="modal-backdrop hidden"
+        class="
+            modal-backdrop
+            hidden
+            fixed
+            inset-0
+            z-[200]
+            flex
+            items-center
+            justify-center
+            p-3
+        "
+        onclick="handleModalBackdropClick(event)"
     >
 
-        <div
-            id="modalPanel"
-            class="modal-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modalTitle"
-        >
+        <div class="modal-card">
+
+            <!-- Modal Header -->
 
             <div class="modal-header">
 
-                <div class="min-w-0">
-                    <h2
-                        id="modalTitle"
-                        class="modal-title"
-                    >
-                        Vessel Detail
-                    </h2>
+                <div class="flex items-start justify-between gap-4">
 
-                    <div
-                        id="modalSubtitle"
-                        class="modal-subtitle"
-                    ></div>
+                    <div class="min-w-0">
+
+                        <div
+                            id="modalSectionBadge"
+                            class="modal-section-badge"
+                        >
+                            <i class="fa-solid fa-ship"></i>
+                            <span>Vessel</span>
+                        </div>
+
+                        <div
+                            id="modalVesselName"
+                            class="modal-vessel-name"
+                        >
+                            —
+                        </div>
+
+                        <div
+                            id="modalVoyage"
+                            class="modal-voyage"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick="closeVesselModal()"
+                        class="
+                            w-9
+                            h-9
+                            shrink-0
+                            rounded-xl
+                            flex
+                            items-center
+                            justify-center
+                            bg-white
+                            border
+                            border-slate-200
+                            text-slate-500
+                            hover:text-slate-900
+                            hover:bg-slate-50
+                            transition
+                        "
+                        aria-label="Close modal"
+                    >
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
                 </div>
 
-                <button
-                    type="button"
-                    onclick="closeModal()"
-                    class="modal-close"
-                    aria-label="Close"
-                >
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-
             </div>
+
+
+            <!-- Modal Body -->
 
             <div
                 id="modalBody"
@@ -965,18 +1422,20 @@
     </div>
 
 
-    <!-- =========================================================
-         JAVASCRIPT
-         ========================================================= -->
-
     <script>
+        /* =========================================================
+           CONFIGURATION
+           ========================================================= */
 
         const DATA_URL = "./data.json";
 
-        let CURRENT_DATA = null;
-        let CURRENT_SEARCH = "";
-        let SEARCH_RESULTS = [];
-        let ACTIVE_SUGGESTION = -1;
+        const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000;
+
+        const FRESHNESS_INTERVAL = 30 * 1000;
+
+        const NEXT_UPDATE_INTERVAL = 1000;
+
+        const SCRAPER_STATUS_INTERVAL = 2 * 60 * 1000;
 
 
         /* =========================================================
@@ -984,11 +1443,22 @@
            ========================================================= */
 
         const SECTION_CONFIG = [
+
             {
                 key: "vesselAlongside",
+
                 title: "Vessel Alongside",
+
                 icon: "fa-ship",
+
                 subtitle: "Vessel currently alongside",
+
+                accentA: "#2563eb",
+
+                accentB: "#0891b2",
+
+                accentBg: "#eff6ff",
+
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -997,11 +1467,22 @@
                     ["etd", "ETD", "datetime"]
                 ]
             },
+
             {
                 key: "confirmedVessel",
+
                 title: "Confirmed Vessel",
+
                 icon: "fa-circle-check",
+
                 subtitle: "Confirmed vessel information",
+
+                accentA: "#7c3aed",
+
+                accentB: "#6366f1",
+
+                accentBg: "#f5f3ff",
+
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1011,11 +1492,23 @@
                     ["etd", "ETD", "datetime"]
                 ]
             },
+
             {
                 key: "openStack",
+
                 title: "Open Stack",
+
                 icon: "fa-box-open",
-                subtitle: "Vessel with export receiving / open stack information",
+
+                subtitle:
+                    "Vessel with export receiving / open stack information",
+
+                accentA: "#ea580c",
+
+                accentB: "#f59e0b",
+
+                accentBg: "#fff7ed",
+
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1024,11 +1517,22 @@
                     ["closingTime", "Closing Time", "datetime"]
                 ]
             },
+
             {
                 key: "vesselSchedule",
+
                 title: "Vessel Schedule",
+
                 icon: "fa-calendar-days",
+
                 subtitle: "Scheduled vessel information",
+
+                accentA: "#0284c7",
+
+                accentB: "#06b6d4",
+
+                accentBg: "#ecfeff",
+
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1038,11 +1542,22 @@
                     ["etd", "ETD", "datetime"]
                 ]
             },
+
             {
                 key: "vesselHistory",
+
                 title: "Vessel History",
+
                 icon: "fa-clock-rotate-left",
+
                 subtitle: "Vessel historical records",
+
+                accentA: "#059669",
+
+                accentB: "#14b8a6",
+
+                accentBg: "#ecfdf5",
+
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1051,7 +1566,129 @@
                     ["atd", "ATD", "datetime"]
                 ]
             }
+
         ];
+
+
+        /* =========================================================
+           MODAL FIELDS
+           ========================================================= */
+
+        const MODAL_FIELDS = [
+
+            ["vesselName", "Vessel Name"],
+
+            ["vesselCode", "Vessel Code"],
+
+            ["voyage", "Voyage"],
+
+            ["type", "Type"],
+
+            ["eta", "ETA"],
+
+            ["etb", "ETB"],
+
+            ["atb", "ATB"],
+
+            ["etd", "ETD"],
+
+            ["atd", "ATD"],
+
+            ["openStack", "Open Stack"],
+
+            ["closingTime", "Closing Time"],
+
+            ["booking", "Booking"],
+
+            ["open", "Open"],
+
+            ["actual", "Actual"],
+
+            ["export", "Export"],
+
+            ["exportTeus", "Export TEUs"],
+
+            ["import", "Import"],
+
+            ["importTeus", "Import TEUs"]
+
+        ];
+
+
+        /* =========================================================
+           STATE
+           ========================================================= */
+
+        let dashboardData = {
+
+            lastUpdated: null,
+
+            updatedAt: null,
+
+            source: "",
+
+            vesselAlongside: [],
+
+            confirmedVessel: [],
+
+            openStack: [],
+
+            vesselSchedule: [],
+
+            vesselHistory: [],
+
+            counts: {}
+
+        };
+
+        let searchResults = [];
+
+        let activeSuggestionIndex = -1;
+
+        let autoRefreshTimer = null;
+
+        let freshnessTimer = null;
+
+        let nextUpdateTimer = null;
+
+        let scraperStatusTimer = null;
+
+        let nextUpdateAt = null;
+
+
+        /* =========================================================
+           DOM
+           ========================================================= */
+
+        const searchInput =
+            document.getElementById("searchInput");
+
+        const searchSuggestions =
+            document.getElementById("searchSuggestions");
+
+        const clearSearchButton =
+            document.getElementById("clearSearchButton");
+
+        const searchStatus =
+            document.getElementById("searchStatus");
+
+        const freshnessText =
+            document.getElementById("freshnessText");
+
+        const dashboardSections =
+            document.getElementById("dashboardSections");
+
+        const statistics =
+            document.getElementById("statistics");
+
+        const refreshButton =
+            document.getElementById("refreshButton");
+
+        const connectionText =
+            document.getElementById("connectionText");
+
+        const connectionPill =
+            document.getElementById("connectionPill");
 
 
         /* =========================================================
@@ -1060,7 +1697,10 @@
 
         function escapeHtml(value) {
 
-            if (value === null || value === undefined) {
+            if (
+                value === null ||
+                value === undefined
+            ) {
                 return "";
             }
 
@@ -1075,28 +1715,121 @@
 
         function normalizeSearchValue(value) {
 
-            return String(value ?? "")
+            if (
+                value === null ||
+                value === undefined
+            ) {
+                return "";
+            }
+
+            return String(value)
                 .toLowerCase()
-                .trim()
-                .replace(/\s+/g, " ");
+                .trim();
+        }
+
+
+        function getVesselKey(vessel, sectionKey) {
+
+            const name =
+                normalizeSearchValue(
+                    vessel?.vesselName
+                );
+
+            const code =
+                normalizeSearchValue(
+                    vessel?.vesselCode
+                );
+
+            const voyage =
+                normalizeSearchValue(
+                    vessel?.voyage
+                );
+
+            return [
+                sectionKey,
+                name,
+                code,
+                voyage
+            ].join("|");
+        }
+
+
+        function getAllRecords() {
+
+            const results = [];
+
+            SECTION_CONFIG.forEach(section => {
+
+                const rows =
+                    Array.isArray(
+                        dashboardData[section.key]
+                    )
+                        ? dashboardData[section.key]
+                        : [];
+
+                rows.forEach(vessel => {
+
+                    results.push({
+
+                        vessel,
+
+                        section,
+
+                        key: getVesselKey(
+                            vessel,
+                            section.key
+                        )
+
+                    });
+
+                });
+
+            });
+
+            return results;
+        }
+
+
+        /* =========================================================
+           DATE / TIME
+           ========================================================= */
+
+        function parseDate(value) {
+
+            if (!value) {
+                return null;
+            }
+
+            if (value instanceof Date) {
+                return value;
+            }
+
+            const text = String(value).trim();
+
+            if (!text) {
+                return null;
+            }
+
+            let normalized = text;
+
+            if (
+                /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)
+            ) {
+                normalized =
+                    text.replace(" ", "T");
+            }
+
+            const date = new Date(normalized);
+
+            if (!Number.isNaN(date.getTime())) {
+                return date;
+            }
+
+            return null;
         }
 
 
         function formatDateTime(value) {
-
-            if (
-                value === null ||
-                value === undefined ||
-                String(value).trim() === ""
-            ) {
-                return "—";
-            }
-
-            return String(value);
-        }
-
-
-        function formatNumber(value) {
 
             if (
                 value === null ||
@@ -1106,725 +1839,267 @@
                 return "—";
             }
 
-            const number = Number(
-                String(value).replace(/,/g, "")
-            );
+            const date = parseDate(value);
 
-            if (!Number.isFinite(number)) {
-                return escapeHtml(value);
+            if (!date) {
+                return String(value);
             }
 
-            return number.toLocaleString("en-US");
-        }
+            try {
 
-
-        function sectionByKey(sectionKey) {
-
-            return SECTION_CONFIG.find(
-                item => item.key === sectionKey
-            );
-        }
-
-
-        function getSectionData(sectionKey) {
-
-            if (!CURRENT_DATA) {
-                return [];
-            }
-
-            return Array.isArray(CURRENT_DATA[sectionKey])
-                ? CURRENT_DATA[sectionKey]
-                : [];
-        }
-
-
-        /* =========================================================
-           SEARCH KEY
-           
-           Vessel name + vessel code + voyage + section
-           membuat voyage berbeda tetap dianggap berbeda.
-           ========================================================= */
-
-        function getVesselKey(vessel, sectionKey) {
-
-            return [
-                sectionKey,
-                vessel?.vesId || "",
-                vessel?.vesselName || "",
-                vessel?.vesselCode || "",
-                vessel?.voyage || ""
-            ]
-                .map(normalizeSearchValue)
-                .join("|");
-        }
-
-
-        function getSearchFields(vessel, sectionKey) {
-
-            const section = sectionByKey(sectionKey);
-
-            const values = [];
-
-            if (section) {
-                values.push(section.title);
-            }
-
-            if (vessel && typeof vessel === "object") {
-
-                Object.entries(vessel).forEach(
-                    ([key, value]) => {
-
-                        if (
-                            value !== null &&
-                            value !== undefined &&
-                            typeof value !== "object"
-                        ) {
-                            values.push(value);
-                        }
-
+                return new Intl.DateTimeFormat(
+                    "en-GB",
+                    {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false
                     }
-                );
+                ).format(date);
+
+            } catch {
+
+                return String(value);
 
             }
-
-            return normalizeSearchValue(
-                values.join(" ")
-            );
         }
 
 
-        function vesselMatches(vessel, sectionKey, query) {
+        function formatModalValue(key, value) {
 
-            if (!query) {
-                return true;
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+                return "—";
             }
 
-            return getSearchFields(
-                vessel,
-                sectionKey
-            ).includes(
-                normalizeSearchValue(query)
-            );
-        }
-
-
-        /* =========================================================
-           SEARCH SUGGESTIONS
-           ========================================================= */
-
-        function buildSuggestions(query) {
-
-            const q = normalizeSearchValue(query);
-
-            if (!q || !CURRENT_DATA) {
-                return [];
-            }
-
-            const results = [];
-
-            SECTION_CONFIG.forEach(section => {
-
-                const vessels = getSectionData(section.key);
-
-                vessels.forEach(vessel => {
-
-                    if (!vesselMatches(
-                        vessel,
-                        section.key,
-                        q
-                    )) {
-                        return;
-                    }
-
-                    const name =
-                        normalizeSearchValue(
-                            vessel?.vesselName
-                        );
-
-                    const code =
-                        normalizeSearchValue(
-                            vessel?.vesselCode
-                        );
-
-                    const voyage =
-                        normalizeSearchValue(
-                            vessel?.voyage
-                        );
-
-                    const combined =
-                        `${name} ${code} ${voyage}`;
-
-                    let priority = 5;
-
-                    if (name === q) {
-                        priority = 0;
-                    }
-                    else if (
-                        combined === q
-                    ) {
-                        priority = 1;
-                    }
-                    else if (
-                        code === q ||
-                        voyage === q
-                    ) {
-                        priority = 2;
-                    }
-                    else if (
-                        name.startsWith(q) ||
-                        code.startsWith(q) ||
-                        voyage.startsWith(q)
-                    ) {
-                        priority = 3;
-                    }
-
-                    results.push({
-                        vessel,
-                        sectionKey: section.key,
-                        priority
-                    });
-
-                });
-
-            });
-
-            results.sort((a, b) => {
-
-                if (a.priority !== b.priority) {
-                    return a.priority - b.priority;
-                }
-
-                const aName =
-                    normalizeSearchValue(
-                        a.vessel?.vesselName
-                    );
-
-                const bName =
-                    normalizeSearchValue(
-                        b.vessel?.vesselName
-                    );
-
-                return aName.localeCompare(bName);
-
-            });
-
-            /*
-             * Hindari suggestion duplikat.
-             * Voyage berbeda tetap berbeda.
-             */
-
-            const unique = [];
-            const seen = new Set();
-
-            results.forEach(result => {
-
-                const key = getVesselKey(
-                    result.vessel,
-                    result.sectionKey
-                );
-
-                if (!seen.has(key)) {
-
-                    seen.add(key);
-                    unique.push(result);
-
-                }
-
-            });
-
-            return unique.slice(0, 8);
-        }
-
-
-        function renderSuggestions(query) {
-
-            const container =
-                document.getElementById(
-                    "searchSuggestions"
-                );
-
-            const suggestions =
-                buildSuggestions(query);
-
-            SEARCH_RESULTS = suggestions;
-
-            ACTIVE_SUGGESTION = -1;
-
-            if (!query || suggestions.length === 0) {
-
-                container.innerHTML = "";
-                container.classList.add("hidden");
-
-                return;
-            }
-
-            container.innerHTML =
-                suggestions.map(
-                    (item, index) => {
-
-                        const vessel =
-                            item.vessel;
-
-                        const section =
-                            sectionByKey(
-                                item.sectionKey
-                            );
-
-                        const name =
-                            vessel?.vesselName ||
-                            "Unnamed Vessel";
-
-                        const code =
-                            vessel?.vesselCode ||
-                            "—";
-
-                        const voyage =
-                            vessel?.voyage ||
-                            "—";
-
-                        return `
-                            <button
-                                type="button"
-                                class="suggestion-item"
-                                data-index="${index}"
-                                onmousedown="selectSuggestion(${index})"
-                            >
-                                <div class="suggestion-title">
-                                    <i class="fa-solid fa-ship text-[11px] text-slate-400"></i>
-
-                                    <span class="suggestion-vessel">
-                                        ${escapeHtml(name)}
-                                    </span>
-                                </div>
-
-                                <div class="suggestion-meta">
-                                    ${escapeHtml(code)}
-                                    · Voyage ${escapeHtml(voyage)}
-                                    · ${escapeHtml(section?.title || "")}
-                                </div>
-                            </button>
-                        `;
-
-                    }
-                )
-                .join("");
-
-            container.classList.remove("hidden");
-        }
-
-
-        function selectSuggestion(index) {
-
-            const result =
-                SEARCH_RESULTS[index];
-
-            if (!result) {
-                return;
-            }
-
-            const vessel =
-                result.vessel;
-
-            const input =
-                document.getElementById(
-                    "searchInput"
-                );
-
-            input.value =
+            if (
                 [
-                    vessel?.vesselName,
-                    vessel?.vesselCode,
-                    vessel?.voyage
-                ]
-                    .filter(Boolean)
-                    .join(" ");
+                    "eta",
+                    "etb",
+                    "atb",
+                    "etd",
+                    "atd",
+                    "openStack",
+                    "closingTime"
+                ].includes(key)
+            ) {
+                return formatDateTime(value);
+            }
 
-            CURRENT_SEARCH = input.value;
+            return String(value);
+        }
 
-            document
-                .getElementById("searchSuggestions")
-                .classList.add("hidden");
 
-            document
-                .getElementById("clearSearchButton")
-                .classList.remove("hidden");
+        function getFreshnessText(date) {
 
-            renderAllSections();
+            if (!date) {
+                return "Data time unavailable";
+            }
 
-            setTimeout(() => {
+            const now = Date.now();
 
-                jumpToSearchResult(
-                    vessel,
-                    result.sectionKey,
-                    true
+            const diffMs =
+                Math.max(
+                    0,
+                    now - date.getTime()
                 );
 
-            }, 50);
+            const diffSeconds =
+                Math.floor(diffMs / 1000);
+
+            if (diffSeconds < 30) {
+                return "Updated just now";
+            }
+
+            if (diffSeconds < 60) {
+                return `Updated ${diffSeconds}s ago`;
+            }
+
+            const diffMinutes =
+                Math.floor(diffSeconds / 60);
+
+            if (diffMinutes < 60) {
+                return `Updated ${diffMinutes} min ago`;
+            }
+
+            const diffHours =
+                Math.floor(diffMinutes / 60);
+
+            if (diffHours < 24) {
+                return `Updated ${diffHours}h ago`;
+            }
+
+            const diffDays =
+                Math.floor(diffHours / 24);
+
+            return `Updated ${diffDays}d ago`;
         }
 
 
         /* =========================================================
-           FIND SEARCH RESULT
+           CONNECTION STATUS
            ========================================================= */
 
-        function findFirstSearchResult(query) {
+        function setConnectionStatus(status) {
 
-            if (!CURRENT_DATA || !query) {
-                return null;
-            }
+            connectionPill.classList.remove(
+                "connection-online",
+                "connection-loading",
+                "connection-offline"
+            );
 
-            const q =
-                normalizeSearchValue(query);
-
-            /*
-             * Prioritas 1:
-             * exact vessel name + voyage
-             */
-
-            for (const section of SECTION_CONFIG) {
-
-                for (const vessel of getSectionData(section.key)) {
-
-                    const name =
-                        normalizeSearchValue(
-                            vessel?.vesselName
-                        );
-
-                    const voyage =
-                        normalizeSearchValue(
-                            vessel?.voyage
-                        );
-
-                    const code =
-                        normalizeSearchValue(
-                            vessel?.vesselCode
-                        );
-
-                    const combinations = [
-                        `${name} ${voyage}`,
-                        `${name} ${code}`,
-                        `${name} ${code} ${voyage}`
-                    ];
-
-                    if (
-                        combinations.some(
-                            combination =>
-                                combination === q
-                        )
-                    ) {
-                        return {
-                            vessel,
-                            sectionKey: section.key
-                        };
-                    }
-
-                }
-
-            }
-
-            /*
-             * Prioritas 2:
-             * exact field
-             */
-
-            for (const section of SECTION_CONFIG) {
-
-                for (const vessel of getSectionData(section.key)) {
-
-                    const fields = [
-                        vessel?.vesselName,
-                        vessel?.vesselCode,
-                        vessel?.voyage
-                    ]
-                        .filter(Boolean)
-                        .map(normalizeSearchValue);
-
-                    if (fields.includes(q)) {
-
-                        return {
-                            vessel,
-                            sectionKey: section.key
-                        };
-
-                    }
-
-                }
-
-            }
-
-            /*
-             * Prioritas 3:
-             * general search
-             */
-
-            for (const section of SECTION_CONFIG) {
-
-                for (const vessel of getSectionData(section.key)) {
-
-                    if (
-                        vesselMatches(
-                            vessel,
-                            section.key,
-                            q
-                        )
-                    ) {
-                        return {
-                            vessel,
-                            sectionKey: section.key
-                        };
-                    }
-
-                }
-
-            }
-
-            return null;
-        }
-
-
-        function performSearch() {
-
-            const input =
-                document.getElementById(
-                    "searchInput"
+            const dot =
+                connectionPill.querySelector(
+                    ".status-dot"
                 );
 
-            const query =
-                input.value.trim();
+            if (status === "online") {
 
-            CURRENT_SEARCH = query;
+                connectionPill.classList.add(
+                    "connection-online"
+                );
 
-            document
-                .getElementById(
-                    "searchSuggestions"
-                )
-                .classList.add("hidden");
+                connectionText.textContent =
+                    "Connected";
 
-            if (!query) {
+                dot.className =
+                    "status-dot bg-emerald-500";
 
-                document
-                    .getElementById(
-                        "searchStatus"
-                    )
-                    .textContent = "";
+            } else if (status === "offline") {
 
-                renderAllSections();
+                connectionPill.classList.add(
+                    "connection-offline"
+                );
 
-                return;
+                connectionText.textContent =
+                    "Offline";
+
+                dot.className =
+                    "status-dot bg-red-500";
+
+            } else {
+
+                connectionPill.classList.add(
+                    "connection-loading"
+                );
+
+                connectionText.textContent =
+                    "Updating...";
+
+                dot.className =
+                    "status-dot bg-sky-500";
             }
-
-            document
-                .getElementById(
-                    "clearSearchButton"
-                )
-                .classList.remove("hidden");
-
-            renderAllSections();
-
-            const result =
-                findFirstSearchResult(query);
-
-            if (!result) {
-
-                document
-                    .getElementById(
-                        "searchStatus"
-                    )
-                    .textContent =
-                    "Data tidak ditemukan.";
-
-                return;
-            }
-
-            document
-                .getElementById(
-                    "searchStatus"
-                )
-                .textContent =
-                "Menampilkan hasil pencarian.";
-
-            setTimeout(() => {
-
-                jumpToSearchResult(
-                    result.vessel,
-                    result.sectionKey,
-                    true
-                );
-
-            }, 50);
-        }
-
-
-        function jumpToSearchResult(
-            vessel,
-            sectionKey,
-            highlight = true
-        ) {
-
-            const key =
-                getVesselKey(
-                    vessel,
-                    sectionKey
-                );
-
-            const row =
-                document.querySelector(
-                    `[data-vessel-key="${CSS.escape(key)}"]`
-                );
-
-            if (!row) {
-                return;
-            }
-
-            row.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-
-            if (highlight) {
-
-                row.classList.remove(
-                    "search-hit"
-                );
-
-                /*
-                 * Force reflow agar animation
-                 * bisa dimainkan kembali.
-                 */
-
-                void row.offsetWidth;
-
-                row.classList.add(
-                    "search-hit"
-                );
-
-                setTimeout(() => {
-
-                    row.classList.remove(
-                        "search-hit"
-                    );
-
-                }, 3000);
-            }
-        }
-
-
-        function clearSearch() {
-
-            const input =
-                document.getElementById(
-                    "searchInput"
-                );
-
-            input.value = "";
-
-            CURRENT_SEARCH = "";
-
-            document
-                .getElementById(
-                    "searchSuggestions"
-                )
-                .classList.add("hidden");
-
-            document
-                .getElementById(
-                    "clearSearchButton"
-                )
-                .classList.add("hidden");
-
-            document
-                .getElementById(
-                    "searchStatus"
-                )
-                .textContent = "";
-
-            renderAllSections();
-
-            input.focus();
         }
 
 
         /* =========================================================
-           KPI
+           STATISTICS
            ========================================================= */
 
         function updateStatistics() {
 
-            const container =
-                document.getElementById(
-                    "statisticsGrid"
+            statistics.innerHTML = "";
+
+            SECTION_CONFIG.forEach(section => {
+
+                const data =
+                    Array.isArray(
+                        dashboardData[section.key]
+                    )
+                        ? dashboardData[section.key]
+                        : [];
+
+                const card =
+                    document.createElement("button");
+
+                card.type = "button";
+
+                card.className =
+                    "stat-card text-left w-full p-4";
+
+                card.style.setProperty(
+                    "--accent-a",
+                    section.accentA
                 );
 
-            if (!CURRENT_DATA) {
-                container.innerHTML = "";
-                return;
-            }
+                card.style.setProperty(
+                    "--accent-b",
+                    section.accentB
+                );
 
-            const counts =
-                CURRENT_DATA.counts || {};
+                card.style.setProperty(
+                    "--accent-bg",
+                    section.accentBg
+                );
 
-            const items = [
-                {
-                    key: "vesselAlongside",
-                    title: "Alongside",
-                    value: counts.vesselAlongside ?? 0,
-                    icon: "fa-ship"
-                },
-                {
-                    key: "confirmedVessel",
-                    title: "Confirmed",
-                    value: counts.confirmedVessel ?? 0,
-                    icon: "fa-circle-check"
-                },
-                {
-                    key: "openStack",
-                    title: "Open Stack",
-                    value: counts.openStack ?? 0,
-                    icon: "fa-box-open"
-                },
-                {
-                    key: "vesselSchedule",
-                    title: "Schedule",
-                    value: counts.vesselSchedule ?? 0,
-                    icon: "fa-calendar-days"
-                },
-                {
-                    key: "vesselHistory",
-                    title: "History",
-                    value: counts.vesselHistory ?? 0,
-                    icon: "fa-clock-rotate-left"
-                }
-            ];
+                card.addEventListener(
+                    "click",
+                    () => scrollToSection(section.key)
+                );
 
-            container.innerHTML =
-                items.map(item => `
-                    <button
-                        type="button"
-                        onclick="scrollToSection('${item.key}')"
-                        class="stat-card text-left p-4"
-                    >
-                        <div class="flex items-center justify-between gap-3">
+                card.innerHTML = `
 
-                            <div class="min-w-0">
+                    <div class="flex items-center justify-between gap-3">
 
-                                <div class="text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                                    ${escapeHtml(item.title)}
-                                </div>
+                        <div class="stat-icon">
+                            <i class="fa-solid ${section.icon} text-sm"></i>
+                        </div>
 
-                                <div class="mt-1 text-xl font-bold text-slate-900">
-                                    ${formatNumber(item.value)}
-                                </div>
+                        <i
+                            class="
+                                fa-solid
+                                fa-arrow-up-right-from-square
+                                text-[9px]
+                                text-slate-300
+                            "
+                        ></i>
 
+                    </div>
+
+                    <div class="mt-4">
+
+                        <div
+                            class="
+                                text-[10px]
+                                font-bold
+                                uppercase
+                                tracking-wide
+                                text-slate-400
+                            "
+                        >
+                            ${escapeHtml(section.title)}
+                        </div>
+
+                        <div class="mt-1 flex items-end gap-2">
+
+                            <div class="stat-number">
+                                ${data.length}
                             </div>
 
-                            <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center flex-none">
-                                <i class="fa-solid ${item.icon} text-sm"></i>
+                            <div
+                                class="
+                                    pb-0.5
+                                    text-[9px]
+                                    text-slate-400
+                                "
+                            >
+                                records
                             </div>
 
                         </div>
-                    </button>
-                `)
-                .join("");
+
+                    </div>
+
+                `;
+
+                statistics.appendChild(card);
+
+            });
         }
 
 
@@ -1847,40 +2122,30 @@
 
 
         /* =========================================================
-           RENDER SECTION
+           SECTION RENDERING
            ========================================================= */
 
         function renderAllSections() {
 
-            const container =
-                document.getElementById(
-                    "dashboardSections"
-                );
-
-            container.innerHTML = "";
+            dashboardSections.innerHTML = "";
 
             SECTION_CONFIG.forEach(section => {
 
-                const data =
-                    getSectionData(
-                        section.key
-                    );
-
-                renderSection(
-                    container,
-                    section,
-                    data
-                );
+                renderSection(section);
 
             });
+
         }
 
 
-        function renderSection(
-            container,
-            section,
-            data
-        ) {
+        function renderSection(section) {
+
+            const data =
+                Array.isArray(
+                    dashboardData[section.key]
+                )
+                    ? dashboardData[section.key]
+                    : [];
 
             const sectionElement =
                 document.createElement("section");
@@ -1892,15 +2157,9 @@
                 "section-card dashboard-section";
 
 
-            /*
-             * HEADER SECTION
-             *
-             * STICKY.
-             *
-             * Header utama tidak sticky sehingga
-             * section header akan menempel ke
-             * bagian paling atas viewport.
-             */
+            /* ---------------------------------------------
+               Header
+               --------------------------------------------- */
 
             const header =
                 document.createElement("div");
@@ -1909,46 +2168,73 @@
                 "section-header";
 
 
-            const headerLeft =
+            const titleWrapper =
                 document.createElement("div");
 
-            headerLeft.className =
-                "section-header-left";
+            titleWrapper.className =
+                "flex items-center gap-3 min-w-0";
+
+
+            const icon =
+                document.createElement("span");
+
+            icon.className =
+                "section-title-icon";
+
+            icon.innerHTML = `
+                <i class="fa-solid ${section.icon} text-xs"></i>
+            `;
+
+
+            const titleContent =
+                document.createElement("div");
+
+            titleContent.className =
+                "min-w-0";
 
 
             const title =
-                document.createElement("h2");
+                document.createElement("div");
 
             title.className =
-                "section-title";
+                "flex items-center gap-2";
 
-            title.innerHTML = `
-                <span class="section-title-icon">
-                    <i class="fa-solid ${section.icon} text-xs"></i>
-                </span>
 
-                <span>
-                    ${escapeHtml(section.title)}
-                </span>
-            `;
+            const heading =
+                document.createElement("h2");
+
+            heading.className =
+                "text-sm font-extrabold text-slate-900 truncate";
+
+            heading.textContent =
+                section.title;
+
+
+            title.appendChild(heading);
 
 
             const subtitle =
                 document.createElement("p");
 
             subtitle.className =
-                "section-subtitle";
+                "mt-0.5 text-[10px] text-slate-400 truncate";
 
             subtitle.textContent =
                 section.subtitle;
 
 
-            headerLeft.appendChild(title);
-            headerLeft.appendChild(subtitle);
+            titleContent.appendChild(title);
+
+            titleContent.appendChild(subtitle);
+
+
+            titleWrapper.appendChild(icon);
+
+            titleWrapper.appendChild(titleContent);
 
 
             const count =
-                document.createElement("div");
+                document.createElement("span");
 
             count.className =
                 "section-count";
@@ -1957,16 +2243,14 @@
                 `${data.length} record${data.length === 1 ? "" : "s"}`;
 
 
-            header.appendChild(headerLeft);
+            header.appendChild(titleWrapper);
+
             header.appendChild(count);
 
 
-            sectionElement.appendChild(header);
-
-
-            /*
-             * TABLE
-             */
+            /* ---------------------------------------------
+               Scroll wrapper
+               --------------------------------------------- */
 
             const scroll =
                 document.createElement("div");
@@ -1975,56 +2259,100 @@
                 "section-scroll";
 
 
+            const table =
+                document.createElement("table");
+
+
+            /* ---------------------------------------------
+               Table Header
+               --------------------------------------------- */
+
+            const thead =
+                document.createElement("thead");
+
+            const headerRow =
+                document.createElement("tr");
+
+            section.columns.forEach(
+                ([key, label]) => {
+
+                    const th =
+                        document.createElement("th");
+
+                    th.textContent =
+                        label;
+
+                    if (key === "vesselName") {
+                        th.className = "text-left";
+                    } else {
+                        th.className = "text-left";
+                    }
+
+                    headerRow.appendChild(th);
+
+                }
+            );
+
+            thead.appendChild(headerRow);
+
+
+            /* ---------------------------------------------
+               Table Body
+               --------------------------------------------- */
+
+            const tbody =
+                document.createElement("tbody");
+
+
             if (!data.length) {
 
-                const empty =
-                    document.createElement("div");
-
-                empty.className =
-                    "empty-section";
-
-                empty.innerHTML = `
-                    <i class="fa-regular fa-folder-open mb-2 text-base"></i>
-                    <div>No data available</div>
-                `;
-
-                scroll.appendChild(empty);
-
-            }
-            else {
-
-                const table =
-                    document.createElement("table");
-
-                const thead =
-                    document.createElement("thead");
-
-                const headerRow =
+                const row =
                     document.createElement("tr");
 
+                const cell =
+                    document.createElement("td");
 
-                section.columns.forEach(
-                    column => {
+                cell.colSpan =
+                    section.columns.length;
 
-                        const th =
-                            document.createElement("th");
+                cell.innerHTML = `
 
-                        th.textContent =
-                            column[1];
+                    <div class="empty-state">
 
-                        headerRow.appendChild(th);
+                        <div class="empty-icon">
+                            <i class="fa-regular fa-folder-open"></i>
+                        </div>
 
-                    }
-                );
+                        <div
+                            class="
+                                text-xs
+                                font-semibold
+                                text-slate-500
+                            "
+                        >
+                            No data available
+                        </div>
 
+                        <div
+                            class="
+                                mt-1
+                                text-[10px]
+                                text-slate-400
+                            "
+                        >
+                            There are currently no records
+                            in this section.
+                        </div>
 
-                thead.appendChild(headerRow);
-                table.appendChild(thead);
+                    </div>
 
+                `;
 
-                const tbody =
-                    document.createElement("tbody");
+                row.appendChild(cell);
 
+                tbody.appendChild(row);
+
+            } else {
 
                 data.forEach(vessel => {
 
@@ -2038,17 +2366,28 @@
 
                 });
 
-
-                table.appendChild(tbody);
-                scroll.appendChild(table);
-
             }
 
 
+            table.appendChild(thead);
+
+            table.appendChild(tbody);
+
+            scroll.appendChild(table);
+
+            sectionElement.appendChild(header);
+
             sectionElement.appendChild(scroll);
-            container.appendChild(sectionElement);
+
+            dashboardSections.appendChild(
+                sectionElement
+            );
         }
 
+
+        /* =========================================================
+           TABLE ROW
+           ========================================================= */
 
         function renderTableRow(
             vessel,
@@ -2058,14 +2397,11 @@
             const row =
                 document.createElement("tr");
 
-            row.style.cursor = "pointer";
-
             row.dataset.vesselKey =
                 getVesselKey(
                     vessel,
                     section.key
                 );
-
 
             row.addEventListener(
                 "click",
@@ -2077,25 +2413,19 @@
 
 
             section.columns.forEach(
-                column => {
+                ([key, label, type]) => {
 
-                    const [
-                        field,
-                        label,
-                        type
-                    ] = column;
-
-                    const td =
+                    const cell =
                         document.createElement("td");
 
-                    td.innerHTML =
-                        renderCell(
+                    cell.innerHTML =
+                        renderCellValue(
                             vessel,
-                            field,
+                            key,
                             type
                         );
 
-                    row.appendChild(td);
+                    row.appendChild(cell);
 
                 }
             );
@@ -2105,14 +2435,14 @@
         }
 
 
-        function renderCell(
+        function renderCellValue(
             vessel,
-            field,
+            key,
             type
         ) {
 
             const value =
-                vessel?.[field];
+                vessel?.[key];
 
 
             if (
@@ -2120,29 +2450,38 @@
                 value === undefined ||
                 value === ""
             ) {
-
                 return `
-                    <span class="muted-text">—</span>
+                    <span class="text-slate-300">
+                        —
+                    </span>
                 `;
-
             }
 
 
             if (type === "vessel") {
 
-                return `
-                    <div class="vessel-main">
+                const name =
+                    vessel.vesselName ||
+                    "Unknown Vessel";
 
-                        <span class="vessel-name">
-                            ${escapeHtml(vessel?.vesselName || "—")}
-                        </span>
+                const code =
+                    vessel.vesselCode ||
+                    "";
+
+                return `
+
+                    <div>
+
+                        <div class="vessel-primary">
+                            ${escapeHtml(name)}
+                        </div>
 
                         ${
-                            vessel?.vesselCode
+                            code
                                 ? `
-                                    <span class="vessel-code">
-                                        ${escapeHtml(vessel.vesselCode)}
-                                    </span>
+                                    <div class="vessel-secondary">
+                                        ${escapeHtml(code)}
+                                    </div>
                                   `
                                 : ""
                         }
@@ -2155,7 +2494,7 @@
             if (type === "voyage") {
 
                 return `
-                    <span class="voyage-text">
+                    <span class="voyage-badge">
                         ${escapeHtml(value)}
                     </span>
                 `;
@@ -2166,7 +2505,6 @@
 
                 return `
                     <span class="type-badge">
-                        <span class="type-dot"></span>
                         ${escapeHtml(value)}
                     </span>
                 `;
@@ -2176,7 +2514,7 @@
             if (type === "datetime") {
 
                 return `
-                    <span class="datetime-text">
+                    <span class="datetime-value">
                         ${escapeHtml(
                             formatDateTime(value)
                         )}
@@ -2188,42 +2526,891 @@
             if (type === "number") {
 
                 return `
-                    <span class="number-text">
-                        ${formatNumber(value)}
+                    <span class="
+                        text-xs
+                        font-semibold
+                        text-slate-600
+                    ">
+                        ${escapeHtml(value)}
                     </span>
                 `;
             }
 
 
-            return escapeHtml(value);
+            return `
+                <span class="
+                    text-[11px]
+                    text-slate-600
+                ">
+                    ${escapeHtml(value)}
+                </span>
+            `;
         }
+
+
+        /* =========================================================
+           SEARCH ENGINE
+           ========================================================= */
+
+        function findSearchResults(query) {
+
+            const normalizedQuery =
+                normalizeSearchValue(query);
+
+            if (!normalizedQuery) {
+                return [];
+            }
+
+            const records =
+                getAllRecords();
+
+            const terms =
+                normalizedQuery
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+
+            const scored = [];
+
+
+            records.forEach(result => {
+
+                const vessel =
+                    result.vessel;
+
+                const section =
+                    result.section;
+
+
+                const searchableFields = [
+
+                    vessel.vesselName,
+
+                    vessel.vesselCode,
+
+                    vessel.voyage,
+
+                    vessel.type,
+
+                    vessel.shippingLine,
+
+                    vessel.eta,
+
+                    vessel.etb,
+
+                    vessel.atb,
+
+                    vessel.etd,
+
+                    vessel.atd,
+
+                    vessel.openStack,
+
+                    vessel.closingTime,
+
+                    vessel.booking,
+
+                    vessel.open,
+
+                    vessel.actual,
+
+                    vessel.export,
+
+                    vessel.exportTeus,
+
+                    vessel.import,
+
+                    vessel.importTeus,
+
+                    section.title,
+
+                    section.subtitle
+
+                ]
+                    .filter(
+                        value =>
+                            value !== null &&
+                            value !== undefined
+                    )
+                    .map(
+                        value =>
+                            normalizeSearchValue(value)
+                    );
+
+
+                const searchableText =
+                    searchableFields.join(" ");
+
+
+                const allTermsMatch =
+                    terms.every(
+                        term =>
+                            searchableText.includes(term)
+                    );
+
+
+                if (!allTermsMatch) {
+                    return;
+                }
+
+
+                let score = 0;
+
+
+                const name =
+                    normalizeSearchValue(
+                        vessel.vesselName
+                    );
+
+                const code =
+                    normalizeSearchValue(
+                        vessel.vesselCode
+                    );
+
+                const voyage =
+                    normalizeSearchValue(
+                        vessel.voyage
+                    );
+
+                const type =
+                    normalizeSearchValue(
+                        vessel.type
+                    );
+
+                const sectionTitle =
+                    normalizeSearchValue(
+                        section.title
+                    );
+
+
+                if (name === normalizedQuery) {
+                    score += 1000;
+                }
+
+                if (code === normalizedQuery) {
+                    score += 900;
+                }
+
+                if (voyage === normalizedQuery) {
+                    score += 850;
+                }
+
+                if (
+                    name.startsWith(
+                        normalizedQuery
+                    )
+                ) {
+                    score += 500;
+                }
+
+                if (
+                    code.startsWith(
+                        normalizedQuery
+                    )
+                ) {
+                    score += 450;
+                }
+
+                if (
+                    voyage.startsWith(
+                        normalizedQuery
+                    )
+                ) {
+                    score += 400;
+                }
+
+                if (
+                    type.includes(
+                        normalizedQuery
+                    )
+                ) {
+                    score += 100;
+                }
+
+                if (
+                    sectionTitle.includes(
+                        normalizedQuery
+                    )
+                ) {
+                    score += 80;
+                }
+
+
+                score += Math.max(
+                    0,
+                    50 - searchableText.indexOf(
+                        normalizedQuery
+                    )
+                );
+
+
+                scored.push({
+                    ...result,
+                    score
+                });
+
+            });
+
+
+            scored.sort(
+                (a, b) =>
+                    b.score - a.score
+            );
+
+
+            return scored;
+        }
+
+
+        /* =========================================================
+           SEARCH SUGGESTIONS
+           ========================================================= */
+
+        function updateSearchSuggestions() {
+
+            const query =
+                searchInput.value.trim();
+
+
+            clearSearchButton.style.display =
+                query
+                    ? "flex"
+                    : "none";
+
+
+            if (!query) {
+
+                hideSearchSuggestions();
+
+                searchStatus.textContent = "";
+
+                return;
+            }
+
+
+            const results =
+                findSearchResults(query);
+
+
+            searchResults =
+                results.slice(0, 10);
+
+
+            activeSuggestionIndex = -1;
+
+
+            if (!searchResults.length) {
+
+                searchSuggestions.innerHTML = `
+
+                    <div class="
+                        px-4
+                        py-5
+                        text-center
+                    ">
+
+                        <div
+                            class="
+                                mx-auto
+                                w-9
+                                h-9
+                                rounded-xl
+                                flex
+                                items-center
+                                justify-center
+                                bg-slate-50
+                                text-slate-300
+                            "
+                        >
+                            <i class="
+                                fa-solid
+                                fa-magnifying-glass
+                            "></i>
+                        </div>
+
+                        <div
+                            class="
+                                mt-2
+                                text-xs
+                                font-semibold
+                                text-slate-500
+                            "
+                        >
+                            No matching vessel
+                        </div>
+
+                        <div
+                            class="
+                                mt-1
+                                text-[10px]
+                                text-slate-400
+                            "
+                        >
+                            Try another vessel name,
+                            code, or voyage.
+                        </div>
+
+                    </div>
+
+                `;
+
+                searchSuggestions.classList.remove(
+                    "hidden"
+                );
+
+                return;
+            }
+
+
+            searchSuggestions.innerHTML = "";
+
+
+            searchResults.forEach(
+                (result, index) => {
+
+                    const vessel =
+                        result.vessel;
+
+                    const section =
+                        result.section;
+
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "suggestion-item";
+
+                    item.dataset.index =
+                        String(index);
+
+
+                    item.innerHTML = `
+
+                        <div class="
+                            flex
+                            items-center
+                            gap-3
+                        ">
+
+                            <div class="suggestion-icon">
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        ${section.icon}
+                                        text-xs
+                                    "
+                                ></i>
+
+                            </div>
+
+
+                            <div class="
+                                min-w-0
+                                flex-1
+                            ">
+
+                                <div
+                                    class="
+                                        text-xs
+                                        font-bold
+                                        text-slate-800
+                                        truncate
+                                    "
+                                >
+                                    ${escapeHtml(
+                                        vessel.vesselName ||
+                                        "Unknown Vessel"
+                                    )}
+                                </div>
+
+                                <div
+                                    class="
+                                        mt-0.5
+                                        text-[10px]
+                                        text-slate-500
+                                        truncate
+                                    "
+                                >
+                                    ${
+                                        vessel.vesselCode
+                                            ? escapeHtml(
+                                                vessel.vesselCode
+                                            )
+                                            : "—"
+                                    }
+
+                                    ·
+
+                                    Voyage ${
+                                        vessel.voyage
+                                            ? escapeHtml(
+                                                vessel.voyage
+                                            )
+                                            : "—"
+                                    }
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="
+                                    text-right
+                                    shrink-0
+                                "
+                            >
+
+                                <div
+                                    class="
+                                        text-[9px]
+                                        font-bold
+                                        text-blue-600
+                                        max-w-[110px]
+                                        truncate
+                                    "
+                                >
+                                    ${escapeHtml(
+                                        section.title
+                                    )}
+                                </div>
+
+                                <div
+                                    class="
+                                        mt-1
+                                        text-[9px]
+                                        text-slate-300
+                                    "
+                                >
+                                    <i
+                                        class="
+                                            fa-solid
+                                            fa-chevron-right
+                                        "
+                                    ></i>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+
+                    /*
+                     * IMPORTANT:
+                     * Suggestion click = MODAL
+                     * NOT scroll.
+                     */
+
+                    item.addEventListener(
+                        "click",
+                        () => {
+
+                            openSearchSuggestion(
+                                result
+                            );
+
+                        }
+                    );
+
+
+                    searchSuggestions.appendChild(
+                        item
+                    );
+
+                }
+            );
+
+
+            searchSuggestions.classList.remove(
+                "hidden"
+            );
+        }
+
+
+        /* =========================================================
+           SUGGESTION CLICK
+           ========================================================= */
+
+        function openSearchSuggestion(
+            result
+        ) {
+
+            if (
+                !result ||
+                !result.vessel ||
+                !result.section
+            ) {
+                return;
+            }
+
+
+            hideSearchSuggestions();
+
+
+            openVesselModal(
+                result.vessel,
+                result.section
+            );
+
+        }
+
+
+        /* =========================================================
+           PERFORM SEARCH
+           ENTER / SEARCH BUTTON
+           = SCROLL TO ROW
+           ========================================================= */
+
+        function performSearch() {
+
+            const query =
+                searchInput.value.trim();
+
+
+            if (!query) {
+
+                searchStatus.textContent =
+                    "Type a vessel, voyage, code, or type to search.";
+
+                return;
+            }
+
+
+            const results =
+                findSearchResults(query);
+
+
+            if (!results.length) {
+
+                searchStatus.textContent =
+                    `No data found for "${query}"`;
+
+                hideSearchSuggestions();
+
+                return;
+            }
+
+
+            const result =
+                results[0];
+
+
+            hideSearchSuggestions();
+
+
+            jumpToSearchResult(
+                result
+            );
+
+
+            searchStatus.textContent =
+                `${results.length} result${
+                    results.length === 1
+                        ? ""
+                        : "s"
+                } found`;
+
+        }
+
+
+        /* =========================================================
+           JUMP TO SEARCH RESULT
+           ========================================================= */
+
+        function jumpToSearchResult(
+            result
+        ) {
+
+            if (
+                !result ||
+                !result.vessel ||
+                !result.section
+            ) {
+                return;
+            }
+
+
+            const key =
+                getVesselKey(
+                    result.vessel,
+                    result.section.key
+                );
+
+
+            const row =
+                document.querySelector(
+                    `[data-vessel-key="${CSS.escape(key)}"]`
+                );
+
+
+            if (!row) {
+
+                /*
+                 * Fallback:
+                 * If duplicate key exists unexpectedly,
+                 * locate section and render state.
+                 */
+
+                scrollToSection(
+                    result.section.key
+                );
+
+                return;
+            }
+
+
+            row.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+
+            row.classList.remove(
+                "search-hit"
+            );
+
+
+            void row.offsetWidth;
+
+
+            row.classList.add(
+                "search-hit"
+            );
+
+
+            setTimeout(
+                () => {
+                    row.classList.remove(
+                        "search-hit"
+                    );
+                },
+                3200
+            );
+
+        }
+
+
+        /* =========================================================
+           CLEAR SEARCH
+           ========================================================= */
+
+        function clearSearch() {
+
+            searchInput.value = "";
+
+            searchStatus.textContent = "";
+
+            clearSearchButton.style.display =
+                "none";
+
+            hideSearchSuggestions();
+
+            searchInput.focus();
+
+        }
+
+
+        /* =========================================================
+           HIDE SUGGESTIONS
+           ========================================================= */
+
+        function hideSearchSuggestions() {
+
+            searchSuggestions.classList.add(
+                "hidden"
+            );
+
+            activeSuggestionIndex = -1;
+
+        }
+
+
+        /* =========================================================
+           KEYBOARD SEARCH
+           ========================================================= */
+
+        searchInput.addEventListener(
+            "input",
+            () => {
+
+                updateSearchSuggestions();
+
+            }
+        );
+
+
+        searchInput.addEventListener(
+            "keydown",
+            event => {
+
+                const isVisible =
+                    !searchSuggestions.classList.contains(
+                        "hidden"
+                    );
+
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    performSearch();
+
+                    return;
+                }
+
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    hideSearchSuggestions();
+
+                    return;
+                }
+
+
+                if (
+                    event.key === "ArrowDown"
+                ) {
+
+                    if (!isVisible) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    moveSuggestion(
+                        1
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    event.key === "ArrowUp"
+                ) {
+
+                    if (!isVisible) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    moveSuggestion(
+                        -1
+                    );
+
+                    return;
+                }
+
+            }
+        );
+
+
+        function moveSuggestion(
+            direction
+        ) {
+
+            if (!searchResults.length) {
+                return;
+            }
+
+
+            activeSuggestionIndex +=
+                direction;
+
+
+            if (
+                activeSuggestionIndex < 0
+            ) {
+                activeSuggestionIndex =
+                    searchResults.length - 1;
+            }
+
+
+            if (
+                activeSuggestionIndex >=
+                searchResults.length
+            ) {
+                activeSuggestionIndex = 0;
+            }
+
+
+            const items =
+                searchSuggestions.querySelectorAll(
+                    ".suggestion-item"
+                );
+
+
+            items.forEach(
+                (item, index) => {
+
+                    item.classList.toggle(
+                        "active",
+                        index ===
+                            activeSuggestionIndex
+                    );
+
+                }
+            );
+
+
+            const activeItem =
+                items[
+                    activeSuggestionIndex
+                ];
+
+
+            if (activeItem) {
+
+                activeItem.scrollIntoView({
+                    block: "nearest"
+                });
+
+            }
+
+        }
+
+
+        /* =========================================================
+           CLICK OUTSIDE SEARCH
+           ========================================================= */
+
+        document.addEventListener(
+            "click",
+            event => {
+
+                const wrapper =
+                    document.querySelector(
+                        ".search-wrapper"
+                    );
+
+
+                if (
+                    wrapper &&
+                    !wrapper.contains(
+                        event.target
+                    )
+                ) {
+
+                    hideSearchSuggestions();
+
+                }
+
+            }
+        );
 
 
         /* =========================================================
            MODAL
            ========================================================= */
-
-        const MODAL_FIELDS = [
-            ["vesselName", "Vessel Name"],
-            ["vesselCode", "Vessel Code"],
-            ["voyage", "Voyage"],
-            ["type", "Type"],
-            ["eta", "ETA"],
-            ["etb", "ETB"],
-            ["atb", "ATB"],
-            ["etd", "ETD"],
-            ["atd", "ATD"],
-            ["openStack", "Open Stack"],
-            ["closingTime", "Closing Time"],
-            ["booking", "Booking"],
-            ["open", "Open"],
-            ["actual", "Actual"],
-            ["export", "Export"],
-            ["exportTeus", "Export TEUs"],
-            ["import", "Import"],
-            ["importTeus", "Import TEUs"]
-        ];
-
 
         function openVesselModal(
             vessel,
@@ -2235,14 +3422,29 @@
                     "vesselModal"
                 );
 
-            const title =
+
+            if (
+                !modal ||
+                !vessel ||
+                !section
+            ) {
+                return;
+            }
+
+
+            const sectionBadge =
                 document.getElementById(
-                    "modalTitle"
+                    "modalSectionBadge"
                 );
 
-            const subtitle =
+            const vesselName =
                 document.getElementById(
-                    "modalSubtitle"
+                    "modalVesselName"
+                );
+
+            const voyage =
+                document.getElementById(
+                    "modalVoyage"
                 );
 
             const body =
@@ -2251,787 +3453,228 @@
                 );
 
 
-            title.textContent =
-                vessel?.vesselName ||
-                "Vessel Detail";
+            /* ---------------------------------------------
+               Section
+               --------------------------------------------- */
+
+            sectionBadge.innerHTML = `
+
+                <i
+                    class="
+                        fa-solid
+                        ${section.icon}
+                    "
+                ></i>
+
+                <span>
+                    ${escapeHtml(
+                        section.title
+                    )}
+                </span>
+
+            `;
 
 
-            subtitle.textContent =
-                [
-                    vessel?.vesselCode,
-                    vessel?.voyage,
-                    section?.title
-                ]
-                    .filter(Boolean)
-                    .join(" · ");
+            /* ---------------------------------------------
+               Vessel Name
+               --------------------------------------------- */
+
+            vesselName.textContent =
+                vessel.vesselName ||
+                "Unknown Vessel";
 
 
-            body.innerHTML =
-                `
-                    <div class="detail-grid">
-                        ${
-                            MODAL_FIELDS
-                                .map(
-                                    ([field, label]) => {
+            /* ---------------------------------------------
+               Voyage / Code
+               --------------------------------------------- */
 
-                                        const value =
-                                            vessel?.[field];
+            const voyageParts = [];
 
-                                        return `
-                                            <div class="detail-item">
 
-                                                <div class="detail-label">
-                                                    ${escapeHtml(label)}
-                                                </div>
+            if (vessel.vesselCode) {
 
-                                                <div class="detail-value">
-                                                    ${
-                                                        value === null ||
-                                                        value === undefined ||
-                                                        value === ""
-                                                            ? "—"
-                                                            : escapeHtml(value)
-                                                    }
-                                                </div>
+                voyageParts.push(
+                    vessel.vesselCode
+                );
 
-                                            </div>
-                                        `;
+            }
 
-                                    }
-                                )
-                                .join("")
-                        }
+
+            if (vessel.voyage) {
+
+                voyageParts.push(
+                    `Voyage ${vessel.voyage}`
+                );
+
+            }
+
+
+            voyage.textContent =
+                voyageParts.length
+                    ? voyageParts.join(" · ")
+                    : "Vessel information";
+
+
+            /* ---------------------------------------------
+               Fields
+               --------------------------------------------- */
+
+            body.innerHTML = "";
+
+
+            const availableFields =
+                MODAL_FIELDS.filter(
+                    ([key]) => {
+
+                        const value =
+                            vessel[key];
+
+                        return (
+                            value !==
+                                undefined &&
+                            value !== null &&
+                            value !== ""
+                        );
+
+                    }
+                );
+
+
+            if (!availableFields.length) {
+
+                body.innerHTML = `
+
+                    <div class="
+                        py-10
+                        text-center
+                        text-xs
+                        text-slate-400
+                    ">
+                        No additional information
+                        available.
                     </div>
+
                 `;
+
+            } else {
+
+                const grid =
+                    document.createElement("div");
+
+                grid.className =
+                    "grid grid-cols-1 sm:grid-cols-2 gap-2.5";
+
+
+                availableFields.forEach(
+                    ([key, label]) => {
+
+                        const value =
+                            vessel[key];
+
+
+                        const field =
+                            document.createElement(
+                                "div"
+                            );
+
+                        field.className =
+                            "modal-field";
+
+
+                        field.innerHTML = `
+
+                            <div class="modal-field-label">
+                                ${escapeHtml(label)}
+                            </div>
+
+                            <div class="modal-field-value">
+                                ${escapeHtml(
+                                    formatModalValue(
+                                        key,
+                                        value
+                                    )
+                                )}
+                            </div>
+
+                        `;
+
+
+                        grid.appendChild(
+                            field
+                        );
+
+                    }
+                );
+
+
+                body.appendChild(
+                    grid
+                );
+
+            }
 
 
             modal.classList.remove(
                 "hidden"
             );
 
-            document.body.style.overflow =
-                "hidden";
-        }
 
-
-        function closeModal() {
-
-            document
-                .getElementById(
-                    "vesselModal"
-                )
-                .classList.add("hidden");
-
-            document.body.style.overflow =
-                "";
-        }
-
-
-        /* =========================================================
-           CONNECTION / STATUS
-           ========================================================= */
-
-        function updateConnectionStatus(
-            status
-        ) {
-
-            const dot =
-                document.getElementById(
-                    "liveDot"
-                );
-
-            const text =
-                document.getElementById(
-                    "connectionText"
-                );
-
-
-            dot.classList.remove(
-                "offline",
-                "loading"
+            document.body.classList.add(
+                "overflow-hidden"
             );
 
-
-            if (status === "online") {
-
-                text.textContent =
-                    "Connected";
-
-                dot.classList.add(
-                    "pulse-dot"
-                );
-
-            }
-            else if (status === "loading") {
-
-                text.textContent =
-                    "Updating...";
-
-                dot.classList.add(
-                    "loading"
-                );
-
-            }
-            else {
-
-                text.textContent =
-                    "Connection error";
-
-                dot.classList.add(
-                    "offline"
-                );
-
-            }
-        }
-
-
-        function updateFreshness() {
-
-            if (!CURRENT_DATA) {
-                return;
-            }
-
-            const timestamp =
-                CURRENT_DATA.updatedAt ||
-                CURRENT_DATA.lastUpdated;
-
-            if (!timestamp) {
-                return;
-            }
-
-            const date =
-                new Date(timestamp);
-
-            if (
-                Number.isNaN(
-                    date.getTime()
-                )
-            ) {
-                return;
-            }
-
-            const now =
-                new Date();
-
-            const diffMs =
-                now.getTime() -
-                date.getTime();
-
-            const diffMin =
-                Math.floor(
-                    diffMs / 60000
-                );
-
-
-            let text;
-
-            if (diffMin < 1) {
-                text = "Updated just now";
-            }
-            else if (diffMin === 1) {
-                text = "Updated 1 minute ago";
-            }
-            else if (diffMin < 60) {
-                text =
-                    `Updated ${diffMin} minutes ago`;
-            }
-            else {
-
-                const diffHour =
-                    Math.floor(
-                        diffMin / 60
-                    );
-
-                text =
-                    `Updated ${diffHour} hour${diffHour === 1 ? "" : "s"} ago`;
-            }
-
-
-            document
-                .getElementById(
-                    "freshnessText"
-                )
-                .textContent = text;
-        }
-
-
-        function updateLastUpdate() {
-
-            if (!CURRENT_DATA) {
-                return;
-            }
-
-            const timestamp =
-                CURRENT_DATA.updatedAt ||
-                CURRENT_DATA.lastUpdated;
-
-            const element =
-                document.getElementById(
-                    "lastUpdateText"
-                );
-
-
-            if (!timestamp) {
-
-                element.textContent =
-                    "—";
-
-                return;
-            }
-
-
-            const date =
-                new Date(timestamp);
-
-
-            if (
-                Number.isNaN(
-                    date.getTime()
-                )
-            ) {
-
-                element.textContent =
-                    timestamp;
-
-                return;
-            }
-
-
-            element.textContent =
-                date.toLocaleString(
-                    "id-ID",
-                    {
-                        dateStyle: "medium",
-                        timeStyle: "short"
-                    }
-                );
-        }
-
-
-        function updateSource() {
-
-            if (
-                CURRENT_DATA &&
-                CURRENT_DATA.source
-            ) {
-
-                const link =
-                    document.getElementById(
-                        "sourceLink"
-                    );
-
-                link.href =
-                    CURRENT_DATA.source;
-            }
-        }
-
-
-        /* =========================================================
-           NEXT SCRAPER UPDATE
-           
-           Workflow berjalan setiap 30 menit.
-           ========================================================= */
-
-        function getNextScraperUpdate() {
-
-            if (!CURRENT_DATA) {
-                return null;
-            }
-
-            const timestamp =
-                CURRENT_DATA.updatedAt ||
-                CURRENT_DATA.lastUpdated;
-
-            if (!timestamp) {
-                return null;
-            }
-
-            const date =
-                new Date(timestamp);
-
-            if (
-                Number.isNaN(
-                    date.getTime()
-                )
-            ) {
-                return null;
-            }
-
-            const interval =
-                30 * 60 * 1000;
-
-            const next =
-                new Date(
-                    Math.ceil(
-                        date.getTime() /
-                        interval
-                    ) * interval
-                );
-
-            return next;
-        }
-
-
-        function updateNextUpdate() {
-
-            const element =
-                document.getElementById(
-                    "nextUpdateText"
-                );
-
-            const next =
-                getNextScraperUpdate();
-
-            if (!next) {
-
-                element.textContent =
-                    "—";
-
-                return;
-            }
-
-
-            const diff =
-                next.getTime() -
-                Date.now();
-
-
-            if (diff <= 0) {
-
-                element.textContent =
-                    "Soon";
-
-                return;
-            }
-
-
-            const totalSeconds =
-                Math.floor(
-                    diff / 1000
-                );
-
-            const minutes =
-                Math.floor(
-                    totalSeconds / 60
-                );
-
-            const seconds =
-                totalSeconds % 60;
-
-
-            element.textContent =
-                `${minutes}m ${String(seconds).padStart(2, "0")}s`;
-        }
-
-
-        /* =========================================================
-           LOAD DATA
-           ========================================================= */
-
-        async function loadData() {
-
-            updateConnectionStatus(
-                "loading"
-            );
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${DATA_URL}?t=${Date.now()}`,
-                        {
-                            cache: "no-store"
-                        }
-                    );
-
-
-                if (!response.ok) {
-                    throw new Error(
-                        `HTTP ${response.status}`
-                    );
-                }
-
-
-                const data =
-                    await response.json();
-
-
-                CURRENT_DATA =
-                    data;
-
-
-                updateStatistics();
-                renderAllSections();
-                updateLastUpdate();
-                updateSource();
-                updateFreshness();
-                updateNextUpdate();
-
-
-                updateConnectionStatus(
-                    "online"
-                );
-
-
-                /*
-                 * Kalau sedang mencari,
-                 * search tetap dipertahankan.
-                 */
-
-                if (CURRENT_SEARCH) {
-
-                    document
-                        .getElementById(
-                            "searchStatus"
-                        )
-                        .textContent =
-                        "Data diperbarui.";
-
-                }
-
-            }
-            catch (error) {
-
-                console.error(
-                    "Failed to load data:",
-                    error
-                );
-
-
-                updateConnectionStatus(
-                    "offline"
-                );
-
-
-                renderDataError(
-                    error
-                );
-
-            }
-        }
-
-
-        function renderDataError(
-            error
-        ) {
-
-            const container =
-                document.getElementById(
-                    "dashboardSections"
-                );
-
-            container.innerHTML = `
-                <div class="section-card p-10 text-center">
-
-                    <div class="w-12 h-12 mx-auto rounded-2xl bg-red-50 text-red-500 flex items-center justify-center">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-
-                    <h2 class="mt-4 text-sm font-bold text-slate-800">
-                        Failed to load vessel data
-                    </h2>
-
-                    <p class="mt-1 text-xs text-slate-400">
-                        ${escapeHtml(
-                            error?.message ||
-                            "Unknown error"
-                        )}
-                    </p>
-
-                    <button
-                        type="button"
-                        onclick="loadData()"
-                        class="mt-5 px-4 py-2 rounded-lg bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition"
-                    >
-                        Try Again
-                    </button>
-
-                </div>
-            `;
-        }
-
-
-        /* =========================================================
-           OPTIONAL SCRAPER STATUS
-           ========================================================= */
-
-        async function loadScraperStatus() {
 
             /*
-             * Tidak wajib.
-             * data.json tetap menjadi sumber utama.
+             * Store currently opened record
+             * for debugging / future extension.
              */
 
-            try {
+            modal.dataset.section =
+                section.key;
 
-                const response =
-                    await fetch(
-                        `${DATA_URL}?t=${Date.now()}`,
-                        {
-                            cache: "no-store"
-                        }
-                    );
-
-                if (!response.ok) {
-                    return;
-                }
-
-            }
-            catch (error) {
-
-                console.debug(
-                    "Status refresh:",
-                    error
+            modal.dataset.vesselKey =
+                getVesselKey(
+                    vessel,
+                    section.key
                 );
 
-            }
         }
 
 
-        /* =========================================================
-           SEARCH EVENTS
-           ========================================================= */
+        function closeVesselModal() {
 
-        const searchInput =
-            document.getElementById(
-                "searchInput"
-            );
-
-
-        searchInput.addEventListener(
-            "input",
-            event => {
-
-                const value =
-                    event.target.value;
-
-                CURRENT_SEARCH =
-                    value.trim();
-
-
-                const clearButton =
-                    document.getElementById(
-                        "clearSearchButton"
-                    );
-
-
-                if (value.trim()) {
-
-                    clearButton.classList.remove(
-                        "hidden"
-                    );
-
-                }
-                else {
-
-                    clearButton.classList.add(
-                        "hidden"
-                    );
-
-                }
-
-
-                /*
-                 * Filter data secara langsung
-                 * ketika mengetik.
-                 */
-
-                renderAllSections();
-
-                renderSuggestions(
-                    value
-                );
-
-            }
-        );
-
-
-        searchInput.addEventListener(
-            "keydown",
-            event => {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    /*
-                     * Jika suggestion aktif,
-                     * pilih suggestion tersebut.
-                     */
-
-                    if (
-                        ACTIVE_SUGGESTION >= 0 &&
-                        SEARCH_RESULTS[
-                            ACTIVE_SUGGESTION
-                        ]
-                    ) {
-
-                        selectSuggestion(
-                            ACTIVE_SUGGESTION
-                        );
-
-                        return;
-                    }
-
-
-                    performSearch();
-
-                    return;
-                }
-
-
-                if (event.key === "Escape") {
-
-                    document
-                        .getElementById(
-                            "searchSuggestions"
-                        )
-                        .classList.add(
-                            "hidden"
-                        );
-
-                    ACTIVE_SUGGESTION = -1;
-
-                    return;
-                }
-
-
-                if (
-                    event.key === "ArrowDown"
-                ) {
-
-                    if (
-                        !SEARCH_RESULTS.length
-                    ) {
-                        return;
-                    }
-
-                    event.preventDefault();
-
-                    ACTIVE_SUGGESTION =
-                        Math.min(
-                            ACTIVE_SUGGESTION + 1,
-                            SEARCH_RESULTS.length - 1
-                        );
-
-                    updateActiveSuggestion();
-
-                }
-
-
-                if (
-                    event.key === "ArrowUp"
-                ) {
-
-                    if (
-                        !SEARCH_RESULTS.length
-                    ) {
-                        return;
-                    }
-
-                    event.preventDefault();
-
-                    ACTIVE_SUGGESTION =
-                        Math.max(
-                            ACTIVE_SUGGESTION - 1,
-                            0
-                        );
-
-                    updateActiveSuggestion();
-
-                }
-
-            }
-        );
-
-
-        function updateActiveSuggestion() {
-
-            const items =
-                document.querySelectorAll(
-                    ".suggestion-item"
+            const modal =
+                document.getElementById(
+                    "vesselModal"
                 );
 
 
-            items.forEach(
-                (item, index) => {
-
-                    item.classList.toggle(
-                        "active",
-                        index ===
-                        ACTIVE_SUGGESTION
-                    );
-
-                }
+            modal.classList.add(
+                "hidden"
             );
 
 
-            const active =
-                items[
-                    ACTIVE_SUGGESTION
-                ];
+            document.body.classList.remove(
+                "overflow-hidden"
+            );
 
-
-            if (active) {
-
-                active.scrollIntoView({
-                    block: "nearest"
-                });
-
-            }
         }
 
 
-        document.addEventListener(
-            "click",
-            event => {
+        function handleModalBackdropClick(
+            event
+        ) {
 
-                const wrapper =
-                    document.querySelector(
-                        ".search-wrapper"
-                    );
+            if (
+                event.target.id ===
+                "vesselModal"
+            ) {
 
-                if (
-                    wrapper &&
-                    !wrapper.contains(
-                        event.target
-                    )
-                ) {
-
-                    document
-                        .getElementById(
-                            "searchSuggestions"
-                        )
-                        .classList.add(
-                            "hidden"
-                        );
-
-                }
+                closeVesselModal();
 
             }
-        );
 
-
-        /* =========================================================
-           MODAL EVENTS
-           ========================================================= */
-
-        document
-            .getElementById("vesselModal")
-            .addEventListener(
-                "click",
-                event => {
-
-                    if (
-                        event.target.id ===
-                        "vesselModal"
-                    ) {
-                        closeModal();
-                    }
-
-                }
-            );
+        }
 
 
         document.addEventListener(
@@ -3047,12 +3690,16 @@
                             "vesselModal"
                         );
 
+
                     if (
+                        modal &&
                         !modal.classList.contains(
                             "hidden"
                         )
                     ) {
-                        closeModal();
+
+                        closeVesselModal();
+
                     }
 
                 }
@@ -3062,40 +3709,419 @@
 
 
         /* =========================================================
-           AUTO REFRESH
+           LOAD DATA
            ========================================================= */
 
-        setInterval(
-            loadData,
-            5 * 60 * 1000
-        );
+        async function loadData() {
+
+            setConnectionStatus(
+                "loading"
+            );
 
 
-        setInterval(
-            updateFreshness,
-            30 * 1000
-        );
+            refreshButton.classList.add(
+                "loading"
+            );
 
 
-        setInterval(
-            updateNextUpdate,
-            1000
-        );
+            const originalRefresh =
+                refreshButton.innerHTML;
 
 
-        setInterval(
-            loadScraperStatus,
-            2 * 60 * 1000
-        );
+            refreshButton.innerHTML = `
+
+                <i class="fa-solid fa-rotate-right"></i>
+
+                <span>Loading...</span>
+
+            `;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${DATA_URL}?t=${Date.now()}`,
+                        {
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `HTTP ${response.status}`
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                dashboardData = {
+
+                    lastUpdated:
+                        data.lastUpdated ||
+                        data.updatedAt ||
+                        null,
+
+                    updatedAt:
+                        data.updatedAt ||
+                        data.lastUpdated ||
+                        null,
+
+                    source:
+                        data.source ||
+                        "",
+
+                    vesselAlongside:
+                        Array.isArray(
+                            data.vesselAlongside
+                        )
+                            ? data.vesselAlongside
+                            : [],
+
+                    confirmedVessel:
+                        Array.isArray(
+                            data.confirmedVessel
+                        )
+                            ? data.confirmedVessel
+                            : [],
+
+                    openStack:
+                        Array.isArray(
+                            data.openStack
+                        )
+                            ? data.openStack
+                            : [],
+
+                    vesselSchedule:
+                        Array.isArray(
+                            data.vesselSchedule
+                        )
+                            ? data.vesselSchedule
+                            : [],
+
+                    vesselHistory:
+                        Array.isArray(
+                            data.vesselHistory
+                        )
+                            ? data.vesselHistory
+                            : [],
+
+                    counts:
+                        data.counts || {}
+
+                };
+
+
+                updateStatistics();
+
+                renderAllSections();
+
+                updateFreshness();
+
+                setConnectionStatus(
+                    "online"
+                );
+
+
+                nextUpdateAt =
+                    Date.now() +
+                    AUTO_REFRESH_INTERVAL;
+
+
+                searchStatus.textContent =
+                    "";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load data:",
+                    error
+                );
+
+
+                setConnectionStatus(
+                    "offline"
+                );
+
+
+                searchStatus.textContent =
+                    "Unable to load latest data.";
+
+
+            } finally {
+
+                refreshButton.classList.remove(
+                    "loading"
+                );
+
+
+                refreshButton.innerHTML =
+                    originalRefresh;
+
+            }
+
+        }
 
 
         /* =========================================================
-           INITIAL LOAD
+           FRESHNESS
            ========================================================= */
 
-        loadData();
-        loadScraperStatus();
-        updateNextUpdate();
+        function updateFreshness() {
+
+            const rawDate =
+                dashboardData.lastUpdated ||
+                dashboardData.updatedAt;
+
+
+            const date =
+                parseDate(rawDate);
+
+
+            if (!date) {
+
+                freshnessText.textContent =
+                    "Data time unavailable";
+
+                return;
+
+            }
+
+
+            freshnessText.textContent =
+                getFreshnessText(date);
+
+        }
+
+
+        /* =========================================================
+           NEXT UPDATE
+           ========================================================= */
+
+        function updateNextUpdate() {
+
+            if (!nextUpdateAt) {
+
+                return;
+
+            }
+
+
+            const remainingMs =
+                Math.max(
+                    0,
+                    nextUpdateAt -
+                        Date.now()
+                );
+
+
+            const remainingSeconds =
+                Math.ceil(
+                    remainingMs / 1000
+                );
+
+
+            const minutes =
+                Math.floor(
+                    remainingSeconds / 60
+                );
+
+
+            const seconds =
+                remainingSeconds % 60;
+
+
+            let text;
+
+
+            if (
+                minutes > 0
+            ) {
+
+                text =
+                    `Next refresh in ${minutes}m ${String(
+                        seconds
+                    ).padStart(2, "0")}s`;
+
+            } else {
+
+                text =
+                    `Next refresh in ${seconds}s`;
+
+            }
+
+
+            /*
+             * Only append when there is no active
+             * search result message.
+             */
+
+            if (
+                !searchInput.value.trim()
+            ) {
+
+                const current =
+                    freshnessText.textContent;
+
+
+                if (
+                    current &&
+                    current !== "—"
+                ) {
+
+                    freshnessText.textContent =
+                        `${current} · ${text}`;
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================================================
+           SCRAPER STATUS
+           ========================================================= */
+
+        async function loadScraperStatus() {
+
+            /*
+             * GitHub Pages cannot directly know GitHub Actions
+             * status without an API/token.
+             *
+             * This lightweight function is intentionally kept
+             * non-blocking.
+             *
+             * The dashboard connection status is based on
+             * data.json availability.
+             */
+
+            return;
+
+        }
+
+
+        /* =========================================================
+           TIMERS
+           ========================================================= */
+
+        function startTimers() {
+
+            if (autoRefreshTimer) {
+
+                clearInterval(
+                    autoRefreshTimer
+                );
+
+            }
+
+
+            if (freshnessTimer) {
+
+                clearInterval(
+                    freshnessTimer
+                );
+
+            }
+
+
+            if (nextUpdateTimer) {
+
+                clearInterval(
+                    nextUpdateTimer
+                );
+
+            }
+
+
+            if (scraperStatusTimer) {
+
+                clearInterval(
+                    scraperStatusTimer
+                );
+
+            }
+
+
+            autoRefreshTimer =
+                setInterval(
+                    () => {
+
+                        loadData();
+
+                    },
+                    AUTO_REFRESH_INTERVAL
+                );
+
+
+            freshnessTimer =
+                setInterval(
+                    () => {
+
+                        updateFreshness();
+
+                    },
+                    FRESHNESS_INTERVAL
+                );
+
+
+            nextUpdateTimer =
+                setInterval(
+                    () => {
+
+                        updateNextUpdate();
+
+                    },
+                    NEXT_UPDATE_INTERVAL
+                );
+
+
+            scraperStatusTimer =
+                setInterval(
+                    () => {
+
+                        loadScraperStatus();
+
+                    },
+                    SCRAPER_STATUS_INTERVAL
+                );
+
+        }
+
+
+        /* =========================================================
+           INITIALIZATION
+           ========================================================= */
+
+        async function initialize() {
+
+            nextUpdateAt =
+                Date.now() +
+                AUTO_REFRESH_INTERVAL;
+
+
+            await loadData();
+
+
+            loadScraperStatus();
+
+
+            startTimers();
+
+
+            updateNextUpdate();
+
+        }
+
+
+        initialize();
 
     </script>
 
