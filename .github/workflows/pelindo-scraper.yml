@@ -1,4 +1,3 @@
-```yaml
 name: Pelindo TPKS Scraper
 
 on:
@@ -605,4 +604,3 @@ jobs:
           echo "======================================"
           echo "PUSH SUCCESSFUL"
           echo "======================================"
-```
