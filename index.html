@@ -1,2787 +1,3103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TPKS Vessel Monitoring</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-<script>
-tailwind.config={theme:{extend:{boxShadow:{
- soft:"0 8px 30px rgba(15,23,42,.06)",
- card:"0 4px 20px rgba(15,23,42,.06)"
-}}}};
-</script>
-
-<style>
-html{scroll-behavior:smooth}
-
-body{
- background:
- radial-gradient(circle at 10% 0%,rgba(59,130,246,.08),transparent 28%),
- radial-gradient(circle at 90% 10%,rgba(14,165,233,.06),transparent 25%),
- #f5f7fb
-}
-
-::selection{background:rgba(59,130,246,.18)}
-
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px}
-::-webkit-scrollbar-thumb:hover{background:#94a3b8}
-
-/* =========================================================
-   MAIN HEADER
-   ONLY THIS HEADER IS STICKY
-========================================================= */
-
-.header-glass{
- background:rgba(255,255,255,.92);
- backdrop-filter:blur(18px);
- -webkit-backdrop-filter:blur(18px)
-}
-
-.brand-icon{
- background:linear-gradient(135deg,#2563eb,#1d4ed8);
- box-shadow:0 8px 22px rgba(37,99,235,.22)
-}
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero-panel{
- position:relative;
- overflow:hidden;
- background:
- radial-gradient(circle at 85% 20%,rgba(96,165,250,.22),transparent 30%),
- radial-gradient(circle at 100% 100%,rgba(14,165,233,.13),transparent 35%),
- linear-gradient(135deg,#0f172a,#172554);
- box-shadow:0 18px 45px rgba(15,23,42,.14)
-}
-
-.hero-grid{
- position:absolute;
- inset:0;
- background-image:
- linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
- linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
- background-size:32px 32px;
- mask-image:linear-gradient(to right,transparent,black 25%,black 75%,transparent)
-}
-
-.hero-ship{
- position:absolute;
- right:7%;
- bottom:-12px;
- font-size:150px;
- color:rgba(255,255,255,.035);
- transform:rotate(-8deg)
-}
-
-/* =========================================================
-   CARDS
-========================================================= */
-
-.dashboard-card{
- background:rgba(255,255,255,.95);
- border:1px solid #e2e8f0;
- box-shadow:0 4px 18px rgba(15,23,42,.045);
- transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
-}
-
-.dashboard-card:hover{
- transform:translateY(-1px);
- box-shadow:0 10px 28px rgba(15,23,42,.065);
- border-color:#cbd5e1
-}
-
-/* =========================================================
-   KPI
-========================================================= */
-
-.kpi-card{
- position:relative;
- overflow:hidden;
- cursor:pointer
-}
-
-.kpi-card::after{
- content:"";
- position:absolute;
- right:-30px;
- bottom:-35px;
- width:105px;
- height:105px;
- border-radius:999px;
- background:currentColor;
- opacity:.035;
- pointer-events:none
-}
-
-.kpi-card:focus-visible{
- outline:2px solid #3b82f6;
- outline-offset:2px
-}
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-.status-dot{
- width:8px;
- height:8px;
- border-radius:9999px;
- display:inline-block;
- flex-shrink:0
-}
-
-.pulse{animation:statusPulse 1.8s infinite}
-
-@keyframes statusPulse{
- 0%,100%{opacity:1;transform:scale(1)}
- 50%{opacity:.45;transform:scale(.82)}
-}
-
-.live-badge{
- display:inline-flex;
- align-items:center;
- gap:7px;
- padding:5px 9px;
- border-radius:999px;
- background:rgba(16,185,129,.1);
- color:#047857;
- font-size:10px;
- font-weight:700;
- letter-spacing:.05em;
- text-transform:uppercase
-}
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-.search-section{
- position:relative;
- z-index:30
-}
-
-.search-wrapper{
- position:relative;
- z-index:40
-}
-
-.search-wrapper input{
- transition:border-color .18s ease,box-shadow .18s ease,background .18s ease
-}
-
-.search-wrapper input:focus{
- box-shadow:0 0 0 4px rgba(59,130,246,.09)
-}
-
-.search-suggestions{
- position:absolute;
- z-index:100;
- left:0;
- right:0;
- top:calc(100% + 7px);
- max-height:330px;
- overflow-y:auto;
- background:#fff;
- border:1px solid #e2e8f0;
- border-radius:14px;
- box-shadow:0 18px 40px rgba(15,23,42,.16);
- padding:5px
-}
-
-.search-suggestion{
- cursor:pointer;
- border-radius:10px;
- transition:background .12s ease
-}
-
-.search-suggestion:hover,
-.search-suggestion.active{
- background:#f1f5f9
-}
-
-.btn{transition:all .18s ease}
-.btn:active{transform:translateY(1px)}
-
-.refresh-btn:hover{
- box-shadow:0 8px 20px rgba(37,99,235,.22)
-}
-
-.refresh-btn:disabled{
- opacity:.65;
- cursor:not-allowed
-}
-
-/* =========================================================
-   VESSEL SECTIONS
-   NOTHING BELOW IS STICKY
-========================================================= */
-
-.dashboard-section{
- scroll-margin-top:88px
-}
-
-.section-card{
- background:rgba(255,255,255,.97);
- border:1px solid #e2e8f0;
- border-radius:18px;
- overflow:hidden;
- box-shadow:0 4px 18px rgba(15,23,42,.045)
-}
-
-/* Section title is NOT sticky */
-.section-header{
- background:#fff
-}
-
-/* =========================================================
-   MODERN TABLE
-========================================================= */
-
-.section-scroll{
- overflow-x:auto;
- -webkit-overflow-scrolling:touch
-}
-
-.section-scroll table{
- width:100%;
- min-width:760px;
- border-collapse:separate;
- border-spacing:0
-}
-
-/* Table header is NOT sticky */
-.table-header{
- background:#f8fafc
-}
-
-.table-header th{
- padding:11px 16px;
- color:#64748b;
- font-size:9px;
- font-weight:800;
- letter-spacing:.09em;
- text-transform:uppercase;
- white-space:nowrap;
- border-bottom:1px solid #e2e8f0
-}
-
-/* Modern rows */
-.table-row-clickable{
- cursor:pointer;
- transition:background .16s ease,box-shadow .16s ease
-}
-
-.table-row-clickable td{
- padding:14px 16px;
- border-bottom:1px solid #f1f5f9;
- background:#fff;
- transition:background .16s ease
-}
-
-.table-row-clickable:nth-child(even) td{
- background:#fcfdff
-}
-
-.table-row-clickable:hover td{
- background:#f8fbff
-}
-
-.table-row-clickable:hover td:first-child{
- box-shadow:inset 3px 0 0 #3b82f6
-}
-
-.table-row-clickable:last-child td{
- border-bottom:0
-}
-
-/* Vessel */
-.vessel-name{
- color:#172033;
- font-weight:700;
- font-size:13px;
- letter-spacing:-.01em
-}
-
-.vessel-code{
- color:#94a3b8;
- font-size:10px;
- font-weight:600;
- margin-top:3px
-}
-
-/* Voyage */
-.voyage-cell{
- font-size:12px;
- font-weight:600;
- color:#475569;
- white-space:nowrap
-}
-
-/* Type */
-.type-badge{
- display:inline-flex;
- align-items:center;
- gap:6px;
- padding:5px 9px;
- border-radius:7px;
- background:#f8fafc;
- color:#475569;
- font-size:10px;
- font-weight:700;
- border:1px solid #e2e8f0;
- white-space:nowrap
-}
-
-.type-badge::before{
- content:"";
- width:5px;
- height:5px;
- border-radius:50%;
- background:#94a3b8
-}
-
-/* Date / time */
-.datetime-cell{
- line-height:1.15;
- white-space:nowrap
-}
-
-.datetime-date{
- font-size:12px;
- font-weight:600;
- color:#334155
-}
-
-.datetime-time{
- font-size:10px;
- font-weight:500;
- color:#94a3b8;
- margin-top:4px
-}
-
-/* Number */
-.number-cell{
- font-variant-numeric:tabular-nums;
- font-weight:600;
- font-size:12px;
- color:#475569
-}
-
-.numeric-cell{text-align:right}
-
-/* Open stack */
-.open-stack-table th,
-.open-stack-table td{
- white-space:nowrap
-}
-
-/* =========================================================
-   SEARCH RESULT HIGHLIGHT
-========================================================= */
-
-.search-hit td{
- animation:searchHit 2.8s ease both
-}
-
-.search-hit td:first-child{
- box-shadow:inset 4px 0 0 #2563eb!important
-}
-
-@keyframes searchHit{
- 0%{background:#dbeafe!important}
- 20%{background:#eff6ff!important}
- 55%{background:#eff6ff!important}
- 100%{background:inherit}
-}
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-.modal-backdrop{
- background:rgba(15,23,42,.62);
- backdrop-filter:blur(8px);
- -webkit-backdrop-filter:blur(8px)
-}
-
-.modal-enter{
- animation:modalEnter .22s cubic-bezier(.16,1,.3,1)
-}
-
-@keyframes modalEnter{
- from{opacity:0;transform:translateY(16px) scale(.97)}
- to{opacity:1;transform:translateY(0) scale(1)}
-}
-
-.modal-field{
- background:#f8fafc;
- border:1px solid #e2e8f0;
- transition:background .15s ease,border-color .15s ease
-}
-
-.modal-field:hover{
- background:#f1f5f9;
- border-color:#cbd5e1
-}
-
-@media(max-width:640px){
- .hero-ship{font-size:90px;right:-10px}
- .hero-panel{border-radius:18px}
- .section-card{border-radius:15px}
- .table-row-clickable td{padding:12px}
- .table-header th{padding:10px 12px}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TPKS Vessel Monitoring</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background:
+                linear-gradient(
+                    180deg,
+                    #f8fafc 0%,
+                    #f1f5f9 45%,
+                    #f8fafc 100%
+                );
+            color: #0f172a;
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        /* =========================================================
+           HEADER UTAMA
+           TIDAK STICKY
+           ========================================================= */
+
+        .main-header {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        /* =========================================================
+           SEARCH
+           ========================================================= */
+
+        .search-section {
+            position: relative;
+            z-index: 40;
+        }
+
+        .search-wrapper {
+            position: relative;
+            z-index: 50;
+        }
+
+        .search-input {
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #94a3b8;
+            box-shadow:
+                0 0 0 3px rgba(148, 163, 184, 0.18);
+            background: #ffffff;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            z-index: 100;
+            overflow: hidden;
+
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+
+            box-shadow:
+                0 20px 45px rgba(15, 23, 42, 0.12),
+                0 4px 12px rgba(15, 23, 42, 0.06);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .suggestion-item {
+            width: 100%;
+            text-align: left;
+            padding: 12px 14px;
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .suggestion-item:hover,
+        .suggestion-item.active {
+            background: #f8fafc;
+        }
+
+        .suggestion-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .suggestion-vessel {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .suggestion-meta {
+            margin-top: 3px;
+            padding-left: 20px;
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* =========================================================
+           KPI
+           ========================================================= */
+
+        .statistics-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        .stat-card {
+            position: relative;
+            z-index: 1;
+
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 14px;
+
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease,
+                border-color 0.18s ease,
+                background 0.18s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+            background: #ffffff;
+            box-shadow:
+                0 10px 25px rgba(15, 23, 42, 0.07);
+        }
+
+        /* =========================================================
+           SECTION
+           
+           PENTING:
+           Section TIDAK diberi overflow hidden/auto.
+           Sticky section header harus mengikuti scroll halaman.
+           ========================================================= */
+
+        .dashboard-section {
+            position: relative;
+            scroll-margin-top: 8px;
+
+            /* Jangan gunakan overflow:hidden/auto di sini */
+            overflow: visible;
+        }
+
+        .section-card {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+
+            box-shadow:
+                0 2px 8px rgba(15, 23, 42, 0.035);
+        }
+
+        /*
+         * HEADER SECTION STICKY
+         *
+         * Header utama tidak sticky.
+         * Karena itu section header cukup top: 0.
+         *
+         * Ketika Open Stack sedang panjang:
+         *
+         * OPEN STACK
+         * ─────────────────────────
+         * Vessel | Voyage | ...
+         * ─────────────────────────
+         * data
+         * data
+         * data
+         *
+         * Header Open Stack tetap berada di atas.
+         */
+        .section-header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+
+            min-height: 68px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+
+            padding: 14px 18px;
+
+            background: rgba(255, 255, 255, 0.97);
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-header-left {
+            min-width: 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            margin: 0;
+
+            font-size: 15px;
+            line-height: 20px;
+            font-weight: 750;
+            letter-spacing: -0.01em;
+            color: #0f172a;
+        }
+
+        .section-title-icon {
+            width: 30px;
+            height: 30px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+            background: #f1f5f9;
+            color: #475569;
+
+            flex: 0 0 auto;
+        }
+
+        .section-subtitle {
+            margin: 3px 0 0 39px;
+
+            font-size: 11px;
+            line-height: 16px;
+            color: #64748b;
+        }
+
+        .section-count {
+            flex: 0 0 auto;
+
+            padding: 5px 9px;
+
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+
+            background: #f8fafc;
+
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        /* =========================================================
+           TABLE
+           ========================================================= */
+
+        .section-scroll {
+            width: 100%;
+
+            /*
+             * Hanya horizontal scroll jika diperlukan.
+             * Jangan beri vertical overflow / max-height.
+             */
+            overflow-x: auto;
+            overflow-y: visible;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            min-width: 760px;
+
+            border-collapse: separate;
+            border-spacing: 0;
+
+            font-size: 12px;
+        }
+
+        /*
+         * TABLE HEADER STICKY
+         *
+         * Karena section-header tingginya sekitar 68px,
+         * header tabel berada di bawahnya.
+         */
+        .section-scroll thead {
+            position: sticky;
+            top: 68px;
+            z-index: 20;
+        }
+
+        .section-scroll thead th {
+            padding: 10px 14px;
+
+            background: #f8fafc;
+
+            border-bottom: 1px solid #e2e8f0;
+
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: 0.045em;
+            text-transform: uppercase;
+
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        .section-scroll tbody td {
+            padding: 11px 14px;
+
+            border-bottom: 1px solid #f1f5f9;
+
+            color: #334155;
+            vertical-align: middle;
+
+            white-space: nowrap;
+        }
+
+        .section-scroll tbody tr {
+            background: #ffffff;
+            transition:
+                background 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .section-scroll tbody tr:nth-child(even) {
+            background: #fcfdff;
+        }
+
+        .section-scroll tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .section-scroll tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .vessel-main {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 150px;
+        }
+
+        .vessel-name {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .vessel-code {
+            font-size: 10px;
+            color: #94a3b8;
+            letter-spacing: 0.025em;
+        }
+
+        .voyage-text {
+            font-weight: 650;
+            color: #334155;
+        }
+
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            padding: 4px 8px;
+
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+
+            background: #f8fafc;
+
+            color: #475569;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .type-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 999px;
+            background: #94a3b8;
+        }
+
+        .datetime-text {
+            color: #475569;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .number-text {
+            color: #334155;
+            font-weight: 650;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .muted-text {
+            color: #94a3b8;
+        }
+
+        .empty-section {
+            padding: 40px 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        /* =========================================================
+           SEARCH RESULT HIGHLIGHT
+           ========================================================= */
+
+        .search-hit td {
+            animation: searchHit 2.8s ease both;
+        }
+
+        .search-hit td:first-child {
+            box-shadow:
+                inset 4px 0 0 #2563eb !important;
+        }
+
+        @keyframes searchHit {
+            0% {
+                background: #dbeafe !important;
+            }
+
+            20% {
+                background: #eff6ff !important;
+            }
+
+            55% {
+                background: #eff6ff !important;
+            }
+
+            100% {
+                background: inherit;
+            }
+        }
+
+        /* =========================================================
+           MODAL
+           ========================================================= */
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background: rgba(15, 23, 42, 0.48);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .modal-panel {
+            width: min(720px, 100%);
+            max-height: 88vh;
+
+            overflow-y: auto;
+
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+
+            box-shadow:
+                0 30px 80px rgba(15, 23, 42, 0.2);
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+
+            padding: 18px 20px;
+
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-title {
+            margin: 0;
+
+            font-size: 17px;
+            font-weight: 750;
+            color: #0f172a;
+        }
+
+        .modal-subtitle {
+            margin-top: 3px;
+
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .modal-close {
+            width: 34px;
+            height: 34px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            flex: 0 0 auto;
+
+            border: 0;
+            border-radius: 10px;
+
+            background: #f1f5f9;
+            color: #64748b;
+
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                color 0.15s ease;
+        }
+
+        .modal-close:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .modal-body {
+            padding: 18px 20px 22px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .detail-item {
+            padding: 11px 12px;
+
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .detail-label {
+            margin-bottom: 4px;
+
+            font-size: 9px;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+
+            color: #94a3b8;
+        }
+
+        .detail-value {
+            font-size: 12px;
+            font-weight: 650;
+            color: #334155;
+
+            word-break: break-word;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 768px) {
+            .section-header {
+                min-height: 62px;
+                padding: 12px 14px;
+            }
+
+            .section-scroll thead {
+                top: 62px;
+            }
+
+            .section-title {
+                font-size: 14px;
+            }
+
+            .section-subtitle {
+                display: none;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-backdrop {
+                padding: 10px;
+            }
+
+            .modal-panel {
+                max-height: 92vh;
+            }
+        }
+
+        /* =========================================================
+           CONNECTION STATUS
+           ========================================================= */
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        .status-dot.offline {
+            background: #ef4444;
+        }
+
+        .status-dot.loading {
+            background: #f59e0b;
+        }
+
+        .pulse-dot {
+            animation: pulseDot 1.8s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.45;
+            }
+        }
+
+        /* =========================================================
+           SCROLLBAR
+           ========================================================= */
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
 </head>
 
-<body class="min-h-screen text-slate-800">
+<body>
+
+    <!-- =========================================================
+         HEADER UTAMA
+         
+         TIDAK STICKY.
+         Header ini akan ikut hilang ketika halaman di-scroll.
+         ========================================================= -->
+
+    <header class="main-header border-b border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-5 flex items-center justify-between gap-4">
+
+                <div class="min-w-0">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+                            TPKS Vessel Monitoring
+                        </h1>
+
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-[10px] font-bold"
+                        >
+                            <span
+                                id="liveDot"
+                                class="status-dot pulse-dot"
+                            ></span>
+                            Live
+                        </span>
+                    </div>
+
+                    <p class="mt-1 text-xs text-slate-500">
+                        Pelindo Terminal Petikemas Semarang
+                    </p>
+                </div>
+
+                <div class="hidden sm:flex items-center gap-2">
+                    <span
+                        id="connectionText"
+                        class="text-[10px] text-slate-400"
+                    >
+                        Connecting...
+                    </span>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+
+    <!-- =========================================================
+         MAIN
+         ========================================================= -->
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- =====================================================
+             SEARCH
+             ===================================================== -->
+
+        <section class="search-section mb-5">
+
+            <div class="search-wrapper">
+
+                <div class="flex flex-col sm:flex-row gap-2">
+
+                    <div class="relative flex-1">
+
+                        <button
+                            id="searchButtonIcon"
+                            type="button"
+                            onclick="performSearch()"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 z-10 text-slate-400 hover:text-slate-700 transition"
+                            aria-label="Search"
+                        >
+                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                        </button>
+
+                        <input
+                            id="searchInput"
+                            type="text"
+                            autocomplete="off"
+                            placeholder="Search vessel, voyage, code, type..."
+                            class="search-input w-full h-11 pl-10 pr-10 rounded-xl border border-slate-200 bg-white/90 text-sm text-slate-800 placeholder:text-slate-400"
+                        >
+
+                        <button
+                            id="clearSearchButton"
+                            type="button"
+                            onclick="clearSearch()"
+                            class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition"
+                            aria-label="Clear search"
+                        >
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+
+                        <!-- SEARCH SUGGESTIONS -->
+
+                        <div
+                            id="searchSuggestions"
+                            class="search-suggestions hidden"
+                        ></div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick="performSearch()"
+                        class="h-11 px-5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center justify-center gap-2"
+                    >
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Search
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="loadData()"
+                        class="h-11 px-5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-2"
+                    >
+                        <i class="fa-solid fa-rotate-right"></i>
+                        Refresh
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="mt-2 flex items-center justify-between gap-3">
+                <p
+                    id="searchStatus"
+                    class="text-[10px] text-slate-400"
+                ></p>
+
+                <p
+                    id="freshnessText"
+                    class="text-[10px] text-slate-400 text-right"
+                >
+                    —
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             STATISTICS / KPI
+             ===================================================== -->
+
+        <section
+            id="statistics"
+            class="statistics-wrapper mb-7"
+        >
+            <div
+                id="statisticsGrid"
+                class="grid grid-cols-2 lg:grid-cols-5 gap-3"
+            ></div>
+        </section>
+
+
+        <!-- =====================================================
+             DATA SECTIONS
+             ===================================================== -->
+
+        <div
+            id="dashboardSections"
+            class="space-y-5"
+        ></div>
+
+
+        <!-- =====================================================
+             FOOTER STATUS
+             ===================================================== -->
+
+        <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-slate-400">
+
+            <div>
+                Source:
+                <a
+                    id="sourceLink"
+                    href="https://ibstpks.pelindo.co.id/webaccess/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-slate-600 underline underline-offset-2"
+                >
+                    Pelindo TPKS Webaccess
+                </a>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span>Last update:</span>
+                <span id="lastUpdateText">—</span>
+            </div>
+
+            <div>
+                Next scraper:
+                <span id="nextUpdateText">—</span>
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         MODAL
+         ========================================================= -->
 
-<!-- =======================================================
-     ONLY THIS HEADER IS STICKY
-======================================================== -->
-
-<header class="sticky top-0 z-50 border-b border-slate-200/80 header-glass">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="h-[72px] flex items-center justify-between gap-4">
-
-<div class="flex items-center gap-3 min-w-0">
-
-<div class="brand-icon w-11 h-11 rounded-[14px] text-white flex items-center justify-center flex-shrink-0">
-<i class="fa-solid fa-ship text-lg"></i>
-</div>
-
-<div class="min-w-0">
-
-<div class="flex items-center gap-2">
-<h1 class="font-bold text-base sm:text-lg tracking-tight truncate">
-TPKS Vessel Monitoring
-</h1>
-
-<span class="hidden sm:inline-flex live-badge">
-<span id="headerLiveDot" class="status-dot bg-emerald-500"></span>
-Live
-</span>
-</div>
-
-<p class="text-[11px] sm:text-xs text-slate-500 truncate mt-0.5">
-Pelindo Terminal Petikemas Semarang
-</p>
-
-</div>
-</div>
-
-<div id="connectionStatus" class="flex items-center gap-2.5 text-xs font-semibold text-slate-500">
-<span id="connectionDot" class="status-dot bg-slate-400"></span>
-<span id="connectionText" class="hidden sm:inline">Loading...</span>
-</div>
-
-</div>
-</div>
-</header>
-
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
-
-<!-- HERO -->
-<section class="hero-panel rounded-[20px] px-5 py-6 sm:px-7 sm:py-7 mb-5">
-
-<div class="hero-grid"></div>
-<i class="fa-solid fa-ship hero-ship"></i>
-
-<div class="relative z-10">
-
-<div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
-
-<div>
-
-<div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 border border-white/10 text-blue-100 text-[10px] font-bold uppercase tracking-[.12em]">
-<i class="fa-solid fa-chart-line text-[9px]"></i>
-Terminal Operations
-</div>
-
-<h2 class="mt-3 text-2xl sm:text-3xl font-bold tracking-tight text-white">
-Vessel Operations Dashboard
-</h2>
-
-<p class="mt-2 text-sm text-slate-300 max-w-xl">
-Real-time operational overview of vessel activity at TPKS Terminal Petikemas Semarang.
-</p>
-
-</div>
-
-<div class="flex items-center gap-2 text-xs text-slate-300">
-<span class="status-dot bg-emerald-400 pulse"></span>
-Automated monitoring active
-</div>
-
-</div>
-</div>
-</section>
-
-<!-- STATUS -->
-<section class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
-
-<div class="dashboard-card rounded-[18px] p-4 sm:p-5">
-<div class="flex items-start justify-between gap-4">
-
-<div>
-<div class="flex items-center gap-2">
-<span class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">
-Last Updated
-</span>
-<span id="freshnessBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">
-Checking
-</span>
-</div>
-
-<p id="lastUpdated" class="mt-2 text-base sm:text-lg font-bold tracking-tight text-slate-800">
--
-</p>
-
-<p id="lastUpdatedRelative" class="mt-1 text-xs text-slate-500">
-Waiting for data...
-</p>
-</div>
-
-<div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-<i class="fa-solid fa-arrows-rotate"></i>
-</div>
-
-</div>
-</div>
-
-<div class="dashboard-card rounded-[18px] p-4 sm:p-5">
-<div class="flex items-start justify-between gap-4">
-
-<div>
-<div class="flex items-center gap-2">
-<span class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">
-Next Update
-</span>
-
-<span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold">
-30 MIN
-</span>
-</div>
-
-<p id="nextUpdate" class="mt-2 text-base sm:text-lg font-bold tracking-tight text-slate-800">
--
-</p>
-
-<p id="nextUpdateCountdown" class="mt-1 text-xs text-slate-500">
--
-</p>
-</div>
-
-<div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-<i class="fa-regular fa-clock"></i>
-</div>
-
-</div>
-</div>
-
-<div class="dashboard-card rounded-[18px] p-4 sm:p-5">
-<div class="flex items-start justify-between gap-4">
-
-<div class="min-w-0">
-
-<div class="text-[10px] font-bold uppercase tracking-[.1em] text-slate-400">
-Scraper Status
-</div>
-
-<div class="flex items-center gap-2 mt-2">
-<span id="scraperDot" class="status-dot bg-slate-400"></span>
-<p id="scraperStatus" class="text-base sm:text-lg font-bold tracking-tight text-slate-800 truncate">
-Checking...
-</p>
-</div>
-
-<p id="scraperDetail" class="mt-1 text-xs text-slate-500 truncate">
-Checking GitHub Actions...
-</p>
-
-</div>
-
-<div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0">
-<i class="fa-solid fa-gears"></i>
-</div>
-
-</div>
-</div>
-
-</section>
-
-<!-- SEARCH -->
-<section class="dashboard-card search-section rounded-[18px] p-3 sm:p-4 mb-5">
-
-<div class="flex flex-col md:flex-row gap-2.5">
-
-<div class="search-wrapper flex-1">
-
-<button
-id="searchButtonIcon"
-type="button"
-onclick="performSearch()"
-class="absolute left-0 top-0 w-10 h-full flex items-center justify-center text-slate-400 hover:text-blue-600 z-10"
-aria-label="Search">
-<i class="fa-solid fa-magnifying-glass text-sm"></i>
-</button>
-
-<input
-id="searchInput"
-type="text"
-autocomplete="off"
-placeholder="Search vessel name, code, voyage, type..."
-class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/80 focus:bg-white focus:outline-none focus:border-blue-500 text-sm text-slate-700 placeholder:text-slate-400">
-
-<div id="searchSuggestions" class="search-suggestions hidden"></div>
-
-</div>
-
-<button
-type="button"
-onclick="clearSearch()"
-class="btn px-4 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-600">
-<i class="fa-solid fa-xmark mr-2"></i>Clear
-</button>
-
-<button
-type="button"
-onclick="performSearch()"
-class="btn px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold">
-<i class="fa-solid fa-magnifying-glass mr-2"></i>Search
-</button>
-
-<button
-id="refreshButton"
-type="button"
-onclick="loadData()"
-class="btn refresh-btn px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
-<i class="fa-solid fa-rotate mr-2"></i>Refresh Data
-</button>
-
-</div>
-
-<div class="mt-3 flex flex-wrap items-center justify-between gap-2 px-1">
-
-<p class="text-[11px] text-slate-400">
-<i class="fa-solid fa-circle-info mr-1"></i>
-Refresh reloads the latest <code>data.json</code>.
-</p>
-
-<p id="searchResultInfo" class="text-[11px] font-semibold text-slate-500">
--
-</p>
-
-</div>
-</section>
-
-<!-- KPI -->
-<section
-id="statistics"
-class="relative z-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
-</section>
-
-<!-- ALL VESSEL TABLES -->
-<section id="sections" class="space-y-5"></section>
-
-<!-- SOURCE -->
-<section class="mt-5">
-
-<div class="dashboard-card rounded-[18px] px-4 py-4">
-
-<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-
-<div class="flex items-center gap-3">
-
-<div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center">
-<i class="fa-solid fa-database text-sm"></i>
-</div>
-
-<div>
-<p class="text-xs font-bold text-slate-700">Data Source</p>
-<p id="sourceText" class="text-[11px] text-slate-500 mt-0.5">
-Pelindo TPKS
-</p>
-</div>
-
-</div>
-
-<div class="flex items-center gap-2 text-[10px] text-slate-400">
-<span class="status-dot bg-emerald-500"></span>
-Automated data pipeline
-<span class="mx-1">•</span>
-v2.1.0
-</div>
-
-</div>
-</div>
-</section>
-
-</main>
-
-<!-- MODAL -->
-<div id="vesselModal" class="fixed inset-0 z-[100] hidden modal-backdrop p-3 sm:p-4">
-
-<div class="min-h-full flex items-center justify-center">
-
-<div
-id="vesselModalContent"
-class="modal-enter bg-white w-full max-w-2xl max-h-[calc(100vh-2rem)] rounded-[20px] shadow-2xl overflow-hidden flex flex-col">
-
-<div class="px-5 py-4 border-b border-slate-200 bg-white flex items-center justify-between flex-shrink-0">
-
-<div class="flex items-center gap-3 min-w-0">
-
-<div class="w-11 h-11 rounded-[14px] bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-<i class="fa-solid fa-ship"></i>
-</div>
-
-<div class="min-w-0">
-<h2 id="modalVesselName" class="font-bold text-lg tracking-tight text-slate-800 truncate">
-Vessel Detail
-</h2>
-
-<p id="modalVesselCode" class="text-xs text-slate-500 mt-0.5">
--
-</p>
-</div>
-
-</div>
-
-<button
-type="button"
-onclick="closeVesselModal()"
-class="btn w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-700 flex items-center justify-center"
-aria-label="Close">
-<i class="fa-solid fa-xmark"></i>
-</button>
-
-</div>
-
-<div class="px-5 py-5 overflow-y-auto bg-slate-50/50">
-<div id="modalVesselGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
-</div>
-
-<div class="px-5 py-3 border-t border-slate-200 bg-white flex justify-between items-center flex-shrink-0">
-
-<p class="text-[10px] text-slate-400">
-Vessel operational details
-</p>
-
-<button
-type="button"
-onclick="closeVesselModal()"
-class="btn px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold">
-Close
-</button>
-
-</div>
-
-</div>
-</div>
-</div>
-
-<footer class="mt-10 border-t border-slate-200">
-
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-<div class="flex flex-col sm:flex-row items-center justify-between gap-2">
-
-<p class="text-[11px] text-slate-400">
-TPKS Vessel Monitoring Dashboard
-</p>
-
-<p class="text-[11px] text-slate-400">
-Pelindo TPKS <span class="mx-1">•</span> Automated Monitoring
-</p>
-
-</div>
-</div>
-</footer>
-
-<script>
-const DATA_FILE="data.json";
-const GITHUB_WORKFLOW_API="https://api.github.com/repos/mprojectspace/logistics-hub-portal/actions/workflows/pelindo-scraper.yml/runs?branch=main&per_page=1";
-const DATA_REFRESH_INTERVAL=5*60*1000;
-const SCRAPER_STATUS_INTERVAL=2*60*1000;
-
-let DATA={
- updatedAt:"",
- source:"",
- vesselAlongside:[],
- confirmedVessel:[],
- openStack:[],
- vesselSchedule:[],
- vesselHistory:[],
- counts:{}
-};
-
-let CURRENT_SEARCH="";
-let SEARCH_SUGGESTIONS=[];
-let ACTIVE_SUGGESTION=-1;
-
-const SECTION_CONFIG={
- vesselAlongside:{
-  title:"Vessel Alongside",
-  icon:"fa-anchor",
-  description:"Vessels currently alongside the terminal.",
-  iconClass:"text-blue-600",
-  bgClass:"bg-blue-50"
- },
- confirmedVessel:{
-  title:"Confirmed Vessel",
-  icon:"fa-circle-check",
-  description:"Confirmed vessel operations and cargo readiness.",
-  iconClass:"text-emerald-600",
-  bgClass:"bg-emerald-50"
- },
- openStack:{
-  title:"Open Stack",
-  icon:"fa-box-open",
-  description:"Vessel and cargo information with open stack status.",
-  iconClass:"text-amber-600",
-  bgClass:"bg-amber-50"
- },
- vesselSchedule:{
-  title:"Vessel Schedule",
-  icon:"fa-calendar-days",
-  description:"Upcoming vessel schedule.",
-  iconClass:"text-purple-600",
-  bgClass:"bg-purple-50"
- },
- vesselHistory:{
-  title:"Vessel History",
-  icon:"fa-clock-rotate-left",
-  description:"Historical vessel movements and cargo activity.",
-  iconClass:"text-slate-600",
-  bgClass:"bg-slate-100"
- }
-};
-
-const SECTION_ORDER=Object.keys(SECTION_CONFIG);
-
-const TABLE_COLUMNS={
- vesselAlongside:[
-  {key:"vessel",label:"Vessel",type:"vessel"},
-  {key:"voyage",label:"Voyage",type:"text"},
-  {key:"type",label:"Type",type:"type"},
-  {key:"atb",label:"ATB",type:"text"},
-  {key:"etd",label:"ETD",type:"text"}
- ],
- confirmedVessel:[
-  {key:"vessel",label:"Vessel",type:"vessel"},
-  {key:"voyage",label:"Voyage",type:"text"},
-  {key:"type",label:"Type",type:"type"},
-  {key:"etb",label:"ETB",type:"text"},
-  {key:"etd",label:"ETD",type:"text"},
-  {key:"openStack",label:"Open Stack",type:"text"},
-  {key:"closingTime",label:"Closing",type:"text"},
-  {key:"booking",label:"Booking",type:"number"},
-  {key:"open",label:"Open",type:"number"},
-  {key:"actual",label:"Actual",type:"number"}
- ],
- openStack:[
-  {key:"vessel",label:"Vessel",type:"vessel"},
-  {key:"voyage",label:"Voyage",type:"text"},
-  {key:"type",label:"Type",type:"type"},
-  {key:"eta",label:"ETA",type:"datetime"},
-  {key:"etb",label:"ETB",type:"datetime"},
-  {key:"etd",label:"ETD",type:"datetime"},
-  {key:"openStack",label:"Open Stack",type:"datetime"},
-  {key:"closingTime",label:"Closing",type:"datetime"},
-  {key:"booking",label:"Booking",type:"number"},
-  {key:"open",label:"Open",type:"number"},
-  {key:"actual",label:"Actual",type:"number"}
- ],
- vesselSchedule:[
-  {key:"vessel",label:"Vessel",type:"vessel"},
-  {key:"voyage",label:"Voyage",type:"text"},
-  {key:"etb",label:"ETB",type:"text"}
- ],
- vesselHistory:[
-  {key:"vessel",label:"Vessel",type:"vessel"},
-  {key:"voyage",label:"Voyage",type:"text"},
-  {key:"type",label:"Type",type:"type"},
-  {key:"etb",label:"ETB",type:"text"},
-  {key:"atd",label:"ATD",type:"text"},
-  {key:"export",label:"Export",type:"number"},
-  {key:"import",label:"Import",type:"number"}
- ]
-};
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function escapeHtml(value){
- return String(value??"")
-  .replace(/&/g,"&amp;")
-  .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;")
-  .replace(/'/g,"&#039;");
-}
-
-function normalizeSearchValue(value){
- return String(value??"").toLowerCase().trim();
-}
-
-function formatValue(value){
- return value===null||value===undefined||value===""
-  ?"-"
-  :escapeHtml(value);
-}
-
-function formatNumber(value){
- if(value===null||value===undefined||value==="")return "-";
-
- const n=Number(String(value).replace(/,/g,""));
-
- return Number.isNaN(n)
-  ?escapeHtml(value)
-  :n.toLocaleString("en-US");
-}
-
-function formatDateTime(date){
- if(!date||Number.isNaN(date.getTime()))return "-";
-
- return new Intl.DateTimeFormat("id-ID",{
-  dateStyle:"medium",
-  timeStyle:"medium",
-  timeZone:"Asia/Jakarta"
- }).format(date)+" WIB";
-}
-
-function formatTime(date){
- if(!date||Number.isNaN(date.getTime()))return "-";
-
- return new Intl.DateTimeFormat("id-ID",{
-  hour:"2-digit",
-  minute:"2-digit",
-  timeZone:"Asia/Jakarta"
- }).format(date)+" WIB";
-}
-
-function renderDateTime(value){
-
- if(!value){
-  return '<span class="text-slate-400">-</span>';
- }
-
- const text=String(value).trim();
- const match=text.match(/^(.*?)\s+(\d{1,2}:\d{2}(?::\d{2})?)$/);
-
- if(!match){
-  return `
-  <div class="datetime-cell">
-   <div class="datetime-date">${escapeHtml(text)}</div>
-  </div>`;
- }
-
- return `
- <div class="datetime-cell">
-  <div class="datetime-date">${escapeHtml(match[1])}</div>
-  <div class="datetime-time">${escapeHtml(match[2])}</div>
- </div>`;
-}
-
-function getAgeMinutes(){
-
- const timestamp=DATA.updatedAt||DATA.lastUpdated;
-
- if(!timestamp)return null;
-
- const date=new Date(timestamp);
-
- if(Number.isNaN(date.getTime()))return null;
-
- return Math.max(
-  0,
-  (Date.now()-date.getTime())/60000
- );
-}
-
-function formatAge(minutes){
-
- if(minutes==null||Number.isNaN(minutes))return "-";
-
- if(minutes<1)return "just now";
-
- if(minutes<60)return `${Math.floor(minutes)} min`;
-
- const hours=Math.floor(minutes/60);
- const mins=Math.floor(minutes%60);
-
- if(hours<24){
-  return mins
-   ?`${hours} hr ${mins} min`
-   :`${hours} hr`;
- }
-
- const days=Math.floor(hours/24);
-
- return days===1?"1 day":`${days} days`;
-}
-
-/* =========================================================
-   CONNECTION / STATUS
-========================================================= */
-
-function updateConnectionStatus(state,text){
-
- const dot=document.getElementById("connectionDot");
- const label=document.getElementById("connectionText");
-
- if(!dot||!label)return;
-
- label.textContent=text;
- dot.className="status-dot";
-
- if(state==="online"){
-  dot.classList.add("bg-emerald-500");
- }else if(state==="loading"){
-  dot.classList.add("bg-blue-500","pulse");
- }else{
-  dot.classList.add("bg-red-500");
- }
-}
-
-function updateFreshness(){
-
- const badge=document.getElementById("freshnessBadge");
- const relative=document.getElementById("lastUpdatedRelative");
-
- if(!badge||!relative)return;
-
- const age=getAgeMinutes();
-
- badge.className=
-  "px-2 py-0.5 rounded-full text-[10px] font-bold";
-
- if(age===null){
-  badge.textContent="Unknown";
-  badge.classList.add("bg-slate-100","text-slate-500");
-  relative.textContent="No valid update timestamp.";
-  return;
- }
-
- relative.textContent=`${formatAge(age)} ago`;
-
- if(age<90){
-  badge.textContent="Fresh";
-  badge.classList.add("bg-emerald-50","text-emerald-700");
- }else if(age<180){
-  badge.textContent="Delayed";
-  badge.classList.add("bg-amber-50","text-amber-700");
- }else{
-  badge.textContent="Outdated";
-  badge.classList.add("bg-red-50","text-red-700");
- }
-}
-
-function getNextScraperUpdate(){
-
- const now=new Date();
- const next=new Date(now);
-
- if(now.getMinutes()<30){
-  next.setMinutes(30,0,0);
- }else{
-  next.setHours(now.getHours()+1,0,0,0);
- }
-
- return next;
-}
-
-function updateNextUpdate(){
-
- const next=getNextScraperUpdate();
-
- const label=document.getElementById("nextUpdate");
- const countdown=document.getElementById("nextUpdateCountdown");
-
- if(!label||!countdown)return;
-
- label.textContent=formatTime(next);
-
- const seconds=Math.floor(
-  Math.max(0,next-Date.now())/1000
- );
-
- const h=Math.floor(seconds/3600);
- const m=Math.floor(seconds%3600/60);
- const s=seconds%60;
-
- countdown.textContent=
-  h?`in ${h}h ${m}m`
-  :m?`in ${m}m ${s}s`
-  :`in ${s}s`;
-}
-
-/* =========================================================
-   GITHUB ACTIONS STATUS
-========================================================= */
-
-async function loadScraperStatus(){
-
- const dot=document.getElementById("scraperDot");
- const status=document.getElementById("scraperStatus");
- const detail=document.getElementById("scraperDetail");
-
- if(!dot||!status||!detail)return;
-
- try{
-
-  const response=await fetch(
-   GITHUB_WORKFLOW_API,
-   {cache:"no-store"}
-  );
-
-  if(!response.ok){
-   throw new Error(`HTTP ${response.status}`);
-  }
-
-  const run=(await response.json())?.workflow_runs?.[0];
-
-  if(!run){
-   throw new Error("No workflow run found");
-  }
-
-  dot.className="status-dot";
-
-  if(
-   run.status==="in_progress"||
-   run.status==="queued"
-  ){
-
-   dot.classList.add("bg-blue-500","pulse");
-
-   status.textContent=
-    run.status==="queued"
-     ?"Queued"
-     :"Running";
-
-  }else if(run.conclusion==="success"){
-
-   dot.classList.add("bg-emerald-500");
-   status.textContent="Operational";
-
-  }else{
-
-   dot.classList.add("bg-red-500");
-   status.textContent="Failed";
-  }
-
-  detail.textContent=
-   `Last run: ${formatDateTime(
-    new Date(run.updated_at||run.created_at)
-   )}`;
-
- }catch(error){
-
-  console.error(
-   "Failed to load scraper status:",
-   error
-  );
-
-  dot.className="status-dot bg-slate-400";
-  status.textContent="Unavailable";
-  detail.textContent=
-   "GitHub Actions status unavailable.";
- }
-}
-
-/* =========================================================
-   KPI
-========================================================= */
-
-function scrollToSection(sectionKey){
-
- const target=
-  document.getElementById(
-   `section-${sectionKey}`
-  );
-
- if(!target)return;
-
- target.scrollIntoView({
-  behavior:"smooth",
-  block:"start"
- });
-}
-
-function updateStatistics(){
-
- const container=document.getElementById("statistics");
-
- if(!container)return;
-
- const items=[
-  {
-   key:"vesselAlongside",
-   label:"Alongside",
-   subtitle:"At terminal",
-   icon:"fa-anchor",
-   iconClass:"text-blue-600",
-   bgClass:"bg-blue-50",
-   accent:"border-l-blue-500"
-  },
-  {
-   key:"confirmedVessel",
-   label:"Confirmed",
-   subtitle:"Confirmed ops",
-   icon:"fa-circle-check",
-   iconClass:"text-emerald-600",
-   bgClass:"bg-emerald-50",
-   accent:"border-l-emerald-500"
-  },
-  {
-   key:"openStack",
-   label:"Open Stack",
-   subtitle:"Cargo readiness",
-   icon:"fa-box-open",
-   iconClass:"text-amber-600",
-   bgClass:"bg-amber-50",
-   accent:"border-l-amber-500"
-  },
-  {
-   key:"vesselSchedule",
-   label:"Schedule",
-   subtitle:"Upcoming",
-   icon:"fa-calendar-days",
-   iconClass:"text-purple-600",
-   bgClass:"bg-purple-50",
-   accent:"border-l-purple-500"
-  },
-  {
-   key:"vesselHistory",
-   label:"History",
-   subtitle:"Completed",
-   icon:"fa-clock-rotate-left",
-   iconClass:"text-slate-600",
-   bgClass:"bg-slate-100",
-   accent:"border-l-slate-400"
-  }
- ];
-
- container.innerHTML=items.map(item=>{
-
-  const count=
-   Array.isArray(DATA[item.key])
-    ?DATA[item.key].length
-    :Number(DATA.counts?.[item.key]||0);
-
-  return `
-  <button
-   type="button"
-   class="dashboard-card kpi-card ${item.accent} border-l-[3px] rounded-[16px] p-4 ${item.iconClass} text-left w-full"
-   onclick="scrollToSection('${item.key}')"
-   title="Go to ${escapeHtml(item.label)}">
-
-   <div class="flex items-center justify-between gap-3">
-
-    <div>
-
-     <p class="text-[10px] font-bold uppercase tracking-[.08em] text-slate-500">
-      ${escapeHtml(item.label)}
-     </p>
-
-     <p class="mt-1 text-2xl font-bold tracking-tight text-slate-800">
-      ${count.toLocaleString("en-US")}
-     </p>
-
-     <p class="mt-0.5 text-[10px] text-slate-400">
-      ${escapeHtml(item.subtitle)}
-     </p>
-
-    </div>
-
-    <div class="w-10 h-10 rounded-xl ${item.bgClass} ${item.iconClass} flex items-center justify-center">
-     <i class="fa-solid ${item.icon} text-sm"></i>
-    </div>
-
-   </div>
-  </button>`;
- }).join("");
-}
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-function getSearchFields(vessel,sectionKey){
-
- const values=[];
-
- Object.entries(vessel||{}).forEach(
-  ([key,value])=>{
-   if(
-    value!==null&&
-    value!==undefined
-   ){
-    values.push(String(value));
-   }
-  }
- );
-
- values.push(
-  SECTION_CONFIG[sectionKey]?.title||""
- );
-
- return values;
-}
-
-function vesselMatches(vessel,query,sectionKey){
-
- if(!query)return true;
-
- return normalizeSearchValue(
-  getSearchFields(
-   vessel,
-   sectionKey
-  ).join(" ")
- ).includes(query);
-}
-
-/*
- Unique key:
- section + vesId + vesselName + vesselCode + voyage
-
- This keeps:
- SINAR BINTAN / 951S
- and
- SINAR BINTAN / 951N
-
- as separate records.
-*/
-
-function getVesselKey(vessel,sectionKey){
-
- return [
-  sectionKey,
-  vessel?.vesId||"",
-  vessel?.vesselName||"",
-  vessel?.vesselCode||"",
-  vessel?.voyage||""
- ].map(normalizeSearchValue).join("|");
-}
-
-/* =========================================================
-   BUILD SEARCH SUGGESTIONS
-========================================================= */
-
-function buildSuggestions(query){
-
- if(!query)return [];
-
- const q=normalizeSearchValue(query);
- const results=[];
- const seen=new Set();
-
- for(const sectionKey of SECTION_ORDER){
-
-  const records=
-   Array.isArray(DATA[sectionKey])
-    ?DATA[sectionKey]
-    :[];
-
-  records.forEach(vessel=>{
-
-   if(!vesselMatches(
-    vessel,
-    q,
-    sectionKey
-   ))return;
-
-   const key=
-    getVesselKey(
-     vessel,
-     sectionKey
-    );
-
-   if(seen.has(key))return;
-
-   seen.add(key);
-
-   results.push({
-    vessel,
-    sectionKey,
-    key
-   });
-  });
- }
-
- results.sort((a,b)=>{
-
-  function score(v){
-
-   const name=
-    normalizeSearchValue(
-     v.vesselName
-    );
-
-   const code=
-    normalizeSearchValue(
-     v.vesselCode
-    );
-
-   const voyage=
-    normalizeSearchValue(
-     v.voyage
-    );
-
-   if(
-    name===q||
-    `${name} ${voyage}`===q
-   )return 0;
-
-   if(
-    code===q||
-    voyage===q
-   )return 1;
-
-   if(
-    name.startsWith(q)||
-    code.startsWith(q)||
-    voyage.startsWith(q)
-   )return 2;
-
-   return 3;
-  }
-
-  return score(a.vessel)-score(b.vessel);
- });
-
- return results.slice(0,8);
-}
-
-function renderSearchSuggestions(query){
-
- const box=
-  document.getElementById(
-   "searchSuggestions"
-  );
-
- if(!box)return;
-
- SEARCH_SUGGESTIONS=
-  buildSuggestions(query);
-
- ACTIVE_SUGGESTION=-1;
-
- if(
-  !query||
-  !SEARCH_SUGGESTIONS.length
- ){
-
-  box.classList.add("hidden");
-  box.innerHTML="";
-  return;
- }
-
- box.innerHTML=
-  SEARCH_SUGGESTIONS.map(
-   (item,index)=>{
-
-    const v=item.vessel;
-    const cfg=
-     SECTION_CONFIG[item.sectionKey];
-
-    const details=[
-     v.vesselCode,
-     v.voyage
-      ?`Voyage ${v.voyage}`
-      :"",
-     cfg.title
-    ].filter(Boolean).join(" · ");
-
-    return `
     <div
-     class="search-suggestion px-4 py-3 flex items-center gap-3"
-     data-suggestion-index="${index}">
-
-     <div class="w-8 h-8 rounded-lg ${cfg.bgClass} ${cfg.iconClass} flex items-center justify-center flex-shrink-0">
-      <i class="fa-solid ${cfg.icon} text-xs"></i>
-     </div>
-
-     <div class="min-w-0 flex-1">
-
-      <div class="text-sm font-bold text-slate-800 truncate">
-       ${escapeHtml(v.vesselName||"-")}
-      </div>
-
-      <div class="text-[11px] text-slate-500 truncate">
-       ${escapeHtml(details)}
-      </div>
-
-     </div>
-
-     <i class="fa-solid fa-arrow-turn-down-left text-[10px] text-slate-300"></i>
-
-    </div>`;
-   }
-  ).join("");
-
- box.classList.remove("hidden");
-
- box.querySelectorAll(
-  "[data-suggestion-index]"
- ).forEach(element=>{
-
-  element.addEventListener(
-   "mousedown",
-   event=>{
-
-    event.preventDefault();
-
-    selectSuggestion(
-     Number(
-      element.dataset.suggestionIndex
-     )
-    );
-   }
-  );
- });
-}
-
-function selectSuggestion(index){
-
- const item=
-  SEARCH_SUGGESTIONS[index];
-
- if(!item)return;
-
- const input=
-  document.getElementById(
-   "searchInput"
-  );
-
- const v=item.vessel;
-
- const query=[
-  v.vesselName,
-  v.vesselCode,
-  v.voyage
- ].filter(Boolean).join(" ");
-
- input.value=query;
-
- CURRENT_SEARCH=
-  normalizeSearchValue(query);
-
- hideSuggestions();
-
- renderSections();
-
- /*
- Directly jump to the exact
- suggestion record.
- */
-
- jumpToSearchResult(
-  v,
-  item.sectionKey,
-  true
- );
-}
-
-function hideSuggestions(){
-
- const box=
-  document.getElementById(
-   "searchSuggestions"
-  );
-
- if(box){
-  box.classList.add("hidden");
- }
-
- ACTIVE_SUGGESTION=-1;
-}
-
-function findFirstSearchResult(query){
-
- const q=
-  normalizeSearchValue(query);
-
- /* Exact combination first */
-
- for(const sectionKey of SECTION_ORDER){
-
-  const records=
-   Array.isArray(DATA[sectionKey])
-    ?DATA[sectionKey]
-    :[];
-
-  const exact=records.find(v=>{
-
-   const combinations=[
-    `${v.vesselName||""} ${v.voyage||""}`,
-    `${v.vesselName||""} ${v.vesselCode||""} ${v.voyage||""}`,
-    `${v.vesselCode||""} ${v.voyage||""}`
-   ];
-
-   return combinations.some(
-    value=>
-     normalizeSearchValue(value)===q
-   );
-  });
-
-  if(exact){
-   return{
-    vessel:exact,
-    sectionKey
-   };
-  }
- }
-
- /* General search */
-
- for(const sectionKey of SECTION_ORDER){
-
-  const records=
-   Array.isArray(DATA[sectionKey])
-    ?DATA[sectionKey]
-    :[];
-
-  const found=
-   records.find(v=>
-    vesselMatches(
-     v,
-     q,
-     sectionKey
-    )
-   );
-
-  if(found){
-   return{
-    vessel:found,
-    sectionKey
-   };
-  }
- }
-
- return null;
-}
-
-function jumpToSearchResult(
- vessel,
- sectionKey,
- highlight=true
-){
-
- const section=
-  document.getElementById(
-   `section-${sectionKey}`
-  );
-
- if(!section)return;
-
- const key=
-  getVesselKey(
-   vessel,
-   sectionKey
-  );
-
- const row=[
-  ...section.querySelectorAll(
-   "tbody tr[data-vessel-key]"
-  )
- ].find(
-  element=>
-   element.dataset.vesselKey===key
- );
-
- if(!row)return;
-
- setTimeout(()=>{
-
-  row.scrollIntoView({
-   behavior:"smooth",
-   block:"center",
-   inline:"nearest"
-  });
-
-  if(highlight){
-
-   row.classList.remove(
-    "search-hit"
-   );
-
-   void row.offsetWidth;
-
-   row.classList.add(
-    "search-hit"
-   );
-
-   setTimeout(()=>{
-    row.classList.remove(
-     "search-hit"
-    );
-   },3000);
-  }
-
- },100);
-}
-
-function performSearch(){
-
- const input=
-  document.getElementById(
-   "searchInput"
-  );
-
- CURRENT_SEARCH=
-  normalizeSearchValue(
-   input?.value||""
-  );
-
- hideSuggestions();
-
- renderSections();
-
- if(!CURRENT_SEARCH){
-
-  const info=
-   document.getElementById(
-    "searchResultInfo"
-   );
-
-  const total=
-   SECTION_ORDER.reduce(
-    (sum,key)=>
-     sum+(DATA[key]?.length||0),
-    0
-   );
-
-  if(info){
-   info.textContent=
-    `${total.toLocaleString(
-     "en-US"
-    )} total records`;
-  }
-
-  return;
- }
-
- const found=
-  findFirstSearchResult(
-   CURRENT_SEARCH
-  );
-
- if(found){
-
-  jumpToSearchResult(
-   found.vessel,
-   found.sectionKey,
-   true
-  );
-
- }else{
-
-  const info=
-   document.getElementById(
-    "searchResultInfo"
-   );
-
-  if(info){
-   info.textContent=
-    "Data tidak ditemukan";
-  }
- }
-}
-
-function clearSearch(){
-
- const input=
-  document.getElementById(
-   "searchInput"
-  );
-
- if(input)input.value="";
-
- CURRENT_SEARCH="";
-
- hideSuggestions();
-
- renderSections();
-}
-
-function updateSuggestionActive(){
-
- const box=
-  document.getElementById(
-   "searchSuggestions"
-  );
-
- if(!box)return;
-
- box.querySelectorAll(
-  ".search-suggestion"
- ).forEach(
-  (element,index)=>{
-   element.classList.toggle(
-    "active",
-    index===ACTIVE_SUGGESTION
-   );
-  }
- );
-}
-
-/* =========================================================
-   RENDER SECTIONS
-========================================================= */
-
-function renderSections(){
-
- const container=
-  document.getElementById(
-   "sections"
-  );
-
- if(!container)return;
-
- let totalVisible=0;
- let totalRecords=0;
-
- container.innerHTML=
-  SECTION_ORDER.map(
-   sectionKey=>{
-
-    const config=
-     SECTION_CONFIG[sectionKey];
-
-    const records=
-     Array.isArray(DATA[sectionKey])
-      ?DATA[sectionKey]
-      :[];
-
-    totalRecords+=records.length;
-
-    const filtered=
-     records.filter(vessel=>
-      vesselMatches(
-       vessel,
-       CURRENT_SEARCH,
-       sectionKey
-      )
-     );
-
-    totalVisible+=filtered.length;
-
-    return renderSection(
-     sectionKey,
-     config,
-     filtered,
-     records.length
-    );
-   }
-  ).join("");
-
- const info=
-  document.getElementById(
-   "searchResultInfo"
-  );
-
- if(info){
-
-  info.textContent=
-   CURRENT_SEARCH
-    ?`Showing ${totalVisible.toLocaleString(
-      "en-US"
-     )} of ${totalRecords.toLocaleString(
-      "en-US"
-     )} records`
-    :`${totalRecords.toLocaleString(
-      "en-US"
-     )} total records`;
- }
-}
-
-function renderSection(
- sectionKey,
- config,
- records,
- totalCount
-){
-
- const columns=
-  TABLE_COLUMNS[sectionKey]||[];
-
- const tableClass=
-  sectionKey==="openStack"
-   ?"w-full open-stack-table"
-   :"w-full";
-
- return `
- <section
-  id="section-${sectionKey}"
-  class="section-card dashboard-section">
-
-  <!-- SECTION TITLE IS NOT STICKY -->
-
-  <div class="section-header px-4 sm:px-5 py-4 border-b border-slate-200">
-
-   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-
-    <div class="flex items-center gap-3">
-
-     <div class="w-10 h-10 rounded-xl ${config.bgClass} ${config.iconClass} flex items-center justify-center flex-shrink-0">
-      <i class="fa-solid ${config.icon} text-sm"></i>
-     </div>
-
-     <div>
-
-      <div class="flex items-center gap-2">
-
-       <h2 class="font-bold text-slate-800 tracking-tight">
-        ${escapeHtml(config.title)}
-       </h2>
-
-       <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">
-        ${records.length}
-       </span>
-
-      </div>
-
-      <p class="text-[11px] text-slate-500 mt-0.5">
-       ${escapeHtml(config.description)}
-      </p>
-
-     </div>
+        id="vesselModal"
+        class="modal-backdrop hidden"
+    >
+
+        <div
+            id="modalPanel"
+            class="modal-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modalTitle"
+        >
+
+            <div class="modal-header">
+
+                <div class="min-w-0">
+                    <h2
+                        id="modalTitle"
+                        class="modal-title"
+                    >
+                        Vessel Detail
+                    </h2>
+
+                    <div
+                        id="modalSubtitle"
+                        class="modal-subtitle"
+                    ></div>
+                </div>
+
+                <button
+                    type="button"
+                    onclick="closeModal()"
+                    class="modal-close"
+                    aria-label="Close"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <div
+                id="modalBody"
+                class="modal-body"
+            ></div>
+
+        </div>
 
     </div>
 
-    ${
-     CURRENT_SEARCH&&
-     totalCount!==records.length
-      ?`
-       <p class="text-[10px] font-semibold text-slate-400">
-        ${records.length} matching
-       </p>`
-      :""
-    }
 
-   </div>
-  </div>
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
 
-  <div class="section-scroll">
+    <script>
 
-  ${
-   records.length
+        const DATA_URL = "./data.json";
 
-   ?`
-    <table class="${tableClass}">
+        let CURRENT_DATA = null;
+        let CURRENT_SEARCH = "";
+        let SEARCH_RESULTS = [];
+        let ACTIVE_SUGGESTION = -1;
 
-     <!-- TABLE HEADER IS NOT STICKY -->
 
-     <thead class="table-header">
-      <tr>
-       ${columns.map(column=>`
-        <th class="text-left">
-         ${escapeHtml(column.label)}
-        </th>
-       `).join("")}
-      </tr>
-     </thead>
+        /* =========================================================
+           SECTION CONFIG
+           ========================================================= */
 
-     <tbody>
-      ${records.map(
-       vessel=>
-        renderTableRow(
-         vessel,
-         sectionKey,
-         columns
-        )
-      ).join("")}
-     </tbody>
+        const SECTION_CONFIG = [
+            {
+                key: "vesselAlongside",
+                title: "Vessel Alongside",
+                icon: "fa-ship",
+                subtitle: "Vessel currently alongside",
+                columns: [
+                    ["vesselName", "Vessel", "vessel"],
+                    ["voyage", "Voyage", "voyage"],
+                    ["type", "Type", "type"],
+                    ["atb", "ATB", "datetime"],
+                    ["etd", "ETD", "datetime"]
+                ]
+            },
+            {
+                key: "confirmedVessel",
+                title: "Confirmed Vessel",
+                icon: "fa-circle-check",
+                subtitle: "Confirmed vessel information",
+                columns: [
+                    ["vesselName", "Vessel", "vessel"],
+                    ["voyage", "Voyage", "voyage"],
+                    ["type", "Type", "type"],
+                    ["eta", "ETA", "datetime"],
+                    ["etb", "ETB", "datetime"],
+                    ["etd", "ETD", "datetime"]
+                ]
+            },
+            {
+                key: "openStack",
+                title: "Open Stack",
+                icon: "fa-box-open",
+                subtitle: "Vessel with export receiving / open stack information",
+                columns: [
+                    ["vesselName", "Vessel", "vessel"],
+                    ["voyage", "Voyage", "voyage"],
+                    ["type", "Type", "type"],
+                    ["openStack", "Open Stack", "datetime"],
+                    ["closingTime", "Closing Time", "datetime"]
+                ]
+            },
+            {
+                key: "vesselSchedule",
+                title: "Vessel Schedule",
+                icon: "fa-calendar-days",
+                subtitle: "Scheduled vessel information",
+                columns: [
+                    ["vesselName", "Vessel", "vessel"],
+                    ["voyage", "Voyage", "voyage"],
+                    ["type", "Type", "type"],
+                    ["eta", "ETA", "datetime"],
+                    ["etb", "ETB", "datetime"],
+                    ["etd", "ETD", "datetime"]
+                ]
+            },
+            {
+                key: "vesselHistory",
+                title: "Vessel History",
+                icon: "fa-clock-rotate-left",
+                subtitle: "Vessel historical records",
+                columns: [
+                    ["vesselName", "Vessel", "vessel"],
+                    ["voyage", "Voyage", "voyage"],
+                    ["type", "Type", "type"],
+                    ["atb", "ATB", "datetime"],
+                    ["atd", "ATD", "datetime"]
+                ]
+            }
+        ];
 
-    </table>`
 
-   :`
-    <div class="py-14 text-center">
+        /* =========================================================
+           HELPERS
+           ========================================================= */
 
-     <div class="w-12 h-12 rounded-2xl bg-slate-100 mx-auto flex items-center justify-center">
-      <i class="fa-solid fa-inbox text-slate-400"></i>
-     </div>
+        function escapeHtml(value) {
 
-     <p class="mt-3 text-sm font-semibold text-slate-600">
-      ${CURRENT_SEARCH
-       ?"No matching vessel found"
-       :"No vessel data available"}
-     </p>
+            if (value === null || value === undefined) {
+                return "";
+            }
 
-     <p class="mt-1 text-xs text-slate-400">
-      ${CURRENT_SEARCH
-       ?"Try another search keyword."
-       :"The scraper did not return records for this section."}
-     </p>
-
-    </div>`
-  }
-
-  </div>
- </section>`;
-}
-
-function renderTableRow(
- vessel,
- sectionKey,
- columns
-){
-
- let encoded="";
-
- try{
-  encoded=
-   encodeURIComponent(
-    JSON.stringify(vessel)
-   );
- }catch(error){
-  console.error(
-   "Failed to encode vessel:",
-   error
-  );
- }
-
- const vesselKey=
-  getVesselKey(
-   vessel,
-   sectionKey
-  );
-
- return `
- <tr
-  class="table-row-clickable"
-  data-vessel-key="${escapeHtml(vesselKey)}"
-  ${encoded
-   ?`onclick="openVesselModal('${encoded}')"`
-   :""}
-  title="Click to view vessel details">
-
-  ${columns.map(
-   column=>
-    renderCell(
-     vessel,
-     column
-    )
-  ).join("")}
-
- </tr>`;
-}
-
-function renderCell(
- vessel,
- column
-){
-
- if(column.type==="vessel"){
-
-  return `
-  <td>
-
-   <div class="vessel-name">
-    ${escapeHtml(
-     vessel.vesselName||"-"
-    )}
-   </div>
-
-   ${
-    vessel.vesselCode
-     ?`
-      <div class="vessel-code">
-       ${escapeHtml(
-        vessel.vesselCode
-       )}
-      </div>`
-     :""
-   }
-
-  </td>`;
- }
-
- if(column.type==="type"){
-
-  const value=
-   vessel[column.key];
-
-  return `
-  <td>
-
-   ${
-    value
-     ?`
-      <span class="type-badge">
-       ${escapeHtml(value)}
-      </span>`
-     :`<span class="text-slate-400">-</span>`
-   }
-
-  </td>`;
- }
-
- if(column.type==="datetime"){
-
-  return `
-  <td>
-   ${renderDateTime(
-    vessel[column.key]
-   )}
-  </td>`;
- }
-
- if(column.type==="number"){
-
-  return `
-  <td class="number-cell ${
-   ["booking","open","actual"].includes(
-    column.key
-   )
-    ?"numeric-cell"
-    :""
-  }">
-   ${formatNumber(
-    vessel[column.key]
-   )}
-  </td>`;
- }
-
- return `
- <td class="whitespace-nowrap text-slate-600 text-xs font-medium">
-  ${formatValue(
-   vessel[column.key]
-  )}
- </td>`;
-}
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-function openVesselModal(encodedVessel){
-
- try{
-
-  const vessel=
-   JSON.parse(
-    decodeURIComponent(
-     encodedVessel
-    )
-   );
-
-  const modal=
-   document.getElementById(
-    "vesselModal"
-   );
-
-  const name=
-   document.getElementById(
-    "modalVesselName"
-   );
-
-  const code=
-   document.getElementById(
-    "modalVesselCode"
-   );
-
-  const grid=
-   document.getElementById(
-    "modalVesselGrid"
-   );
-
-  if(!modal||!name||!code||!grid){
-   throw new Error(
-    "Modal elements not found"
-   );
-  }
-
-  name.textContent=
-   vessel.vesselName||
-   "Vessel Detail";
-
-  code.textContent=
-   vessel.vesselCode||
-   "No vessel code";
-
-  const fields=[
-   ["Vessel Name",vessel.vesselName],
-   ["Vessel Code",vessel.vesselCode],
-   ["Voyage",vessel.voyage],
-   ["Type",vessel.type],
-   ["ETA",vessel.eta],
-   ["ETB",vessel.etb],
-   ["ATB",vessel.atb],
-   ["ETD",vessel.etd],
-   ["ATD",vessel.atd],
-   ["Open Stack",vessel.openStack],
-   ["Closing Time",vessel.closingTime],
-   ["Booking",vessel.booking],
-   ["Open",vessel.open],
-   ["Actual",vessel.actual],
-   ["Export",vessel.export],
-   ["Export TEUs",vessel.exportTeus],
-   ["Import",vessel.import],
-   ["Import TEUs",vessel.importTeus]
-  ];
-
-  const numeric=[
-   "Booking",
-   "Open",
-   "Actual",
-   "Export",
-   "Export TEUs",
-   "Import",
-   "Import TEUs"
-  ];
-
-  grid.innerHTML=
-   fields
-    .filter(([,value])=>
-     value!==null&&
-     value!==undefined&&
-     String(value).trim()!==""
-    )
-    .map(
-     ([label,value])=>`
-
-      <div class="modal-field rounded-xl px-3.5 py-3">
-
-       <p class="text-[9px] font-bold uppercase tracking-[.1em] text-slate-400">
-        ${escapeHtml(label)}
-       </p>
-
-       <p class="mt-1 text-sm font-semibold text-slate-800 break-words leading-tight">
-        ${
-         numeric.includes(label)
-          ?formatNumber(value)
-          :formatValue(value)
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
-       </p>
-
-      </div>
-     `
-    ).join("");
-
-  modal.classList.remove(
-   "hidden"
-  );
 
-  document.body.classList.add(
-   "overflow-hidden"
-  );
-
- }catch(error){
 
-  console.error(
-   "Failed to open vessel modal:",
-   error
-  );
- }
-}
+        function normalizeSearchValue(value) {
 
-function closeVesselModal(){
+            return String(value ?? "")
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, " ");
+        }
 
- const modal=
-  document.getElementById(
-   "vesselModal"
-  );
-
- if(modal){
-  modal.classList.add(
-   "hidden"
-  );
- }
 
- document.body.classList.remove(
-  "overflow-hidden"
- );
-}
-
-function updateLastUpdate(){
-
- const label=
-  document.getElementById(
-   "lastUpdated"
-  );
-
- if(!label)return;
-
- const timestamp=
-  DATA.updatedAt||
-  DATA.lastUpdated;
-
- if(!timestamp){
-  label.textContent="-";
-  return;
- }
-
- const date=
-  new Date(timestamp);
-
- label.textContent=
-  Number.isNaN(date.getTime())
-   ?timestamp
-   :formatDateTime(date);
-}
-
-function updateSource(){
-
- const element=
-  document.getElementById(
-   "sourceText"
-  );
-
- if(element){
-  element.textContent=
-   DATA.source||
-   "Pelindo TPKS";
- }
-}
-
-/* =========================================================
-   LOAD DATA
-========================================================= */
-
-async function loadData(){
-
- const refreshButton=
-  document.getElementById(
-   "refreshButton"
-  );
-
- updateConnectionStatus(
-  "loading",
-  "Loading..."
- );
-
- if(refreshButton){
-
-  refreshButton.disabled=true;
-
-  refreshButton.innerHTML=
-   '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Refreshing...';
- }
-
- try{
-
-  const response=
-   await fetch(
-    `${DATA_FILE}?t=${Date.now()}`,
-    {cache:"no-store"}
-   );
-
-  if(!response.ok){
-
-   throw new Error(
-    `HTTP ${response.status} while loading ${DATA_FILE}`
-   );
-  }
-
-  const responseText=
-   await response.text();
-
-  if(!responseText.trim()){
-   throw new Error(
-    "data.json is empty"
-   );
-  }
-
-  let json;
-
-  try{
-   json=JSON.parse(
-    responseText
-   );
-  }catch(error){
-   throw new Error(
-    "data.json is not valid JSON"
-   );
-  }
-
-  if(
-   !json||
-   typeof json!=="object"||
-   Array.isArray(json)
-  ){
-
-   throw new Error(
-    "data.json has an invalid root structure"
-   );
-  }
-
-  DATA={
-   updatedAt:
-    json.updatedAt||
-    json.lastUpdated||
-    "",
-
-   source:
-    json.source||
-    "",
-
-   vesselAlongside:
-    Array.isArray(
-     json.vesselAlongside
-    )
-     ?json.vesselAlongside
-     :[],
-
-   confirmedVessel:
-    Array.isArray(
-     json.confirmedVessel
-    )
-     ?json.confirmedVessel
-     :[],
-
-   openStack:
-    Array.isArray(
-     json.openStack
-    )
-     ?json.openStack
-     :[],
-
-   vesselSchedule:
-    Array.isArray(
-     json.vesselSchedule
-    )
-     ?json.vesselSchedule
-     :[],
-
-   vesselHistory:
-    Array.isArray(
-     json.vesselHistory
-    )
-     ?json.vesselHistory
-     :[],
-
-   counts:
-    json.counts&&
-    typeof json.counts==="object"
-     ?json.counts
-     :{}
-  };
-
-  console.log(
-   "TPKS data loaded:",
-   {
-    vesselAlongside:
-     DATA.vesselAlongside.length,
-    confirmedVessel:
-     DATA.confirmedVessel.length,
-    openStack:
-     DATA.openStack.length,
-    vesselSchedule:
-     DATA.vesselSchedule.length,
-    vesselHistory:
-     DATA.vesselHistory.length
-   }
-  );
-
-  updateStatistics();
-  updateLastUpdate();
-  updateFreshness();
-  updateNextUpdate();
-  updateSource();
-  renderSections();
-
-  updateConnectionStatus(
-   "online",
-   "Connected"
-  );
-
- }catch(error){
-
-  console.error(
-   "Failed to load data:",
-   error
-  );
-
-  updateConnectionStatus(
-   "offline",
-   "Connection Error"
-  );
-
-  renderDataError(
-   error?.message||
-   "Unknown data loading error"
-  );
-
- }finally{
-
-  if(refreshButton){
-
-   refreshButton.disabled=false;
-
-   refreshButton.innerHTML=
-    '<i class="fa-solid fa-rotate mr-2"></i>Refresh Data';
-  }
- }
-}
-
-function renderDataError(message){
-
- const statistics=
-  document.getElementById(
-   "statistics"
-  );
-
- const sections=
-  document.getElementById(
-   "sections"
-  );
-
- if(statistics){
-  statistics.innerHTML="";
- }
-
- if(sections){
-
-  sections.innerHTML=`
-  <section class="section-card border-red-200">
-
-   <div class="p-6 sm:p-8">
-
-    <div class="flex items-start gap-4">
-
-     <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-     </div>
-
-     <div class="min-w-0">
-
-      <h2 class="font-bold text-slate-800">
-       Unable to Load Data
-      </h2>
-
-      <p class="mt-1 text-sm text-slate-500">
-       The dashboard could not load the latest
-       <code>data.json</code>.
-      </p>
-
-      <p class="mt-2 text-xs text-red-600 break-words">
-       ${escapeHtml(message)}
-      </p>
-
-      <button
-       type="button"
-       onclick="loadData()"
-       class="btn mt-4 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">
-       <i class="fa-solid fa-rotate mr-2"></i>
-       Try Again
-      </button>
-
-     </div>
-    </div>
-   </div>
-  </section>`;
- }
-}
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-const searchInput=
- document.getElementById(
-  "searchInput"
- );
-
-if(searchInput){
-
- searchInput.addEventListener(
-  "input",
-  event=>{
-
-   const value=
-    event.target.value;
-
-   CURRENT_SEARCH=
-    normalizeSearchValue(
-     value
-    );
-
-   renderSections();
-   renderSearchSuggestions(
-    value
-   );
-  }
- );
-
- searchInput.addEventListener(
-  "keydown",
-  event=>{
-
-   if(event.key==="Enter"){
-
-    event.preventDefault();
-
-    if(
-     ACTIVE_SUGGESTION>=0&&
-     SEARCH_SUGGESTIONS[
-      ACTIVE_SUGGESTION
-     ]
-    ){
-
-     selectSuggestion(
-      ACTIVE_SUGGESTION
-     );
-
-    }else{
-
-     performSearch();
-    }
-
-    return;
-   }
-
-   if(event.key==="Escape"){
-
-    hideSuggestions();
-    return;
-   }
-
-   if(
-    event.key==="ArrowDown"&&
-    SEARCH_SUGGESTIONS.length
-   ){
-
-    event.preventDefault();
-
-    ACTIVE_SUGGESTION=
-     (
-      ACTIVE_SUGGESTION+1
-     )%
-     SEARCH_SUGGESTIONS.length;
-
-    updateSuggestionActive();
-
-    return;
-   }
-
-   if(
-    event.key==="ArrowUp"&&
-    SEARCH_SUGGESTIONS.length
-   ){
-
-    event.preventDefault();
-
-    ACTIVE_SUGGESTION=
-     (
-      ACTIVE_SUGGESTION-1+
-      SEARCH_SUGGESTIONS.length
-     )%
-     SEARCH_SUGGESTIONS.length;
-
-    updateSuggestionActive();
-   }
-  }
- );
-}
-
-/* Close suggestion when clicking outside */
-
-document.addEventListener(
- "click",
- event=>{
-
-  const wrapper=
-   document.querySelector(
-    ".search-wrapper"
-   );
-
-  if(
-   wrapper&&
-   !wrapper.contains(
-    event.target
-   )
-  ){
-   hideSuggestions();
-  }
- }
-);
-
-/* Modal click outside */
-
-const vesselModal=
- document.getElementById(
-  "vesselModal"
- );
-
-if(vesselModal){
-
- vesselModal.addEventListener(
-  "click",
-  event=>{
-
-   if(
-    event.target===
-    vesselModal
-   ){
-    closeVesselModal();
-   }
-  }
- );
-}
-
-/* ESC */
-
-document.addEventListener(
- "keydown",
- event=>{
-
-  if(event.key==="Escape"){
-
-   hideSuggestions();
-
-   if(
-    !vesselModal?.classList.contains(
-     "hidden"
-    )
-   ){
-    closeVesselModal();
-   }
-  }
- }
-);
-
-/* =========================================================
-   TIMERS
-========================================================= */
-
-setInterval(
- loadData,
- DATA_REFRESH_INTERVAL
-);
-
-setInterval(
- updateFreshness,
- 30*1000
-);
-
-setInterval(
- updateNextUpdate,
- 1000
-);
-
-setInterval(
- loadScraperStatus,
- SCRAPER_STATUS_INTERVAL
-);
-
-/* INITIAL */
-
-loadData();
-loadScraperStatus();
-updateNextUpdate();
-</script>
+        function formatDateTime(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                String(value).trim() === ""
+            ) {
+                return "—";
+            }
+
+            return String(value);
+        }
+
+
+        function formatNumber(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+                return "—";
+            }
+
+            const number = Number(
+                String(value).replace(/,/g, "")
+            );
+
+            if (!Number.isFinite(number)) {
+                return escapeHtml(value);
+            }
+
+            return number.toLocaleString("en-US");
+        }
+
+
+        function sectionByKey(sectionKey) {
+
+            return SECTION_CONFIG.find(
+                item => item.key === sectionKey
+            );
+        }
+
+
+        function getSectionData(sectionKey) {
+
+            if (!CURRENT_DATA) {
+                return [];
+            }
+
+            return Array.isArray(CURRENT_DATA[sectionKey])
+                ? CURRENT_DATA[sectionKey]
+                : [];
+        }
+
+
+        /* =========================================================
+           SEARCH KEY
+           
+           Vessel name + vessel code + voyage + section
+           membuat voyage berbeda tetap dianggap berbeda.
+           ========================================================= */
+
+        function getVesselKey(vessel, sectionKey) {
+
+            return [
+                sectionKey,
+                vessel?.vesId || "",
+                vessel?.vesselName || "",
+                vessel?.vesselCode || "",
+                vessel?.voyage || ""
+            ]
+                .map(normalizeSearchValue)
+                .join("|");
+        }
+
+
+        function getSearchFields(vessel, sectionKey) {
+
+            const section = sectionByKey(sectionKey);
+
+            const values = [];
+
+            if (section) {
+                values.push(section.title);
+            }
+
+            if (vessel && typeof vessel === "object") {
+
+                Object.entries(vessel).forEach(
+                    ([key, value]) => {
+
+                        if (
+                            value !== null &&
+                            value !== undefined &&
+                            typeof value !== "object"
+                        ) {
+                            values.push(value);
+                        }
+
+                    }
+                );
+
+            }
+
+            return normalizeSearchValue(
+                values.join(" ")
+            );
+        }
+
+
+        function vesselMatches(vessel, sectionKey, query) {
+
+            if (!query) {
+                return true;
+            }
+
+            return getSearchFields(
+                vessel,
+                sectionKey
+            ).includes(
+                normalizeSearchValue(query)
+            );
+        }
+
+
+        /* =========================================================
+           SEARCH SUGGESTIONS
+           ========================================================= */
+
+        function buildSuggestions(query) {
+
+            const q = normalizeSearchValue(query);
+
+            if (!q || !CURRENT_DATA) {
+                return [];
+            }
+
+            const results = [];
+
+            SECTION_CONFIG.forEach(section => {
+
+                const vessels = getSectionData(section.key);
+
+                vessels.forEach(vessel => {
+
+                    if (!vesselMatches(
+                        vessel,
+                        section.key,
+                        q
+                    )) {
+                        return;
+                    }
+
+                    const name =
+                        normalizeSearchValue(
+                            vessel?.vesselName
+                        );
+
+                    const code =
+                        normalizeSearchValue(
+                            vessel?.vesselCode
+                        );
+
+                    const voyage =
+                        normalizeSearchValue(
+                            vessel?.voyage
+                        );
+
+                    const combined =
+                        `${name} ${code} ${voyage}`;
+
+                    let priority = 5;
+
+                    if (name === q) {
+                        priority = 0;
+                    }
+                    else if (
+                        combined === q
+                    ) {
+                        priority = 1;
+                    }
+                    else if (
+                        code === q ||
+                        voyage === q
+                    ) {
+                        priority = 2;
+                    }
+                    else if (
+                        name.startsWith(q) ||
+                        code.startsWith(q) ||
+                        voyage.startsWith(q)
+                    ) {
+                        priority = 3;
+                    }
+
+                    results.push({
+                        vessel,
+                        sectionKey: section.key,
+                        priority
+                    });
+
+                });
+
+            });
+
+            results.sort((a, b) => {
+
+                if (a.priority !== b.priority) {
+                    return a.priority - b.priority;
+                }
+
+                const aName =
+                    normalizeSearchValue(
+                        a.vessel?.vesselName
+                    );
+
+                const bName =
+                    normalizeSearchValue(
+                        b.vessel?.vesselName
+                    );
+
+                return aName.localeCompare(bName);
+
+            });
+
+            /*
+             * Hindari suggestion duplikat.
+             * Voyage berbeda tetap berbeda.
+             */
+
+            const unique = [];
+            const seen = new Set();
+
+            results.forEach(result => {
+
+                const key = getVesselKey(
+                    result.vessel,
+                    result.sectionKey
+                );
+
+                if (!seen.has(key)) {
+
+                    seen.add(key);
+                    unique.push(result);
+
+                }
+
+            });
+
+            return unique.slice(0, 8);
+        }
+
+
+        function renderSuggestions(query) {
+
+            const container =
+                document.getElementById(
+                    "searchSuggestions"
+                );
+
+            const suggestions =
+                buildSuggestions(query);
+
+            SEARCH_RESULTS = suggestions;
+
+            ACTIVE_SUGGESTION = -1;
+
+            if (!query || suggestions.length === 0) {
+
+                container.innerHTML = "";
+                container.classList.add("hidden");
+
+                return;
+            }
+
+            container.innerHTML =
+                suggestions.map(
+                    (item, index) => {
+
+                        const vessel =
+                            item.vessel;
+
+                        const section =
+                            sectionByKey(
+                                item.sectionKey
+                            );
+
+                        const name =
+                            vessel?.vesselName ||
+                            "Unnamed Vessel";
+
+                        const code =
+                            vessel?.vesselCode ||
+                            "—";
+
+                        const voyage =
+                            vessel?.voyage ||
+                            "—";
+
+                        return `
+                            <button
+                                type="button"
+                                class="suggestion-item"
+                                data-index="${index}"
+                                onmousedown="selectSuggestion(${index})"
+                            >
+                                <div class="suggestion-title">
+                                    <i class="fa-solid fa-ship text-[11px] text-slate-400"></i>
+
+                                    <span class="suggestion-vessel">
+                                        ${escapeHtml(name)}
+                                    </span>
+                                </div>
+
+                                <div class="suggestion-meta">
+                                    ${escapeHtml(code)}
+                                    · Voyage ${escapeHtml(voyage)}
+                                    · ${escapeHtml(section?.title || "")}
+                                </div>
+                            </button>
+                        `;
+
+                    }
+                )
+                .join("");
+
+            container.classList.remove("hidden");
+        }
+
+
+        function selectSuggestion(index) {
+
+            const result =
+                SEARCH_RESULTS[index];
+
+            if (!result) {
+                return;
+            }
+
+            const vessel =
+                result.vessel;
+
+            const input =
+                document.getElementById(
+                    "searchInput"
+                );
+
+            input.value =
+                [
+                    vessel?.vesselName,
+                    vessel?.vesselCode,
+                    vessel?.voyage
+                ]
+                    .filter(Boolean)
+                    .join(" ");
+
+            CURRENT_SEARCH = input.value;
+
+            document
+                .getElementById("searchSuggestions")
+                .classList.add("hidden");
+
+            document
+                .getElementById("clearSearchButton")
+                .classList.remove("hidden");
+
+            renderAllSections();
+
+            setTimeout(() => {
+
+                jumpToSearchResult(
+                    vessel,
+                    result.sectionKey,
+                    true
+                );
+
+            }, 50);
+        }
+
+
+        /* =========================================================
+           FIND SEARCH RESULT
+           ========================================================= */
+
+        function findFirstSearchResult(query) {
+
+            if (!CURRENT_DATA || !query) {
+                return null;
+            }
+
+            const q =
+                normalizeSearchValue(query);
+
+            /*
+             * Prioritas 1:
+             * exact vessel name + voyage
+             */
+
+            for (const section of SECTION_CONFIG) {
+
+                for (const vessel of getSectionData(section.key)) {
+
+                    const name =
+                        normalizeSearchValue(
+                            vessel?.vesselName
+                        );
+
+                    const voyage =
+                        normalizeSearchValue(
+                            vessel?.voyage
+                        );
+
+                    const code =
+                        normalizeSearchValue(
+                            vessel?.vesselCode
+                        );
+
+                    const combinations = [
+                        `${name} ${voyage}`,
+                        `${name} ${code}`,
+                        `${name} ${code} ${voyage}`
+                    ];
+
+                    if (
+                        combinations.some(
+                            combination =>
+                                combination === q
+                        )
+                    ) {
+                        return {
+                            vessel,
+                            sectionKey: section.key
+                        };
+                    }
+
+                }
+
+            }
+
+            /*
+             * Prioritas 2:
+             * exact field
+             */
+
+            for (const section of SECTION_CONFIG) {
+
+                for (const vessel of getSectionData(section.key)) {
+
+                    const fields = [
+                        vessel?.vesselName,
+                        vessel?.vesselCode,
+                        vessel?.voyage
+                    ]
+                        .filter(Boolean)
+                        .map(normalizeSearchValue);
+
+                    if (fields.includes(q)) {
+
+                        return {
+                            vessel,
+                            sectionKey: section.key
+                        };
+
+                    }
+
+                }
+
+            }
+
+            /*
+             * Prioritas 3:
+             * general search
+             */
+
+            for (const section of SECTION_CONFIG) {
+
+                for (const vessel of getSectionData(section.key)) {
+
+                    if (
+                        vesselMatches(
+                            vessel,
+                            section.key,
+                            q
+                        )
+                    ) {
+                        return {
+                            vessel,
+                            sectionKey: section.key
+                        };
+                    }
+
+                }
+
+            }
+
+            return null;
+        }
+
+
+        function performSearch() {
+
+            const input =
+                document.getElementById(
+                    "searchInput"
+                );
+
+            const query =
+                input.value.trim();
+
+            CURRENT_SEARCH = query;
+
+            document
+                .getElementById(
+                    "searchSuggestions"
+                )
+                .classList.add("hidden");
+
+            if (!query) {
+
+                document
+                    .getElementById(
+                        "searchStatus"
+                    )
+                    .textContent = "";
+
+                renderAllSections();
+
+                return;
+            }
+
+            document
+                .getElementById(
+                    "clearSearchButton"
+                )
+                .classList.remove("hidden");
+
+            renderAllSections();
+
+            const result =
+                findFirstSearchResult(query);
+
+            if (!result) {
+
+                document
+                    .getElementById(
+                        "searchStatus"
+                    )
+                    .textContent =
+                    "Data tidak ditemukan.";
+
+                return;
+            }
+
+            document
+                .getElementById(
+                    "searchStatus"
+                )
+                .textContent =
+                "Menampilkan hasil pencarian.";
+
+            setTimeout(() => {
+
+                jumpToSearchResult(
+                    result.vessel,
+                    result.sectionKey,
+                    true
+                );
+
+            }, 50);
+        }
+
+
+        function jumpToSearchResult(
+            vessel,
+            sectionKey,
+            highlight = true
+        ) {
+
+            const key =
+                getVesselKey(
+                    vessel,
+                    sectionKey
+                );
+
+            const row =
+                document.querySelector(
+                    `[data-vessel-key="${CSS.escape(key)}"]`
+                );
+
+            if (!row) {
+                return;
+            }
+
+            row.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            if (highlight) {
+
+                row.classList.remove(
+                    "search-hit"
+                );
+
+                /*
+                 * Force reflow agar animation
+                 * bisa dimainkan kembali.
+                 */
+
+                void row.offsetWidth;
+
+                row.classList.add(
+                    "search-hit"
+                );
+
+                setTimeout(() => {
+
+                    row.classList.remove(
+                        "search-hit"
+                    );
+
+                }, 3000);
+            }
+        }
+
+
+        function clearSearch() {
+
+            const input =
+                document.getElementById(
+                    "searchInput"
+                );
+
+            input.value = "";
+
+            CURRENT_SEARCH = "";
+
+            document
+                .getElementById(
+                    "searchSuggestions"
+                )
+                .classList.add("hidden");
+
+            document
+                .getElementById(
+                    "clearSearchButton"
+                )
+                .classList.add("hidden");
+
+            document
+                .getElementById(
+                    "searchStatus"
+                )
+                .textContent = "";
+
+            renderAllSections();
+
+            input.focus();
+        }
+
+
+        /* =========================================================
+           KPI
+           ========================================================= */
+
+        function updateStatistics() {
+
+            const container =
+                document.getElementById(
+                    "statisticsGrid"
+                );
+
+            if (!CURRENT_DATA) {
+                container.innerHTML = "";
+                return;
+            }
+
+            const counts =
+                CURRENT_DATA.counts || {};
+
+            const items = [
+                {
+                    key: "vesselAlongside",
+                    title: "Alongside",
+                    value: counts.vesselAlongside ?? 0,
+                    icon: "fa-ship"
+                },
+                {
+                    key: "confirmedVessel",
+                    title: "Confirmed",
+                    value: counts.confirmedVessel ?? 0,
+                    icon: "fa-circle-check"
+                },
+                {
+                    key: "openStack",
+                    title: "Open Stack",
+                    value: counts.openStack ?? 0,
+                    icon: "fa-box-open"
+                },
+                {
+                    key: "vesselSchedule",
+                    title: "Schedule",
+                    value: counts.vesselSchedule ?? 0,
+                    icon: "fa-calendar-days"
+                },
+                {
+                    key: "vesselHistory",
+                    title: "History",
+                    value: counts.vesselHistory ?? 0,
+                    icon: "fa-clock-rotate-left"
+                }
+            ];
+
+            container.innerHTML =
+                items.map(item => `
+                    <button
+                        type="button"
+                        onclick="scrollToSection('${item.key}')"
+                        class="stat-card text-left p-4"
+                    >
+                        <div class="flex items-center justify-between gap-3">
+
+                            <div class="min-w-0">
+
+                                <div class="text-[10px] font-bold uppercase tracking-wide text-slate-400">
+                                    ${escapeHtml(item.title)}
+                                </div>
+
+                                <div class="mt-1 text-xl font-bold text-slate-900">
+                                    ${formatNumber(item.value)}
+                                </div>
+
+                            </div>
+
+                            <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center flex-none">
+                                <i class="fa-solid ${item.icon} text-sm"></i>
+                            </div>
+
+                        </div>
+                    </button>
+                `)
+                .join("");
+        }
+
+
+        function scrollToSection(sectionKey) {
+
+            const section =
+                document.getElementById(
+                    `section-${sectionKey}`
+                );
+
+            if (!section) {
+                return;
+            }
+
+            section.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+
+
+        /* =========================================================
+           RENDER SECTION
+           ========================================================= */
+
+        function renderAllSections() {
+
+            const container =
+                document.getElementById(
+                    "dashboardSections"
+                );
+
+            container.innerHTML = "";
+
+            SECTION_CONFIG.forEach(section => {
+
+                const data =
+                    getSectionData(
+                        section.key
+                    );
+
+                renderSection(
+                    container,
+                    section,
+                    data
+                );
+
+            });
+        }
+
+
+        function renderSection(
+            container,
+            section,
+            data
+        ) {
+
+            const sectionElement =
+                document.createElement("section");
+
+            sectionElement.id =
+                `section-${section.key}`;
+
+            sectionElement.className =
+                "section-card dashboard-section";
+
+
+            /*
+             * HEADER SECTION
+             *
+             * STICKY.
+             *
+             * Header utama tidak sticky sehingga
+             * section header akan menempel ke
+             * bagian paling atas viewport.
+             */
+
+            const header =
+                document.createElement("div");
+
+            header.className =
+                "section-header";
+
+
+            const headerLeft =
+                document.createElement("div");
+
+            headerLeft.className =
+                "section-header-left";
+
+
+            const title =
+                document.createElement("h2");
+
+            title.className =
+                "section-title";
+
+            title.innerHTML = `
+                <span class="section-title-icon">
+                    <i class="fa-solid ${section.icon} text-xs"></i>
+                </span>
+
+                <span>
+                    ${escapeHtml(section.title)}
+                </span>
+            `;
+
+
+            const subtitle =
+                document.createElement("p");
+
+            subtitle.className =
+                "section-subtitle";
+
+            subtitle.textContent =
+                section.subtitle;
+
+
+            headerLeft.appendChild(title);
+            headerLeft.appendChild(subtitle);
+
+
+            const count =
+                document.createElement("div");
+
+            count.className =
+                "section-count";
+
+            count.textContent =
+                `${data.length} record${data.length === 1 ? "" : "s"}`;
+
+
+            header.appendChild(headerLeft);
+            header.appendChild(count);
+
+
+            sectionElement.appendChild(header);
+
+
+            /*
+             * TABLE
+             */
+
+            const scroll =
+                document.createElement("div");
+
+            scroll.className =
+                "section-scroll";
+
+
+            if (!data.length) {
+
+                const empty =
+                    document.createElement("div");
+
+                empty.className =
+                    "empty-section";
+
+                empty.innerHTML = `
+                    <i class="fa-regular fa-folder-open mb-2 text-base"></i>
+                    <div>No data available</div>
+                `;
+
+                scroll.appendChild(empty);
+
+            }
+            else {
+
+                const table =
+                    document.createElement("table");
+
+                const thead =
+                    document.createElement("thead");
+
+                const headerRow =
+                    document.createElement("tr");
+
+
+                section.columns.forEach(
+                    column => {
+
+                        const th =
+                            document.createElement("th");
+
+                        th.textContent =
+                            column[1];
+
+                        headerRow.appendChild(th);
+
+                    }
+                );
+
+
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+
+                const tbody =
+                    document.createElement("tbody");
+
+
+                data.forEach(vessel => {
+
+                    const row =
+                        renderTableRow(
+                            vessel,
+                            section
+                        );
+
+                    tbody.appendChild(row);
+
+                });
+
+
+                table.appendChild(tbody);
+                scroll.appendChild(table);
+
+            }
+
+
+            sectionElement.appendChild(scroll);
+            container.appendChild(sectionElement);
+        }
+
+
+        function renderTableRow(
+            vessel,
+            section
+        ) {
+
+            const row =
+                document.createElement("tr");
+
+            row.style.cursor = "pointer";
+
+            row.dataset.vesselKey =
+                getVesselKey(
+                    vessel,
+                    section.key
+                );
+
+
+            row.addEventListener(
+                "click",
+                () => openVesselModal(
+                    vessel,
+                    section
+                )
+            );
+
+
+            section.columns.forEach(
+                column => {
+
+                    const [
+                        field,
+                        label,
+                        type
+                    ] = column;
+
+                    const td =
+                        document.createElement("td");
+
+                    td.innerHTML =
+                        renderCell(
+                            vessel,
+                            field,
+                            type
+                        );
+
+                    row.appendChild(td);
+
+                }
+            );
+
+
+            return row;
+        }
+
+
+        function renderCell(
+            vessel,
+            field,
+            type
+        ) {
+
+            const value =
+                vessel?.[field];
+
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+
+                return `
+                    <span class="muted-text">—</span>
+                `;
+
+            }
+
+
+            if (type === "vessel") {
+
+                return `
+                    <div class="vessel-main">
+
+                        <span class="vessel-name">
+                            ${escapeHtml(vessel?.vesselName || "—")}
+                        </span>
+
+                        ${
+                            vessel?.vesselCode
+                                ? `
+                                    <span class="vessel-code">
+                                        ${escapeHtml(vessel.vesselCode)}
+                                    </span>
+                                  `
+                                : ""
+                        }
+
+                    </div>
+                `;
+            }
+
+
+            if (type === "voyage") {
+
+                return `
+                    <span class="voyage-text">
+                        ${escapeHtml(value)}
+                    </span>
+                `;
+            }
+
+
+            if (type === "type") {
+
+                return `
+                    <span class="type-badge">
+                        <span class="type-dot"></span>
+                        ${escapeHtml(value)}
+                    </span>
+                `;
+            }
+
+
+            if (type === "datetime") {
+
+                return `
+                    <span class="datetime-text">
+                        ${escapeHtml(
+                            formatDateTime(value)
+                        )}
+                    </span>
+                `;
+            }
+
+
+            if (type === "number") {
+
+                return `
+                    <span class="number-text">
+                        ${formatNumber(value)}
+                    </span>
+                `;
+            }
+
+
+            return escapeHtml(value);
+        }
+
+
+        /* =========================================================
+           MODAL
+           ========================================================= */
+
+        const MODAL_FIELDS = [
+            ["vesselName", "Vessel Name"],
+            ["vesselCode", "Vessel Code"],
+            ["voyage", "Voyage"],
+            ["type", "Type"],
+            ["eta", "ETA"],
+            ["etb", "ETB"],
+            ["atb", "ATB"],
+            ["etd", "ETD"],
+            ["atd", "ATD"],
+            ["openStack", "Open Stack"],
+            ["closingTime", "Closing Time"],
+            ["booking", "Booking"],
+            ["open", "Open"],
+            ["actual", "Actual"],
+            ["export", "Export"],
+            ["exportTeus", "Export TEUs"],
+            ["import", "Import"],
+            ["importTeus", "Import TEUs"]
+        ];
+
+
+        function openVesselModal(
+            vessel,
+            section
+        ) {
+
+            const modal =
+                document.getElementById(
+                    "vesselModal"
+                );
+
+            const title =
+                document.getElementById(
+                    "modalTitle"
+                );
+
+            const subtitle =
+                document.getElementById(
+                    "modalSubtitle"
+                );
+
+            const body =
+                document.getElementById(
+                    "modalBody"
+                );
+
+
+            title.textContent =
+                vessel?.vesselName ||
+                "Vessel Detail";
+
+
+            subtitle.textContent =
+                [
+                    vessel?.vesselCode,
+                    vessel?.voyage,
+                    section?.title
+                ]
+                    .filter(Boolean)
+                    .join(" · ");
+
+
+            body.innerHTML =
+                `
+                    <div class="detail-grid">
+                        ${
+                            MODAL_FIELDS
+                                .map(
+                                    ([field, label]) => {
+
+                                        const value =
+                                            vessel?.[field];
+
+                                        return `
+                                            <div class="detail-item">
+
+                                                <div class="detail-label">
+                                                    ${escapeHtml(label)}
+                                                </div>
+
+                                                <div class="detail-value">
+                                                    ${
+                                                        value === null ||
+                                                        value === undefined ||
+                                                        value === ""
+                                                            ? "—"
+                                                            : escapeHtml(value)
+                                                    }
+                                                </div>
+
+                                            </div>
+                                        `;
+
+                                    }
+                                )
+                                .join("")
+                        }
+                    </div>
+                `;
+
+
+            modal.classList.remove(
+                "hidden"
+            );
+
+            document.body.style.overflow =
+                "hidden";
+        }
+
+
+        function closeModal() {
+
+            document
+                .getElementById(
+                    "vesselModal"
+                )
+                .classList.add("hidden");
+
+            document.body.style.overflow =
+                "";
+        }
+
+
+        /* =========================================================
+           CONNECTION / STATUS
+           ========================================================= */
+
+        function updateConnectionStatus(
+            status
+        ) {
+
+            const dot =
+                document.getElementById(
+                    "liveDot"
+                );
+
+            const text =
+                document.getElementById(
+                    "connectionText"
+                );
+
+
+            dot.classList.remove(
+                "offline",
+                "loading"
+            );
+
+
+            if (status === "online") {
+
+                text.textContent =
+                    "Connected";
+
+                dot.classList.add(
+                    "pulse-dot"
+                );
+
+            }
+            else if (status === "loading") {
+
+                text.textContent =
+                    "Updating...";
+
+                dot.classList.add(
+                    "loading"
+                );
+
+            }
+            else {
+
+                text.textContent =
+                    "Connection error";
+
+                dot.classList.add(
+                    "offline"
+                );
+
+            }
+        }
+
+
+        function updateFreshness() {
+
+            if (!CURRENT_DATA) {
+                return;
+            }
+
+            const timestamp =
+                CURRENT_DATA.updatedAt ||
+                CURRENT_DATA.lastUpdated;
+
+            if (!timestamp) {
+                return;
+            }
+
+            const date =
+                new Date(timestamp);
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+                return;
+            }
+
+            const now =
+                new Date();
+
+            const diffMs =
+                now.getTime() -
+                date.getTime();
+
+            const diffMin =
+                Math.floor(
+                    diffMs / 60000
+                );
+
+
+            let text;
+
+            if (diffMin < 1) {
+                text = "Updated just now";
+            }
+            else if (diffMin === 1) {
+                text = "Updated 1 minute ago";
+            }
+            else if (diffMin < 60) {
+                text =
+                    `Updated ${diffMin} minutes ago`;
+            }
+            else {
+
+                const diffHour =
+                    Math.floor(
+                        diffMin / 60
+                    );
+
+                text =
+                    `Updated ${diffHour} hour${diffHour === 1 ? "" : "s"} ago`;
+            }
+
+
+            document
+                .getElementById(
+                    "freshnessText"
+                )
+                .textContent = text;
+        }
+
+
+        function updateLastUpdate() {
+
+            if (!CURRENT_DATA) {
+                return;
+            }
+
+            const timestamp =
+                CURRENT_DATA.updatedAt ||
+                CURRENT_DATA.lastUpdated;
+
+            const element =
+                document.getElementById(
+                    "lastUpdateText"
+                );
+
+
+            if (!timestamp) {
+
+                element.textContent =
+                    "—";
+
+                return;
+            }
+
+
+            const date =
+                new Date(timestamp);
+
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                element.textContent =
+                    timestamp;
+
+                return;
+            }
+
+
+            element.textContent =
+                date.toLocaleString(
+                    "id-ID",
+                    {
+                        dateStyle: "medium",
+                        timeStyle: "short"
+                    }
+                );
+        }
+
+
+        function updateSource() {
+
+            if (
+                CURRENT_DATA &&
+                CURRENT_DATA.source
+            ) {
+
+                const link =
+                    document.getElementById(
+                        "sourceLink"
+                    );
+
+                link.href =
+                    CURRENT_DATA.source;
+            }
+        }
+
+
+        /* =========================================================
+           NEXT SCRAPER UPDATE
+           
+           Workflow berjalan setiap 30 menit.
+           ========================================================= */
+
+        function getNextScraperUpdate() {
+
+            if (!CURRENT_DATA) {
+                return null;
+            }
+
+            const timestamp =
+                CURRENT_DATA.updatedAt ||
+                CURRENT_DATA.lastUpdated;
+
+            if (!timestamp) {
+                return null;
+            }
+
+            const date =
+                new Date(timestamp);
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+                return null;
+            }
+
+            const interval =
+                30 * 60 * 1000;
+
+            const next =
+                new Date(
+                    Math.ceil(
+                        date.getTime() /
+                        interval
+                    ) * interval
+                );
+
+            return next;
+        }
+
+
+        function updateNextUpdate() {
+
+            const element =
+                document.getElementById(
+                    "nextUpdateText"
+                );
+
+            const next =
+                getNextScraperUpdate();
+
+            if (!next) {
+
+                element.textContent =
+                    "—";
+
+                return;
+            }
+
+
+            const diff =
+                next.getTime() -
+                Date.now();
+
+
+            if (diff <= 0) {
+
+                element.textContent =
+                    "Soon";
+
+                return;
+            }
+
+
+            const totalSeconds =
+                Math.floor(
+                    diff / 1000
+                );
+
+            const minutes =
+                Math.floor(
+                    totalSeconds / 60
+                );
+
+            const seconds =
+                totalSeconds % 60;
+
+
+            element.textContent =
+                `${minutes}m ${String(seconds).padStart(2, "0")}s`;
+        }
+
+
+        /* =========================================================
+           LOAD DATA
+           ========================================================= */
+
+        async function loadData() {
+
+            updateConnectionStatus(
+                "loading"
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${DATA_URL}?t=${Date.now()}`,
+                        {
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (!response.ok) {
+                    throw new Error(
+                        `HTTP ${response.status}`
+                    );
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                CURRENT_DATA =
+                    data;
+
+
+                updateStatistics();
+                renderAllSections();
+                updateLastUpdate();
+                updateSource();
+                updateFreshness();
+                updateNextUpdate();
+
+
+                updateConnectionStatus(
+                    "online"
+                );
+
+
+                /*
+                 * Kalau sedang mencari,
+                 * search tetap dipertahankan.
+                 */
+
+                if (CURRENT_SEARCH) {
+
+                    document
+                        .getElementById(
+                            "searchStatus"
+                        )
+                        .textContent =
+                        "Data diperbarui.";
+
+                }
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Failed to load data:",
+                    error
+                );
+
+
+                updateConnectionStatus(
+                    "offline"
+                );
+
+
+                renderDataError(
+                    error
+                );
+
+            }
+        }
+
+
+        function renderDataError(
+            error
+        ) {
+
+            const container =
+                document.getElementById(
+                    "dashboardSections"
+                );
+
+            container.innerHTML = `
+                <div class="section-card p-10 text-center">
+
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-red-50 text-red-500 flex items-center justify-center">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+
+                    <h2 class="mt-4 text-sm font-bold text-slate-800">
+                        Failed to load vessel data
+                    </h2>
+
+                    <p class="mt-1 text-xs text-slate-400">
+                        ${escapeHtml(
+                            error?.message ||
+                            "Unknown error"
+                        )}
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="loadData()"
+                        class="mt-5 px-4 py-2 rounded-lg bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition"
+                    >
+                        Try Again
+                    </button>
+
+                </div>
+            `;
+        }
+
+
+        /* =========================================================
+           OPTIONAL SCRAPER STATUS
+           ========================================================= */
+
+        async function loadScraperStatus() {
+
+            /*
+             * Tidak wajib.
+             * data.json tetap menjadi sumber utama.
+             */
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${DATA_URL}?t=${Date.now()}`,
+                        {
+                            cache: "no-store"
+                        }
+                    );
+
+                if (!response.ok) {
+                    return;
+                }
+
+            }
+            catch (error) {
+
+                console.debug(
+                    "Status refresh:",
+                    error
+                );
+
+            }
+        }
+
+
+        /* =========================================================
+           SEARCH EVENTS
+           ========================================================= */
+
+        const searchInput =
+            document.getElementById(
+                "searchInput"
+            );
+
+
+        searchInput.addEventListener(
+            "input",
+            event => {
+
+                const value =
+                    event.target.value;
+
+                CURRENT_SEARCH =
+                    value.trim();
+
+
+                const clearButton =
+                    document.getElementById(
+                        "clearSearchButton"
+                    );
+
+
+                if (value.trim()) {
+
+                    clearButton.classList.remove(
+                        "hidden"
+                    );
+
+                }
+                else {
+
+                    clearButton.classList.add(
+                        "hidden"
+                    );
+
+                }
+
+
+                /*
+                 * Filter data secara langsung
+                 * ketika mengetik.
+                 */
+
+                renderAllSections();
+
+                renderSuggestions(
+                    value
+                );
+
+            }
+        );
+
+
+        searchInput.addEventListener(
+            "keydown",
+            event => {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    /*
+                     * Jika suggestion aktif,
+                     * pilih suggestion tersebut.
+                     */
+
+                    if (
+                        ACTIVE_SUGGESTION >= 0 &&
+                        SEARCH_RESULTS[
+                            ACTIVE_SUGGESTION
+                        ]
+                    ) {
+
+                        selectSuggestion(
+                            ACTIVE_SUGGESTION
+                        );
+
+                        return;
+                    }
+
+
+                    performSearch();
+
+                    return;
+                }
+
+
+                if (event.key === "Escape") {
+
+                    document
+                        .getElementById(
+                            "searchSuggestions"
+                        )
+                        .classList.add(
+                            "hidden"
+                        );
+
+                    ACTIVE_SUGGESTION = -1;
+
+                    return;
+                }
+
+
+                if (
+                    event.key === "ArrowDown"
+                ) {
+
+                    if (
+                        !SEARCH_RESULTS.length
+                    ) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    ACTIVE_SUGGESTION =
+                        Math.min(
+                            ACTIVE_SUGGESTION + 1,
+                            SEARCH_RESULTS.length - 1
+                        );
+
+                    updateActiveSuggestion();
+
+                }
+
+
+                if (
+                    event.key === "ArrowUp"
+                ) {
+
+                    if (
+                        !SEARCH_RESULTS.length
+                    ) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    ACTIVE_SUGGESTION =
+                        Math.max(
+                            ACTIVE_SUGGESTION - 1,
+                            0
+                        );
+
+                    updateActiveSuggestion();
+
+                }
+
+            }
+        );
+
+
+        function updateActiveSuggestion() {
+
+            const items =
+                document.querySelectorAll(
+                    ".suggestion-item"
+                );
+
+
+            items.forEach(
+                (item, index) => {
+
+                    item.classList.toggle(
+                        "active",
+                        index ===
+                        ACTIVE_SUGGESTION
+                    );
+
+                }
+            );
+
+
+            const active =
+                items[
+                    ACTIVE_SUGGESTION
+                ];
+
+
+            if (active) {
+
+                active.scrollIntoView({
+                    block: "nearest"
+                });
+
+            }
+        }
+
+
+        document.addEventListener(
+            "click",
+            event => {
+
+                const wrapper =
+                    document.querySelector(
+                        ".search-wrapper"
+                    );
+
+                if (
+                    wrapper &&
+                    !wrapper.contains(
+                        event.target
+                    )
+                ) {
+
+                    document
+                        .getElementById(
+                            "searchSuggestions"
+                        )
+                        .classList.add(
+                            "hidden"
+                        );
+
+                }
+
+            }
+        );
+
+
+        /* =========================================================
+           MODAL EVENTS
+           ========================================================= */
+
+        document
+            .getElementById("vesselModal")
+            .addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target.id ===
+                        "vesselModal"
+                    ) {
+                        closeModal();
+                    }
+
+                }
+            );
+
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    const modal =
+                        document.getElementById(
+                            "vesselModal"
+                        );
+
+                    if (
+                        !modal.classList.contains(
+                            "hidden"
+                        )
+                    ) {
+                        closeModal();
+                    }
+
+                }
+
+            }
+        );
+
+
+        /* =========================================================
+           AUTO REFRESH
+           ========================================================= */
+
+        setInterval(
+            loadData,
+            5 * 60 * 1000
+        );
+
+
+        setInterval(
+            updateFreshness,
+            30 * 1000
+        );
+
+
+        setInterval(
+            updateNextUpdate,
+            1000
+        );
+
+
+        setInterval(
+            loadScraperStatus,
+            2 * 60 * 1000
+        );
+
+
+        /* =========================================================
+           INITIAL LOAD
+           ========================================================= */
+
+        loadData();
+        loadScraperStatus();
+        updateNextUpdate();
+
+    </script>
 
 </body>
 </html>
