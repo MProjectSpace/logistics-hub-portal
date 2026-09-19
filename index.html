@@ -6,14 +6,35 @@
 
     <title>TPKS Vessel Monitoring</title>
 
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Font Awesome -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    boxShadow: {
+                        soft: "0 8px 30px rgba(15, 23, 42, 0.06)",
+                        card: "0 4px 20px rgba(15, 23, 42, 0.06)",
+                        glow: "0 0 0 1px rgba(59, 130, 246, 0.08), 0 12px 35px rgba(15, 23, 42, 0.08)"
+                    }
+                }
+            }
+        };
+    </script>
+
     <style>
+
+        /* =====================================================
+           GLOBAL
+        ====================================================== */
+
         html {
             scroll-behavior: smooth;
         }
@@ -21,71 +42,363 @@
         body {
             background:
                 radial-gradient(
-                    circle at top right,
-                    rgba(59, 130, 246, 0.08),
+                    circle at 10% 0%,
+                    rgba(59, 130, 246, 0.10),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(14, 165, 233, 0.08),
+                    transparent 25%
+                ),
+                #f5f7fb;
+        }
+
+        ::selection {
+            background: rgba(59, 130, 246, 0.18);
+        }
+
+
+        /* =====================================================
+           SCROLLBAR
+        ====================================================== */
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+
+        /* =====================================================
+           HEADER GLASS
+        ====================================================== */
+
+        .header-glass {
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+
+        /* =====================================================
+           BRAND ICON
+        ====================================================== */
+
+        .brand-icon {
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #1d4ed8
+                );
+
+            box-shadow:
+                0 10px 25px
+                rgba(37, 99, 235, 0.25);
+        }
+
+
+        /* =====================================================
+           HERO
+        ====================================================== */
+
+        .hero-panel {
+            position: relative;
+            overflow: hidden;
+
+            background:
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(96, 165, 250, 0.24),
                     transparent 30%
                 ),
-                #f8fafc;
+                radial-gradient(
+                    circle at 100% 100%,
+                    rgba(14, 165, 233, 0.15),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    #0f172a,
+                    #172554
+                );
+
+            box-shadow:
+                0 20px 50px
+                rgba(15, 23, 42, 0.16);
         }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+
+            background-image:
+                linear-gradient(
+                    rgba(255,255,255,0.035) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,0.035) 1px,
+                    transparent 1px
+                );
+
+            background-size: 32px 32px;
+
+            mask-image:
+                linear-gradient(
+                    to right,
+                    transparent,
+                    black 25%,
+                    black 75%,
+                    transparent
+                );
         }
 
-        .table-row-clickable {
-            cursor: pointer;
-            transition: background-color 0.15s ease;
+        .hero-ship {
+            position: absolute;
+            right: 7%;
+            bottom: -12px;
+
+            font-size: 150px;
+
+            color: rgba(255,255,255,0.035);
+
+            transform: rotate(-8deg);
         }
 
-        .table-row-clickable:hover {
-            background-color: #f8fafc;
+
+        /* =====================================================
+           CARDS
+        ====================================================== */
+
+        .dashboard-card {
+            background: rgba(255,255,255,0.94);
+
+            border:
+                1px solid
+                rgba(226, 232, 240, 0.9);
+
+            box-shadow:
+                0 4px 20px
+                rgba(15, 23, 42, 0.045);
+
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease,
+                border-color 0.18s ease;
         }
 
-        .modal-backdrop {
-            background: rgba(15, 23, 42, 0.55);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 30px
+                rgba(15, 23, 42, 0.07);
+
+            border-color:
+                rgba(203, 213, 225, 1);
         }
 
-        .modal-enter {
-            animation: modalEnter 0.18s ease-out;
+
+        /* =====================================================
+           KPI CARDS
+        ====================================================== */
+
+        .kpi-card {
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes modalEnter {
-            from {
-                opacity: 0;
-                transform: translateY(10px) scale(0.98);
-            }
+        .kpi-card::after {
+            content: "";
 
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            position: absolute;
+
+            right: -28px;
+            bottom: -32px;
+
+            width: 100px;
+            height: 100px;
+
+            border-radius: 999px;
+
+            background:
+                currentColor;
+
+            opacity: 0.035;
         }
+
+
+        /* =====================================================
+           STATUS DOT
+        ====================================================== */
 
         .status-dot {
             width: 8px;
             height: 8px;
+
             border-radius: 9999px;
+
             display: inline-block;
+
             flex-shrink: 0;
         }
 
         .pulse {
-            animation: pulse 1.8s infinite;
+            animation:
+                statusPulse 1.8s infinite;
         }
 
-        @keyframes pulse {
+        @keyframes statusPulse {
+
             0%, 100% {
                 opacity: 1;
+                transform: scale(1);
             }
 
             50% {
                 opacity: 0.45;
+                transform: scale(0.82);
             }
+
         }
+
+
+        /* =====================================================
+           LIVE BADGE
+        ====================================================== */
+
+        .live-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding:
+                6px 10px;
+
+            border-radius:
+                999px;
+
+            background:
+                rgba(16, 185, 129, 0.10);
+
+            color:
+                #047857;
+
+            font-size:
+                11px;
+
+            font-weight:
+                700;
+
+            letter-spacing:
+                0.04em;
+
+            text-transform:
+                uppercase;
+        }
+
+
+        /* =====================================================
+           SEARCH
+        ====================================================== */
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-wrapper input {
+            transition:
+                border-color 0.18s ease,
+                box-shadow 0.18s ease,
+                background 0.18s ease;
+        }
+
+        .search-wrapper input:focus {
+            box-shadow:
+                0 0 0 4px
+                rgba(59, 130, 246, 0.09);
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ====================================================== */
+
+        .btn {
+            transition:
+                all 0.18s ease;
+        }
+
+        .btn:active {
+            transform:
+                translateY(1px);
+        }
+
+        .refresh-btn:hover {
+            box-shadow:
+                0 8px 20px
+                rgba(37, 99, 235, 0.22);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+
+        /* =====================================================
+           SECTION
+        ====================================================== */
+
+        .section-card {
+            background:
+                rgba(255,255,255,0.96);
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            border-radius:
+                18px;
+
+            overflow:
+                hidden;
+
+            box-shadow:
+                0 5px 22px
+                rgba(15, 23, 42, 0.045);
+        }
+
+        .section-header {
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(248,250,252,0.75),
+                    rgba(255,255,255,0.95)
+                );
+        }
+
+
+        /* =====================================================
+           TABLE
+        ====================================================== */
 
         .section-scroll {
             overflow-x: auto;
@@ -96,9 +409,170 @@
             min-width: 760px;
         }
 
-        .number-cell {
-            font-variant-numeric: tabular-nums;
+        .table-row-clickable {
+            cursor: pointer;
+
+            transition:
+                background-color 0.15s ease,
+                box-shadow 0.15s ease;
         }
+
+        .table-row-clickable:hover {
+            background:
+                linear-gradient(
+                    90deg,
+                    #f8fbff,
+                    #ffffff
+                );
+        }
+
+        .table-row-clickable:hover td:first-child {
+            box-shadow:
+                inset 3px 0 0 #3b82f6;
+        }
+
+        .table-row-clickable td {
+            border-bottom:
+                1px solid #f1f5f9;
+        }
+
+        .table-header {
+            background:
+                #f8fafc;
+        }
+
+        .table-header th {
+            color:
+                #64748b;
+
+            font-size:
+                10px;
+
+            font-weight:
+                700;
+
+            letter-spacing:
+                0.08em;
+
+            text-transform:
+                uppercase;
+        }
+
+
+        /* =====================================================
+           VESSEL NAME
+        ====================================================== */
+
+        .vessel-name {
+            color:
+                #0f172a;
+
+            font-weight:
+                700;
+
+            letter-spacing:
+                -0.01em;
+        }
+
+        .vessel-code {
+            color:
+                #94a3b8;
+
+            font-size:
+                11px;
+
+            font-weight:
+                500;
+        }
+
+
+        /* =====================================================
+           TYPE BADGE
+        ====================================================== */
+
+        .type-badge {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            padding:
+                5px 9px;
+
+            border-radius:
+                8px;
+
+            background:
+                #f1f5f9;
+
+            color:
+                #475569;
+
+            font-size:
+                11px;
+
+            font-weight:
+                600;
+
+            border:
+                1px solid
+                #e2e8f0;
+        }
+
+
+        /* =====================================================
+           DATETIME
+        ====================================================== */
+
+        .datetime-cell {
+            line-height:
+                1.15;
+        }
+
+        .datetime-date {
+            font-size:
+                13px;
+
+            font-weight:
+                600;
+
+            color:
+                #334155;
+        }
+
+        .datetime-time {
+            font-size:
+                11px;
+
+            font-weight:
+                500;
+
+            color:
+                #94a3b8;
+
+            margin-top:
+                3px;
+        }
+
+
+        /* =====================================================
+           NUMBERS
+        ====================================================== */
+
+        .number-cell {
+            font-variant-numeric:
+                tabular-nums;
+
+            font-weight:
+                600;
+        }
+
+        .numeric-cell {
+            text-align:
+                right;
+        }
+
 
         /* =====================================================
            OPEN STACK TABLE
@@ -106,616 +580,472 @@
 
         .open-stack-table th,
         .open-stack-table td {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
+            padding-left:
+                0.75rem;
+
+            padding-right:
+                0.75rem;
         }
 
         .open-stack-table th {
-            white-space: nowrap;
+            white-space:
+                nowrap;
         }
 
         .open-stack-table td {
-            white-space: nowrap;
+            white-space:
+                nowrap;
         }
 
-        .open-stack-table .datetime-cell {
-            line-height: 1.15;
+
+        /* =====================================================
+           MODAL
+        ====================================================== */
+
+        .modal-backdrop {
+            background:
+                rgba(15, 23, 42, 0.62);
+
+            backdrop-filter:
+                blur(8px);
+
+            -webkit-backdrop-filter:
+                blur(8px);
         }
 
-        .open-stack-table .datetime-date {
-            font-size: 0.875rem;
+        .modal-enter {
+            animation:
+                modalEnter 0.22s
+                cubic-bezier(
+                    0.16,
+                    1,
+                    0.3,
+                    1
+                );
         }
 
-        .open-stack-table .datetime-time {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #64748b;
-            margin-top: 2px;
+        @keyframes modalEnter {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(16px)
+                    scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+
         }
 
-        .open-stack-table .numeric-cell {
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
+        .modal-field {
+            background:
+                #f8fafc;
+
+            border:
+                1px solid
+                #e2e8f0;
+
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease;
         }
+
+        .modal-field:hover {
+            background:
+                #f1f5f9;
+
+            border-color:
+                #cbd5e1;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ====================================================== */
+
+        @media (max-width: 640px) {
+
+            .hero-ship {
+                font-size:
+                    90px;
+
+                right:
+                    -10px;
+            }
+
+            .hero-panel {
+                border-radius:
+                    18px;
+            }
+
+            .section-card {
+                border-radius:
+                    15px;
+            }
+
+        }
+
     </style>
 </head>
 
 
 <body class="min-h-screen text-slate-800">
 
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
 
-    <header class="sticky top-0 z-40 border-b border-slate-200 glass">
+<!-- =========================================================
+     HEADER
+========================================================== -->
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<header
+    class="sticky top-0 z-40
+           border-b border-slate-200/80
+           header-glass"
+>
 
-            <div class="h-20 flex items-center justify-between gap-4">
+    <div
+        class="max-w-7xl mx-auto
+               px-4 sm:px-6 lg:px-8"
+    >
 
-                <!-- BRAND -->
-                <div class="flex items-center gap-3 min-w-0">
+        <div
+            class="h-[72px]
+                   flex items-center
+                   justify-between
+                   gap-4"
+        >
+
+            <!-- BRAND -->
+
+            <div
+                class="flex items-center
+                       gap-3 min-w-0"
+            >
+
+                <div
+                    class="brand-icon
+                           w-11 h-11
+                           rounded-[14px]
+                           text-white
+                           flex items-center
+                           justify-center
+                           flex-shrink-0"
+                >
+
+                    <i
+                        class="fa-solid fa-ship
+                               text-lg"
+                    ></i>
+
+                </div>
+
+
+                <div
+                    class="min-w-0"
+                >
 
                     <div
-                        class="w-11 h-11 rounded-xl bg-blue-600
-                               text-white flex items-center
-                               justify-center shadow-sm"
+                        class="flex items-center
+                               gap-2"
                     >
-                        <i class="fa-solid fa-ship text-lg"></i>
-                    </div>
-
-                    <div class="min-w-0">
 
                         <h1
-                            class="font-bold text-lg sm:text-xl truncate"
+                            class="font-bold
+                                   text-base sm:text-lg
+                                   tracking-tight
+                                   truncate"
                         >
                             TPKS Vessel Monitoring
                         </h1>
 
-                        <p
-                            class="text-xs sm:text-sm
-                                   text-slate-500 truncate"
+                        <span
+                            class="hidden sm:inline-flex
+                                   live-badge"
                         >
-                            Pelindo Terminal Petikemas Semarang
-                        </p>
+
+                            <span
+                                id="headerLiveDot"
+                                class="status-dot
+                                       bg-emerald-500"
+                            ></span>
+
+                            Live
+
+                        </span>
 
                     </div>
 
+                    <p
+                        class="text-[11px] sm:text-xs
+                               text-slate-500
+                               truncate
+                               mt-0.5"
+                    >
+                        Pelindo Terminal Petikemas Semarang
+                    </p>
+
                 </div>
 
+            </div>
 
-                <!-- CONNECTION -->
-                <div
-                    id="connectionStatus"
-                    class="hidden sm:flex items-center
-                           gap-2 text-xs font-medium
-                           text-slate-500"
+
+            <!-- CONNECTION -->
+
+            <div
+                id="connectionStatus"
+                class="flex items-center
+                       gap-2.5
+                       text-xs font-semibold
+                       text-slate-500"
+            >
+
+                <span
+                    id="connectionDot"
+                    class="status-dot
+                           bg-slate-400"
+                ></span>
+
+                <span
+                    id="connectionText"
+                    class="hidden sm:inline"
                 >
-                    <span
-                        id="connectionDot"
-                        class="status-dot bg-slate-400"
-                    ></span>
-
-                    <span id="connectionText">
-                        Loading...
-                    </span>
-                </div>
+                    Loading...
+                </span>
 
             </div>
 
         </div>
 
-    </header>
+    </div>
+
+</header>
 
 
-    <!-- =====================================================
-         MAIN
-    ====================================================== -->
 
-    <main
-        class="max-w-7xl mx-auto
-               px-4 sm:px-6 lg:px-8 py-6"
+<!-- =========================================================
+     MAIN
+========================================================== -->
+
+<main
+    class="max-w-7xl mx-auto
+           px-4 sm:px-6 lg:px-8
+           py-5 sm:py-7"
+>
+
+
+<!-- =========================================================
+     HERO
+========================================================== -->
+
+<section
+    class="hero-panel
+           rounded-[20px]
+           px-5 py-6
+           sm:px-7 sm:py-7
+           mb-5"
+>
+
+    <div
+        class="hero-grid"
+    ></div>
+
+    <i
+        class="fa-solid fa-ship hero-ship"
+    ></i>
+
+
+    <div
+        class="relative z-10"
     >
 
-        <!-- =================================================
-             STATUS CARDS
-        ================================================== -->
-
-        <section
-            class="grid grid-cols-1
-                   lg:grid-cols-3 gap-4 mb-6"
+        <div
+            class="flex flex-col
+                   lg:flex-row
+                   lg:items-end
+                   lg:justify-between
+                   gap-5"
         >
 
-            <!-- LAST UPDATED / FRESHNESS -->
-            <div
-                class="bg-white border border-slate-200
-                       rounded-2xl p-5 shadow-sm"
-            >
+            <div>
 
                 <div
-                    class="flex items-start
-                           justify-between gap-4"
+                    class="inline-flex
+                           items-center
+                           gap-2
+                           px-2.5 py-1
+                           rounded-full
+                           bg-white/10
+                           border border-white/10
+                           text-blue-100
+                           text-[10px]
+                           font-bold
+                           uppercase
+                           tracking-[0.12em]"
                 >
-
-                    <div>
-
-                        <p
-                            class="text-xs font-semibold
-                                   uppercase tracking-wider
-                                   text-slate-400"
-                        >
-                            Last Updated
-                        </p>
-
-                        <p
-                            id="lastUpdated"
-                            class="mt-1 text-lg font-bold
-                                   text-slate-800"
-                        >
-                            -
-                        </p>
-
-                        <p
-                            id="lastUpdatedRelative"
-                            class="mt-1 text-xs
-                                   text-slate-500"
-                        >
-                            Waiting for data...
-                        </p>
-
-                    </div>
-
-                    <div
-                        id="freshnessBadge"
-                        class="px-2.5 py-1 rounded-full
-                               text-xs font-semibold
-                               bg-slate-100 text-slate-500"
-                    >
-                        Checking
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- NEXT UPDATE -->
-            <div
-                class="bg-white border border-slate-200
-                       rounded-2xl p-5 shadow-sm"
-            >
-
-                <div
-                    class="flex items-start
-                           justify-between gap-4"
-                >
-
-                    <div>
-
-                        <p
-                            class="text-xs font-semibold
-                                   uppercase tracking-wider
-                                   text-slate-400"
-                        >
-                            Next Update
-                        </p>
-
-                        <p
-                            class="text-[11px]
-                                   text-slate-400 mt-0.5"
-                        >
-                            Every 30 minutes
-                        </p>
-
-                        <p
-                            id="nextUpdate"
-                            class="mt-1 text-lg font-bold
-                                   text-slate-800"
-                        >
-                            -
-                        </p>
-
-                        <p
-                            id="nextUpdateCountdown"
-                            class="mt-1 text-xs
-                                   text-slate-500"
-                        >
-                            -
-                        </p>
-
-                    </div>
-
-                    <div
-                        class="w-9 h-9 rounded-lg
-                               bg-blue-50 text-blue-600
-                               flex items-center justify-center"
-                    >
-                        <i class="fa-regular fa-clock"></i>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- SCRAPER STATUS -->
-            <div
-                class="bg-white border border-slate-200
-                       rounded-2xl p-5 shadow-sm"
-            >
-
-                <div
-                    class="flex items-start
-                           justify-between gap-4"
-                >
-
-                    <div class="min-w-0">
-
-                        <p
-                            class="text-xs font-semibold
-                                   uppercase tracking-wider
-                                   text-slate-400"
-                        >
-                            Scraper Status
-                        </p>
-
-                        <div
-                            class="flex items-center
-                                   gap-2 mt-1"
-                        >
-
-                            <span
-                                id="scraperDot"
-                                class="status-dot bg-slate-400"
-                            ></span>
-
-                            <p
-                                id="scraperStatus"
-                                class="text-lg font-bold
-                                       text-slate-800 truncate"
-                            >
-                                Checking...
-                            </p>
-
-                        </div>
-
-                        <p
-                            id="scraperDetail"
-                            class="mt-1 text-xs
-                                   text-slate-500 truncate"
-                        >
-                            Checking GitHub Actions...
-                        </p>
-
-                    </div>
-
-                    <div
-                        class="w-9 h-9 rounded-lg
-                               bg-slate-100 text-slate-600
-                               flex items-center justify-center"
-                    >
-                        <i class="fa-solid fa-gears"></i>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             CONTROLS
-        ================================================== -->
-
-        <section
-            class="bg-white border border-slate-200
-                   rounded-2xl p-4 shadow-sm mb-6"
-        >
-
-            <div
-                class="flex flex-col md:flex-row gap-3"
-            >
-
-                <!-- SEARCH -->
-                <div class="relative flex-1">
 
                     <i
-                        class="fa-solid fa-magnifying-glass
-                               absolute left-4 top-1/2
-                               -translate-y-1/2
-                               text-slate-400"
+                        class="fa-solid
+                               fa-chart-line
+                               text-[9px]"
                     ></i>
 
-                    <input
-                        id="searchInput"
-                        type="text"
-                        placeholder="Search vessel name, vessel code, voyage, type..."
-                        class="w-full pl-11 pr-4 py-3
-                               rounded-xl border border-slate-200
-                               bg-slate-50
-                               focus:bg-white
-                               focus:outline-none
-                               focus:ring-2
-                               focus:ring-blue-500/20
-                               focus:border-blue-500
-                               text-sm"
-                    >
+                    Terminal Operations
 
                 </div>
 
 
-                <!-- CLEAR -->
-                <button
-                    id="clearSearchButton"
-                    type="button"
-                    onclick="clearSearch()"
-                    class="px-4 py-3 rounded-xl
-                           border border-slate-200
-                           bg-white hover:bg-slate-50
-                           text-sm font-medium
-                           text-slate-600 transition"
+                <h2
+                    class="mt-3
+                           text-2xl sm:text-3xl
+                           font-bold
+                           tracking-tight
+                           text-white"
                 >
-                    <i class="fa-solid fa-xmark mr-2"></i>
-                    Clear
-                </button>
+                    Vessel Operations Dashboard
+                </h2>
 
 
-                <!-- REFRESH -->
-                <button
-                    id="refreshButton"
-                    type="button"
-                    onclick="loadData()"
-                    class="px-4 py-3 rounded-xl
-                           bg-blue-600 hover:bg-blue-700
-                           text-white text-sm font-semibold
-                           transition shadow-sm"
+                <p
+                    class="mt-2
+                           text-sm
+                           text-slate-300
+                           max-w-xl"
                 >
-                    <i class="fa-solid fa-rotate mr-2"></i>
-                    Refresh Data
-                </button>
+                    Real-time operational overview
+                    of vessel activity at TPKS
+                    Terminal Petikemas Semarang.
+                </p>
 
             </div>
 
 
             <div
-                class="mt-3 flex flex-wrap
-                       items-center justify-between gap-2"
+                class="flex items-center
+                       gap-2
+                       text-xs
+                       text-slate-300"
             >
 
-                <p class="text-xs text-slate-400">
-                    Refresh Data reloads the latest
-                    published <code>data.json</code>.
-                </p>
+                <span
+                    class="status-dot
+                           bg-emerald-400
+                           pulse"
+                ></span>
+
+                Automated monitoring active
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     STATUS CARDS
+========================================================== -->
+
+<section
+    class="grid grid-cols-1
+           md:grid-cols-3
+           gap-3
+           mb-5"
+>
+
+
+    <!-- LAST UPDATED -->
+
+    <div
+        class="dashboard-card
+               rounded-[18px]
+               p-4 sm:p-5"
+    >
+
+        <div
+            class="flex items-start
+                   justify-between
+                   gap-4"
+        >
+
+            <div>
+
+                <div
+                    class="flex items-center
+                           gap-2"
+                >
+
+                    <span
+                        class="text-[10px]
+                               font-bold
+                               uppercase
+                               tracking-[0.1em]
+                               text-slate-400"
+                    >
+                        Last Updated
+                    </span>
+
+                    <span
+                        id="freshnessBadge"
+                        class="px-2 py-0.5
+                               rounded-full
+                               text-[10px]
+                               font-bold
+                               bg-slate-100
+                               text-slate-500"
+                    >
+                        Checking
+                    </span>
+
+                </div>
+
 
                 <p
-                    id="searchResultInfo"
-                    class="text-xs font-medium
-                           text-slate-500"
+                    id="lastUpdated"
+                    class="mt-2
+                           text-base sm:text-lg
+                           font-bold
+                           tracking-tight
+                           text-slate-800"
                 >
                     -
                 </p>
 
-            </div>
 
-        </section>
-
-
-        <!-- =================================================
-             STATISTICS
-        ================================================== -->
-
-        <section
-            id="statistics"
-            class="grid grid-cols-2
-                   lg:grid-cols-5 gap-3 mb-6"
-        >
-        </section>
-
-
-        <!-- =================================================
-             VESSEL SECTIONS
-        ================================================== -->
-
-        <section
-            id="sections"
-            class="space-y-6"
-        >
-        </section>
-
-
-        <!-- =================================================
-             SOURCE
-        ================================================== -->
-
-        <section class="mt-6">
-
-            <div
-                class="bg-white border border-slate-200
-                       rounded-2xl p-4 shadow-sm"
-            >
-
-                <div
-                    class="flex flex-col
-                           sm:flex-row
-                           sm:items-center
-                           sm:justify-between gap-2"
+                <p
+                    id="lastUpdatedRelative"
+                    class="mt-1
+                           text-xs
+                           text-slate-500"
                 >
-
-                    <div
-                        class="flex items-center gap-2 text-sm"
-                    >
-
-                        <span
-                            class="w-8 h-8 rounded-lg
-                                   bg-slate-100
-                                   flex items-center justify-center"
-                        >
-                            <i
-                                class="fa-solid fa-database
-                                       text-slate-500"
-                            ></i>
-                        </span>
-
-                        <div>
-
-                            <p
-                                class="font-semibold
-                                       text-slate-700"
-                            >
-                                Data Source
-                            </p>
-
-                            <p
-                                id="sourceText"
-                                class="text-xs
-                                       text-slate-500"
-                            >
-                                Pelindo TPKS
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div
-                        class="text-xs text-slate-400"
-                    >
-                        TPKS Vessel Monitoring
-                        Dashboard v2.0.3
-                    </div>
-
-                </div>
+                    Waiting for data...
+                </p>
 
             </div>
 
-        </section>
-
-    </main>
-
-
-    <!-- =====================================================
-         VESSEL DETAIL MODAL
-    ====================================================== -->
-
-    <div
-        id="vesselModal"
-        class="fixed inset-0 z-50 hidden
-               modal-backdrop p-3 sm:p-4"
-    >
-
-        <div
-            class="min-h-full flex
-                   items-center justify-center"
-        >
 
             <div
-                id="vesselModalContent"
-                class="modal-enter bg-white
-                       w-full max-w-2xl
-                       max-h-[calc(100vh-2rem)]
-                       rounded-2xl shadow-2xl
-                       overflow-hidden flex flex-col"
+                class="w-10 h-10
+                       rounded-xl
+                       bg-emerald-50
+                       text-emerald-600
+                       flex items-center
+                       justify-center
+                       flex-shrink-0"
             >
 
-                <!-- MODAL HEADER -->
-                <div
-                    class="px-5 py-4
-                           border-b border-slate-200
-                           flex items-center
-                           justify-between
-                           flex-shrink-0"
-                >
-
-                    <div
-                        class="flex items-center
-                               gap-3 min-w-0"
-                    >
-
-                        <div
-                            class="w-10 h-10 rounded-xl
-                                   bg-blue-50 text-blue-600
-                                   flex items-center
-                                   justify-center"
-                        >
-                            <i class="fa-solid fa-ship"></i>
-                        </div>
-
-                        <div class="min-w-0">
-
-                            <h2
-                                id="modalVesselName"
-                                class="font-bold text-lg
-                                       truncate"
-                            >
-                                Vessel Detail
-                            </h2>
-
-                            <p
-                                id="modalVesselCode"
-                                class="text-xs
-                                       text-slate-500"
-                            >
-                                -
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <button
-                        type="button"
-                        onclick="closeVesselModal()"
-                        class="w-9 h-9 rounded-lg
-                               hover:bg-slate-100
-                               text-slate-500 transition"
-                        aria-label="Close"
-                    >
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-
-                </div>
-
-
-                <!-- MODAL BODY -->
-                <div
-                    class="px-5 py-4 overflow-y-auto"
-                >
-
-                    <div
-                        id="modalVesselGrid"
-                        class="grid grid-cols-2 gap-2.5"
-                    >
-                    </div>
-
-                </div>
-
-
-                <!-- MODAL FOOTER -->
-                <div
-                    class="px-5 py-3
-                           border-t border-slate-200
-                           bg-slate-50
-                           flex justify-end
-                           flex-shrink-0"
-                >
-
-                    <button
-                        type="button"
-                        onclick="closeVesselModal()"
-                        class="px-4 py-2 rounded-xl
-                               bg-white border
-                               border-slate-200
-                               hover:bg-slate-100
-                               text-sm font-medium
-                               text-slate-700"
-                    >
-                        Close
-                    </button>
-
-                </div>
+                <i
+                    class="fa-solid
+                           fa-arrows-rotate"
+                ></i>
 
             </div>
 
@@ -724,798 +1054,1837 @@
     </div>
 
 
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
 
-    <footer
-        class="border-t border-slate-200 mt-10"
+    <!-- NEXT UPDATE -->
+
+    <div
+        class="dashboard-card
+               rounded-[18px]
+               p-4 sm:p-5"
     >
 
         <div
-            class="max-w-7xl mx-auto
-                   px-4 sm:px-6 lg:px-8
-                   py-6"
+            class="flex items-start
+                   justify-between
+                   gap-4"
         >
 
+            <div>
+
+                <div
+                    class="flex items-center
+                           gap-2"
+                >
+
+                    <span
+                        class="text-[10px]
+                               font-bold
+                               uppercase
+                               tracking-[0.1em]
+                               text-slate-400"
+                    >
+                        Next Update
+                    </span>
+
+                    <span
+                        class="px-2 py-0.5
+                               rounded-full
+                               bg-blue-50
+                               text-blue-600
+                               text-[10px]
+                               font-bold"
+                    >
+                        30 MIN
+                    </span>
+
+                </div>
+
+
+                <p
+                    id="nextUpdate"
+                    class="mt-2
+                           text-base sm:text-lg
+                           font-bold
+                           tracking-tight
+                           text-slate-800"
+                >
+                    -
+                </p>
+
+
+                <p
+                    id="nextUpdateCountdown"
+                    class="mt-1
+                           text-xs
+                           text-slate-500"
+                >
+                    -
+                </p>
+
+            </div>
+
+
             <div
-                class="flex flex-col
-                       sm:flex-row
-                       justify-between gap-2
-                       text-xs text-slate-400"
+                class="w-10 h-10
+                       rounded-xl
+                       bg-blue-50
+                       text-blue-600
+                       flex items-center
+                       justify-center
+                       flex-shrink-0"
             >
 
-                <p>
-                    TPKS Vessel Monitoring Dashboard
-                </p>
-
-                <p>
-                    Source: Pelindo TPKS
-                </p>
+                <i
+                    class="fa-regular
+                           fa-clock"
+                ></i>
 
             </div>
 
         </div>
 
-    </footer>
+    </div>
+
+
+
+    <!-- SCRAPER STATUS -->
+
+    <div
+        class="dashboard-card
+               rounded-[18px]
+               p-4 sm:p-5"
+    >
+
+        <div
+            class="flex items-start
+                   justify-between
+                   gap-4"
+        >
+
+            <div
+                class="min-w-0"
+            >
+
+                <div
+                    class="text-[10px]
+                           font-bold
+                           uppercase
+                           tracking-[0.1em]
+                           text-slate-400"
+                >
+                    Scraper Status
+                </div>
+
+
+                <div
+                    class="flex items-center
+                           gap-2 mt-2"
+                >
+
+                    <span
+                        id="scraperDot"
+                        class="status-dot
+                               bg-slate-400"
+                    ></span>
+
+
+                    <p
+                        id="scraperStatus"
+                        class="text-base sm:text-lg
+                               font-bold
+                               tracking-tight
+                               text-slate-800
+                               truncate"
+                    >
+                        Checking...
+                    </p>
+
+                </div>
+
+
+                <p
+                    id="scraperDetail"
+                    class="mt-1
+                           text-xs
+                           text-slate-500
+                           truncate"
+                >
+                    Checking GitHub Actions...
+                </p>
+
+            </div>
+
+
+            <div
+                class="w-10 h-10
+                       rounded-xl
+                       bg-violet-50
+                       text-violet-600
+                       flex items-center
+                       justify-center
+                       flex-shrink-0"
+            >
+
+                <i
+                    class="fa-solid fa-gears"
+                ></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     CONTROLS
+========================================================== -->
+
+<section
+    class="dashboard-card
+           rounded-[18px]
+           p-3 sm:p-4
+           mb-5"
+>
+
+    <div
+        class="flex flex-col
+               md:flex-row
+               gap-2.5"
+    >
+
+        <!-- SEARCH -->
+
+        <div
+            class="search-wrapper
+                   flex-1"
+        >
+
+            <i
+                class="fa-solid
+                       fa-magnifying-glass
+                       absolute
+                       left-4 top-1/2
+                       -translate-y-1/2
+                       text-slate-400
+                       text-sm"
+            ></i>
+
+
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Search vessel name, code, voyage, type..."
+                class="w-full
+                       pl-10 pr-4
+                       py-3
+                       rounded-xl
+                       border border-slate-200
+                       bg-slate-50/80
+                       focus:bg-white
+                       focus:outline-none
+                       focus:border-blue-500
+                       text-sm
+                       text-slate-700
+                       placeholder:text-slate-400"
+            >
+
+        </div>
+
+
+        <!-- CLEAR -->
+
+        <button
+            id="clearSearchButton"
+            type="button"
+            onclick="clearSearch()"
+            class="btn
+                   px-4 py-3
+                   rounded-xl
+                   border border-slate-200
+                   bg-white
+                   hover:bg-slate-50
+                   text-sm
+                   font-semibold
+                   text-slate-600"
+        >
+
+            <i
+                class="fa-solid
+                       fa-xmark
+                       mr-2"
+            ></i>
+
+            Clear
+
+        </button>
+
+
+        <!-- REFRESH -->
+
+        <button
+            id="refreshButton"
+            type="button"
+            onclick="loadData()"
+            class="btn refresh-btn
+                   px-5 py-3
+                   rounded-xl
+                   bg-blue-600
+                   hover:bg-blue-700
+                   text-white
+                   text-sm
+                   font-semibold"
+        >
+
+            <i
+                class="fa-solid
+                       fa-rotate
+                       mr-2"
+            ></i>
+
+            Refresh Data
+
+        </button>
+
+    </div>
+
+
+    <div
+        class="mt-3
+               flex flex-wrap
+               items-center
+               justify-between
+               gap-2
+               px-1"
+    >
+
+        <p
+            class="text-[11px]
+                   text-slate-400"
+        >
+
+            <i
+                class="fa-solid
+                       fa-circle-info
+                       mr-1"
+            ></i>
+
+            Refresh reloads the latest
+            published <code>data.json</code>.
+
+        </p>
+
+
+        <p
+            id="searchResultInfo"
+            class="text-[11px]
+                   font-semibold
+                   text-slate-500"
+        >
+            -
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     STATISTICS
+========================================================== -->
+
+<section
+    id="statistics"
+    class="grid grid-cols-2
+           md:grid-cols-3
+           lg:grid-cols-5
+           gap-3
+           mb-5"
+>
+</section>
+
+
+
+<!-- =========================================================
+     VESSEL SECTIONS
+========================================================== -->
+
+<section
+    id="sections"
+    class="space-y-5"
+>
+</section>
+
+
+
+<!-- =========================================================
+     SOURCE
+========================================================== -->
+
+<section
+    class="mt-5"
+>
+
+    <div
+        class="dashboard-card
+               rounded-[18px]
+               px-4 py-4"
+    >
+
+        <div
+            class="flex flex-col
+                   sm:flex-row
+                   sm:items-center
+                   sm:justify-between
+                   gap-3"
+        >
+
+            <div
+                class="flex items-center
+                       gap-3"
+            >
+
+                <div
+                    class="w-9 h-9
+                           rounded-xl
+                           bg-slate-100
+                           text-slate-500
+                           flex items-center
+                           justify-center"
+                >
+
+                    <i
+                        class="fa-solid
+                               fa-database
+                               text-sm"
+                    ></i>
+
+                </div>
+
+
+                <div>
+
+                    <p
+                        class="text-xs
+                               font-bold
+                               text-slate-700"
+                    >
+                        Data Source
+                    </p>
+
+
+                    <p
+                        id="sourceText"
+                        class="text-[11px]
+                               text-slate-500
+                               mt-0.5"
+                    >
+                        Pelindo TPKS
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="flex items-center
+                       gap-2
+                       text-[10px]
+                       text-slate-400"
+            >
+
+                <span
+                    class="status-dot
+                           bg-emerald-500"
+                ></span>
+
+                Automated data pipeline
+
+                <span
+                    class="mx-1"
+                >
+                    •
+                </span>
+
+                v2.1.0
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+
+<!-- =========================================================
+     MODAL
+========================================================== -->
+
+<div
+    id="vesselModal"
+    class="fixed inset-0 z-50 hidden
+           modal-backdrop
+           p-3 sm:p-4"
+>
+
+    <div
+        class="min-h-full
+               flex items-center
+               justify-center"
+    >
+
+        <div
+            id="vesselModalContent"
+            class="modal-enter
+                   bg-white
+                   w-full
+                   max-w-2xl
+                   max-h-[calc(100vh-2rem)]
+                   rounded-[20px]
+                   shadow-2xl
+                   overflow-hidden
+                   flex flex-col"
+        >
+
+            <!-- MODAL HEADER -->
+
+            <div
+                class="px-5 py-4
+                       border-b border-slate-200
+                       bg-white
+                       flex items-center
+                       justify-between
+                       flex-shrink-0"
+            >
+
+                <div
+                    class="flex items-center
+                           gap-3 min-w-0"
+                >
+
+                    <div
+                        class="w-11 h-11
+                               rounded-[14px]
+                               bg-blue-50
+                               text-blue-600
+                               flex items-center
+                               justify-center
+                               flex-shrink-0"
+                    >
+
+                        <i
+                            class="fa-solid fa-ship"
+                        ></i>
+
+                    </div>
+
+
+                    <div
+                        class="min-w-0"
+                    >
+
+                        <div
+                            class="flex items-center
+                                   gap-2"
+                        >
+
+                            <h2
+                                id="modalVesselName"
+                                class="font-bold
+                                       text-lg
+                                       tracking-tight
+                                       text-slate-800
+                                       truncate"
+                            >
+                                Vessel Detail
+                            </h2>
+
+                        </div>
+
+
+                        <p
+                            id="modalVesselCode"
+                            class="text-xs
+                                   text-slate-500
+                                   mt-0.5"
+                        >
+                            -
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    onclick="closeVesselModal()"
+                    class="btn
+                           w-9 h-9
+                           rounded-xl
+                           hover:bg-slate-100
+                           text-slate-500
+                           hover:text-slate-700
+                           flex items-center
+                           justify-center"
+                    aria-label="Close"
+                >
+
+                    <i
+                        class="fa-solid
+                               fa-xmark"
+                    ></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- MODAL BODY -->
+
+            <div
+                class="px-5 py-5
+                       overflow-y-auto
+                       bg-slate-50/50"
+            >
+
+                <div
+                    id="modalVesselGrid"
+                    class="grid
+                           grid-cols-1
+                           sm:grid-cols-2
+                           gap-2.5"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- MODAL FOOTER -->
+
+            <div
+                class="px-5 py-3
+                       border-t border-slate-200
+                       bg-white
+                       flex justify-between
+                       items-center
+                       flex-shrink-0"
+            >
+
+                <p
+                    class="text-[10px]
+                           text-slate-400"
+                >
+
+                    Vessel operational details
+
+                </p>
+
+
+                <button
+                    type="button"
+                    onclick="closeVesselModal()"
+                    class="btn
+                           px-4 py-2
+                           rounded-xl
+                           bg-slate-900
+                           hover:bg-slate-800
+                           text-white
+                           text-sm
+                           font-semibold"
+                >
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================== -->
+
+<footer
+    class="mt-10
+           border-t border-slate-200"
+>
+
+    <div
+        class="max-w-7xl mx-auto
+               px-4 sm:px-6 lg:px-8
+               py-6"
+    >
+
+        <div
+            class="flex flex-col
+                   sm:flex-row
+                   items-center
+                   justify-between
+                   gap-2"
+        >
+
+            <p
+                class="text-[11px]
+                       text-slate-400"
+            >
+                TPKS Vessel Monitoring Dashboard
+            </p>
+
+
+            <p
+                class="text-[11px]
+                       text-slate-400"
+            >
+                Pelindo TPKS
+                <span class="mx-1">•</span>
+                Automated Monitoring
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+
 
 
 <script>
 
-    /* =========================================================
-       CONFIG
-    ========================================================= */
+/* =========================================================
+   CONFIG
+========================================================= */
 
-    const DATA_FILE = "data.json";
+const DATA_FILE = "data.json";
 
-    const GITHUB_WORKFLOW_API =
-        "https://api.github.com/repos/mprojectspace/logistics-hub-portal/actions/workflows/pelindo-scraper.yml/runs?branch=main&per_page=1";
+const GITHUB_WORKFLOW_API =
+    "https://api.github.com/repos/mprojectspace/logistics-hub-portal/actions/workflows/pelindo-scraper.yml/runs?branch=main&per_page=1";
 
-    const DATA_REFRESH_INTERVAL =
-        5 * 60 * 1000;
+const DATA_REFRESH_INTERVAL =
+    5 * 60 * 1000;
 
-    const SCRAPER_STATUS_INTERVAL =
-        2 * 60 * 1000;
+const SCRAPER_STATUS_INTERVAL =
+    2 * 60 * 1000;
 
 
-    let DATA = {
+/* =========================================================
+   DATA
+========================================================= */
 
-        updatedAt: "",
+let DATA = {
 
-        source: "",
+    updatedAt: "",
 
-        vesselAlongside: [],
+    source: "",
 
-        confirmedVessel: [],
+    vesselAlongside: [],
 
-        openStack: [],
+    confirmedVessel: [],
 
-        vesselSchedule: [],
+    openStack: [],
 
-        vesselHistory: [],
+    vesselSchedule: [],
 
-        counts: {}
+    vesselHistory: [],
 
-    };
+    counts: {}
 
+};
 
-    let CURRENT_SEARCH = "";
 
-    let CURRENT_MODAL_VESSEL = null;
+let CURRENT_SEARCH = "";
 
+let CURRENT_MODAL_VESSEL = null;
 
-    /* =========================================================
-       SECTION CONFIG
-    ========================================================= */
 
-    const SECTION_CONFIG = {
+/* =========================================================
+   SECTION CONFIG
+========================================================= */
 
-        vesselAlongside: {
+const SECTION_CONFIG = {
 
-            title: "Vessel Alongside",
+    vesselAlongside: {
 
-            icon: "fa-anchor",
+        title: "Vessel Alongside",
 
-            description:
-                "Vessels currently alongside the terminal.",
+        icon: "fa-anchor",
 
-            iconClass:
-                "text-blue-600",
+        description:
+            "Vessels currently alongside the terminal.",
 
-            bgClass:
-                "bg-blue-50"
+        iconClass:
+            "text-blue-600",
 
-        },
+        bgClass:
+            "bg-blue-50"
 
+    },
 
-        confirmedVessel: {
 
-            title: "Confirmed Vessel",
+    confirmedVessel: {
 
-            icon: "fa-circle-check",
+        title: "Confirmed Vessel",
 
-            description:
-                "Confirmed vessel operations and cargo readiness.",
+        icon: "fa-circle-check",
 
-            iconClass:
-                "text-emerald-600",
+        description:
+            "Confirmed vessel operations and cargo readiness.",
 
-            bgClass:
-                "bg-emerald-50"
+        iconClass:
+            "text-emerald-600",
 
-        },
+        bgClass:
+            "bg-emerald-50"
 
+    },
 
-        openStack: {
 
-            title: "Open Stack",
+    openStack: {
 
-            icon: "fa-box-open",
+        title: "Open Stack",
 
-            description:
-                "Vessel and cargo information with open stack status.",
+        icon: "fa-box-open",
 
-            iconClass:
-                "text-amber-600",
+        description:
+            "Vessel and cargo information with open stack status.",
 
-            bgClass:
-                "bg-amber-50"
+        iconClass:
+            "text-amber-600",
 
-        },
+        bgClass:
+            "bg-amber-50"
 
+    },
 
-        vesselSchedule: {
 
-            title: "Vessel Schedule",
+    vesselSchedule: {
 
-            icon: "fa-calendar-days",
+        title: "Vessel Schedule",
 
-            description:
-                "Upcoming vessel schedule.",
+        icon: "fa-calendar-days",
 
-            iconClass:
-                "text-purple-600",
+        description:
+            "Upcoming vessel schedule.",
 
-            bgClass:
-                "bg-purple-50"
+        iconClass:
+            "text-purple-600",
 
-        },
+        bgClass:
+            "bg-purple-50"
 
+    },
 
-        vesselHistory: {
 
-            title: "Vessel History",
+    vesselHistory: {
 
-            icon: "fa-clock-rotate-left",
+        title: "Vessel History",
 
-            description:
-                "Historical vessel movements and cargo activity.",
+        icon: "fa-clock-rotate-left",
 
-            iconClass:
-                "text-slate-600",
+        description:
+            "Historical vessel movements and cargo activity.",
 
-            bgClass:
-                "bg-slate-100"
+        iconClass:
+            "text-slate-600",
 
-        }
-
-    };
-
-
-    /* =========================================================
-       TABLE CONFIG
-    ========================================================= */
-
-    const TABLE_COLUMNS = {
-
-        vesselAlongside: [
-
-            {
-                key: "vessel",
-                label: "Vessel",
-                type: "vessel"
-            },
-
-            {
-                key: "voyage",
-                label: "Voyage",
-                type: "text"
-            },
-
-            {
-                key: "type",
-                label: "Type",
-                type: "type"
-            },
-
-            {
-                key: "atb",
-                label: "ATB",
-                type: "text"
-            },
-
-            {
-                key: "etd",
-                label: "ETD",
-                type: "text"
-            }
-
-        ],
-
-
-        confirmedVessel: [
-
-            {
-                key: "vessel",
-                label: "Vessel",
-                type: "vessel"
-            },
-
-            {
-                key: "voyage",
-                label: "Voyage",
-                type: "text"
-            },
-
-            {
-                key: "type",
-                label: "Type",
-                type: "type"
-            },
-
-            {
-                key: "etb",
-                label: "ETB",
-                type: "text"
-            },
-
-            {
-                key: "etd",
-                label: "ETD",
-                type: "text"
-            },
-
-            {
-                key: "openStack",
-                label: "Open Stack",
-                type: "text"
-            },
-
-            {
-                key: "closingTime",
-                label: "Closing",
-                type: "text"
-            },
-
-            {
-                key: "booking",
-                label: "Booking",
-                type: "number"
-            },
-
-            {
-                key: "open",
-                label: "Open",
-                type: "number"
-            },
-
-            {
-                key: "actual",
-                label: "Actual",
-                type: "number"
-            }
-
-        ],
-
-
-        /* =====================================================
-           OPEN STACK
-           ===================================================== */
-
-        openStack: [
-
-            {
-                key: "vessel",
-                label: "Vessel",
-                type: "vessel"
-            },
-
-            {
-                key: "voyage",
-                label: "Voyage",
-                type: "text"
-            },
-
-            {
-                key: "type",
-                label: "Type",
-                type: "type"
-            },
-
-            {
-                key: "eta",
-                label: "ETA",
-                type: "datetime"
-            },
-
-            {
-                key: "etb",
-                label: "ETB",
-                type: "datetime"
-            },
-
-            {
-                key: "etd",
-                label: "ETD",
-                type: "datetime"
-            },
-
-            {
-                key: "openStack",
-                label: "Open Stack",
-                type: "datetime"
-            },
-
-            {
-                key: "closingTime",
-                label: "Closing",
-                type: "datetime"
-            },
-
-            {
-                key: "booking",
-                label: "Booking",
-                type: "number"
-            },
-
-            {
-                key: "open",
-                label: "Open",
-                type: "number"
-            },
-
-            {
-                key: "actual",
-                label: "Actual",
-                type: "number"
-            }
-
-        ],
-
-
-        vesselSchedule: [
-
-            {
-                key: "vessel",
-                label: "Vessel",
-                type: "vessel"
-            },
-
-            {
-                key: "voyage",
-                label: "Voyage",
-                type: "text"
-            },
-
-            {
-                key: "etb",
-                label: "ETB",
-                type: "text"
-            }
-
-        ],
-
-
-        vesselHistory: [
-
-            {
-                key: "vessel",
-                label: "Vessel",
-                type: "vessel"
-            },
-
-            {
-                key: "voyage",
-                label: "Voyage",
-                type: "text"
-            },
-
-            {
-                key: "type",
-                label: "Type",
-                type: "type"
-            },
-
-            {
-                key: "etb",
-                label: "ETB",
-                type: "text"
-            },
-
-            {
-                key: "atd",
-                label: "ATD",
-                type: "text"
-            },
-
-            {
-                key: "export",
-                label: "Export",
-                type: "number"
-            },
-
-            {
-                key: "import",
-                label: "Import",
-                type: "number"
-            }
-
-        ]
-
-    };
-
-
-    /* =========================================================
-       HELPERS
-    ========================================================= */
-
-    function escapeHtml(value) {
-
-        return String(value ?? "")
-
-            .replace(/&/g, "&amp;")
-
-            .replace(/</g, "&lt;")
-
-            .replace(/>/g, "&gt;")
-
-            .replace(/"/g, "&quot;")
-
-            .replace(/'/g, "&#039;");
+        bgClass:
+            "bg-slate-100"
 
     }
 
+};
 
-    function normalizeSearchValue(value) {
 
-        return String(value ?? "")
+/* =========================================================
+   TABLE CONFIG
+========================================================= */
 
-            .toLowerCase()
+const TABLE_COLUMNS = {
 
-            .trim();
+    vesselAlongside: [
+
+        {
+            key: "vessel",
+            label: "Vessel",
+            type: "vessel"
+        },
+
+        {
+            key: "voyage",
+            label: "Voyage",
+            type: "text"
+        },
+
+        {
+            key: "type",
+            label: "Type",
+            type: "type"
+        },
+
+        {
+            key: "atb",
+            label: "ATB",
+            type: "text"
+        },
+
+        {
+            key: "etd",
+            label: "ETD",
+            type: "text"
+        }
+
+    ],
+
+
+    confirmedVessel: [
+
+        {
+            key: "vessel",
+            label: "Vessel",
+            type: "vessel"
+        },
+
+        {
+            key: "voyage",
+            label: "Voyage",
+            type: "text"
+        },
+
+        {
+            key: "type",
+            label: "Type",
+            type: "type"
+        },
+
+        {
+            key: "etb",
+            label: "ETB",
+            type: "text"
+        },
+
+        {
+            key: "etd",
+            label: "ETD",
+            type: "text"
+        },
+
+        {
+            key: "openStack",
+            label: "Open Stack",
+            type: "text"
+        },
+
+        {
+            key: "closingTime",
+            label: "Closing",
+            type: "text"
+        },
+
+        {
+            key: "booking",
+            label: "Booking",
+            type: "number"
+        },
+
+        {
+            key: "open",
+            label: "Open",
+            type: "number"
+        },
+
+        {
+            key: "actual",
+            label: "Actual",
+            type: "number"
+        }
+
+    ],
+
+
+    openStack: [
+
+        {
+            key: "vessel",
+            label: "Vessel",
+            type: "vessel"
+        },
+
+        {
+            key: "voyage",
+            label: "Voyage",
+            type: "text"
+        },
+
+        {
+            key: "type",
+            label: "Type",
+            type: "type"
+        },
+
+        {
+            key: "eta",
+            label: "ETA",
+            type: "datetime"
+        },
+
+        {
+            key: "etb",
+            label: "ETB",
+            type: "datetime"
+        },
+
+        {
+            key: "etd",
+            label: "ETD",
+            type: "datetime"
+        },
+
+        {
+            key: "openStack",
+            label: "Open Stack",
+            type: "datetime"
+        },
+
+        {
+            key: "closingTime",
+            label: "Closing",
+            type: "datetime"
+        },
+
+        {
+            key: "booking",
+            label: "Booking",
+            type: "number"
+        },
+
+        {
+            key: "open",
+            label: "Open",
+            type: "number"
+        },
+
+        {
+            key: "actual",
+            label: "Actual",
+            type: "number"
+        }
+
+    ],
+
+
+    vesselSchedule: [
+
+        {
+            key: "vessel",
+            label: "Vessel",
+            type: "vessel"
+        },
+
+        {
+            key: "voyage",
+            label: "Voyage",
+            type: "text"
+        },
+
+        {
+            key: "etb",
+            label: "ETB",
+            type: "text"
+        }
+
+    ],
+
+
+    vesselHistory: [
+
+        {
+            key: "vessel",
+            label: "Vessel",
+            type: "vessel"
+        },
+
+        {
+            key: "voyage",
+            label: "Voyage",
+            type: "text"
+        },
+
+        {
+            key: "type",
+            label: "Type",
+            type: "type"
+        },
+
+        {
+            key: "etb",
+            label: "ETB",
+            type: "text"
+        },
+
+        {
+            key: "atd",
+            label: "ATD",
+            type: "text"
+        },
+
+        {
+            key: "export",
+            label: "Export",
+            type: "number"
+        },
+
+        {
+            key: "import",
+            label: "Import",
+            type: "number"
+        }
+
+    ]
+
+};
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function normalizeSearchValue(value) {
+
+    return String(value ?? "")
+        .toLowerCase()
+        .trim();
+
+}
+
+
+function formatValue(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+
+        return "-";
 
     }
 
+    return escapeHtml(value);
 
-    function formatValue(value) {
+}
 
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
 
-            return "-";
+function formatNumber(value) {
 
-        }
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+
+        return "-";
+
+    }
+
+    const number =
+        Number(
+            String(value)
+                .replace(/,/g, "")
+        );
+
+
+    if (Number.isNaN(number)) {
 
         return escapeHtml(value);
 
     }
 
 
-    function formatNumber(value) {
+    return number.toLocaleString(
+        "en-US"
+    );
 
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
+}
 
-            return "-";
 
+/* =========================================================
+   DATE / TIME
+========================================================= */
+
+function formatDateTime(date) {
+
+    if (
+        !date ||
+        Number.isNaN(date.getTime())
+    ) {
+
+        return "-";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+
+        "id-ID",
+
+        {
+            dateStyle: "medium",
+            timeStyle: "medium",
+            timeZone: "Asia/Jakarta"
         }
 
-        const number =
-            Number(
-                String(value)
-                    .replace(/,/g, "")
-            );
+    ).format(date) + " WIB";
+
+}
 
 
-        if (Number.isNaN(number)) {
+function formatTime(date) {
 
-            return escapeHtml(value);
+    if (
+        !date ||
+        Number.isNaN(date.getTime())
+    ) {
 
+        return "-";
+
+    }
+
+
+    return new Intl.DateTimeFormat(
+
+        "id-ID",
+
+        {
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "Asia/Jakarta"
         }
 
+    ).format(date) + " WIB";
 
-        return number.toLocaleString(
-            "en-US"
+}
+
+
+/* =========================================================
+   DATETIME RENDERER
+========================================================= */
+
+function renderDateTime(value) {
+
+    if (!value) {
+
+        return `
+            <span class="text-slate-400">-</span>
+        `;
+
+    }
+
+
+    const text =
+        String(value).trim();
+
+
+    const match =
+        text.match(
+            /^(.*?)\s+(\d{1,2}:\d{2}(?::\d{2})?)$/
         );
 
-    }
 
-
-    /* =========================================================
-       DATE / TIME
-    ========================================================= */
-
-    function formatDateTime(date) {
-
-        if (
-            !date ||
-            Number.isNaN(date.getTime())
-        ) {
-
-            return "-";
-
-        }
-
-
-        return new Intl.DateTimeFormat(
-
-            "id-ID",
-
-            {
-                dateStyle: "medium",
-                timeStyle: "medium",
-                timeZone: "Asia/Jakarta"
-            }
-
-        ).format(date) + " WIB";
-
-    }
-
-
-    function formatTime(date) {
-
-        if (
-            !date ||
-            Number.isNaN(date.getTime())
-        ) {
-
-            return "-";
-
-        }
-
-
-        return new Intl.DateTimeFormat(
-
-            "id-ID",
-
-            {
-                hour: "2-digit",
-                minute: "2-digit",
-                timeZone: "Asia/Jakarta"
-            }
-
-        ).format(date) + " WIB";
-
-    }
-
-
-    /* =========================================================
-       OPEN STACK DATETIME RENDERER
-    ========================================================= */
-
-    function renderDateTime(value) {
-
-        if (!value) {
-
-            return `
-                <span class="text-slate-400">-</span>
-            `;
-
-        }
-
-
-        const text =
-            String(value).trim();
-
-
-        const match =
-            text.match(
-                /^(.*?)\s+(\d{1,2}:\d{2}(?::\d{2})?)$/
-            );
-
-
-        if (!match) {
-
-            return `
-                <div class="datetime-cell whitespace-nowrap">
-
-                    <div class="datetime-date">
-                        ${escapeHtml(text)}
-                    </div>
-
-                </div>
-            `;
-
-        }
-
-
-        const datePart =
-            match[1];
-
-        const timePart =
-            match[2];
-
+    if (!match) {
 
         return `
             <div class="datetime-cell whitespace-nowrap">
-
                 <div class="datetime-date">
-                    ${escapeHtml(datePart)}
+                    ${escapeHtml(text)}
                 </div>
-
-                <div class="datetime-time">
-                    ${escapeHtml(timePart)}
-                </div>
-
             </div>
         `;
 
     }
 
 
-    /* =========================================================
-       DATA AGE
-    ========================================================= */
+    const datePart =
+        match[1];
 
-    function getAgeMinutes() {
-
-        const timestamp =
-            DATA.updatedAt ||
-            DATA.lastUpdated;
+    const timePart =
+        match[2];
 
 
-        if (!timestamp) {
-            return null;
+    return `
+        <div class="datetime-cell whitespace-nowrap">
+
+            <div class="datetime-date">
+                ${escapeHtml(datePart)}
+            </div>
+
+            <div class="datetime-time">
+                ${escapeHtml(timePart)}
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   DATA AGE
+========================================================= */
+
+function getAgeMinutes() {
+
+    const timestamp =
+        DATA.updatedAt ||
+        DATA.lastUpdated;
+
+
+    if (!timestamp) {
+
+        return null;
+
+    }
+
+
+    const date =
+        new Date(timestamp);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    return Math.max(
+
+        0,
+
+        (
+            Date.now() -
+            date.getTime()
+        ) / 60000
+
+    );
+
+}
+
+
+function formatAge(minutes) {
+
+    if (
+        minutes === null ||
+        minutes === undefined ||
+        Number.isNaN(minutes)
+    ) {
+
+        return "-";
+
+    }
+
+
+    if (minutes < 1) {
+
+        return "just now";
+
+    }
+
+
+    if (minutes < 60) {
+
+        return `${Math.floor(minutes)} min`;
+
+    }
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    const mins =
+        Math.floor(
+            minutes % 60
+        );
+
+
+    if (hours < 24) {
+
+        if (mins === 0) {
+
+            return `${hours} hr`;
+
         }
 
 
-        const date =
-            new Date(timestamp);
+        return `${hours} hr ${mins} min`;
+
+    }
 
 
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
-
-            return null;
-
-        }
+    const days =
+        Math.floor(
+            hours / 24
+        );
 
 
-        return Math.max(
+    return days === 1
+        ? "1 day"
+        : `${days} days`;
 
-            0,
+}
 
-            (
-                Date.now() -
-                date.getTime()
-            ) / 60000
 
+/* =========================================================
+   CONNECTION STATUS
+========================================================= */
+
+function updateConnectionStatus(
+    state,
+    text
+) {
+
+    const dot =
+        document.getElementById(
+            "connectionDot"
+        );
+
+    const label =
+        document.getElementById(
+            "connectionText"
+        );
+
+
+    if (!dot || !label) {
+
+        return;
+
+    }
+
+
+    label.textContent =
+        text;
+
+
+    dot.className =
+        "status-dot";
+
+
+    if (state === "online") {
+
+        dot.classList.add(
+            "bg-emerald-500"
+        );
+
+    }
+    else if (state === "loading") {
+
+        dot.classList.add(
+            "bg-blue-500",
+            "pulse"
+        );
+
+    }
+    else {
+
+        dot.classList.add(
+            "bg-red-500"
         );
 
     }
 
-
-    function formatAge(minutes) {
-
-        if (
-            minutes === null ||
-            minutes === undefined ||
-            Number.isNaN(minutes)
-        ) {
-
-            return "-";
-
-        }
+}
 
 
-        if (minutes < 1) {
+/* =========================================================
+   FRESHNESS
+========================================================= */
 
-            return "just now";
+function updateFreshness() {
 
-        }
+    const badge =
+        document.getElementById(
+            "freshnessBadge"
+        );
 
-
-        if (minutes < 60) {
-
-            return `${Math.floor(minutes)} min`;
-
-        }
-
-
-        const hours =
-            Math.floor(
-                minutes / 60
-            );
+    const relative =
+        document.getElementById(
+            "lastUpdatedRelative"
+        );
 
 
-        const mins =
-            Math.floor(
-                minutes % 60
-            );
+    if (!badge || !relative) {
 
-
-        if (hours < 24) {
-
-            if (mins === 0) {
-
-                return `${hours} hr`;
-
-            }
-
-
-            return `${hours} hr ${mins} min`;
-
-        }
-
-
-        const days =
-            Math.floor(
-                hours / 24
-            );
-
-
-        return days === 1
-            ? "1 day"
-            : `${days} days`;
+        return;
 
     }
 
 
-    /* =========================================================
-       CONNECTION STATUS
-    ========================================================= */
+    const age =
+        getAgeMinutes();
 
-    function updateConnectionStatus(
-        state,
-        text
+
+    badge.className =
+        "px-2 py-0.5 rounded-full text-[10px] font-bold";
+
+
+    if (age === null) {
+
+        badge.textContent =
+            "Unknown";
+
+
+        badge.classList.add(
+            "bg-slate-100",
+            "text-slate-500"
+        );
+
+
+        relative.textContent =
+            "No valid update timestamp.";
+
+        return;
+
+    }
+
+
+    const ageText =
+        formatAge(age);
+
+
+    relative.textContent =
+        `${ageText} ago`;
+
+
+    if (age < 90) {
+
+        badge.textContent =
+            "Fresh";
+
+
+        badge.classList.add(
+            "bg-emerald-50",
+            "text-emerald-700"
+        );
+
+    }
+    else if (age < 180) {
+
+        badge.textContent =
+            "Delayed";
+
+
+        badge.classList.add(
+            "bg-amber-50",
+            "text-amber-700"
+        );
+
+    }
+    else {
+
+        badge.textContent =
+            "Outdated";
+
+
+        badge.classList.add(
+            "bg-red-50",
+            "text-red-700"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NEXT UPDATE
+========================================================= */
+
+function getNextScraperUpdate() {
+
+    const now =
+        new Date();
+
+
+    const next =
+        new Date(now);
+
+
+    const currentMinutes =
+        now.getMinutes();
+
+
+    if (
+        currentMinutes < 30
     ) {
 
-        const dot =
-            document.getElementById(
-                "connectionDot"
+        next.setMinutes(30);
+
+        next.setSeconds(0);
+
+        next.setMilliseconds(0);
+
+    }
+    else {
+
+        next.setHours(
+            next.getHours() + 1
+        );
+
+        next.setMinutes(0);
+
+        next.setSeconds(0);
+
+        next.setMilliseconds(0);
+
+    }
+
+
+    return next;
+
+}
+
+
+function updateNextUpdate() {
+
+    const next =
+        getNextScraperUpdate();
+
+
+    const label =
+        document.getElementById(
+            "nextUpdate"
+        );
+
+
+    const countdown =
+        document.getElementById(
+            "nextUpdateCountdown"
+        );
+
+
+    if (
+        !label ||
+        !countdown
+    ) {
+
+        return;
+
+    }
+
+
+    label.textContent =
+        formatTime(next);
+
+
+    const diff =
+        Math.max(
+
+            0,
+
+            next.getTime() -
+            Date.now()
+
+        );
+
+
+    const totalSeconds =
+        Math.floor(
+            diff / 1000
+        );
+
+
+    const hours =
+        Math.floor(
+            totalSeconds / 3600
+        );
+
+
+    const minutes =
+        Math.floor(
+            (
+                totalSeconds % 3600
+            ) / 60
+        );
+
+
+    const seconds =
+        totalSeconds % 60;
+
+
+    if (hours > 0) {
+
+        countdown.textContent =
+            `in ${hours}h ${minutes}m`;
+
+    }
+    else if (minutes > 0) {
+
+        countdown.textContent =
+            `in ${minutes}m ${seconds}s`;
+
+    }
+    else {
+
+        countdown.textContent =
+            `in ${seconds}s`;
+
+    }
+
+}
+
+
+/* =========================================================
+   SCRAPER STATUS
+========================================================= */
+
+async function loadScraperStatus() {
+
+    const dot =
+        document.getElementById(
+            "scraperDot"
+        );
+
+    const status =
+        document.getElementById(
+            "scraperStatus"
+        );
+
+    const detail =
+        document.getElementById(
+            "scraperDetail"
+        );
+
+
+    if (
+        !dot ||
+        !status ||
+        !detail
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                GITHUB_WORKFLOW_API,
+
+                {
+                    cache: "no-store"
+                }
+
             );
 
-        const label =
-            document.getElementById(
-                "connectionText"
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
             );
 
-
-        if (!dot || !label) {
-            return;
         }
 
 
-        label.textContent =
-            text;
+        const json =
+            await response.json();
+
+
+        const run =
+            json?.workflow_runs?.[0];
+
+
+        if (!run) {
+
+            throw new Error(
+                "No workflow run found"
+            );
+
+        }
+
+
+        const conclusion =
+            run.conclusion;
+
+
+        const runStatus =
+            run.status;
 
 
         dot.className =
             "status-dot";
 
 
-        if (state === "online") {
+        if (
 
-            dot.classList.add(
-                "bg-emerald-500"
-            );
+            runStatus ===
+                "in_progress" ||
 
-        }
-        else if (state === "loading") {
+            runStatus ===
+                "queued"
+
+        ) {
 
             dot.classList.add(
                 "bg-blue-500",
                 "pulse"
             );
+
+
+            status.textContent =
+                runStatus ===
+                    "queued"
+                    ? "Queued"
+                    : "Running";
+
+        }
+        else if (
+            conclusion ===
+            "success"
+        ) {
+
+            dot.classList.add(
+                "bg-emerald-500"
+            );
+
+
+            status.textContent =
+                "Operational";
 
         }
         else {
@@ -1524,1273 +2893,672 @@
                 "bg-red-500"
             );
 
-        }
-
-    }
-
-
-    /* =========================================================
-       FRESHNESS
-    ========================================================= */
-
-    function updateFreshness() {
-
-        const badge =
-            document.getElementById(
-                "freshnessBadge"
-            );
-
-        const relative =
-            document.getElementById(
-                "lastUpdatedRelative"
-            );
-
-
-        if (!badge || !relative) {
-            return;
-        }
-
-
-        const age =
-            getAgeMinutes();
-
-
-        badge.className =
-            "px-2.5 py-1 rounded-full text-xs font-semibold";
-
-
-        if (age === null) {
-
-            badge.textContent =
-                "Unknown";
-
-
-            badge.classList.add(
-                "bg-slate-100",
-                "text-slate-500"
-            );
-
-
-            relative.textContent =
-                "No valid update timestamp.";
-
-            return;
-
-        }
-
-
-        const ageText =
-            formatAge(age);
-
-
-        relative.textContent =
-            `${ageText} ago`;
-
-
-        if (age < 90) {
-
-            badge.textContent =
-                "Fresh";
-
-
-            badge.classList.add(
-                "bg-emerald-50",
-                "text-emerald-700"
-            );
-
-        }
-        else if (age < 180) {
-
-            badge.textContent =
-                "Delayed";
-
-
-            badge.classList.add(
-                "bg-amber-50",
-                "text-amber-700"
-            );
-
-        }
-        else {
-
-            badge.textContent =
-                "Outdated";
-
-
-            badge.classList.add(
-                "bg-red-50",
-                "text-red-700"
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       NEXT SCRAPER UPDATE
-    ========================================================= */
-
-    function getNextScraperUpdate() {
-
-        const now =
-            new Date();
-
-
-        const next =
-            new Date(now);
-
-
-        const currentMinutes =
-            now.getMinutes();
-
-
-        if (
-            currentMinutes < 30
-        ) {
-
-            next.setMinutes(30);
-
-            next.setSeconds(0);
-
-            next.setMilliseconds(0);
-
-        }
-        else {
-
-            next.setHours(
-                next.getHours() + 1
-            );
-
-            next.setMinutes(0);
-
-            next.setSeconds(0);
-
-            next.setMilliseconds(0);
-
-        }
-
-
-        return next;
-
-    }
-
-
-    function updateNextUpdate() {
-
-        const next =
-            getNextScraperUpdate();
-
-
-        const label =
-            document.getElementById(
-                "nextUpdate"
-            );
-
-
-        const countdown =
-            document.getElementById(
-                "nextUpdateCountdown"
-            );
-
-
-        if (
-            !label ||
-            !countdown
-        ) {
-
-            return;
-
-        }
-
-
-        label.textContent =
-            formatTime(next);
-
-
-        const diff =
-            Math.max(
-
-                0,
-
-                next.getTime() -
-                Date.now()
-
-            );
-
-
-        const totalSeconds =
-            Math.floor(
-                diff / 1000
-            );
-
-
-        const hours =
-            Math.floor(
-                totalSeconds / 3600
-            );
-
-
-        const minutes =
-            Math.floor(
-                (
-                    totalSeconds % 3600
-                ) / 60
-            );
-
-
-        const seconds =
-            totalSeconds % 60;
-
-
-        if (hours > 0) {
-
-            countdown.textContent =
-                `in ${hours}h ${minutes}m`;
-
-        }
-        else if (minutes > 0) {
-
-            countdown.textContent =
-                `in ${minutes}m ${seconds}s`;
-
-        }
-        else {
-
-            countdown.textContent =
-                `in ${seconds}s`;
-
-        }
-
-    }
-
-
-    /* =========================================================
-       SCRAPER STATUS
-    ========================================================= */
-
-    async function loadScraperStatus() {
-
-        const dot =
-            document.getElementById(
-                "scraperDot"
-            );
-
-        const status =
-            document.getElementById(
-                "scraperStatus"
-            );
-
-        const detail =
-            document.getElementById(
-                "scraperDetail"
-            );
-
-
-        if (
-            !dot ||
-            !status ||
-            !detail
-        ) {
-
-            return;
-
-        }
-
-
-        try {
-
-            const response =
-                await fetch(
-
-                    GITHUB_WORKFLOW_API,
-
-                    {
-                        cache: "no-store"
-                    }
-
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    `HTTP ${response.status}`
-                );
-
-            }
-
-
-            const json =
-                await response.json();
-
-
-            const run =
-                json?.workflow_runs?.[0];
-
-
-            if (!run) {
-
-                throw new Error(
-                    "No workflow run found"
-                );
-
-            }
-
-
-            const conclusion =
-                run.conclusion;
-
-
-            const runStatus =
-                run.status;
-
-
-            dot.className =
-                "status-dot";
-
-
-            if (
-
-                runStatus ===
-                    "in_progress" ||
-
-                runStatus ===
-                    "queued"
-
-            ) {
-
-                dot.classList.add(
-                    "bg-blue-500",
-                    "pulse"
-                );
-
-
-                status.textContent =
-                    runStatus ===
-                        "queued"
-                        ? "Queued"
-                        : "Running";
-
-            }
-            else if (
-                conclusion ===
-                "success"
-            ) {
-
-                dot.classList.add(
-                    "bg-emerald-500"
-                );
-
-
-                status.textContent =
-                    "Operational";
-
-            }
-            else {
-
-                dot.classList.add(
-                    "bg-red-500"
-                );
-
-
-                status.textContent =
-                    "Failed";
-
-            }
-
-
-            const runDate =
-                new Date(
-
-                    run.updated_at ||
-                    run.created_at
-
-                );
-
-
-            detail.textContent =
-                `Last run: ${
-                    formatDateTime(runDate)
-                }`;
-
-        }
-        catch (error) {
-
-            console.error(
-                "Failed to load scraper status:",
-                error
-            );
-
-
-            dot.className =
-                "status-dot bg-slate-400";
-
 
             status.textContent =
-                "Unavailable";
-
-
-            detail.textContent =
-                "GitHub Actions status unavailable.";
+                "Failed";
 
         }
 
-    }
 
+        const runDate =
+            new Date(
 
-    /* =========================================================
-       STATISTICS
-    ========================================================= */
+                run.updated_at ||
+                run.created_at
 
-    function updateStatistics() {
-
-        const container =
-            document.getElementById(
-                "statistics"
             );
 
 
-        if (!container) {
-            return;
-        }
-
-
-        const items = [
-
-            {
-                key:
-                    "vesselAlongside",
-
-                label:
-                    "Vessel Alongside",
-
-                icon:
-                    "fa-anchor",
-
-                iconClass:
-                    "text-blue-600",
-
-                bgClass:
-                    "bg-blue-50"
-            },
-
-
-            {
-                key:
-                    "confirmedVessel",
-
-                label:
-                    "Confirmed Vessel",
-
-                icon:
-                    "fa-circle-check",
-
-                iconClass:
-                    "text-emerald-600",
-
-                bgClass:
-                    "bg-emerald-50"
-            },
-
-
-            {
-                key:
-                    "openStack",
-
-                label:
-                    "Open Stack",
-
-                icon:
-                    "fa-box-open",
-
-                iconClass:
-                    "text-amber-600",
-
-                bgClass:
-                    "bg-amber-50"
-            },
-
-
-            {
-                key:
-                    "vesselSchedule",
-
-                label:
-                    "Vessel Schedule",
-
-                icon:
-                    "fa-calendar-days",
-
-                iconClass:
-                    "text-purple-600",
-
-                bgClass:
-                    "bg-purple-50"
-            },
-
-
-            {
-                key:
-                    "vesselHistory",
-
-                label:
-                    "Vessel History",
-
-                icon:
-                    "fa-clock-rotate-left",
-
-                iconClass:
-                    "text-slate-600",
-
-                bgClass:
-                    "bg-slate-100"
-            }
-
-        ];
-
-
-        container.innerHTML =
-
-            items.map(
-                item => {
-
-                    const count =
-
-                        Array.isArray(
-                            DATA[item.key]
-                        )
-
-                            ? DATA[item.key].length
-
-                            : Number(
-                                DATA.counts?.[
-                                    item.key
-                                ] || 0
-                            );
-
-
-                    return `
-
-                        <div
-                            class="bg-white
-                                   border border-slate-200
-                                   rounded-2xl p-4
-                                   shadow-sm"
-                        >
-
-                            <div
-                                class="flex items-center
-                                       justify-between gap-3"
-                            >
-
-                                <div>
-
-                                    <p
-                                        class="text-xs
-                                               font-medium
-                                               text-slate-500"
-                                    >
-                                        ${
-                                            escapeHtml(
-                                                item.label
-                                            )
-                                        }
-                                    </p>
-
-                                    <p
-                                        class="mt-1 text-2xl
-                                               font-bold
-                                               text-slate-800"
-                                    >
-                                        ${
-                                            count.toLocaleString(
-                                                "en-US"
-                                            )
-                                        }
-                                    </p>
-
-                                </div>
-
-
-                                <div
-                                    class="w-10 h-10
-                                           rounded-xl
-                                           ${item.bgClass}
-                                           ${item.iconClass}
-                                           flex items-center
-                                           justify-center"
-                                >
-
-                                    <i
-                                        class="fa-solid
-                                               ${item.icon}"
-                                    ></i>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-                }
-
-            ).join("");
+        detail.textContent =
+            `Last run: ${
+                formatDateTime(runDate)
+            }`;
 
     }
+    catch (error) {
 
-
-    /* =========================================================
-       SEARCH
-    ========================================================= */
-
-    function vesselMatches(
-        vessel,
-        query,
-        sectionKey
-    ) {
-
-        if (!query) {
-            return true;
-        }
-
-
-        const columns =
-            TABLE_COLUMNS[
-                sectionKey
-            ] || [];
-
-
-        const searchableValues = [];
-
-
-        columns.forEach(
-            column => {
-
-                if (
-                    column.type ===
-                    "vessel"
-                ) {
-
-                    searchableValues.push(
-                        vessel.vesselName ??
-                        ""
-                    );
-
-
-                    searchableValues.push(
-                        vessel.vesselCode ??
-                        ""
-                    );
-
-
-                    return;
-
-                }
-
-
-                searchableValues.push(
-                    vessel[
-                        column.key
-                    ] ?? ""
-                );
-
-            }
+        console.error(
+            "Failed to load scraper status:",
+            error
         );
 
 
-        const searchableText =
-
-            searchableValues
-
-                .map(
-                    normalizeSearchValue
-                )
-
-                .join(" ");
+        dot.className =
+            "status-dot bg-slate-400";
 
 
-        return searchableText.includes(
-            query
+        status.textContent =
+            "Unavailable";
+
+
+        detail.textContent =
+            "GitHub Actions status unavailable.";
+
+    }
+
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+function updateStatistics() {
+
+    const container =
+        document.getElementById(
+            "statistics"
         );
 
-    }
 
+    if (!container) {
 
-    function clearSearch() {
-
-        const input =
-            document.getElementById(
-                "searchInput"
-            );
-
-
-        if (input) {
-            input.value = "";
-        }
-
-
-        CURRENT_SEARCH =
-            "";
-
-
-        renderSections();
+        return;
 
     }
 
 
-    /* =========================================================
-       RENDER SECTIONS
-    ========================================================= */
+    const items = [
 
-    function renderSections() {
+        {
+            key:
+                "vesselAlongside",
 
-        const container =
-            document.getElementById(
-                "sections"
-            );
+            label:
+                "Alongside",
+
+            subtitle:
+                "At terminal",
+
+            icon:
+                "fa-anchor",
+
+            iconClass:
+                "text-blue-600",
+
+            bgClass:
+                "bg-blue-50",
+
+            accent:
+                "border-l-blue-500"
+
+        },
 
 
-        if (!container) {
-            return;
+        {
+            key:
+                "confirmedVessel",
+
+            label:
+                "Confirmed",
+
+            subtitle:
+                "Confirmed ops",
+
+            icon:
+                "fa-circle-check",
+
+            iconClass:
+                "text-emerald-600",
+
+            bgClass:
+                "bg-emerald-50",
+
+            accent:
+                "border-l-emerald-500"
+
+        },
+
+
+        {
+            key:
+                "openStack",
+
+            label:
+                "Open Stack",
+
+            subtitle:
+                "Cargo readiness",
+
+            icon:
+                "fa-box-open",
+
+            iconClass:
+                "text-amber-600",
+
+            bgClass:
+                "bg-amber-50",
+
+            accent:
+                "border-l-amber-500"
+
+        },
+
+
+        {
+            key:
+                "vesselSchedule",
+
+            label:
+                "Schedule",
+
+            subtitle:
+                "Upcoming",
+
+            icon:
+                "fa-calendar-days",
+
+            iconClass:
+                "text-purple-600",
+
+            bgClass:
+                "bg-purple-50",
+
+            accent:
+                "border-l-purple-500"
+
+        },
+
+
+        {
+            key:
+                "vesselHistory",
+
+            label:
+                "History",
+
+            subtitle:
+                "Completed",
+
+            icon:
+                "fa-clock-rotate-left",
+
+            iconClass:
+                "text-slate-600",
+
+            bgClass:
+                "bg-slate-100",
+
+            accent:
+                "border-l-slate-400"
+
         }
 
-
-        let totalVisible =
-            0;
+    ];
 
 
-        let totalRecords =
-            0;
+    container.innerHTML =
 
+        items.map(
+            item => {
 
-        container.innerHTML =
+                const count =
 
-            Object.entries(
-                SECTION_CONFIG
-            )
+                    Array.isArray(
+                        DATA[item.key]
+                    )
 
-            .map(
-                ([sectionKey, config]) => {
+                        ? DATA[item.key].length
 
-                    const records =
-
-                        Array.isArray(
-                            DATA[sectionKey]
-                        )
-
-                            ? DATA[sectionKey]
-
-                            : [];
-
-
-                    totalRecords +=
-                        records.length;
-
-
-                    const filteredRecords =
-
-                        records.filter(
-
-                            vessel =>
-
-                                vesselMatches(
-
-                                    vessel,
-
-                                    CURRENT_SEARCH,
-
-                                    sectionKey
-
-                                )
-
+                        : Number(
+                            DATA.counts?.[
+                                item.key
+                            ] || 0
                         );
 
 
-                    totalVisible +=
-                        filteredRecords.length;
-
-
-                    return renderSection(
-
-                        sectionKey,
-
-                        config,
-
-                        filteredRecords,
-
-                        records.length
-
-                    );
-
-                }
-
-            )
-
-            .join("");
-
-
-        const info =
-            document.getElementById(
-                "searchResultInfo"
-            );
-
-
-        if (info) {
-
-            if (CURRENT_SEARCH) {
-
-                info.textContent =
-
-                    `Showing ${
-                        totalVisible.toLocaleString(
-                            "en-US"
-                        )
-                    } of ${
-                        totalRecords.toLocaleString(
-                            "en-US"
-                        )
-                    } records`;
-
-            }
-            else {
-
-                info.textContent =
-
-                    `${
-                        totalRecords.toLocaleString(
-                            "en-US"
-                        )
-                    } total records`;
-
-            }
-
-        }
-
-    }
-
-
-    /* =========================================================
-       ERROR DISPLAY
-    ========================================================= */
-
-    function renderDataError(message) {
-
-        const statistics =
-            document.getElementById(
-                "statistics"
-            );
-
-        const sections =
-            document.getElementById(
-                "sections"
-            );
-
-
-        if (statistics) {
-
-            statistics.innerHTML = "";
-
-        }
-
-
-        if (sections) {
-
-            sections.innerHTML = `
-
-                <section
-                    class="bg-white
-                           border border-red-200
-                           rounded-2xl
-                           shadow-sm overflow-hidden"
-                >
-
-                    <div class="p-6">
-
-                        <div
-                            class="flex items-start
-                                   gap-4"
-                        >
-
-                            <div
-                                class="w-11 h-11
-                                       rounded-xl
-                                       bg-red-50
-                                       text-red-600
-                                       flex items-center
-                                       justify-center
-                                       flex-shrink-0"
-                            >
-
-                                <i
-                                    class="fa-solid
-                                           fa-triangle-exclamation"
-                                ></i>
-
-                            </div>
-
-
-                            <div class="min-w-0">
-
-                                <h2
-                                    class="font-bold
-                                           text-slate-800"
-                                >
-                                    Unable to Load Data
-                                </h2>
-
-                                <p
-                                    class="mt-1
-                                           text-sm
-                                           text-slate-500"
-                                >
-                                    The dashboard could not
-                                    load the latest
-                                    <code>data.json</code>.
-                                </p>
-
-                                <p
-                                    class="mt-2
-                                           text-xs
-                                           text-red-600
-                                           break-words"
-                                >
-                                    ${escapeHtml(message)}
-                                </p>
-
-                                <button
-                                    type="button"
-                                    onclick="loadData()"
-                                    class="mt-4
-                                           px-4 py-2
-                                           rounded-xl
-                                           bg-blue-600
-                                           hover:bg-blue-700
-                                           text-white
-                                           text-sm
-                                           font-semibold"
-                                >
-                                    <i
-                                        class="fa-solid
-                                               fa-rotate mr-2"
-                                    ></i>
-                                    Try Again
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-            `;
-
-        }
-
-    }
-
-
-    /* =========================================================
-       TABLE SECTION
-    ========================================================= */
-
-    function renderSection(
-
-        sectionKey,
-
-        config,
-
-        records,
-
-        totalCount
-
-    ) {
-
-        const columns =
-            TABLE_COLUMNS[
-                sectionKey
-            ] || [];
-
-
-        const tableClass =
-            sectionKey === "openStack"
-                ? "w-full text-sm open-stack-table"
-                : "w-full text-sm";
-
-
-        return `
-
-            <section
-                class="bg-white
-                       border border-slate-200
-                       rounded-2xl
-                       shadow-sm overflow-hidden"
-            >
-
-                <!-- SECTION HEADER -->
-
-                <div
-                    class="px-5 py-4
-                           border-b border-slate-200"
-                >
+                return `
 
                     <div
-                        class="flex flex-col
-                               sm:flex-row
-                               sm:items-center
-                               sm:justify-between
-                               gap-3"
+                        class="dashboard-card
+                               kpi-card
+                               ${item.accent}
+                               border-l-[3px]
+                               rounded-[16px]
+                               p-4
+                               ${item.iconClass}"
                     >
 
                         <div
-                            class="flex items-center
+                            class="flex
+                                   items-center
+                                   justify-between
                                    gap-3"
                         >
 
-                            <div
-                                class="w-10 h-10
-                                       rounded-xl
-                                       ${config.bgClass}
-                                       ${config.iconClass}
-                                       flex items-center
-                                       justify-center"
-                            >
-
-                                <i
-                                    class="fa-solid
-                                           ${config.icon}"
-                                ></i>
-
-                            </div>
-
-
                             <div>
 
-                                <div
-                                    class="flex items-center
-                                           gap-2"
-                                >
-
-                                    <h2
-                                        class="font-bold
-                                               text-slate-800"
-                                    >
-                                        ${
-                                            escapeHtml(
-                                                config.title
-                                            )
-                                        }
-                                    </h2>
-
-
-                                    <span
-                                        class="px-2 py-0.5
-                                               rounded-full
-                                               bg-slate-100
-                                               text-slate-600
-                                               text-xs
-                                               font-semibold"
-                                    >
-                                        ${
-                                            records.length
-                                        }
-                                    </span>
-
-                                </div>
-
-
                                 <p
-                                    class="text-xs
-                                           text-slate-500
-                                           mt-0.5"
+                                    class="text-[10px]
+                                           font-bold
+                                           uppercase
+                                           tracking-[0.08em]
+                                           text-slate-500"
                                 >
                                     ${
                                         escapeHtml(
-                                            config.description
+                                            item.label
+                                        )
+                                    }
+                                </p>
+
+
+                                <p
+                                    class="mt-1
+                                           text-2xl
+                                           font-bold
+                                           tracking-tight
+                                           text-slate-800"
+                                >
+                                    ${
+                                        count.toLocaleString(
+                                            "en-US"
+                                        )
+                                    }
+                                </p>
+
+
+                                <p
+                                    class="mt-0.5
+                                           text-[10px]
+                                           text-slate-400"
+                                >
+                                    ${
+                                        escapeHtml(
+                                            item.subtitle
                                         )
                                     }
                                 </p>
 
                             </div>
 
-                        </div>
-
-
-                        ${
-                            CURRENT_SEARCH &&
-                            totalCount !==
-                                records.length
-
-                            ? `
-
-                                <p
-                                    class="text-xs
-                                           text-slate-400"
-                                >
-                                    ${
-                                        records.length
-                                    } matching
-                                </p>
-
-                            `
-
-                            : ""
-                        }
-
-                    </div>
-
-                </div>
-
-
-                <!-- TABLE -->
-
-                <div
-                    class="section-scroll"
-                >
-
-                    ${
-                        records.length
-
-                        ? `
-
-                            <table
-                                class="${tableClass}"
-                            >
-
-                                <thead
-                                    class="bg-slate-50
-                                           border-b
-                                           border-slate-200"
-                                >
-
-                                    <tr>
-
-                                        ${
-                                            columns
-                                                .map(
-                                                    column => `
-
-                                                        <th
-                                                            class="px-4
-                                                                   py-3
-                                                                   text-left
-                                                                   text-xs
-                                                                   font-semibold
-                                                                   uppercase
-                                                                   tracking-wider
-                                                                   text-slate-500
-                                                                   whitespace-nowrap"
-                                                        >
-                                                            ${
-                                                                escapeHtml(
-                                                                    column.label
-                                                                )
-                                                            }
-                                                        </th>
-
-                                                    `
-                                                )
-                                                .join("")
-                                        }
-
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody
-                                    class="divide-y
-                                           divide-slate-100"
-                                >
-
-                                    ${
-                                        records
-                                            .map(
-                                                vessel =>
-
-                                                    renderTableRow(
-
-                                                        vessel,
-
-                                                        sectionKey,
-
-                                                        columns
-
-                                                    )
-
-                                            )
-                                            .join("")
-                                    }
-
-                                </tbody>
-
-                            </table>
-
-                        `
-
-                        : `
 
                             <div
-                                class="py-12
-                                       text-center"
+                                class="w-10 h-10
+                                       rounded-xl
+                                       ${item.bgClass}
+                                       ${item.iconClass}
+                                       flex items-center
+                                       justify-center"
                             >
 
-                                <div
-                                    class="w-12 h-12
-                                           rounded-full
-                                           bg-slate-100
-                                           mx-auto
-                                           flex items-center
-                                           justify-center"
-                                >
-
-                                    <i
-                                        class="fa-solid
-                                               fa-inbox
-                                               text-slate-400"
-                                    ></i>
-
-                                </div>
-
-
-                                <p
-                                    class="mt-3
-                                           text-sm
-                                           font-medium
-                                           text-slate-600"
-                                >
-                                    ${
-                                        CURRENT_SEARCH
-
-                                            ? "No matching vessel found"
-
-                                            : "No vessel data available"
-                                    }
-                                </p>
-
-
-                                <p
-                                    class="mt-1
-                                           text-xs
-                                           text-slate-400"
-                                >
-                                    ${
-                                        CURRENT_SEARCH
-
-                                            ? "Try another search keyword."
-
-                                            : "The scraper did not return records for this section."
-                                    }
-                                </p>
+                                <i
+                                    class="fa-solid
+                                           ${item.icon}
+                                           text-sm"
+                                ></i>
 
                             </div>
 
-                        `
-                    }
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+        ).join("");
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function vesselMatches(
+    vessel,
+    query,
+    sectionKey
+) {
+
+    if (!query) {
+
+        return true;
+
+    }
+
+
+    const columns =
+        TABLE_COLUMNS[
+            sectionKey
+        ] || [];
+
+
+    const searchableValues = [];
+
+
+    columns.forEach(
+        column => {
+
+            if (
+                column.type ===
+                "vessel"
+            ) {
+
+                searchableValues.push(
+                    vessel.vesselName ??
+                    ""
+                );
+
+
+                searchableValues.push(
+                    vessel.vesselCode ??
+                    ""
+                );
+
+
+                return;
+
+            }
+
+
+            searchableValues.push(
+                vessel[
+                    column.key
+                ] ?? ""
+            );
+
+        }
+    );
+
+
+    const searchableText =
+
+        searchableValues
+
+            .map(
+                normalizeSearchValue
+            )
+
+            .join(" ");
+
+
+    return searchableText.includes(
+        query
+    );
+
+}
+
+
+function clearSearch() {
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    if (input) {
+
+        input.value = "";
+
+    }
+
+
+    CURRENT_SEARCH =
+        "";
+
+
+    renderSections();
+
+}
+
+
+/* =========================================================
+   RENDER SECTIONS
+========================================================= */
+
+function renderSections() {
+
+    const container =
+        document.getElementById(
+            "sections"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    let totalVisible =
+        0;
+
+
+    let totalRecords =
+        0;
+
+
+    container.innerHTML =
+
+        Object.entries(
+            SECTION_CONFIG
+        )
+
+        .map(
+            ([sectionKey, config]) => {
+
+                const records =
+
+                    Array.isArray(
+                        DATA[sectionKey]
+                    )
+
+                        ? DATA[sectionKey]
+
+                        : [];
+
+
+                totalRecords +=
+                    records.length;
+
+
+                const filteredRecords =
+
+                    records.filter(
+
+                        vessel =>
+
+                            vesselMatches(
+
+                                vessel,
+
+                                CURRENT_SEARCH,
+
+                                sectionKey
+
+                            )
+
+                    );
+
+
+                totalVisible +=
+                    filteredRecords.length;
+
+
+                return renderSection(
+
+                    sectionKey,
+
+                    config,
+
+                    filteredRecords,
+
+                    records.length
+
+                );
+
+            }
+
+        )
+
+        .join("");
+
+
+    const info =
+        document.getElementById(
+            "searchResultInfo"
+        );
+
+
+    if (info) {
+
+        if (CURRENT_SEARCH) {
+
+            info.textContent =
+
+                `Showing ${
+                    totalVisible.toLocaleString(
+                        "en-US"
+                    )
+                } of ${
+                    totalRecords.toLocaleString(
+                        "en-US"
+                    )
+                } records`;
+
+        }
+        else {
+
+            info.textContent =
+
+                `${
+                    totalRecords.toLocaleString(
+                        "en-US"
+                    )
+                } total records`;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function renderDataError(message) {
+
+    const statistics =
+        document.getElementById(
+            "statistics"
+        );
+
+    const sections =
+        document.getElementById(
+            "sections"
+        );
+
+
+    if (statistics) {
+
+        statistics.innerHTML = "";
+
+    }
+
+
+    if (sections) {
+
+        sections.innerHTML = `
+
+            <section
+                class="section-card
+                       border-red-200"
+            >
+
+                <div
+                    class="p-6 sm:p-8"
+                >
+
+                    <div
+                        class="flex items-start
+                               gap-4"
+                    >
+
+                        <div
+                            class="w-12 h-12
+                                   rounded-xl
+                                   bg-red-50
+                                   text-red-600
+                                   flex items-center
+                                   justify-center
+                                   flex-shrink-0"
+                        >
+
+                            <i
+                                class="fa-solid
+                                       fa-triangle-exclamation"
+                            ></i>
+
+                        </div>
+
+
+                        <div
+                            class="min-w-0"
+                        >
+
+                            <h2
+                                class="font-bold
+                                       text-slate-800"
+                            >
+                                Unable to Load Data
+                            </h2>
+
+
+                            <p
+                                class="mt-1
+                                       text-sm
+                                       text-slate-500"
+                            >
+                                The dashboard could not
+                                load the latest
+                                <code>data.json</code>.
+                            </p>
+
+
+                            <p
+                                class="mt-2
+                                       text-xs
+                                       text-red-600
+                                       break-words"
+                            >
+                                ${escapeHtml(message)}
+                            </p>
+
+
+                            <button
+                                type="button"
+                                onclick="loadData()"
+                                class="btn
+                                       mt-4
+                                       px-4 py-2.5
+                                       rounded-xl
+                                       bg-blue-600
+                                       hover:bg-blue-700
+                                       text-white
+                                       text-sm
+                                       font-semibold"
+                            >
+
+                                <i
+                                    class="fa-solid
+                                           fa-rotate
+                                           mr-2"
+                                ></i>
+
+                                Try Again
+
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -2800,294 +3568,539 @@
 
     }
 
-
-    /* =========================================================
-       TABLE ROW
-    ========================================================= */
-
-    function renderTableRow(
-
-        vessel,
-
-        sectionKey,
-
-        columns
-
-    ) {
-
-        let encodedVessel = "";
+}
 
 
-        try {
+/* =========================================================
+   TABLE SECTION
+========================================================= */
 
-            encodedVessel =
-                encodeURIComponent(
-                    JSON.stringify(vessel)
-                );
+function renderSection(
 
-        }
-        catch (error) {
+    sectionKey,
 
-            console.error(
-                "Failed to encode vessel:",
-                error
+    config,
+
+    records,
+
+    totalCount
+
+) {
+
+    const columns =
+        TABLE_COLUMNS[
+            sectionKey
+        ] || [];
+
+
+    const tableClass =
+        sectionKey === "openStack"
+
+            ? "w-full text-sm open-stack-table"
+
+            : "w-full text-sm";
+
+
+    return `
+
+        <section
+            class="section-card"
+        >
+
+            <!-- SECTION HEADER -->
+
+            <div
+                class="section-header
+                       px-4 sm:px-5
+                       py-4
+                       border-b border-slate-200"
+            >
+
+                <div
+                    class="flex flex-col
+                           sm:flex-row
+                           sm:items-center
+                           sm:justify-between
+                           gap-3"
+                >
+
+                    <div
+                        class="flex items-center
+                               gap-3"
+                    >
+
+                        <div
+                            class="w-10 h-10
+                                   rounded-xl
+                                   ${config.bgClass}
+                                   ${config.iconClass}
+                                   flex items-center
+                                   justify-center
+                                   flex-shrink-0"
+                        >
+
+                            <i
+                                class="fa-solid
+                                       ${config.icon}
+                                       text-sm"
+                            ></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <div
+                                class="flex items-center
+                                       gap-2"
+                            >
+
+                                <h2
+                                    class="font-bold
+                                           text-slate-800
+                                           tracking-tight"
+                                >
+                                    ${
+                                        escapeHtml(
+                                            config.title
+                                        )
+                                    }
+                                </h2>
+
+
+                                <span
+                                    class="px-2 py-0.5
+                                           rounded-full
+                                           bg-slate-100
+                                           text-slate-600
+                                           text-[10px]
+                                           font-bold"
+                                >
+                                    ${
+                                        records.length
+                                    }
+                                </span>
+
+                            </div>
+
+
+                            <p
+                                class="text-[11px]
+                                       text-slate-500
+                                       mt-0.5"
+                            >
+                                ${
+                                    escapeHtml(
+                                        config.description
+                                    )
+                                }
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    ${
+                        CURRENT_SEARCH &&
+                        totalCount !==
+                            records.length
+
+                        ? `
+
+                            <p
+                                class="text-[10px]
+                                       font-semibold
+                                       text-slate-400"
+                            >
+                                ${
+                                    records.length
+                                } matching
+                            </p>
+
+                        `
+
+                        : ""
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div
+                class="section-scroll"
+            >
+
+                ${
+                    records.length
+
+                    ? `
+
+                        <table
+                            class="${tableClass}"
+                        >
+
+                            <thead
+                                class="table-header
+                                       border-b
+                                       border-slate-200"
+                            >
+
+                                <tr>
+
+                                    ${
+                                        columns
+                                            .map(
+                                                column => `
+
+                                                    <th
+                                                        class="px-4
+                                                               py-3
+                                                               text-left
+                                                               whitespace-nowrap"
+                                                    >
+                                                        ${
+                                                            escapeHtml(
+                                                                column.label
+                                                            )
+                                                        }
+                                                    </th>
+
+                                                `
+                                            )
+                                            .join("")
+                                    }
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                ${
+                                    records
+                                        .map(
+                                            vessel =>
+
+                                                renderTableRow(
+
+                                                    vessel,
+
+                                                    sectionKey,
+
+                                                    columns
+
+                                                )
+
+                                        )
+                                        .join("")
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    `
+
+                    : `
+
+                        <div
+                            class="py-14
+                                   text-center"
+                        >
+
+                            <div
+                                class="w-12 h-12
+                                       rounded-2xl
+                                       bg-slate-100
+                                       mx-auto
+                                       flex items-center
+                                       justify-center"
+                            >
+
+                                <i
+                                    class="fa-solid
+                                           fa-inbox
+                                           text-slate-400"
+                                ></i>
+
+                            </div>
+
+
+                            <p
+                                class="mt-3
+                                       text-sm
+                                       font-semibold
+                                       text-slate-600"
+                            >
+                                ${
+                                    CURRENT_SEARCH
+
+                                        ? "No matching vessel found"
+
+                                        : "No vessel data available"
+                                }
+                            </p>
+
+
+                            <p
+                                class="mt-1
+                                       text-xs
+                                       text-slate-400"
+                            >
+                                ${
+                                    CURRENT_SEARCH
+
+                                        ? "Try another search keyword."
+
+                                        : "The scraper did not return records for this section."
+                                }
+                            </p>
+
+                        </div>
+
+                    `
+                }
+
+            </div>
+
+        </section>
+
+    `;
+
+}
+
+
+/* =========================================================
+   TABLE ROW
+========================================================= */
+
+function renderTableRow(
+
+    vessel,
+
+    sectionKey,
+
+    columns
+
+) {
+
+    let encodedVessel = "";
+
+
+    try {
+
+        encodedVessel =
+            encodeURIComponent(
+                JSON.stringify(vessel)
             );
 
-            encodedVessel =
-                "";
+    }
+    catch (error) {
 
-        }
+        console.error(
+            "Failed to encode vessel:",
+            error
+        );
+
+        encodedVessel =
+            "";
+
+    }
+
+
+    return `
+
+        <tr
+            class="table-row-clickable"
+            ${
+                encodedVessel
+                    ? `onclick="openVesselModal('${encodedVessel}')"`
+                    : ""
+            }
+            title="Click to view vessel details"
+        >
+
+            ${
+                columns
+                    .map(
+                        column =>
+
+                            renderCell(
+
+                                vessel,
+
+                                column
+
+                            )
+
+                    )
+                    .join("")
+            }
+
+        </tr>
+
+    `;
+
+}
+
+
+/* =========================================================
+   TABLE CELL
+========================================================= */
+
+function renderCell(
+
+    vessel,
+
+    column
+
+) {
+
+    /* =====================================================
+       VESSEL
+    ====================================================== */
+
+    if (
+        column.type ===
+        "vessel"
+    ) {
+
+        const name =
+            vessel.vesselName ||
+            "-";
+
+
+        const code =
+            vessel.vesselCode ||
+            "";
 
 
         return `
 
-            <tr
-                class="table-row-clickable"
-                ${
-                    encodedVessel
-                        ? `onclick="openVesselModal('${encodedVessel}')"`
-                        : ""
-                }
-                title="Click to view vessel details"
+            <td
+                class="px-4 py-3.5"
             >
 
-                ${
-                    columns
-                        .map(
-                            column =>
-
-                                renderCell(
-
-                                    vessel,
-
-                                    column
-
-                                )
-
+                <div
+                    class="vessel-name
+                           text-sm"
+                >
+                    ${
+                        escapeHtml(
+                            name
                         )
-                        .join("")
+                    }
+                </div>
+
+
+                ${
+                    code
+
+                        ? `
+
+                            <div
+                                class="vessel-code
+                                       mt-1"
+                            >
+                                ${
+                                    escapeHtml(
+                                        code
+                                    )
+                                }
+                            </div>
+
+                        `
+
+                        : ""
                 }
 
-            </tr>
+            </td>
 
         `;
 
     }
 
 
-    /* =========================================================
-       TABLE CELL
-    ========================================================= */
+    /* =====================================================
+       TYPE
+    ====================================================== */
 
-    function renderCell(
-
-        vessel,
-
-        column
-
+    if (
+        column.type ===
+        "type"
     ) {
 
-        /* =====================================================
-           VESSEL
-        ===================================================== */
+        const value =
+            vessel[
+                column.key
+            ];
 
-        if (
-            column.type ===
-            "vessel"
-        ) {
-
-            const name =
-                vessel.vesselName ||
-                "-";
-
-
-            const code =
-                vessel.vesselCode ||
-                "";
-
-
-            return `
-
-                <td
-                    class="px-4 py-3"
-                >
-
-                    <div
-                        class="font-semibold
-                               text-slate-800"
-                    >
-                        ${
-                            escapeHtml(
-                                name
-                            )
-                        }
-                    </div>
-
-
-                    ${
-                        code
-
-                            ? `
-
-                                <div
-                                    class="text-xs
-                                           text-slate-400
-                                           mt-0.5"
-                                >
-                                    ${
-                                        escapeHtml(
-                                            code
-                                        )
-                                    }
-                                </div>
-
-                            `
-
-                            : ""
-                    }
-
-                </td>
-
-            `;
-
-        }
-
-
-        /* =====================================================
-           TYPE
-        ===================================================== */
-
-        if (
-            column.type ===
-            "type"
-        ) {
-
-            const value =
-                vessel[
-                    column.key
-                ];
-
-
-            return `
-
-                <td
-                    class="px-4 py-3
-                           whitespace-nowrap"
-                >
-
-                    ${
-                        value
-
-                            ? `
-
-                                <span
-                                    class="inline-flex
-                                           items-center
-                                           px-2 py-1
-                                           rounded-lg
-                                           bg-slate-100
-                                           text-slate-600
-                                           text-xs
-                                           font-medium"
-                                >
-                                    ${
-                                        escapeHtml(
-                                            value
-                                        )
-                                    }
-                                </span>
-
-                            `
-
-                            : "-"
-                    }
-
-                </td>
-
-            `;
-
-        }
-
-
-        /* =====================================================
-           DATETIME
-        ===================================================== */
-
-        if (
-            column.type ===
-            "datetime"
-        ) {
-
-            return `
-
-                <td
-                    class="px-3 py-2.5"
-                >
-                    ${
-                        renderDateTime(
-                            vessel[
-                                column.key
-                            ]
-                        )
-                    }
-                </td>
-
-            `;
-
-        }
-
-
-        /* =====================================================
-           NUMBER
-        ===================================================== */
-
-        if (
-            column.type ===
-            "number"
-        ) {
-
-            return `
-
-                <td
-                    class="px-3 py-2.5
-                           whitespace-nowrap
-                           text-slate-700
-                           number-cell
-                           ${
-                               column.key === "booking" ||
-                               column.key === "open" ||
-                               column.key === "actual"
-                                   ? "numeric-cell"
-                                   : ""
-                           }"
-                >
-                    ${
-                        formatNumber(
-                            vessel[
-                                column.key
-                            ]
-                        )
-                    }
-                </td>
-
-            `;
-
-        }
-
-
-        /* =====================================================
-           DEFAULT TEXT
-        ===================================================== */
 
         return `
 
             <td
-                class="px-4 py-3
-                       whitespace-nowrap
-                       text-slate-700"
+                class="px-4 py-3.5
+                       whitespace-nowrap"
+            >
+
+                ${
+                    value
+
+                        ? `
+
+                            <span
+                                class="type-badge"
+                            >
+
+                                <span
+                                    class="w-1.5 h-1.5
+                                           rounded-full
+                                           bg-slate-400
+                                           mr-1.5"
+                                ></span>
+
+                                ${
+                                    escapeHtml(
+                                        value
+                                    )
+                                }
+
+                            </span>
+
+                        `
+
+                        : "-"
+
+                }
+
+            </td>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       DATETIME
+    ====================================================== */
+
+    if (
+        column.type ===
+        "datetime"
+    ) {
+
+        return `
+
+            <td
+                class="px-3 py-2.5"
             >
                 ${
-                    formatValue(
+                    renderDateTime(
                         vessel[
                             column.key
                         ]
@@ -3100,312 +4113,96 @@
     }
 
 
-    /* =========================================================
-       VESSEL DETAIL MODAL
-    ========================================================= */
+    /* =====================================================
+       NUMBER
+    ====================================================== */
 
-    function openVesselModal(
-        encodedVessel
+    if (
+        column.type ===
+        "number"
     ) {
 
-        try {
+        return `
 
-            const vessel =
-                JSON.parse(
+            <td
+                class="px-3 py-3.5
+                       whitespace-nowrap
+                       text-slate-700
+                       number-cell
+                       ${
+                           column.key === "booking" ||
+                           column.key === "open" ||
+                           column.key === "actual"
+                               ? "numeric-cell"
+                               : ""
+                       }"
+            >
 
-                    decodeURIComponent(
-                        encodedVessel
+                ${
+                    formatNumber(
+                        vessel[
+                            column.key
+                        ]
                     )
+                }
 
-                );
+            </td>
 
-
-            CURRENT_MODAL_VESSEL =
-                vessel;
-
-
-            const modal =
-                document.getElementById(
-                    "vesselModal"
-                );
-
-
-            const name =
-                document.getElementById(
-                    "modalVesselName"
-                );
-
-
-            const code =
-                document.getElementById(
-                    "modalVesselCode"
-                );
-
-
-            const grid =
-                document.getElementById(
-                    "modalVesselGrid"
-                );
-
-
-            if (
-                !modal ||
-                !name ||
-                !code ||
-                !grid
-            ) {
-
-                throw new Error(
-                    "Modal elements not found"
-                );
-
-            }
-
-
-            name.textContent =
-
-                vessel.vesselName ||
-
-                "Vessel Detail";
-
-
-            code.textContent =
-
-                vessel.vesselCode ||
-
-                "No vessel code";
-
-
-            /*
-             * Shipping Line intentionally excluded.
-             */
-
-            const fields = [
-
-                [
-                    "Vessel Name",
-                    vessel.vesselName
-                ],
-
-                [
-                    "Vessel Code",
-                    vessel.vesselCode
-                ],
-
-                [
-                    "Voyage",
-                    vessel.voyage
-                ],
-
-                [
-                    "Type",
-                    vessel.type
-                ],
-
-                [
-                    "ETA",
-                    vessel.eta
-                ],
-
-                [
-                    "ETB",
-                    vessel.etb
-                ],
-
-                [
-                    "ATB",
-                    vessel.atb
-                ],
-
-                [
-                    "ETD",
-                    vessel.etd
-                ],
-
-                [
-                    "ATD",
-                    vessel.atd
-                ],
-
-                [
-                    "Open Stack",
-                    vessel.openStack
-                ],
-
-                [
-                    "Closing Time",
-                    vessel.closingTime
-                ],
-
-                [
-                    "Booking",
-                    vessel.booking
-                ],
-
-                [
-                    "Open",
-                    vessel.open
-                ],
-
-                [
-                    "Actual",
-                    vessel.actual
-                ],
-
-                [
-                    "Export",
-                    vessel.export
-                ],
-
-                [
-                    "Export TEUs",
-                    vessel.exportTeus
-                ],
-
-                [
-                    "Import",
-                    vessel.import
-                ],
-
-                [
-                    "Import TEUs",
-                    vessel.importTeus
-                ]
-
-            ];
-
-
-            const numericFields = [
-
-                "Booking",
-
-                "Open",
-
-                "Actual",
-
-                "Export",
-
-                "Export TEUs",
-
-                "Import",
-
-                "Import TEUs"
-
-            ];
-
-
-            grid.innerHTML =
-
-                fields
-
-                    .filter(
-
-                        ([, value]) =>
-
-                            value !== null &&
-
-                            value !== undefined &&
-
-                            String(
-                                value
-                            ).trim() !== ""
-
-                    )
-
-                    .map(
-
-                        ([label, value]) => {
-
-                            const display =
-
-                                numericFields.includes(
-                                    label
-                                )
-
-                                    ? formatNumber(
-                                        value
-                                    )
-
-                                    : formatValue(
-                                        value
-                                    );
-
-
-                            return `
-
-                                <div
-                                    class="border
-                                           border-slate-200
-                                           rounded-lg
-                                           px-3 py-2.5
-                                           bg-slate-50"
-                                >
-
-                                    <p
-                                        class="text-[10px]
-                                               font-semibold
-                                               uppercase
-                                               tracking-wider
-                                               text-slate-400"
-                                    >
-                                        ${
-                                            escapeHtml(
-                                                label
-                                            )
-                                        }
-                                    </p>
-
-
-                                    <p
-                                        class="mt-0.5
-                                               text-sm
-                                               font-semibold
-                                               text-slate-800
-                                               break-words
-                                               leading-tight"
-                                    >
-                                        ${
-                                            display
-                                        }
-                                    </p>
-
-                                </div>
-
-                            `;
-
-                        }
-
-                    )
-
-                    .join("");
-
-
-            modal.classList.remove(
-                "hidden"
-            );
-
-
-            document.body.classList.add(
-                "overflow-hidden"
-            );
-
-        }
-        catch (error) {
-
-            console.error(
-
-                "Failed to open vessel modal:",
-
-                error
-
-            );
-
-        }
+        `;
 
     }
 
 
-    function closeVesselModal() {
+    /* =====================================================
+       DEFAULT TEXT
+    ====================================================== */
+
+    return `
+
+        <td
+            class="px-4 py-3.5
+                   whitespace-nowrap
+                   text-slate-600
+                   text-xs
+                   font-medium"
+        >
+            ${
+                formatValue(
+                    vessel[
+                        column.key
+                    ]
+                )
+            }
+        </td>
+
+    `;
+
+}
+
+
+/* =========================================================
+   VESSEL MODAL
+========================================================= */
+
+function openVesselModal(
+    encodedVessel
+) {
+
+    try {
+
+        const vessel =
+            JSON.parse(
+
+                decodeURIComponent(
+                    encodedVessel
+                )
+
+            );
+
+
+        CURRENT_MODAL_VESSEL =
+            vessel;
+
 
         const modal =
             document.getElementById(
@@ -3413,128 +4210,657 @@
             );
 
 
-        if (modal) {
-
-            modal.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        document.body.classList.remove(
-            "overflow-hidden"
-        );
-
-
-        CURRENT_MODAL_VESSEL =
-            null;
-
-    }
-
-
-    /* =========================================================
-       LAST UPDATED
-    ========================================================= */
-
-    function updateLastUpdate() {
-
-        const label =
+        const name =
             document.getElementById(
-                "lastUpdated"
+                "modalVesselName"
             );
 
 
-        if (!label) {
-            return;
-        }
+        const code =
+            document.getElementById(
+                "modalVesselCode"
+            );
 
 
-        const timestamp =
-            DATA.updatedAt ||
-            DATA.lastUpdated;
-
-
-        if (!timestamp) {
-
-            label.textContent =
-                "-";
-
-            return;
-
-        }
-
-
-        const date =
-            new Date(timestamp);
+        const grid =
+            document.getElementById(
+                "modalVesselGrid"
+            );
 
 
         if (
-            Number.isNaN(
-                date.getTime()
-            )
+            !modal ||
+            !name ||
+            !code ||
+            !grid
         ) {
 
-            label.textContent =
-                timestamp;
-
-            return;
+            throw new Error(
+                "Modal elements not found"
+            );
 
         }
 
+
+        name.textContent =
+
+            vessel.vesselName ||
+
+            "Vessel Detail";
+
+
+        code.textContent =
+
+            vessel.vesselCode ||
+
+            "No vessel code";
+
+
+        const fields = [
+
+            [
+                "Vessel Name",
+                vessel.vesselName
+            ],
+
+            [
+                "Vessel Code",
+                vessel.vesselCode
+            ],
+
+            [
+                "Voyage",
+                vessel.voyage
+            ],
+
+            [
+                "Type",
+                vessel.type
+            ],
+
+            [
+                "ETA",
+                vessel.eta
+            ],
+
+            [
+                "ETB",
+                vessel.etb
+            ],
+
+            [
+                "ATB",
+                vessel.atb
+            ],
+
+            [
+                "ETD",
+                vessel.etd
+            ],
+
+            [
+                "ATD",
+                vessel.atd
+            ],
+
+            [
+                "Open Stack",
+                vessel.openStack
+            ],
+
+            [
+                "Closing Time",
+                vessel.closingTime
+            ],
+
+            [
+                "Booking",
+                vessel.booking
+            ],
+
+            [
+                "Open",
+                vessel.open
+            ],
+
+            [
+                "Actual",
+                vessel.actual
+            ],
+
+            [
+                "Export",
+                vessel.export
+            ],
+
+            [
+                "Export TEUs",
+                vessel.exportTeus
+            ],
+
+            [
+                "Import",
+                vessel.import
+            ],
+
+            [
+                "Import TEUs",
+                vessel.importTeus
+            ]
+
+        ];
+
+
+        const numericFields = [
+
+            "Booking",
+
+            "Open",
+
+            "Actual",
+
+            "Export",
+
+            "Export TEUs",
+
+            "Import",
+
+            "Import TEUs"
+
+        ];
+
+
+        grid.innerHTML =
+
+            fields
+
+                .filter(
+
+                    ([, value]) =>
+
+                        value !== null &&
+
+                        value !== undefined &&
+
+                        String(
+                            value
+                        ).trim() !== ""
+
+                )
+
+                .map(
+
+                    ([label, value]) => {
+
+                        const display =
+
+                            numericFields.includes(
+                                label
+                            )
+
+                                ? formatNumber(
+                                    value
+                                )
+
+                                : formatValue(
+                                    value
+                                );
+
+
+                        return `
+
+                            <div
+                                class="modal-field
+                                       rounded-xl
+                                       px-3.5 py-3"
+                            >
+
+                                <p
+                                    class="text-[9px]
+                                           font-bold
+                                           uppercase
+                                           tracking-[0.1em]
+                                           text-slate-400"
+                                >
+                                    ${
+                                        escapeHtml(
+                                            label
+                                        )
+                                    }
+                                </p>
+
+
+                                <p
+                                    class="mt-1
+                                           text-sm
+                                           font-semibold
+                                           text-slate-800
+                                           break-words
+                                           leading-tight"
+                                >
+                                    ${
+                                        display
+                                    }
+                                </p>
+
+                            </div>
+
+                        `;
+
+                    }
+
+                )
+
+                .join("");
+
+
+        modal.classList.remove(
+            "hidden"
+        );
+
+
+        document.body.classList.add(
+            "overflow-hidden"
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+
+            "Failed to open vessel modal:",
+
+            error
+
+        );
+
+    }
+
+}
+
+
+function closeVesselModal() {
+
+    const modal =
+        document.getElementById(
+            "vesselModal"
+        );
+
+
+    if (modal) {
+
+        modal.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    document.body.classList.remove(
+        "overflow-hidden"
+    );
+
+
+    CURRENT_MODAL_VESSEL =
+        null;
+
+}
+
+
+/* =========================================================
+   LAST UPDATED
+========================================================= */
+
+function updateLastUpdate() {
+
+    const label =
+        document.getElementById(
+            "lastUpdated"
+        );
+
+
+    if (!label) {
+
+        return;
+
+    }
+
+
+    const timestamp =
+        DATA.updatedAt ||
+        DATA.lastUpdated;
+
+
+    if (!timestamp) {
 
         label.textContent =
-            formatDateTime(date);
+            "-";
+
+        return;
 
     }
 
 
-    /* =========================================================
-       SOURCE
-    ========================================================= */
+    const date =
+        new Date(timestamp);
 
-    function updateSource() {
 
-        const element =
-            document.getElementById(
-                "sourceText"
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        label.textContent =
+            timestamp;
+
+        return;
+
+    }
+
+
+    label.textContent =
+        formatDateTime(date);
+
+}
+
+
+/* =========================================================
+   SOURCE
+========================================================= */
+
+function updateSource() {
+
+    const element =
+        document.getElementById(
+            "sourceText"
+        );
+
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    element.textContent =
+        DATA.source ||
+        "Pelindo TPKS";
+
+}
+
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+
+async function loadData() {
+
+    const refreshButton =
+        document.getElementById(
+            "refreshButton"
+        );
+
+
+    updateConnectionStatus(
+        "loading",
+        "Loading..."
+    );
+
+
+    if (refreshButton) {
+
+        refreshButton.disabled =
+            true;
+
+
+        refreshButton.innerHTML =
+
+            `
+
+                <i
+                    class="fa-solid
+                           fa-spinner
+                           fa-spin
+                           mr-2"
+                ></i>
+
+                Refreshing...
+
+            `;
+
+    }
+
+
+    try {
+
+        const response =
+
+            await fetch(
+
+                `${DATA_FILE}?t=${
+                    Date.now()
+                }`,
+
+                {
+                    cache:
+                        "no-store"
+                }
+
             );
 
 
-        if (!element) {
-            return;
+        if (!response.ok) {
+
+            throw new Error(
+
+                `HTTP ${
+                    response.status
+                } while loading ${DATA_FILE}`
+
+            );
+
         }
 
 
-        element.textContent =
-            DATA.source ||
-            "Pelindo TPKS";
-
-    }
+        const responseText =
+            await response.text();
 
 
-    /* =========================================================
-       LOAD DATA
-    ========================================================= */
+        if (!responseText.trim()) {
 
-    async function loadData() {
-
-        const refreshButton =
-            document.getElementById(
-                "refreshButton"
+            throw new Error(
+                "data.json is empty"
             );
+
+        }
+
+
+        let json;
+
+
+        try {
+
+            json =
+                JSON.parse(
+                    responseText
+                );
+
+        }
+        catch (jsonError) {
+
+            throw new Error(
+                "data.json is not valid JSON"
+            );
+
+        }
+
+
+        if (
+            !json ||
+            typeof json !== "object" ||
+            Array.isArray(json)
+        ) {
+
+            throw new Error(
+                "data.json has an invalid root structure"
+            );
+
+        }
+
+
+        DATA = {
+
+            updatedAt:
+
+                json.updatedAt ||
+                json.lastUpdated ||
+                "",
+
+
+            source:
+
+                json.source ||
+                "",
+
+
+            vesselAlongside:
+
+                Array.isArray(
+                    json.vesselAlongside
+                )
+
+                    ? json.vesselAlongside
+                    : [],
+
+
+            confirmedVessel:
+
+                Array.isArray(
+                    json.confirmedVessel
+                )
+
+                    ? json.confirmedVessel
+                    : [],
+
+
+            openStack:
+
+                Array.isArray(
+                    json.openStack
+                )
+
+                    ? json.openStack
+                    : [],
+
+
+            vesselSchedule:
+
+                Array.isArray(
+                    json.vesselSchedule
+                )
+
+                    ? json.vesselSchedule
+                    : [],
+
+
+            vesselHistory:
+
+                Array.isArray(
+                    json.vesselHistory
+                )
+
+                    ? json.vesselHistory
+                    : [],
+
+
+            counts:
+
+                json.counts &&
+                typeof json.counts === "object"
+
+                    ? json.counts
+                    : {}
+
+        };
+
+
+        console.log(
+            "TPKS data loaded successfully:",
+            {
+                vesselAlongside:
+                    DATA.vesselAlongside.length,
+
+                confirmedVessel:
+                    DATA.confirmedVessel.length,
+
+                openStack:
+                    DATA.openStack.length,
+
+                vesselSchedule:
+                    DATA.vesselSchedule.length,
+
+                vesselHistory:
+                    DATA.vesselHistory.length
+            }
+        );
+
+
+        updateStatistics();
+
+        updateLastUpdate();
+
+        updateFreshness();
+
+        updateNextUpdate();
+
+        updateSource();
+
+        renderSections();
 
 
         updateConnectionStatus(
-            "loading",
-            "Loading..."
+
+            "online",
+
+            "Connected"
+
         );
 
+    }
+    catch (error) {
+
+        console.error(
+
+            "Failed to load data:",
+
+            error
+
+        );
+
+
+        updateConnectionStatus(
+
+            "offline",
+
+            "Connection Error"
+
+        );
+
+
+        renderDataError(
+            error?.message ||
+            "Unknown data loading error"
+        );
+
+    }
+    finally {
 
         if (refreshButton) {
 
             refreshButton.disabled =
-                true;
+                false;
 
 
             refreshButton.innerHTML =
@@ -3543,361 +4869,78 @@
 
                     <i
                         class="fa-solid
-                               fa-spinner
-                               fa-spin mr-2"
+                               fa-rotate
+                               mr-2"
                     ></i>
 
-                    Refreshing...
+                    Refresh Data
 
                 `;
 
         }
 
+    }
 
-        try {
+}
 
-            const response =
 
-                await fetch(
+/* =========================================================
+   SEARCH EVENT
+========================================================= */
 
-                    `${DATA_FILE}?t=${
-                        Date.now()
-                    }`,
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
 
-                    {
-                        cache:
-                            "no-store"
-                    }
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+
+        "input",
+
+        function(event) {
+
+            CURRENT_SEARCH =
+
+                normalizeSearchValue(
+
+                    event.target.value
 
                 );
 
-
-            if (!response.ok) {
-
-                throw new Error(
-
-                    `HTTP ${
-                        response.status
-                    } while loading ${DATA_FILE}`
-
-                );
-
-            }
-
-
-            /*
-             * Read the response as text first.
-             * This gives clearer errors if GitHub Pages
-             * returns HTML instead of JSON.
-             */
-
-            const responseText =
-                await response.text();
-
-
-            if (!responseText.trim()) {
-
-                throw new Error(
-                    "data.json is empty"
-                );
-
-            }
-
-
-            let json;
-
-
-            try {
-
-                json =
-                    JSON.parse(
-                        responseText
-                    );
-
-            }
-            catch (jsonError) {
-
-                throw new Error(
-                    "data.json is not valid JSON"
-                );
-
-            }
-
-
-            if (
-                !json ||
-                typeof json !== "object" ||
-                Array.isArray(json)
-            ) {
-
-                throw new Error(
-                    "data.json has an invalid root structure"
-                );
-
-            }
-
-
-            /*
-             * Accept both updatedAt and lastUpdated.
-             */
-
-            DATA = {
-
-                updatedAt:
-
-                    json.updatedAt ||
-                    json.lastUpdated ||
-                    "",
-
-
-                source:
-
-                    json.source ||
-                    "",
-
-
-                vesselAlongside:
-
-                    Array.isArray(
-                        json.vesselAlongside
-                    )
-
-                        ? json.vesselAlongside
-                        : [],
-
-
-                confirmedVessel:
-
-                    Array.isArray(
-                        json.confirmedVessel
-                    )
-
-                        ? json.confirmedVessel
-                        : [],
-
-
-                openStack:
-
-                    Array.isArray(
-                        json.openStack
-                    )
-
-                        ? json.openStack
-                        : [],
-
-
-                vesselSchedule:
-
-                    Array.isArray(
-                        json.vesselSchedule
-                    )
-
-                        ? json.vesselSchedule
-                        : [],
-
-
-                vesselHistory:
-
-                    Array.isArray(
-                        json.vesselHistory
-                    )
-
-                        ? json.vesselHistory
-                        : [],
-
-
-                counts:
-
-                    json.counts &&
-                    typeof json.counts === "object"
-
-                        ? json.counts
-                        : {}
-
-            };
-
-
-            /*
-             * Console diagnostic.
-             * Useful if data.json changes structure later.
-             */
-
-            console.log(
-                "TPKS data loaded successfully:",
-                {
-                    vesselAlongside:
-                        DATA.vesselAlongside.length,
-
-                    confirmedVessel:
-                        DATA.confirmedVessel.length,
-
-                    openStack:
-                        DATA.openStack.length,
-
-                    vesselSchedule:
-                        DATA.vesselSchedule.length,
-
-                    vesselHistory:
-                        DATA.vesselHistory.length
-                }
-            );
-
-
-            updateStatistics();
-
-            updateLastUpdate();
-
-            updateFreshness();
-
-            updateNextUpdate();
-
-            updateSource();
 
             renderSections();
 
-
-            updateConnectionStatus(
-
-                "online",
-
-                "Connected"
-
-            );
-
-        }
-        catch (error) {
-
-            console.error(
-
-                "Failed to load data:",
-
-                error
-
-            );
-
-
-            updateConnectionStatus(
-
-                "offline",
-
-                "Connection Error"
-
-            );
-
-
-            renderDataError(
-                error?.message ||
-                "Unknown data loading error"
-            );
-
-        }
-        finally {
-
-            if (refreshButton) {
-
-                refreshButton.disabled =
-                    false;
-
-
-                refreshButton.innerHTML =
-
-                    `
-
-                        <i
-                            class="fa-solid
-                                   fa-rotate mr-2"
-                        ></i>
-
-                        Refresh Data
-
-                    `;
-
-            }
-
         }
 
-    }
+    );
+
+}
 
 
-    /* =========================================================
-       SEARCH EVENT
-    ========================================================= */
+/* =========================================================
+   MODAL EVENTS
+========================================================= */
 
-    const searchInput =
-        document.getElementById(
-            "searchInput"
-        );
-
-
-    if (searchInput) {
-
-        searchInput.addEventListener(
-
-            "input",
-
-            function(event) {
-
-                CURRENT_SEARCH =
-
-                    normalizeSearchValue(
-
-                        event.target.value
-
-                    );
+const vesselModal =
+    document.getElementById(
+        "vesselModal"
+    );
 
 
-                renderSections();
+if (vesselModal) {
 
-            }
+    vesselModal.addEventListener(
 
-        );
-
-    }
-
-
-    /* =========================================================
-       MODAL EVENTS
-    ========================================================= */
-
-    const vesselModal =
-        document.getElementById(
-            "vesselModal"
-        );
-
-
-    if (vesselModal) {
-
-        vesselModal.addEventListener(
-
-            "click",
-
-            function(event) {
-
-                if (
-                    event.target ===
-                    this
-                ) {
-
-                    closeVesselModal();
-
-                }
-
-            }
-
-        );
-
-    }
-
-
-    document.addEventListener(
-
-        "keydown",
+        "click",
 
         function(event) {
 
             if (
-                event.key ===
-                "Escape"
+                event.target ===
+                this
             ) {
 
                 closeVesselModal();
@@ -3908,72 +4951,78 @@
 
     );
 
-
-    /* =========================================================
-       TIMERS
-    ========================================================= */
-
-    /*
-     * Reload published data every 5 minutes.
-     */
-
-    setInterval(
-
-        loadData,
-
-        DATA_REFRESH_INTERVAL
-
-    );
+}
 
 
-    /*
-     * Recalculate freshness every 30 seconds.
-     */
+document.addEventListener(
 
-    setInterval(
+    "keydown",
 
-        updateFreshness,
+    function(event) {
 
-        30 * 1000
+        if (
+            event.key ===
+            "Escape"
+        ) {
 
-    );
+            closeVesselModal();
 
+        }
 
-    /*
-     * Update Next Update countdown every second.
-     */
+    }
 
-    setInterval(
-
-        updateNextUpdate,
-
-        1000
-
-    );
+);
 
 
-    /*
-     * Check GitHub Actions scraper status every 2 minutes.
-     */
+/* =========================================================
+   TIMERS
+========================================================= */
 
-    setInterval(
+setInterval(
 
-        loadScraperStatus,
+    loadData,
 
-        SCRAPER_STATUS_INTERVAL
+    DATA_REFRESH_INTERVAL
 
-    );
+);
 
 
-    /* =========================================================
-       INITIAL LOAD
-    ========================================================= */
+setInterval(
 
-    loadData();
+    updateFreshness,
 
-    loadScraperStatus();
+    30 * 1000
 
-    updateNextUpdate();
+);
+
+
+setInterval(
+
+    updateNextUpdate,
+
+    1000
+
+);
+
+
+setInterval(
+
+    loadScraperStatus,
+
+    SCRAPER_STATUS_INTERVAL
+
+);
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+loadData();
+
+loadScraperStatus();
+
+updateNextUpdate();
 
 </script>
 
