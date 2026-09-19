@@ -3,6 +3,7 @@
 import asyncio
 import json
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -14,185 +15,180 @@ from playwright.async_api import (
 
 
 # ============================================================
-# CONFIG
+# CONFIGURATION
 # ============================================================
 
 URL = "https://ibstpks.pelindo.co.id/webaccess/"
+
 OUTPUT_FILE = Path("data.json")
+DEBUG_HTML = Path("debug_pelindo.html")
 
-NAVIGATION_TIMEOUT = 120000
-WAIT_AFTER_LOAD = 5000
+NAVIGATION_TIMEOUT = 120_000
+WA_BOARD_TIMEOUT = 120_000
+WAIT_AFTER_LOAD = 3_000
 
-TZ = ZoneInfo("Asia/Jakarta")
+JAKARTA_TZ = ZoneInfo("Asia/Jakarta")
+
+
+# ============================================================
+# LOGGING
+# ============================================================
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
 )
 
+logger = logging.getLogger("pelindo-scraper")
+
 
 # ============================================================
-# UTILITY
+# TEXT HELPERS
 # ============================================================
 
 def clean_text(value):
     """
-    Membersihkan whitespace berlebih.
+    Membersihkan nilai agar aman dimasukkan ke JSON.
     """
     if value is None:
         return ""
 
-    return " ".join(str(value).split())
+    if isinstance(value, str):
+        return re.sub(r"\s+", " ", value).strip()
+
+    return str(value).strip()
 
 
-def clean_record(record):
+def first_nonempty(*values):
     """
-    Membersihkan string-string dari object WA_BOARD
-    tanpa menghilangkan field asli.
+    Mengambil nilai pertama yang tidak kosong.
     """
-    if not isinstance(record, dict):
-        return {}
+    for value in values:
+        value = clean_text(value)
+        if value:
+            return value
 
-    result = {}
-
-    for key, value in record.items():
-        if isinstance(value, str):
-            result[key] = clean_text(value)
-        else:
-            result[key] = value
-
-    return result
+    return ""
 
 
-def now_jakarta():
-    return datetime.now(TZ)
+def make_voyage(voyage_in, voyage_out):
+    """
+    Menghasilkan format:
+        VOYAGE_IN / VOYAGE_OUT
 
+    Jika salah satu kosong, tetap aman.
+    """
+    voyage_in = clean_text(voyage_in)
+    voyage_out = clean_text(voyage_out)
 
-def iso_now():
-    return now_jakarta().isoformat(timespec="seconds")
+    if voyage_in and voyage_out:
+        return f"{voyage_in} / {voyage_out}"
+
+    if voyage_in:
+        return voyage_in
+
+    if voyage_out:
+        return voyage_out
+
+    return "-"
 
 
 # ============================================================
 # NORMALIZATION
 # ============================================================
 
-def normalize_record(record, category):
+def normalize_record(raw, category):
     """
-    Mengubah object WA_BOARD menjadi struktur JSON yang
-    kompatibel dengan dashboard lama.
+    Mengubah record WA_BOARD Pelindo menjadi format data.json
+    yang kompatibel dengan frontend lama.
 
-    Field asli WA_BOARD tetap dipertahankan.
+    category:
+        alongside
+        anchorage
+        confirmed
+        openStack
+        schedule
+        history
     """
 
-    record = clean_record(record)
+    if not isinstance(raw, dict):
+        return None
 
-    name = clean_text(record.get("name"))
-    vessel_id = clean_text(record.get("id"))
+    vessel_name = clean_text(raw.get("name"))
+    vessel_code = clean_text(raw.get("id"))
 
-    voyage_in = clean_text(record.get("voyageIn"))
-    voyage_out = clean_text(record.get("voyageOut"))
-
-    agent = clean_text(record.get("agent"))
-    customer = clean_text(record.get("customer"))
-    principal = clean_text(record.get("principal"))
-
-    oi = clean_text(record.get("oi"))
-    mv_status = clean_text(record.get("mvSts"))
+    voyage_in = clean_text(raw.get("voyageIn"))
+    voyage_out = clean_text(raw.get("voyageOut"))
 
     # --------------------------------------------------------
-    # Agent / shipping line
+    # Skip record yang benar-benar tidak mempunyai identitas
     # --------------------------------------------------------
 
-    shipping_line = (
-        customer
-        or principal
-        or agent
-        or ""
+    if not vessel_name and not vessel_code:
+        return None
+
+    # --------------------------------------------------------
+    # Shipping line / customer
+    # --------------------------------------------------------
+
+    shipping_line = first_nonempty(
+        raw.get("customer"),
+        raw.get("agentName"),
+        raw.get("principal"),
+        raw.get("agent"),
     )
 
     # --------------------------------------------------------
-    # Common time fields
+    # Time fields
     # --------------------------------------------------------
 
-    eta = clean_text(
-        record.get("eta")
-        or record.get("timeArrival")
+    eta = first_nonempty(
+        raw.get("timeArrival"),
+        raw.get("eta"),
     )
 
-    etb = clean_text(
-        record.get("estBerthTs")
+    etb = clean_text(raw.get("estBerthTs"))
+    atb = clean_text(raw.get("actBerthTs"))
+    etd = clean_text(raw.get("estDepTs"))
+    atd = clean_text(raw.get("actDepTs"))
+
+    # --------------------------------------------------------
+    # Booking / stack fields
+    # --------------------------------------------------------
+
+    booking = first_nonempty(
+        raw.get("bkgExport"),
+        raw.get("bkgBoxes"),
     )
 
-    etd = clean_text(
-        record.get("estDepTs")
-    )
+    open_value = clean_text(raw.get("bkgOpen"))
 
-    atb = clean_text(
-        record.get("actBerthTs")
-    )
+    actual = clean_text(raw.get("joExport"))
 
-    atd = clean_text(
-        record.get("actDepTs")
-    )
+    open_stack = clean_text(raw.get("availableTs"))
+
+    closing_time = clean_text(raw.get("recvCtrCutoffTs"))
 
     # --------------------------------------------------------
-    # Schedule has ETA explicitly.
+    # History cargo
     # --------------------------------------------------------
 
-    if category == "schedule":
-        eta = clean_text(record.get("eta"))
-        etb = clean_text(record.get("estBerthTs"))
-        etd = clean_text(record.get("estDepTs"))
+    export_box = clean_text(raw.get("exportBox"))
+    export_teus = clean_text(raw.get("exportTeus"))
+    import_box = clean_text(raw.get("importBox"))
+    import_teus = clean_text(raw.get("importTeus"))
 
     # --------------------------------------------------------
-    # Alongside
+    # Main normalized record
     # --------------------------------------------------------
 
-    if category == "alongside":
-        atb = clean_text(record.get("actBerthTs"))
-        etd = clean_text(record.get("estDepTs"))
-
-    # --------------------------------------------------------
-    # Confirmed / Open Stack
-    # --------------------------------------------------------
-
-    if category in ("confirmed", "openStack"):
-        eta = clean_text(record.get("timeArrival"))
-        etb = clean_text(record.get("estBerthTs"))
-        etd = clean_text(record.get("estDepTs"))
-
-    # --------------------------------------------------------
-    # History
-    # --------------------------------------------------------
-
-    if category == "history":
-        etb = clean_text(record.get("estBerthTs"))
-        atb = clean_text(record.get("actBerthTs"))
-        atd = clean_text(record.get("actDepTs"))
-
-    normalized = {
-        # ----------------------------------------------------
-        # Existing dashboard-compatible fields
-        # ----------------------------------------------------
-
-        "vesselName": name,
-        "vesselCode": vessel_id,
-
-        "voyage": (
-            f"{voyage_in} / {voyage_out}"
-            if voyage_in or voyage_out
-            else ""
-        ),
-
-        "voyageIn": voyage_in,
-        "voyageOut": voyage_out,
-
+    record = {
+        # Existing frontend-compatible fields
+        "vesselName": vessel_name,
+        "vesselCode": vessel_code,
+        "voyage": make_voyage(voyage_in, voyage_out),
         "shippingLine": shipping_line,
-        "agent": agent,
-        "customer": customer,
-        "principal": principal,
-
-        "type": oi,
+        "type": clean_text(raw.get("oi")),
 
         "eta": eta,
         "etb": etb,
@@ -200,36 +196,106 @@ def normalize_record(record, category):
         "etd": etd,
         "atd": atd,
 
-        "openStack": clean_text(
-            record.get("availableTs")
+        "openStack": open_stack,
+        "closingTime": closing_time,
+
+        "booking": booking,
+        "open": open_value,
+        "actual": actual,
+
+        "export": export_box,
+        "exportTeus": export_teus,
+        "import": import_box,
+        "importTeus": import_teus,
+
+        "vesId": vessel_code,
+
+        # Kept empty intentionally.
+        # The new Pelindo page loads details through POST
+        # rather than exposing these as normal URLs.
+        "detailUrl": "",
+        "historyUrl": "",
+
+        # ----------------------------------------------------
+        # Original Pelindo fields
+        # ----------------------------------------------------
+
+        "name": vessel_name,
+        "id": vessel_code,
+        "voyageIn": voyage_in,
+        "voyageOut": voyage_out,
+
+        "oi": clean_text(raw.get("oi")),
+        "mvSts": clean_text(raw.get("mvSts")),
+
+        "customer": clean_text(raw.get("customer")),
+        "agentName": clean_text(raw.get("agentName")),
+        "principal": clean_text(raw.get("principal")),
+        "agent": clean_text(raw.get("agent")),
+
+        "actBerthTs": clean_text(raw.get("actBerthTs")),
+        "actBerthingTsISO": clean_text(
+            raw.get("actBerthingTsISO")
         ),
 
-        "closingTime": clean_text(
-            record.get("recvCtrCutoffTs")
+        "estDepTs": clean_text(raw.get("estDepTs")),
+        "estDepartureTsISO": clean_text(
+            raw.get("estDepartureTsISO")
         ),
 
-        "booking": record.get("bkgExport", 0) or 0,
-        "open": record.get("bkgOpen", 0) or 0,
-        "actual": record.get("joExport", 0) or 0,
+        "anchorageTs": clean_text(raw.get("anchorageTs")),
 
-        "export": record.get("exportBox", 0) or 0,
-        "exportTeus": record.get("exportTeus", 0) or 0,
-
-        "import": record.get("importBox", 0) or 0,
-        "importTeus": record.get("importTeus", 0) or 0,
-
-        "vesId": vessel_id,
-
-        "detailUrl": (
-            f"LandingData?do=load_detail&mode=public&vesId={vessel_id}"
-            if vessel_id
-            else ""
+        "estBerthTs": clean_text(raw.get("estBerthTs")),
+        "estBerthingTsISO": clean_text(
+            raw.get("estBerthingTsISO")
         ),
 
-        "historyUrl": (
-            f"LandingData?do=load_sched_audit&mode=public&vesId={vessel_id}"
-            if vessel_id
-            else ""
+        "timeArrival": clean_text(raw.get("timeArrival")),
+        "availableTs": clean_text(raw.get("availableTs")),
+        "availableTsISO": clean_text(
+            raw.get("availableTsISO")
+        ),
+
+        "recvCtrCutoffTs": clean_text(
+            raw.get("recvCtrCutoffTs")
+        ),
+
+        "cutoffCtr": clean_text(raw.get("cutoffCtr")),
+
+        "bkgExport": clean_text(raw.get("bkgExport")),
+        "bkgOpen": clean_text(raw.get("bkgOpen")),
+        "joExport": clean_text(raw.get("joExport")),
+
+        "actDepTs": clean_text(raw.get("actDepTs")),
+
+        "exportBox": export_box,
+        "exportTeus": export_teus,
+        "importBox": import_box,
+        "importTeus": import_teus,
+
+        # ----------------------------------------------------
+        # Schedule-specific fields
+        # ----------------------------------------------------
+
+        "callSign": clean_text(raw.get("callSign")),
+        "etaRaw": clean_text(raw.get("eta")),
+        "feederDirect": clean_text(raw.get("feederDirect")),
+        "onWindowsFlag": clean_text(
+            raw.get("onWindowsFlag")
+        ),
+        "bkgBoxes": clean_text(raw.get("bkgBoxes")),
+        "bkgTeus": clean_text(raw.get("bkgTeus")),
+
+        # ----------------------------------------------------
+        # History-specific fields
+        # ----------------------------------------------------
+
+        "actDepartureTsISO": clean_text(
+            raw.get("actDepartureTsISO")
+        ),
+
+        "actStartWorkTs": clean_text(
+            raw.get("actStartWorkTs")
         ),
 
         # ----------------------------------------------------
@@ -237,91 +303,9 @@ def normalize_record(record, category):
         # ----------------------------------------------------
 
         "category": category,
-        "status": mv_status,
-
-        # ----------------------------------------------------
-        # Additional useful fields
-        # ----------------------------------------------------
-
-        "serviceName": clean_text(
-            record.get("serviceName")
-        ),
-
-        "berthNo": clean_text(
-            record.get("berthNo")
-        ),
-
-        "callSign": clean_text(
-            record.get("callSign")
-        ),
-
-        "arrival": clean_text(
-            record.get("arrival")
-        ),
-
-        "timeArrival": clean_text(
-            record.get("timeArrival")
-        ),
-
-        "availableTs": clean_text(
-            record.get("availableTs")
-        ),
-
-        "recvCtrCutoffTs": clean_text(
-            record.get("recvCtrCutoffTs")
-        ),
-
-        "cutoffCtr": clean_text(
-            record.get("cutoffCtr")
-        ),
-
-        "openStackYn": clean_text(
-            record.get("openStackYn")
-        ),
-
-        "onWindowsFlag": clean_text(
-            record.get("onWindowsFlag")
-        ),
-
-        # ISO timestamps
-        "estBerthingTsISO": record.get(
-            "estBerthingTsISO"
-        ),
-
-        "estDepartureTsISO": record.get(
-            "estDepartureTsISO"
-        ),
-
-        "actBerthingTsISO": record.get(
-            "actBerthingTsISO"
-        ),
-
-        "actDepartureTsISO": record.get(
-            "actDepartureTsISO"
-        ),
-
-        # Schedule-specific
-        "feederDirect": clean_text(
-            record.get("feederDirect")
-        ),
-
-        "bkgBoxes": record.get("bkgBoxes", 0) or 0,
-        "bkgTeus": record.get("bkgTeus", 0) or 0,
-
-        # Raw status
-        "mvSts": mv_status,
     }
 
-    # --------------------------------------------------------
-    # Keep original WA_BOARD fields too.
-    #
-    # This makes future dashboard changes easier because
-    # we don't need to modify scraper just to expose a field.
-    # --------------------------------------------------------
-
-    normalized["raw"] = record
-
-    return normalized
+    return record
 
 
 # ============================================================
@@ -330,48 +314,28 @@ def normalize_record(record, category):
 
 def record_key(record):
     """
-    Identitas vessel call.
+    Unique key untuk satu voyage.
 
-    Jangan hanya menggunakan vessel ID karena:
-    1. Schedule tidak memiliki ID.
-    2. Vessel yang sama bisa mempunyai voyage berbeda.
+    Sangat penting:
+        SINAR BINTAN / SIBI093 / 951S / 951N
+    berbeda dengan:
+        SINAR BINTAN / SIBI094 / 952S / 952N
 
-    Contoh:
-        SINAR BINTAN | 951S | 951N
-        SINAR BINTAN | 952S | 952N
-
-    harus dianggap berbeda.
+    Dan voyage berbeda dalam section yang berbeda
+    juga tidak boleh saling menghapus.
     """
 
-    name = clean_text(
-        record.get("vesselName")
-        or record.get("name")
-    ).upper()
-
-    vessel_id = clean_text(
-        record.get("vesselCode")
-        or record.get("id")
-    ).upper()
-
-    voyage_in = clean_text(
-        record.get("voyageIn")
-    ).upper()
-
-    voyage_out = clean_text(
-        record.get("voyageOut")
-    ).upper()
-
     return (
-        name,
-        vessel_id,
-        voyage_in,
-        voyage_out,
+        clean_text(record.get("vesselName")).upper(),
+        clean_text(record.get("vesselCode")).upper(),
+        clean_text(record.get("voyageIn")).upper(),
+        clean_text(record.get("voyageOut")).upper(),
     )
 
 
-def deduplicate(records):
+def deduplicate_records(records):
     """
-    Deduplicate tanpa mencampur voyage.
+    Deduplikasi hanya di dalam section yang sama.
     """
 
     result = []
@@ -390,41 +354,30 @@ def deduplicate(records):
 
 
 # ============================================================
-# BOARD EXTRACTION
+# SECTION PROCESSING
 # ============================================================
 
-async def extract_wa_board(page):
+def process_section(raw_records, category):
     """
-    Mengambil window.WA_BOARD langsung dari browser.
-
-    Ini adalah sumber data utama halaman Pelindo baru.
+    Memproses satu array WA_BOARD.
     """
 
-    logging.info("Reading window.WA_BOARD...")
-
-    board = await page.evaluate(
-        """
-        () => {
-            if (!window.WA_BOARD) {
-                return null;
-            }
-
-            return window.WA_BOARD;
-        }
-        """
-    )
-
-    if not board:
-        raise RuntimeError(
-            "window.WA_BOARD tidak ditemukan."
+    if not isinstance(raw_records, list):
+        logger.warning(
+            "Section '%s' bukan array. Menggunakan []",
+            category,
         )
+        return []
 
-    if not isinstance(board, dict):
-        raise RuntimeError(
-            "window.WA_BOARD bukan object/dictionary."
-        )
+    normalized = []
 
-    return board
+    for raw in raw_records:
+        record = normalize_record(raw, category)
+
+        if record is not None:
+            normalized.append(record)
+
+    return deduplicate_records(normalized)
 
 
 # ============================================================
@@ -433,11 +386,16 @@ async def extract_wa_board(page):
 
 def validate_board(board):
     """
-    Validasi supaya scraper tidak menghasilkan data kosong
-    ketika struktur Pelindo berubah atau gagal load.
+    Memastikan struktur WA_BOARD sesuai dengan halaman Pelindo
+    terbaru.
     """
 
-    required_sections = [
+    if not isinstance(board, dict):
+        raise RuntimeError(
+            "window.WA_BOARD bukan object yang valid."
+        )
+
+    required = [
         "alongside",
         "confirmed",
         "openStack",
@@ -447,349 +405,559 @@ def validate_board(board):
 
     missing = [
         key
-        for key in required_sections
+        for key in required
         if key not in board
     ]
 
     if missing:
         raise RuntimeError(
-            "WA_BOARD kehilangan section: "
+            "WA_BOARD kehilangan key: "
             + ", ".join(missing)
         )
 
-    for key in required_sections:
+    for key in required:
         if not isinstance(board[key], list):
             raise RuntimeError(
-                f"WA_BOARD.{key} bukan array."
+                f"WA_BOARD['{key}'] bukan array."
+            )
+
+    # Anchorage optional karena pada halaman saat ini
+    # bisa saja kosong atau tidak digunakan.
+    if "anchorage" not in board:
+        board["anchorage"] = []
+
+    if not isinstance(board["anchorage"], list):
+        board["anchorage"] = []
+
+    return True
+
+
+def validate_status(records, expected_status, section_name):
+    """
+    Memastikan record tidak salah masuk section.
+
+    Contoh:
+        Schedule tidak boleh berisi HISTORY.
+    """
+
+    wrong = []
+
+    for record in records:
+        status = clean_text(
+            record.get("mvSts")
+        ).upper()
+
+        if status and status != expected_status:
+            wrong.append(
+                (
+                    record.get("vesselName"),
+                    status,
+                )
+            )
+
+    if wrong:
+        logger.warning(
+            "%s memiliki %d record dengan status berbeda.",
+            section_name,
+            len(wrong),
+        )
+
+        for vessel_name, status in wrong[:10]:
+            logger.warning(
+                "  %s -> %s",
+                vessel_name,
+                status,
             )
 
 
 # ============================================================
-# BUILD DATA
+# PLAYWRIGHT
 # ============================================================
 
-def build_output(board):
+async def get_wa_board(page):
     """
-    Menghasilkan struktur data.json final.
+    Mengambil window.WA_BOARD langsung dari browser.
+
+    Ini adalah sumber data utama scraper.
     """
 
-    alongside = [
-        normalize_record(x, "alongside")
-        for x in board.get("alongside", [])
-    ]
-
-    anchorage = [
-        normalize_record(x, "anchorage")
-        for x in board.get("anchorage", [])
-    ]
-
-    confirmed = [
-        normalize_record(x, "confirmed")
-        for x in board.get("confirmed", [])
-    ]
-
-    open_stack = [
-        normalize_record(x, "openStack")
-        for x in board.get("openStack", [])
-    ]
-
-    schedule = [
-        normalize_record(x, "schedule")
-        for x in board.get("schedule", [])
-    ]
-
-    history = [
-        normalize_record(x, "history")
-        for x in board.get("history", [])
-    ]
-
-    # --------------------------------------------------------
-    # Deduplicate each section independently.
-    #
-    # IMPORTANT:
-    # Schedule and History are NEVER merged.
-    # --------------------------------------------------------
-
-    alongside = deduplicate(alongside)
-    anchorage = deduplicate(anchorage)
-    confirmed = deduplicate(confirmed)
-    open_stack = deduplicate(open_stack)
-    schedule = deduplicate(schedule)
-    history = deduplicate(history)
-
-    # --------------------------------------------------------
-    # Safety validation
-    # --------------------------------------------------------
-
-    total_source = sum(
-        len(board.get(key, []))
-        for key in [
-            "alongside",
-            "anchorage",
-            "confirmed",
-            "openStack",
-            "schedule",
-            "history",
-        ]
+    logger.info(
+        "Menunggu window.WA_BOARD..."
     )
 
-    total_output = sum(
-        len(x)
-        for x in [
-            alongside,
-            anchorage,
-            confirmed,
-            open_stack,
-            schedule,
-            history,
-        ]
+    await page.wait_for_function(
+        """
+        () => {
+            const b = window.WA_BOARD;
+
+            return b &&
+                   Array.isArray(b.alongside) &&
+                   Array.isArray(b.confirmed) &&
+                   Array.isArray(b.openStack) &&
+                   Array.isArray(b.schedule) &&
+                   Array.isArray(b.history);
+        }
+        """,
+        timeout=WA_BOARD_TIMEOUT,
     )
 
-    if total_source > 0 and total_output == 0:
-        raise RuntimeError(
-            "WA_BOARD memiliki data tetapi hasil normalisasi kosong."
+    # Tunggu sebentar agar halaman benar-benar selesai
+    # menjalankan script/rendering.
+    await page.wait_for_timeout(
+        WAIT_AFTER_LOAD
+    )
+
+    board = await page.evaluate(
+        """
+        () => {
+            const b = window.WA_BOARD;
+
+            return JSON.parse(
+                JSON.stringify(b)
+            );
+        }
+        """
+    )
+
+    return board
+
+
+async def save_debug_html(page):
+    """
+    Menyimpan HTML halaman jika terjadi error.
+    """
+
+    try:
+        html = await page.content()
+
+        DEBUG_HTML.write_text(
+            html,
+            encoding="utf-8",
         )
 
-    return {
-        "lastUpdated": iso_now(),
-        "updatedAt": iso_now(),
+        logger.info(
+            "Debug HTML disimpan: %s",
+            DEBUG_HTML,
+        )
 
-        "source": URL,
-
-        # ----------------------------------------------------
-        # Main sections
-        # ----------------------------------------------------
-
-        "vesselAlongside": alongside,
-        "anchorage": anchorage,
-        "confirmedVessel": confirmed,
-        "openStack": open_stack,
-        "vesselSchedule": schedule,
-        "vesselHistory": history,
-
-        # ----------------------------------------------------
-        # Counts
-        # ----------------------------------------------------
-
-        "counts": {
-            "alongside": len(alongside),
-            "anchorage": len(anchorage),
-            "confirmed": len(confirmed),
-            "openStack": len(open_stack),
-            "schedule": len(schedule),
-            "history": len(history),
-
-            "total": (
-                len(alongside)
-                + len(anchorage)
-                + len(confirmed)
-                + len(open_stack)
-                + len(schedule)
-                + len(history)
-            ),
-        },
-    }
+    except Exception as exc:
+        logger.warning(
+            "Gagal menyimpan debug HTML: %s",
+            exc,
+        )
 
 
 # ============================================================
-# WRITE JSON
+# JSON OUTPUT
 # ============================================================
 
-def write_json(data):
+def write_json_atomic(payload):
     """
     Menulis data.json secara atomic.
     """
 
-    temp_file = OUTPUT_FILE.with_suffix(".tmp")
+    temp_file = OUTPUT_FILE.with_suffix(
+        ".json.tmp"
+    )
 
     with temp_file.open(
         "w",
         encoding="utf-8",
-    ) as f:
+    ) as file:
+
         json.dump(
-            data,
-            f,
+            payload,
+            file,
             ensure_ascii=False,
             indent=2,
         )
-        f.write("\n")
+
+        file.write("\n")
 
     temp_file.replace(OUTPUT_FILE)
 
-    logging.info(
-        "Saved %s",
-        OUTPUT_FILE.resolve(),
-    )
-
 
 # ============================================================
-# SCRAPER
+# MAIN SCRAPER
 # ============================================================
 
 async def scrape():
-    logging.info("=" * 70)
-    logging.info("Pelindo TPKS scraper started")
-    logging.info("=" * 70)
+    logger.info("======================================")
+    logger.info("PELINDO TPKS SCRAPER")
+    logger.info("======================================")
+    logger.info("URL: %s", URL)
 
-    async with async_playwright() as p:
+    async with async_playwright() as playwright:
 
-        browser = await p.chromium.launch(
+        browser = await playwright.chromium.launch(
             headless=True,
         )
 
-        page = await browser.new_page(
+        context = await browser.new_context(
+            locale="id-ID",
+            timezone_id="Asia/Jakarta",
             viewport={
                 "width": 1920,
                 "height": 1080,
-            }
+            },
         )
+
+        page = await context.new_page()
 
         page.set_default_timeout(
             NAVIGATION_TIMEOUT
         )
 
         try:
+            # ------------------------------------------------
+            # LOAD PAGE
+            # ------------------------------------------------
 
-            logging.info(
-                "Opening Pelindo Webaccess..."
+            logger.info(
+                "Membuka halaman Pelindo..."
             )
 
-            await page.goto(
+            response = await page.goto(
                 URL,
                 wait_until="domcontentloaded",
                 timeout=NAVIGATION_TIMEOUT,
             )
 
-            logging.info(
-                "Page loaded."
-            )
-
-            # ------------------------------------------------
-            # Give inline scripts / board rendering time.
-            # ------------------------------------------------
-
-            await page.wait_for_timeout(
-                WAIT_AFTER_LOAD
-            )
-
-            # ------------------------------------------------
-            # Wait specifically for WA_BOARD.
-            # ------------------------------------------------
-
-            try:
-                await page.wait_for_function(
-                    """
-                    () => (
-                        window.WA_BOARD &&
-                        typeof window.WA_BOARD === 'object'
-                    )
-                    """,
-                    timeout=30000,
+            if response is not None:
+                logger.info(
+                    "HTTP status: %s",
+                    response.status,
                 )
 
-            except PlaywrightTimeoutError:
-                # Save HTML for diagnostics.
-                try:
-                    html = await page.content()
-
-                    Path(
-                        "debug_pelindo.html"
-                    ).write_text(
-                        html,
-                        encoding="utf-8",
+                if response.status >= 400:
+                    raise RuntimeError(
+                        f"Pelindo mengembalikan HTTP "
+                        f"{response.status}"
                     )
 
-                    logging.error(
-                        "window.WA_BOARD tidak muncul. "
-                        "Saved debug_pelindo.html"
-                    )
-
-                except Exception as debug_error:
-                    logging.error(
-                        "Failed to save debug HTML: %s",
-                        debug_error,
-                    )
-
-                raise RuntimeError(
-                    "Timeout menunggu window.WA_BOARD."
-                )
-
-            # ------------------------------------------------
-            # Extract
-            # ------------------------------------------------
-
-            board = await extract_wa_board(
-                page
+            await page.wait_for_selector(
+                "body",
+                timeout=NAVIGATION_TIMEOUT,
             )
 
             # ------------------------------------------------
-            # Validate
+            # GET WA_BOARD
             # ------------------------------------------------
+
+            board = await get_wa_board(page)
 
             validate_board(board)
 
-            logging.info(
-                "WA_BOARD sections:"
+            logger.info(
+                "window.WA_BOARD berhasil ditemukan."
             )
 
-            for key in [
+            # ------------------------------------------------
+            # PROCESS EACH SECTION SEPARATELY
+            # ------------------------------------------------
+
+            vessel_alongside = process_section(
+                board.get("alongside", []),
                 "alongside",
+            )
+
+            anchorage_vessel = process_section(
+                board.get("anchorage", []),
                 "anchorage",
+            )
+
+            confirmed_vessel = process_section(
+                board.get("confirmed", []),
                 "confirmed",
+            )
+
+            open_stack = process_section(
+                board.get("openStack", []),
                 "openStack",
+            )
+
+            vessel_schedule = process_section(
+                board.get("schedule", []),
                 "schedule",
+            )
+
+            vessel_history = process_section(
+                board.get("history", []),
                 "history",
-            ]:
-                logging.info(
-                    "  %-12s : %d",
-                    key,
-                    len(board.get(key, [])),
-                )
-
-            # ------------------------------------------------
-            # Build final JSON
-            # ------------------------------------------------
-
-            output = build_output(
-                board
             )
 
             # ------------------------------------------------
-            # Write
+            # VALIDATE SECTIONS
             # ------------------------------------------------
 
-            write_json(
-                output
+            validate_status(
+                vessel_alongside,
+                "ALONGSIDE",
+                "Vessel Alongside",
             )
 
-            logging.info("=" * 70)
-            logging.info(
-                "Scraper completed successfully."
+            validate_status(
+                anchorage_vessel,
+                "ANCHORAGE",
+                "Anchorage",
             )
-            logging.info(
-                "Total records: %d",
-                output["counts"]["total"],
+
+            validate_status(
+                confirmed_vessel,
+                "CONFIRMED",
+                "Confirmed Vessel",
             )
-            logging.info("=" * 70)
+
+            validate_status(
+                open_stack,
+                "OPEN_STACK",
+                "Open Stack",
+            )
+
+            validate_status(
+                vessel_schedule,
+                "SCHEDULE",
+                "Vessel Schedule",
+            )
+
+            validate_status(
+                vessel_history,
+                "HISTORY",
+                "Vessel History",
+            )
+
+            # ------------------------------------------------
+            # ALL VESSELS
+            # ------------------------------------------------
+            #
+            # IMPORTANT:
+            # Jangan deduplicate lintas kategori.
+            #
+            # SINAR BAJO:
+            #   Confirmed = 135S / 135N
+            #   Schedule  = 136S / 136N
+            #
+            # Keduanya harus tetap muncul.
+            # ------------------------------------------------
+
+            all_vessels = (
+                vessel_alongside
+                + anchorage_vessel
+                + confirmed_vessel
+                + open_stack
+                + vessel_schedule
+                + vessel_history
+            )
+
+            # ------------------------------------------------
+            # TIMESTAMP
+            # ------------------------------------------------
+
+            now = datetime.now(
+                JAKARTA_TZ
+            )
+
+            last_updated = now.strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+
+            updated_at = now.isoformat(
+                timespec="seconds"
+            )
+
+            # ------------------------------------------------
+            # OUTPUT
+            # ------------------------------------------------
+
+            payload = {
+                "lastUpdated": last_updated,
+                "updatedAt": updated_at,
+                "source": URL,
+
+                # Compatibility with existing frontend
+                "allVessels": all_vessels,
+
+                # Main dashboard sections
+                "vesselAlongside": vessel_alongside,
+                "confirmedVessel": confirmed_vessel,
+                "openStack": open_stack,
+                "vesselSchedule": vessel_schedule,
+                "vesselHistory": vessel_history,
+
+                # Kept separately so Anchorage is never
+                # incorrectly classified as Alongside.
+                "anchorageVessel": anchorage_vessel,
+
+                # Counts
+                "counts": {
+                    "allVessels": len(all_vessels),
+
+                    "vesselAlongside": len(
+                        vessel_alongside
+                    ),
+
+                    "anchorageVessel": len(
+                        anchorage_vessel
+                    ),
+
+                    "confirmedVessel": len(
+                        confirmed_vessel
+                    ),
+
+                    "openStack": len(
+                        open_stack
+                    ),
+
+                    "vesselSchedule": len(
+                        vessel_schedule
+                    ),
+
+                    "vesselHistory": len(
+                        vessel_history
+                    ),
+                },
+            }
+
+            # ------------------------------------------------
+            # WRITE JSON
+            # ------------------------------------------------
+
+            write_json_atomic(
+                payload
+            )
+
+            # ------------------------------------------------
+            # SUMMARY
+            # ------------------------------------------------
+
+            logger.info("")
+            logger.info(
+                "========== SCRAPE RESULT =========="
+            )
+
+            logger.info(
+                "Vessel Alongside : %d",
+                len(vessel_alongside),
+            )
+
+            logger.info(
+                "Anchorage        : %d",
+                len(anchorage_vessel),
+            )
+
+            logger.info(
+                "Confirmed Vessel : %d",
+                len(confirmed_vessel),
+            )
+
+            logger.info(
+                "Open Stack       : %d",
+                len(open_stack),
+            )
+
+            logger.info(
+                "Vessel Schedule  : %d",
+                len(vessel_schedule),
+            )
+
+            logger.info(
+                "Vessel History   : %d",
+                len(vessel_history),
+            )
+
+            logger.info(
+                "All Vessels      : %d",
+                len(all_vessels),
+            )
+
+            logger.info(
+                "===================================="
+            )
+
+            logger.info(
+                "data.json berhasil dibuat."
+            )
+
+            logger.info(
+                "======================================"
+            )
+
+            return payload
+
+        except PlaywrightTimeoutError as exc:
+
+            logger.error(
+                "TIMEOUT saat mengambil data Pelindo."
+            )
+
+            logger.error(
+                "Detail: %s",
+                exc,
+            )
+
+            await save_debug_html(page)
+
+            raise RuntimeError(
+                "Timeout saat menunggu halaman "
+                "Pelindo atau window.WA_BOARD."
+            ) from exc
+
+        except Exception as exc:
+
+            logger.error(
+                "Scraper gagal: %s",
+                exc,
+            )
+
+            await save_debug_html(page)
+
+            raise
 
         finally:
 
+            await context.close()
             await browser.close()
 
 
 # ============================================================
-# MAIN
+# ENTRY POINT
 # ============================================================
 
 if __name__ == "__main__":
+
     try:
         asyncio.run(
             scrape()
         )
 
+    except KeyboardInterrupt:
+
+        logger.warning(
+            "Scraper dihentikan oleh user."
+        )
+
+        raise SystemExit(130)
+
     except Exception as exc:
-        logging.exception(
-            "SCRAPER FAILED: %s",
+
+        logger.error(
+            "======================================"
+        )
+
+        logger.error(
+            "SCRAPER FAILED"
+        )
+
+        logger.error(
+            "%s",
             exc,
         )
-        raise
+
+        logger.error(
+            "======================================"
+        )
+
+        # Exit code 1 hanya digunakan jika scraper
+        # benar-benar gagal, bukan karena validasi
+        # allVessels lama.
+        raise SystemExit(1)
