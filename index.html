@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,6 +7,7 @@
 <title>Pelindo TPKS Dashboard</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
@@ -25,9 +27,7 @@ body{
     color:#0f172a;
 }
 
-button,input{
-    font:inherit;
-}
+button,input{font:inherit}
 
 .glass{
     background:rgba(255,255,255,.88);
@@ -45,15 +45,23 @@ button,input{
     box-shadow:0 18px 40px -24px rgba(15,23,42,.35);
 }
 
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
 .section-header{
     position:sticky;
     top:0;
-    z-index:30;
-    background:rgba(255,255,255,.96);
+    z-index:40;
+    background:rgba(255,255,255,.98);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
     border-bottom:1px solid #e2e8f0;
 }
+
+/* =========================================================
+   TABLE
+========================================================= */
 
 .table-wrapper{
     overflow-x:auto;
@@ -63,21 +71,25 @@ button,input{
 
 table{
     width:100%;
-    min-width:950px;
+    min-width:900px;
     border-collapse:separate;
     border-spacing:0;
 }
 
-thead th{
+thead{
     position:sticky;
-    top:72px;
-    z-index:20;
+    top:0;
+    z-index:30;
+}
+
+thead th{
     background:#f8fafc;
     box-shadow:0 1px 0 #e2e8f0;
+    white-space:nowrap;
 }
 
 tbody tr{
-    scroll-margin-top:145px;
+    scroll-margin-top:150px;
 }
 
 .vessel-row{
@@ -99,6 +111,10 @@ tbody tr{
     0%{background:rgba(14,165,233,.28)}
     100%{background:rgba(14,165,233,.06)}
 }
+
+/* =========================================================
+   KPI
+========================================================= */
 
 .kpi-card{
     position:relative;
@@ -124,6 +140,10 @@ tbody tr{
     border-radius:999px;
     opacity:.12;
 }
+
+/* =========================================================
+   SEARCH
+========================================================= */
 
 .search-box{
     box-shadow:0 10px 35px -24px rgba(15,23,42,.35);
@@ -157,22 +177,20 @@ tbody tr{
     transition:background .12s ease;
 }
 
-.search-item:last-child{
-    border-bottom:0;
-}
+.search-item:last-child{border-bottom:0}
 
-.search-item:hover{
-    background:#f0f9ff;
-}
+.search-item:hover{background:#f0f9ff}
 
-.search-item.active{
-    background:#e0f2fe;
-}
+.search-item.active{background:#e0f2fe}
 
 .search-match{
     color:#0369a1;
     font-weight:800;
 }
+
+/* =========================================================
+   MODAL
+========================================================= */
 
 .modal-backdrop{
     position:fixed;
@@ -248,12 +266,13 @@ tbody tr{
 }
 
 @media(max-width:767px){
+
     html{
         scroll-padding-top:8px;
     }
 
-    thead th{
-        top:64px;
+    table{
+        min-width:850px;
     }
 
     .modal-panel{
@@ -263,6 +282,7 @@ tbody tr{
 }
 
 @media(prefers-reduced-motion:reduce){
+
     *,
     *::before,
     *::after{
@@ -272,6 +292,7 @@ tbody tr{
     }
 }
 </style>
+
 </head>
 
 <body>
@@ -279,438 +300,432 @@ tbody tr{
 <!-- =========================================================
      HEADER
 ========================================================= -->
+
 <header class="relative overflow-hidden bg-gradient-to-r from-blue-700 via-sky-600 to-indigo-700 text-white shadow-xl">
 
-    <div class="absolute inset-0 opacity-20">
-        <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-cyan-300 blur-3xl"></div>
-        <div class="absolute -bottom-28 left-1/3 w-80 h-80 rounded-full bg-indigo-300 blur-3xl"></div>
-    </div>
+```
+<div class="absolute inset-0 opacity-20">
+    <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-cyan-300 blur-3xl"></div>
+    <div class="absolute -bottom-28 left-1/3 w-80 h-80 rounded-full bg-indigo-300 blur-3xl"></div>
+</div>
 
-    <div class="relative max-w-[1800px] mx-auto px-4 sm:px-6 py-5">
+<div class="relative max-w-[1800px] mx-auto px-4 sm:px-6 py-5">
 
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-            <div class="flex items-center gap-4 min-w-0">
+        <div class="flex items-center gap-4 min-w-0">
 
-                <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shadow-lg">
-                    <i class="fa-solid fa-ship text-xl sm:text-2xl"></i>
-                </div>
-
-                <div class="min-w-0">
-
-                    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-
-                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">
-                            Pelindo TPKS
-                        </h1>
-
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold">
-                            <span id="statusDot" class="status-dot bg-yellow-300"></span>
-                            <span id="statusText">Loading...</span>
-                        </span>
-
-                    </div>
-
-                    <p class="text-blue-100 text-xs sm:text-sm mt-1">
-                        Vessel Monitoring Dashboard
-                    </p>
-
-                </div>
-
+            <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shadow-lg">
+                <i class="fa-solid fa-ship text-xl sm:text-2xl"></i>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="min-w-0">
 
-                <div
-                    id="connectionTime"
-                    class="text-[10px] text-blue-100 bg-white/10 border border-white/10 px-3 py-2 rounded-xl">
-                    Last check: —
+                <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+
+                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">
+                        Pelindo TPKS
+                    </h1>
+
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold">
+                        <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-yellow-300"></span>
+                        <span id="statusText">Loading...</span>
+                    </span>
+
                 </div>
 
-                <button
-                    id="refreshButton"
-                    onclick="loadData(true)"
-                    class="px-4 py-2.5 rounded-xl bg-white text-blue-700 hover:bg-blue-50 active:scale-[.98] transition font-bold text-sm shadow-lg">
-
-                    <i id="refreshIcon" class="fa-solid fa-rotate-right mr-2"></i>
-                    Refresh
-
-                </button>
+                <p class="text-blue-100 text-xs sm:text-sm mt-1">
+                    Vessel Monitoring Dashboard
+                </p>
 
             </div>
 
         </div>
 
+        <div class="flex flex-wrap items-center gap-2">
+
+            <div
+                id="connectionTime"
+                class="text-[10px] text-blue-100 bg-white/10 border border-white/10 px-3 py-2 rounded-xl">
+                Last check: —
+            </div>
+
+            <button
+                id="refreshButton"
+                onclick="loadData(true)"
+                class="px-4 py-2.5 rounded-xl bg-white text-blue-700 hover:bg-blue-50 active:scale-[.98] transition font-bold text-sm shadow-lg">
+
+                <i id="refreshIcon" class="fa-solid fa-rotate-right mr-2"></i>
+                Refresh
+
+            </button>
+
+        </div>
+
     </div>
 
-</header>
+</div>
+```
 
+</header>
 
 <!-- =========================================================
      MAIN
 ========================================================= -->
-<main class="max-w-[1800px] mx-auto px-3 sm:px-5 lg:px-6 py-5 sm:py-6">
 
+<main class="max-w-[1800px] mx-auto px-3 sm:px-5 lg:px-6 py-5 sm:py-6">
 
 <!-- =========================================================
      SEARCH
 ========================================================= -->
+
 <section class="glass search-box rounded-2xl sm:rounded-3xl p-3 sm:p-5 mb-5">
 
-    <div class="flex flex-col lg:flex-row gap-3">
+```
+<div class="flex flex-col lg:flex-row gap-3">
 
-        <div class="flex-1 relative">
+    <div class="flex-1 relative">
 
-            <div class="relative">
+        <div class="relative">
 
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
 
-                <input
-                    id="searchInput"
-                    type="text"
-                    autocomplete="off"
-                    placeholder="Search vessel, voyage, code, shipping line..."
-                    class="w-full pl-11 pr-12 py-3.5 rounded-xl sm:rounded-2xl border border-slate-200 bg-white focus:outline-none text-sm"
-                    oninput="applySearch()">
+            <input
+                id="searchInput"
+                type="text"
+                autocomplete="off"
+                placeholder="Search vessel, voyage, code, shipping line..."
+                class="w-full pl-11 pr-12 py-3.5 rounded-xl sm:rounded-2xl border border-slate-200 bg-white focus:outline-none text-sm"
+                oninput="applySearch()">
 
-                <button
-                    id="clearSearchButton"
-                    onclick="clearSearch()"
-                    class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+            <button
+                id="clearSearchButton"
+                onclick="clearSearch()"
+                class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
 
-                    <i class="fa-solid fa-xmark"></i>
+                <i class="fa-solid fa-xmark"></i>
 
-                </button>
-
-            </div>
-
-            <div id="searchSuggestions" class="search-suggestions hidden"></div>
+            </button>
 
         </div>
 
-        <button
-            onclick="executeSearch()"
-            class="px-5 py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition font-bold text-sm shadow-lg shadow-blue-600/15">
-
-            <i class="fa-solid fa-magnifying-glass mr-2"></i>
-            Search
-
-        </button>
-
-        <button
-            onclick="clearSearch()"
-            class="px-5 py-3.5 rounded-xl sm:rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 transition text-sm font-semibold">
-
-            <i class="fa-solid fa-xmark mr-2"></i>
-            Clear
-
-        </button>
+        <div id="searchSuggestions" class="search-suggestions hidden"></div>
 
     </div>
 
-    <div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <button
+        onclick="executeSearch()"
+        class="px-5 py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition font-bold text-sm shadow-lg shadow-blue-600/15">
 
-        <div
-            id="searchInfo"
-            class="text-[11px] sm:text-xs text-slate-500">
-            Showing all vessels
-        </div>
+        <i class="fa-solid fa-magnifying-glass mr-2"></i>
+        Search
 
-        <div class="flex items-center gap-2">
+    </button>
 
-            <span
-                id="freshnessBadge"
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold">
-                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                Data: —
-            </span>
+    <button
+        onclick="clearSearch()"
+        class="px-5 py-3.5 rounded-xl sm:rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 transition text-sm font-semibold">
 
-        </div>
+        <i class="fa-solid fa-xmark mr-2"></i>
+        Clear
+
+    </button>
+
+</div>
+
+<div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+
+    <div id="searchInfo" class="text-[11px] sm:text-xs text-slate-500">
+        Showing all vessels
+    </div>
+
+    <div class="flex items-center gap-2">
+
+        <span
+            id="freshnessBadge"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold">
+
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            Data: —
+
+        </span>
 
     </div>
+
+</div>
+```
 
 </section>
-
 
 <!-- =========================================================
      KPI
 ========================================================= -->
+
 <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
 
-    <div
-        onclick="scrollToSection('vesselAlongside')"
-        class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-blue-100">
+```
+<div
+    onclick="scrollToSection('vesselAlongside')"
+    class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-blue-100">
 
-        <div class="kpi-glow bg-blue-500"></div>
+    <div class="kpi-glow bg-blue-500"></div>
 
-        <div class="relative flex items-center justify-between gap-2">
+    <div class="relative flex items-center justify-between gap-2">
 
-            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
-                Vessel Alongside
-            </p>
+        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
+            Vessel Alongside
+        </p>
 
-            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <i class="fa-solid fa-anchor"></i>
-            </div>
-
+        <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <i class="fa-solid fa-anchor"></i>
         </div>
-
-        <p
-            id="countAlongside"
-            class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-blue-700">
-            0
-        </p>
-
-        <p class="relative text-[9px] text-slate-400 mt-1">
-            Currently alongside
-        </p>
 
     </div>
 
+    <p id="countAlongside" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-blue-700">
+        0
+    </p>
 
-    <div
-        onclick="scrollToSection('confirmedVessel')"
-        class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-emerald-100">
+    <p class="relative text-[9px] text-slate-400 mt-1">
+        Currently alongside
+    </p>
 
-        <div class="kpi-glow bg-emerald-500"></div>
+</div>
 
-        <div class="relative flex items-center justify-between gap-2">
 
-            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
-                Confirmed Vessel
-            </p>
+<div
+    onclick="scrollToSection('confirmedVessel')"
+    class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-emerald-100">
 
-            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
+    <div class="kpi-glow bg-emerald-500"></div>
 
+    <div class="relative flex items-center justify-between gap-2">
+
+        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
+            Confirmed Vessel
+        </p>
+
+        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <i class="fa-solid fa-circle-check"></i>
         </div>
-
-        <p
-            id="countConfirmed"
-            class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-emerald-700">
-            0
-        </p>
-
-        <p class="relative text-[9px] text-slate-400 mt-1">
-            Confirmed calls
-        </p>
 
     </div>
 
+    <p id="countConfirmed" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-emerald-700">
+        0
+    </p>
 
-    <div
-        onclick="scrollToSection('openStack')"
-        class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-amber-100">
+    <p class="relative text-[9px] text-slate-400 mt-1">
+        Confirmed calls
+    </p>
 
-        <div class="kpi-glow bg-amber-500"></div>
+</div>
 
-        <div class="relative flex items-center justify-between gap-2">
 
-            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
-                Open Stack
-            </p>
+<div
+    onclick="scrollToSection('openStack')"
+    class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-amber-100">
 
-            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                <i class="fa-solid fa-box-open"></i>
-            </div>
+    <div class="kpi-glow bg-amber-500"></div>
 
+    <div class="relative flex items-center justify-between gap-2">
+
+        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
+            Open Stack
+        </p>
+
+        <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <i class="fa-solid fa-box-open"></i>
         </div>
-
-        <p
-            id="countOpenStack"
-            class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-amber-600">
-            0
-        </p>
-
-        <p class="relative text-[9px] text-slate-400 mt-1">
-            Open stack vessels
-        </p>
 
     </div>
 
+    <p id="countOpenStack" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-amber-600">
+        0
+    </p>
 
-    <div
-        onclick="scrollToSection('vesselSchedule')"
-        class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-sky-100">
+    <p class="relative text-[9px] text-slate-400 mt-1">
+        Open stack vessels
+    </p>
 
-        <div class="kpi-glow bg-sky-500"></div>
+</div>
 
-        <div class="relative flex items-center justify-between gap-2">
 
-            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
-                Vessel Schedule
-            </p>
+<div
+    onclick="scrollToSection('vesselSchedule')"
+    class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-sky-100">
 
-            <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
-                <i class="fa-solid fa-calendar-days"></i>
-            </div>
+    <div class="kpi-glow bg-sky-500"></div>
 
+    <div class="relative flex items-center justify-between gap-2">
+
+        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
+            Vessel Schedule
+        </p>
+
+        <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+            <i class="fa-solid fa-calendar-days"></i>
         </div>
-
-        <p
-            id="countSchedule"
-            class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-sky-700">
-            0
-        </p>
-
-        <p class="relative text-[9px] text-slate-400 mt-1">
-            Upcoming schedule
-        </p>
 
     </div>
 
+    <p id="countSchedule" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-sky-700">
+        0
+    </p>
 
-    <div
-        onclick="scrollToSection('vesselHistory')"
-        class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-indigo-100">
+    <p class="relative text-[9px] text-slate-400 mt-1">
+        Upcoming schedule
+    </p>
 
-        <div class="kpi-glow bg-indigo-500"></div>
+</div>
 
-        <div class="relative flex items-center justify-between gap-2">
 
-            <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
-                Vessel History
-            </p>
+<div
+    onclick="scrollToSection('vesselHistory')"
+    class="kpi-card glass rounded-2xl p-4 sm:p-5 shadow-sm cursor-pointer border border-indigo-100">
 
-            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-            </div>
+    <div class="kpi-glow bg-indigo-500"></div>
 
+    <div class="relative flex items-center justify-between gap-2">
+
+        <p class="text-[11px] sm:text-sm text-slate-500 font-bold">
+            Vessel History
+        </p>
+
+        <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i class="fa-solid fa-clock-rotate-left"></i>
         </div>
 
-        <p
-            id="countHistory"
-            class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-indigo-700">
-            0
-        </p>
-
-        <p class="relative text-[9px] text-slate-400 mt-1">
-            Historical movements
-        </p>
-
     </div>
+
+    <p id="countHistory" class="relative text-2xl sm:text-3xl font-extrabold mt-3 text-indigo-700">
+        0
+    </p>
+
+    <p class="relative text-[9px] text-slate-400 mt-1">
+        Historical movements
+    </p>
+
+</div>
+```
 
 </section>
-
 
 <!-- =========================================================
      DATA SECTIONS
 ========================================================= -->
-<div id="sectionsContainer"></div>
 
+<div id="sectionsContainer"></div>
 
 <!-- =========================================================
      FOOTER
 ========================================================= -->
+
 <footer class="mt-8 pb-8 border-t border-slate-200 pt-5">
 
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-[10px] sm:text-xs text-slate-500">
+```
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-[10px] sm:text-xs text-slate-500">
 
-        <p>
-            Source:
-            <a
-                href="https://ibstpks.pelindo.co.id/webaccess/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="font-bold text-blue-600 hover:text-blue-800">
-                Pelindo TPKS WebAccess
-            </a>
-        </p>
+    <p>
+        Source:
+        <a
+            href="https://ibstpks.pelindo.co.id/webaccess/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-bold text-blue-600 hover:text-blue-800">
+            Pelindo TPKS WebAccess
+        </a>
+    </p>
 
-        <p>
-            Last update:
-            <span
-                id="lastUpdate"
-                class="font-bold text-slate-700">
-                -
-            </span>
-        </p>
+    <p>
+        Last update:
+        <span id="lastUpdate" class="font-bold text-slate-700">
+            -
+        </span>
+    </p>
 
-        <p class="inline-flex items-center gap-1.5">
+    <p class="inline-flex items-center gap-1.5">
 
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
 
-            Auto refresh:
-            <span class="font-bold text-slate-700">
-                5 minutes
-            </span>
+        Auto refresh:
+        <span class="font-bold text-slate-700">
+            5 minutes
+        </span>
 
-        </p>
+    </p>
 
-    </div>
+</div>
+```
 
 </footer>
 
 </main>
 
-
 <!-- =========================================================
      MODAL
 ========================================================= -->
+
 <div
     id="modal"
     class="modal-backdrop hidden"
     onclick="handleModalBackdrop(event)">
 
-    <div class="modal-panel">
+```
+<div class="modal-panel">
 
-        <div class="modal-header px-4 sm:px-6 py-4">
+    <div class="modal-header px-4 sm:px-6 py-4">
 
-            <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start justify-between gap-4">
 
-                <div class="min-w-0">
+            <div class="min-w-0">
 
-                    <div class="flex items-center gap-2 flex-wrap">
+                <div class="flex items-center gap-2 flex-wrap">
 
-                        <span
-                            id="modalSection"
-                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-[9px] uppercase tracking-wider font-extrabold">
-                        </span>
+                    <span
+                        id="modalSection"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-[9px] uppercase tracking-wider font-extrabold">
+                    </span>
 
-                        <span
-                            id="modalType"
-                            class="inline-flex px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[9px] uppercase tracking-wider font-extrabold">
-                        </span>
-
-                    </div>
-
-                    <h2
-                        id="modalTitle"
-                        class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2 truncate">
-                        Vessel Detail
-                    </h2>
-
-                    <p
-                        id="modalSubtitle"
-                        class="text-xs text-slate-500 mt-1">
-                    </p>
+                    <span
+                        id="modalType"
+                        class="inline-flex px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[9px] uppercase tracking-wider font-extrabold">
+                    </span>
 
                 </div>
 
-                <button
-                    onclick="closeModal()"
-                    class="w-9 h-9 shrink-0 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition">
+                <h2
+                    id="modalTitle"
+                    class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2 truncate">
+                    Vessel Detail
+                </h2>
 
-                    <i class="fa-solid fa-xmark"></i>
-
-                </button>
+                <p id="modalSubtitle" class="text-xs text-slate-500 mt-1"></p>
 
             </div>
 
-        </div>
+            <button
+                onclick="closeModal()"
+                class="w-9 h-9 shrink-0 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition">
 
-        <div id="modalBody" class="p-4 sm:p-6"></div>
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
 
     </div>
 
-</div>
+    <div id="modalBody" class="p-4 sm:p-6"></div>
 
+</div>
+```
+
+</div>
 
 <script>
 
 const DATA_FILE="data.json";
-
 const AUTO_REFRESH_MS=5*60*1000;
 
 let DATA={
@@ -741,10 +756,8 @@ const SECTION_CONFIG=[
         color:"blue",
         description:"Vessels currently alongside.",
         columns:[
-            ["vesselName","Vessel Name"],
-            ["vesselCode","Code"],
+            ["vesselName","Vessel"],
             ["voyage","Voyage"],
-            ["shippingLine","Shipping Line"],
             ["type","Type"],
             ["atb","ATB"],
             ["etd","ETD"]
@@ -758,10 +771,8 @@ const SECTION_CONFIG=[
         color:"emerald",
         description:"Confirmed vessel and cargo opening information.",
         columns:[
-            ["vesselName","Vessel Name"],
-            ["vesselCode","Code"],
+            ["vesselName","Vessel"],
             ["voyage","Voyage"],
-            ["shippingLine","Shipping Line"],
             ["type","Type"],
             ["etb","ETB"],
             ["etd","ETD"],
@@ -780,10 +791,8 @@ const SECTION_CONFIG=[
         color:"amber",
         description:"Vessel information with open stack details.",
         columns:[
-            ["vesselName","Vessel Name"],
-            ["vesselCode","Code"],
+            ["vesselName","Vessel"],
             ["voyage","Voyage"],
-            ["shippingLine","Shipping Line"],
             ["type","Type"],
             ["eta","ETA"],
             ["etb","ETB"],
@@ -803,10 +812,8 @@ const SECTION_CONFIG=[
         color:"sky",
         description:"Upcoming vessel schedule.",
         columns:[
-            ["vesselName","Vessel Name"],
-            ["vesselCode","Code"],
+            ["vesselName","Vessel"],
             ["voyage","Voyage"],
-            ["shippingLine","Shipping Line"],
             ["type","Type"],
             ["eta","ETA"],
             ["etb","ETB"],
@@ -821,10 +828,8 @@ const SECTION_CONFIG=[
         color:"indigo",
         description:"Historical vessel movements.",
         columns:[
-            ["vesselName","Vessel Name"],
-            ["vesselCode","Code"],
+            ["vesselName","Vessel"],
             ["voyage","Voyage"],
-            ["shippingLine","Shipping Line"],
             ["type","Type"],
             ["atb","ATB"],
             ["atd","ATD"],
@@ -852,6 +857,7 @@ function escapeHtml(value){
         .replace(/>/g,"&gt;")
         .replace(/"/g,"&quot;")
         .replace(/'/g,"&#039;");
+
 }
 
 
@@ -860,6 +866,7 @@ function normalizeSearchValue(value){
     return String(value??"")
         .toLowerCase()
         .trim();
+
 }
 
 
@@ -878,6 +885,7 @@ function formatNumber(value){
     }
 
     return numeric.toLocaleString("en-US");
+
 }
 
 
@@ -894,6 +902,7 @@ function getColumnClass(key){
     }
 
     return "text-left";
+
 }
 
 
@@ -902,6 +911,7 @@ function getSection(sectionKey){
     return SECTION_CONFIG.find(
         section=>section.key===sectionKey
     );
+
 }
 
 
@@ -913,6 +923,7 @@ function getRecordIdentity(section,vessel){
         normalizeSearchValue(vessel.vesselCode),
         normalizeSearchValue(vessel.voyage)
     ].join("|");
+
 }
 
 
@@ -925,6 +936,7 @@ function vesselSearchText(vessel){
     return Object.values(vessel||{})
         .map(value=>normalizeSearchValue(value))
         .join(" ");
+
 }
 
 
@@ -935,6 +947,7 @@ function vesselMatches(vessel,query){
     }
 
     return vesselSearchText(vessel).includes(query);
+
 }
 
 
@@ -970,6 +983,7 @@ function getSearchResults(query){
     });
 
     return results;
+
 }
 
 
@@ -988,6 +1002,7 @@ function highlightText(value,query){
         new RegExp(`(${escapedQuery})`,"ig"),
         '<span class="search-match">$1</span>'
     );
+
 }
 
 
@@ -999,31 +1014,32 @@ function formatCell(vessel,key,query=""){
 
     const value=vessel?.[key];
 
+    /* Vessel Name + Code in ONE column */
+
     if(key==="vesselName"){
 
         return `
-            <div class="flex flex-col min-w-[150px]">
-                <span class="font-extrabold text-slate-900">
+            <div class="flex flex-col min-w-[190px]">
+
+                <span class="font-extrabold text-slate-900 truncate">
                     ${highlightText(value,query)}
                 </span>
 
                 ${
                     vessel.vesselCode
                     ?`
-                    <span class="text-[10px] text-slate-400 mt-0.5">
-                        ${escapeHtml(vessel.vesselCode)}
+                    <span class="text-[10px] text-slate-400 mt-0.5 font-semibold">
+                        ${highlightText(
+                            vessel.vesselCode,
+                            query
+                        )}
                     </span>
                     `
                     :""
                 }
+
             </div>
         `;
-    }
-
-
-    if(key==="vesselCode"){
-
-        return highlightText(value,query);
 
     }
 
@@ -1031,7 +1047,7 @@ function formatCell(vessel,key,query=""){
     if(key==="voyage"){
 
         return `
-            <span class="inline-flex px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 font-bold">
+            <span class="inline-flex px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 font-bold whitespace-nowrap">
                 ${highlightText(value,query)}
             </span>
         `;
@@ -1095,7 +1111,9 @@ function renderTable(section,items,query=""){
             <div class="p-10 sm:p-14 text-center text-slate-400">
 
                 <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-100 flex items-center justify-center">
+
                     <i class="fa-solid fa-inbox text-lg"></i>
+
                 </div>
 
                 <p class="text-sm font-bold">
@@ -1114,6 +1132,7 @@ function renderTable(section,items,query=""){
 
             </div>
         `;
+
     }
 
 
@@ -1178,6 +1197,7 @@ function renderTable(section,items,query=""){
 
         </div>
     `;
+
 }
 
 
@@ -1187,116 +1207,157 @@ function renderTable(section,items,query=""){
 
 function renderSections(){
 
-    const container=document.getElementById("sectionsContainer");
+    const container=
+        document.getElementById("sectionsContainer");
 
-    const input=document.getElementById("searchInput");
+    const input=
+        document.getElementById("searchInput");
 
-    const query=normalizeSearchValue(input?.value);
+    const query=
+        normalizeSearchValue(input?.value);
 
     let totalVisible=0;
 
-    container.innerHTML=SECTION_CONFIG.map(section=>{
 
-        const source=Array.isArray(DATA[section.key])
-            ?DATA[section.key]
-            :[];
+    container.innerHTML=
+        SECTION_CONFIG.map(section=>{
 
-        const filtered=source
-            .map((vessel,originalIndex)=>({
-                vessel,
-                section,
-                originalIndex,
-                identity:getRecordIdentity(section,vessel)
-            }))
-            .filter(item=>
-                vesselMatches(item.vessel,query)
-            );
+            const source=
+                Array.isArray(DATA[section.key])
+                ?DATA[section.key]
+                :[];
 
-        totalVisible+=filtered.length;
 
-        return `
+            const filtered=
+                source
+                    .map((vessel,originalIndex)=>({
 
-            <section
-                id="section-${section.key}"
-                class="section-card glass rounded-2xl sm:rounded-3xl shadow-sm mb-5 overflow-visible fade-in">
+                        vessel,
+                        section,
+                        originalIndex,
+                        identity:
+                            getRecordIdentity(
+                                section,
+                                vessel
+                            )
 
-                <div class="section-header px-4 sm:px-5 py-3.5 sm:py-4">
+                    }))
+                    .filter(item=>
+                        vesselMatches(
+                            item.vessel,
+                            query
+                        )
+                    );
 
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
-                        <div class="flex items-center gap-3">
+            totalVisible+=filtered.length;
 
-                            <div class="w-10 h-10 shrink-0 rounded-xl bg-${section.color}-50 text-${section.color}-600 flex items-center justify-center border border-${section.color}-100 shadow-sm">
 
-                                <i class="fa-solid ${section.icon}"></i>
+            return `
 
-                            </div>
+                <section
+                    id="section-${section.key}"
+                    class="section-card glass rounded-2xl sm:rounded-3xl shadow-sm mb-5 overflow-visible fade-in">
 
-                            <div class="min-w-0">
 
-                                <div class="flex items-center gap-2 flex-wrap">
+                    <!-- SECTION HEADER -->
 
-                                    <h2 class="font-extrabold text-base sm:text-lg text-slate-900">
-                                        ${section.title}
-                                    </h2>
+                    <div class="section-header px-4 sm:px-5 py-3.5 sm:py-4">
 
-                                    ${
-                                        query
-                                        ?`
-                                        <span class="text-[9px] font-bold px-2 py-1 rounded-full bg-sky-50 text-sky-600 border border-sky-100">
-                                            Filtered
-                                        </span>
-                                        `
-                                        :""
-                                    }
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="w-10 h-10 shrink-0 rounded-xl bg-${section.color}-50 text-${section.color}-600 flex items-center justify-center border border-${section.color}-100 shadow-sm">
+
+                                    <i class="fa-solid ${section.icon}"></i>
 
                                 </div>
 
-                                <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">
-                                    ${section.description}
-                                </p>
+
+                                <div class="min-w-0">
+
+                                    <div class="flex items-center gap-2 flex-wrap">
+
+                                        <h2 class="font-extrabold text-base sm:text-lg text-slate-900">
+
+                                            ${section.title}
+
+                                        </h2>
+
+                                        ${
+                                            query
+                                            ?`
+                                            <span class="text-[9px] font-bold px-2 py-1 rounded-full bg-sky-50 text-sky-600 border border-sky-100">
+
+                                                Filtered
+
+                                            </span>
+                                            `
+                                            :""
+                                        }
+
+                                    </div>
+
+
+                                    <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5">
+
+                                        ${section.description}
+
+                                    </p>
+
+                                </div>
 
                             </div>
 
-                        </div>
+
+                            <div class="flex items-center gap-2">
+
+                                <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
+
+                                    Records
+
+                                </span>
 
 
-                        <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-1.5 rounded-lg bg-${section.color}-50 text-${section.color}-700 border border-${section.color}-100 text-[10px] font-extrabold">
 
-                            <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
-                                Records
-                            </span>
+                                    ${
+                                        query
+                                        ?`${filtered.length} / ${source.length}`
+                                        :filtered.length
+                                    }
 
-                            <span class="px-2.5 py-1.5 rounded-lg bg-${section.color}-50 text-${section.color}-700 border border-${section.color}-100 text-[10px] font-extrabold">
+                                </span>
 
-                                ${
-                                    query
-                                    ?`${filtered.length} / ${source.length}`
-                                    :filtered.length
-                                }
-
-                            </span>
+                            </div>
 
                         </div>
 
                     </div>
 
-                </div>
 
+                    <!-- TABLE -->
 
-                ${renderTable(section,filtered,query)}
+                    ${renderTable(
+                        section,
+                        filtered,
+                        query
+                    )}
 
-            </section>
+                </section>
 
-        `;
+            `;
 
-    }).join("");
+        }).join("");
 
 
     attachRowEvents();
 
 
-    const searchInfo=document.getElementById("searchInfo");
+    const searchInfo=
+        document.getElementById("searchInfo");
+
 
     if(query){
 
@@ -1313,12 +1374,16 @@ function renderSections(){
 
 
     const clearButton=
-        document.getElementById("clearSearchButton");
+        document.getElementById(
+            "clearSearchButton"
+        );
+
 
     clearButton?.classList.toggle(
         "hidden",
         !query
     );
+
 }
 
 
@@ -1328,29 +1393,43 @@ function renderSections(){
 
 function attachRowEvents(){
 
-    document.querySelectorAll(".vessel-row").forEach(row=>{
+    document
+        .querySelectorAll(".vessel-row")
+        .forEach(row=>{
 
-        row.addEventListener("click",()=>{
+            row.addEventListener(
+                "click",
+                ()=>{
 
-            const sectionKey=row.dataset.section;
+                    const sectionKey=
+                        row.dataset.section;
 
-            const index=Number(row.dataset.index);
+                    const index=
+                        Number(row.dataset.index);
 
-            const list=DATA[sectionKey]||[];
+                    const list=
+                        DATA[sectionKey]||[];
 
-            const vessel=list[index];
+                    const vessel=
+                        list[index];
 
-            const section=getSection(sectionKey);
+                    const section=
+                        getSection(sectionKey);
 
-            if(vessel&&section){
 
-                openModal(vessel,section);
+                    if(vessel&&section){
 
-            }
+                        openModal(
+                            vessel,
+                            section
+                        );
+
+                    }
+
+                }
+            );
 
         });
-
-    });
 
 }
 
@@ -1361,17 +1440,23 @@ function attachRowEvents(){
 
 function openModal(vessel,section){
 
-    const modal=document.getElementById("modal");
+    const modal=
+        document.getElementById("modal");
 
-    const title=document.getElementById("modalTitle");
+    const title=
+        document.getElementById("modalTitle");
 
-    const subtitle=document.getElementById("modalSubtitle");
+    const subtitle=
+        document.getElementById("modalSubtitle");
 
-    const type=document.getElementById("modalType");
+    const type=
+        document.getElementById("modalType");
 
-    const sectionBadge=document.getElementById("modalSection");
+    const sectionBadge=
+        document.getElementById("modalSection");
 
-    const body=document.getElementById("modalBody");
+    const body=
+        document.getElementById("modalBody");
 
 
     title.textContent=
@@ -1397,9 +1482,11 @@ function openModal(vessel,section){
             <div class="flex items-center gap-2 text-[10px] uppercase tracking-wider font-extrabold text-slate-400 mb-3">
 
                 <i class="fa-solid fa-circle-info text-blue-500"></i>
+
                 Vessel Information
 
             </div>
+
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
@@ -1409,23 +1496,14 @@ function openModal(vessel,section){
     const fields=[
 
         ["Shipping Line","shippingLine"],
-
         ["Vessel Code","vesselCode"],
-
         ["Voyage","voyage"],
-
         ["ETA","eta"],
-
         ["ETB","etb"],
-
         ["ATB","atb"],
-
         ["ETD","etd"],
-
         ["ATD","atd"],
-
         ["Open Stack","openStack"],
-
         ["Closing Time","closingTime"]
 
     ];
@@ -1447,11 +1525,16 @@ function openModal(vessel,section){
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
 
                 <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-extrabold">
+
                     ${label}
+
                 </span>
 
+
                 <span class="block mt-1 text-sm font-extrabold text-slate-800 break-words">
+
                     ${escapeHtml(vessel[key])}
+
                 </span>
 
             </div>
@@ -1462,10 +1545,17 @@ function openModal(vessel,section){
 
 
     html+=`
+
             </div>
+
         </div>
+
     `;
 
+
+    /* =====================================================
+       CARGO STATUS
+    ===================================================== */
 
     if(
         vessel.booking!==undefined||
@@ -1480,20 +1570,27 @@ function openModal(vessel,section){
                 <div class="flex items-center gap-2 text-[9px] uppercase tracking-wider text-blue-600 font-extrabold mb-4">
 
                     <i class="fa-solid fa-chart-column"></i>
+
                     Cargo Status
 
                 </div>
 
+
                 <div class="grid grid-cols-3 gap-2 sm:gap-4 text-center">
+
 
                     <div class="p-3 rounded-xl bg-white/75 border border-white">
 
                         <div class="text-[9px] text-slate-400 font-bold">
+
                             Booking
+
                         </div>
 
                         <div class="text-lg sm:text-xl font-extrabold text-blue-700 mt-1">
+
                             ${formatNumber(vessel.booking)}
+
                         </div>
 
                     </div>
@@ -1502,11 +1599,15 @@ function openModal(vessel,section){
                     <div class="p-3 rounded-xl bg-white/75 border border-white">
 
                         <div class="text-[9px] text-slate-400 font-bold">
+
                             Open
+
                         </div>
 
                         <div class="text-lg sm:text-xl font-extrabold text-cyan-700 mt-1">
+
                             ${formatNumber(vessel.open)}
+
                         </div>
 
                     </div>
@@ -1515,14 +1616,19 @@ function openModal(vessel,section){
                     <div class="p-3 rounded-xl bg-white/75 border border-white">
 
                         <div class="text-[9px] text-slate-400 font-bold">
+
                             Actual
+
                         </div>
 
                         <div class="text-lg sm:text-xl font-extrabold text-indigo-700 mt-1">
+
                             ${formatNumber(vessel.actual)}
+
                         </div>
 
                     </div>
+
 
                 </div>
 
@@ -1532,6 +1638,10 @@ function openModal(vessel,section){
 
     }
 
+
+    /* =====================================================
+       CONTAINER MOVEMENT
+    ===================================================== */
 
     if(
         vessel.export!==undefined||
@@ -1545,30 +1655,44 @@ function openModal(vessel,section){
                 <div class="flex items-center gap-2 text-[9px] uppercase tracking-wider text-indigo-600 font-extrabold mb-4">
 
                     <i class="fa-solid fa-right-left"></i>
+
                     Container Movement
 
                 </div>
 
+
                 <div class="grid grid-cols-2 gap-3 sm:gap-5 text-center">
+
 
                     <div class="p-4 rounded-xl bg-white/80">
 
                         <div class="text-[9px] text-slate-400 font-bold">
+
                             Export
+
                         </div>
 
+
                         <div class="text-xl font-extrabold text-indigo-700 mt-1">
+
                             ${formatNumber(vessel.export)}
+
                             <span class="text-[10px] font-bold text-slate-400">
+
                                 Box
+
                             </span>
+
                         </div>
+
 
                         ${
                             vessel.exportTeus!==undefined
                             ?`
                             <div class="text-[9px] text-slate-400 mt-1">
+
                                 ${formatNumber(vessel.exportTeus)} TEUs
+
                             </div>
                             `
                             :""
@@ -1580,27 +1704,39 @@ function openModal(vessel,section){
                     <div class="p-4 rounded-xl bg-white/80">
 
                         <div class="text-[9px] text-slate-400 font-bold">
+
                             Import
+
                         </div>
 
+
                         <div class="text-xl font-extrabold text-blue-700 mt-1">
+
                             ${formatNumber(vessel.import)}
+
                             <span class="text-[10px] font-bold text-slate-400">
+
                                 Box
+
                             </span>
+
                         </div>
+
 
                         ${
                             vessel.importTeus!==undefined
                             ?`
                             <div class="text-[9px] text-slate-400 mt-1">
+
                                 ${formatNumber(vessel.importTeus)} TEUs
+
                             </div>
                             `
                             :""
                         }
 
                     </div>
+
 
                 </div>
 
@@ -1616,17 +1752,26 @@ function openModal(vessel,section){
         <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
 
             <div class="text-[9px] text-slate-400">
+
                 Section:
+
                 <span class="font-bold text-slate-600">
+
                     ${escapeHtml(section.title)}
+
                 </span>
+
             </div>
 
+
             <div class="text-[9px] text-slate-400">
-                ${vessel.voyage
+
+                ${
+                    vessel.voyage
                     ?`Voyage ${escapeHtml(vessel.voyage)}`
                     :""
                 }
+
             </div>
 
         </div>
@@ -1645,7 +1790,8 @@ function openModal(vessel,section){
 
 function closeModal(){
 
-    document.getElementById("modal")
+    document
+        .getElementById("modal")
         .classList.add("hidden");
 
     document.body.classList.remove("overflow-hidden");
@@ -1656,9 +1802,7 @@ function closeModal(){
 function handleModalBackdrop(event){
 
     if(event.target.id==="modal"){
-
         closeModal();
-
     }
 
 }
@@ -1670,11 +1814,14 @@ function handleModalBackdrop(event){
 
 function showSuggestions(){
 
-    const input=document.getElementById("searchInput");
+    const input=
+        document.getElementById("searchInput");
 
-    const box=document.getElementById("searchSuggestions");
+    const box=
+        document.getElementById("searchSuggestions");
 
-    const query=normalizeSearchValue(input.value);
+    const query=
+        normalizeSearchValue(input.value);
 
 
     if(!query){
@@ -1688,8 +1835,9 @@ function showSuggestions(){
     }
 
 
-    CURRENT_RESULTS=getSearchResults(query)
-        .slice(0,10);
+    CURRENT_RESULTS=
+        getSearchResults(query)
+            .slice(0,10);
 
 
     suggestionIndex=-1;
@@ -1707,12 +1855,18 @@ function showSuggestions(){
 
                 </div>
 
+
                 <div class="font-semibold">
+
                     No matching vessel
+
                 </div>
 
+
                 <div class="text-[10px] mt-1">
+
                     Try vessel name, voyage, or code.
+
                 </div>
 
             </div>
@@ -1726,73 +1880,81 @@ function showSuggestions(){
     }
 
 
-    box.innerHTML=CURRENT_RESULTS.map((item,index)=>`
+    box.innerHTML=
+        CURRENT_RESULTS.map((item,index)=>`
 
-        <div
-            class="search-item"
-            data-suggestion="${index}">
+            <div
+                class="search-item"
+                data-suggestion="${index}">
 
-            <div class="flex items-center gap-3">
-
-                <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-sky-50 to-indigo-50 text-blue-600 flex items-center justify-center">
-
-                    <i class="fa-solid ${item.section.icon} text-sm"></i>
-
-                </div>
+                <div class="flex items-center gap-3">
 
 
-                <div class="min-w-0 flex-1">
+                    <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-sky-50 to-indigo-50 text-blue-600 flex items-center justify-center">
 
-                    <div class="font-extrabold text-sm text-slate-800 truncate">
-
-                        ${highlightText(
-                            item.vessel.vesselName,
-                            query
-                        )}
+                        <i class="fa-solid ${item.section.icon} text-sm"></i>
 
                     </div>
 
 
-                    <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-slate-400 mt-1">
+                    <div class="min-w-0 flex-1">
 
-                        <span class="font-bold text-indigo-600">
-                            Voyage:
+                        <div class="font-extrabold text-sm text-slate-800 truncate">
+
                             ${highlightText(
-                                item.vessel.voyage,
+                                item.vessel.vesselName,
                                 query
                             )}
-                        </span>
 
-                        ${
-                            item.vessel.vesselCode
-                            ?`
-                            <span>•</span>
-                            <span>
+                        </div>
+
+
+                        <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-slate-400 mt-1">
+
+                            <span class="font-bold text-indigo-600">
+
+                                Voyage:
                                 ${highlightText(
-                                    item.vessel.vesselCode,
+                                    item.vessel.voyage,
                                     query
                                 )}
+
                             </span>
-                            `
-                            :""
-                        }
+
+
+                            ${
+                                item.vessel.vesselCode
+                                ?`
+                                <span>•</span>
+
+                                <span>
+
+                                    ${highlightText(
+                                        item.vessel.vesselCode,
+                                        query
+                                    )}
+
+                                </span>
+                                `
+                                :""
+                            }
+
+                        </div>
 
                     </div>
 
+
+                    <span class="shrink-0 text-[8px] sm:text-[9px] px-2 py-1.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 font-extrabold">
+
+                        ${escapeHtml(item.section.title)}
+
+                    </span>
+
                 </div>
-
-
-                <span class="shrink-0 text-[8px] sm:text-[9px] px-2 py-1.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 font-extrabold">
-
-                    ${escapeHtml(item.section.title)}
-
-                </span>
 
             </div>
 
-        </div>
-
-    `).join("");
+        `).join("");
 
 
     box.classList.remove("hidden");
@@ -1801,21 +1963,24 @@ function showSuggestions(){
     box.querySelectorAll("[data-suggestion]")
         .forEach(element=>{
 
-            element.addEventListener("click",()=>{
+            element.addEventListener(
+                "click",
+                ()=>{
 
-                const index=Number(
-                    element.dataset.suggestion
-                );
+                    const index=
+                        Number(
+                            element.dataset.suggestion
+                        );
 
-                const item=CURRENT_RESULTS[index];
+                    const item=
+                        CURRENT_RESULTS[index];
 
-                if(item){
-
-                    selectSuggestion(item);
+                    if(item){
+                        selectSuggestion(item);
+                    }
 
                 }
-
-            });
+            );
 
         });
 
@@ -1824,20 +1989,26 @@ function showSuggestions(){
 
 function selectSuggestion(item){
 
-    const input=document.getElementById("searchInput");
+    const input=
+        document.getElementById("searchInput");
 
-    const box=document.getElementById("searchSuggestions");
+    const box=
+        document.getElementById("searchSuggestions");
 
 
-    input.value=item.vessel.vesselName||"";
+    input.value=
+        item.vessel.vesselName||"";
 
     box.classList.add("hidden");
 
+    CURRENT_RESULTS=[];
+
+    suggestionIndex=-1;
+
 
     /*
-       Important:
-       Suggestion opens MODAL directly.
-       It does NOT scroll.
+       Suggestion click opens modal directly.
+       It does not scroll the page.
     */
 
     openModal(
@@ -1863,23 +2034,28 @@ function applySearch(){
 
 function executeSearch(){
 
-    const input=document.getElementById("searchInput");
+    const input=
+        document.getElementById("searchInput");
 
-    const query=normalizeSearchValue(input.value);
+    const query=
+        normalizeSearchValue(input.value);
 
-    const box=document.getElementById("searchSuggestions");
+    const box=
+        document.getElementById("searchSuggestions");
+
 
     box.classList.add("hidden");
 
+    suggestionIndex=-1;
+
 
     if(!query){
-
         return;
-
     }
 
 
-    const results=getSearchResults(query);
+    const results=
+        getSearchResults(query);
 
 
     if(!results.length){
@@ -1892,11 +2068,6 @@ function executeSearch(){
     }
 
 
-    /*
-       Enter/Search:
-       scroll to the FIRST matching record.
-    */
-
     const first=results[0];
 
     renderSections();
@@ -1904,10 +2075,14 @@ function executeSearch(){
 
     requestAnimationFrame(()=>{
 
-        const identity=first.identity;
+        const identity=
+            first.identity;
+
 
         const row=[
-            ...document.querySelectorAll(".vessel-row")
+            ...document.querySelectorAll(
+                ".vessel-row"
+            )
         ].find(element=>
             element.dataset.identity===identity
         );
@@ -1921,16 +2096,27 @@ function executeSearch(){
             });
 
 
-            row.classList.remove("search-target");
+            row.classList.remove(
+                "search-target"
+            );
+
 
             void row.offsetWidth;
 
-            row.classList.add("search-target");
+
+            row.classList.add(
+                "search-target"
+            );
 
 
-            setTimeout(()=>{
-                row.classList.remove("search-target");
-            },2200);
+            setTimeout(
+                ()=>{
+                    row.classList.remove(
+                        "search-target"
+                    );
+                },
+                2200
+            );
 
         }
 
@@ -1941,9 +2127,13 @@ function executeSearch(){
 
 function clearSearch(){
 
-    const input=document.getElementById("searchInput");
+    const input=
+        document.getElementById("searchInput");
 
-    const box=document.getElementById("searchSuggestions");
+    const box=
+        document.getElementById(
+            "searchSuggestions"
+        );
 
 
     input.value="";
@@ -1967,9 +2157,11 @@ function clearSearch(){
 
 function scrollToSection(key){
 
-    const element=document.getElementById(
-        `section-${key}`
-    );
+    const element=
+        document.getElementById(
+            `section-${key}`
+        );
+
 
     if(element){
 
@@ -1995,36 +2187,41 @@ function updateStatistics(){
         :(DATA.counts?.[key]||0);
 
 
-    document.getElementById("countAlongside")
-        .textContent=
+    document.getElementById(
+        "countAlongside"
+    ).textContent=
         formatNumber(
             getCount("vesselAlongside")
         );
 
 
-    document.getElementById("countConfirmed")
-        .textContent=
+    document.getElementById(
+        "countConfirmed"
+    ).textContent=
         formatNumber(
             getCount("confirmedVessel")
         );
 
 
-    document.getElementById("countOpenStack")
-        .textContent=
+    document.getElementById(
+        "countOpenStack"
+    ).textContent=
         formatNumber(
             getCount("openStack")
         );
 
 
-    document.getElementById("countSchedule")
-        .textContent=
+    document.getElementById(
+        "countSchedule"
+    ).textContent=
         formatNumber(
             getCount("vesselSchedule")
         );
 
 
-    document.getElementById("countHistory")
-        .textContent=
+    document.getElementById(
+        "countHistory"
+    ).textContent=
         formatNumber(
             getCount("vesselHistory")
         );
@@ -2039,10 +2236,14 @@ function updateStatistics(){
 function updateLastUpdate(){
 
     const element=
-        document.getElementById("lastUpdate");
+        document.getElementById(
+            "lastUpdate"
+        );
 
     const freshness=
-        document.getElementById("freshnessBadge");
+        document.getElementById(
+            "freshnessBadge"
+        );
 
 
     if(!DATA.updatedAt){
@@ -2059,12 +2260,14 @@ function updateLastUpdate(){
     }
 
 
-    const date=new Date(DATA.updatedAt);
+    const date=
+        new Date(DATA.updatedAt);
 
 
     if(Number.isNaN(date.getTime())){
 
-        element.textContent=DATA.updatedAt;
+        element.textContent=
+            DATA.updatedAt;
 
         freshness.innerHTML=`
             <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
@@ -2076,16 +2279,18 @@ function updateLastUpdate(){
     }
 
 
-    const formatted=date.toLocaleString(
-        "id-ID",
-        {
-            dateStyle:"medium",
-            timeStyle:"medium"
-        }
-    );
+    const formatted=
+        date.toLocaleString(
+            "id-ID",
+            {
+                dateStyle:"medium",
+                timeStyle:"medium"
+            }
+        );
 
 
-    element.textContent=formatted;
+    element.textContent=
+        formatted;
 
 
     updateFreshnessBadge(date);
@@ -2096,7 +2301,9 @@ function updateLastUpdate(){
 function updateFreshnessBadge(date){
 
     const freshness=
-        document.getElementById("freshnessBadge");
+        document.getElementById(
+            "freshnessBadge"
+        );
 
 
     const ageMinutes=
@@ -2107,27 +2314,27 @@ function updateFreshnessBadge(date){
 
 
     let label;
-
     let dotClass;
 
 
     if(ageMinutes<10){
 
         label="Fresh";
-
         dotClass="bg-emerald-500";
 
     }
     else if(ageMinutes<30){
 
-        label=`${Math.floor(ageMinutes)}m old`;
+        label=
+            `${Math.floor(ageMinutes)}m old`;
 
         dotClass="bg-amber-500";
 
     }
     else{
 
-        label=`${Math.floor(ageMinutes)}m old`;
+        label=
+            `${Math.floor(ageMinutes)}m old`;
 
         dotClass="bg-red-500";
 
@@ -2152,21 +2359,28 @@ function updateFreshnessBadge(date){
 function updateConnectionStatus(success){
 
     const dot=
-        document.getElementById("statusDot");
+        document.getElementById(
+            "statusDot"
+        );
 
     const text=
-        document.getElementById("statusText");
+        document.getElementById(
+            "statusText"
+        );
 
     const time=
-        document.getElementById("connectionTime");
+        document.getElementById(
+            "connectionTime"
+        );
 
 
     if(success){
 
         dot.className=
-            "status-dot bg-emerald-300";
+            "w-1.5 h-1.5 rounded-full bg-emerald-300";
 
-        text.textContent="Connected";
+        text.textContent=
+            "Connected";
 
         time.textContent=
             `Last check: ${new Date().toLocaleTimeString("id-ID")}`;
@@ -2175,9 +2389,10 @@ function updateConnectionStatus(success){
     else{
 
         dot.className=
-            "status-dot bg-red-300";
+            "w-1.5 h-1.5 rounded-full bg-red-300";
 
-        text.textContent="Connection error";
+        text.textContent=
+            "Connection error";
 
         time.textContent=
             "Last check failed";
@@ -2194,10 +2409,14 @@ function updateConnectionStatus(success){
 async function loadData(manual=false){
 
     const refreshIcon=
-        document.getElementById("refreshIcon");
+        document.getElementById(
+            "refreshIcon"
+        );
 
     const refreshButton=
-        document.getElementById("refreshButton");
+        document.getElementById(
+            "refreshButton"
+        );
 
 
     try{
@@ -2214,19 +2433,24 @@ async function loadData(manual=false){
         }
 
 
-        refreshIcon.classList.add("fa-spin");
-
-
-        document.getElementById("statusText")
-            .textContent="Loading...";
-
-
-        const response=await fetch(
-            `${DATA_FILE}?t=${Date.now()}`,
-            {
-                cache:"no-store"
-            }
+        refreshIcon.classList.add(
+            "fa-spin"
         );
+
+
+        document.getElementById(
+            "statusText"
+        ).textContent=
+            "Loading...";
+
+
+        const response=
+            await fetch(
+                `${DATA_FILE}?t=${Date.now()}`,
+                {
+                    cache:"no-store"
+                }
+            );
 
 
         if(!response.ok){
@@ -2238,7 +2462,8 @@ async function loadData(manual=false){
         }
 
 
-        const json=await response.json();
+        const json=
+            await response.json();
 
 
         DATA={
@@ -2253,27 +2478,37 @@ async function loadData(manual=false){
                 "",
 
             vesselAlongside:
-                Array.isArray(json.vesselAlongside)
+                Array.isArray(
+                    json.vesselAlongside
+                )
                 ?json.vesselAlongside
                 :[],
 
             confirmedVessel:
-                Array.isArray(json.confirmedVessel)
+                Array.isArray(
+                    json.confirmedVessel
+                )
                 ?json.confirmedVessel
                 :[],
 
             openStack:
-                Array.isArray(json.openStack)
+                Array.isArray(
+                    json.openStack
+                )
                 ?json.openStack
                 :[],
 
             vesselSchedule:
-                Array.isArray(json.vesselSchedule)
+                Array.isArray(
+                    json.vesselSchedule
+                )
                 ?json.vesselSchedule
                 :[],
 
             vesselHistory:
-                Array.isArray(json.vesselHistory)
+                Array.isArray(
+                    json.vesselHistory
+                )
                 ?json.vesselHistory
                 :[],
 
@@ -2291,7 +2526,6 @@ async function loadData(manual=false){
 
         updateConnectionStatus(true);
 
-
     }
     catch(error){
 
@@ -2304,7 +2538,9 @@ async function loadData(manual=false){
         updateConnectionStatus(false);
 
 
-        document.getElementById("sectionsContainer").innerHTML=`
+        document.getElementById(
+            "sectionsContainer"
+        ).innerHTML=`
 
             <div class="glass rounded-3xl p-10 sm:p-14 text-center shadow-sm">
 
@@ -2316,17 +2552,23 @@ async function loadData(manual=false){
 
 
                 <h2 class="text-lg font-extrabold text-slate-900">
+
                     Failed to load data
+
                 </h2>
 
 
                 <p class="text-sm text-slate-500 mt-1">
+
                     Unable to read data.json
+
                 </p>
 
 
                 <p class="text-xs text-red-400 mt-2">
+
                     ${escapeHtml(error.message)}
+
                 </p>
 
 
@@ -2335,6 +2577,7 @@ async function loadData(manual=false){
                     class="mt-5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold hover:from-blue-700 hover:to-indigo-700">
 
                     <i class="fa-solid fa-rotate-right mr-1"></i>
+
                     Try Again
 
                 </button>
@@ -2346,7 +2589,9 @@ async function loadData(manual=false){
     }
     finally{
 
-        refreshIcon.classList.remove("fa-spin");
+        refreshIcon.classList.remove(
+            "fa-spin"
+        );
 
         refreshButton.disabled=false;
 
@@ -2364,145 +2609,168 @@ async function loadData(manual=false){
    KEYBOARD / UI EVENTS
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener(
+    "DOMContentLoaded",
+    ()=>{
 
-    const input=
-        document.getElementById("searchInput");
+        const input=
+            document.getElementById(
+                "searchInput"
+            );
 
-    const suggestions=
-        document.getElementById("searchSuggestions");
-
-
-    document.addEventListener("keydown",event=>{
-
-        if(event.key==="Escape"){
-
-            closeModal();
-
-            suggestions.classList.add("hidden");
-
-            suggestionIndex=-1;
-
-        }
-
-    });
+        const suggestions=
+            document.getElementById(
+                "searchSuggestions"
+            );
 
 
-    document.addEventListener("click",event=>{
+        /* =================================================
+           GLOBAL KEYBOARD
+        ================================================= */
 
-        const searchArea=
-            input?.closest(".relative");
+        document.addEventListener(
+            "keydown",
+            event=>{
 
+                if(event.key==="Escape"){
 
-        if(
-            searchArea&&
-            !searchArea.contains(event.target)
-        ){
+                    closeModal();
 
-            suggestions.classList.add("hidden");
-
-            suggestionIndex=-1;
-
-        }
-
-    });
-
-
-    input.addEventListener("keydown",event=>{
-
-        if(event.key==="Enter"){
-
-            event.preventDefault();
-
-            executeSearch();
-
-            return;
-
-        }
-
-
-        if(event.key==="ArrowDown"){
-
-            if(
-                CURRENT_RESULTS.length&&
-                !suggestions.classList.contains("hidden")
-            ){
-
-                event.preventDefault();
-
-                suggestionIndex=
-                    Math.min(
-                        suggestionIndex+1,
-                        CURRENT_RESULTS.length-1
+                    suggestions.classList.add(
+                        "hidden"
                     );
 
-                updateSuggestionSelection();
+                    suggestionIndex=-1;
+
+                }
 
             }
+        );
 
-        }
 
+        /* =================================================
+           CLOSE SUGGESTION WHEN CLICKING OUTSIDE
+        ================================================= */
 
-        if(event.key==="ArrowUp"){
+        document.addEventListener(
+            "click",
+            event=>{
 
-            if(
-                CURRENT_RESULTS.length&&
-                !suggestions.classList.contains("hidden")
-            ){
-
-                event.preventDefault();
-
-                suggestionIndex=
-                    Math.max(
-                        suggestionIndex-1,
-                        0
+                const searchArea=
+                    input?.closest(
+                        ".relative"
                     );
 
-                updateSuggestionSelection();
+
+                if(
+                    searchArea&&
+                    !searchArea.contains(
+                        event.target
+                    )
+                ){
+
+                    suggestions.classList.add(
+                        "hidden"
+                    );
+
+                    suggestionIndex=-1;
+
+                }
 
             }
-
-        }
-
-    });
+        );
 
 
-    input.addEventListener("keydown",event=>{
+        /* =================================================
+           SEARCH KEYBOARD
+        ================================================= */
 
-        if(
-            event.key==="Enter"&&
-            suggestionIndex>=0&&
-            CURRENT_RESULTS[suggestionIndex]
-        ){
+        input.addEventListener(
+            "keydown",
+            event=>{
 
-            event.preventDefault();
+                if(event.key==="Enter"){
 
-            /*
-               Enter intentionally performs SEARCH/SCROLL,
-               not suggestion selection.
-            */
+                    event.preventDefault();
 
-            executeSearch();
+                    executeSearch();
 
-        }
+                    return;
 
-    });
+                }
 
 
-    loadData();
+                if(event.key==="ArrowDown"){
+
+                    if(
+                        CURRENT_RESULTS.length&&
+                        !suggestions.classList.contains(
+                            "hidden"
+                        )
+                    ){
+
+                        event.preventDefault();
+
+                        suggestionIndex=
+                            Math.min(
+                                suggestionIndex+1,
+                                CURRENT_RESULTS.length-1
+                            );
+
+                        updateSuggestionSelection();
+
+                    }
+
+                    return;
+
+                }
 
 
-    /*
-       Dashboard checks data.json every 5 minutes.
-       The scraper itself may update data.json independently.
-    */
+                if(event.key==="ArrowUp"){
 
-    setInterval(
-        ()=>loadData(),
-        AUTO_REFRESH_MS
-    );
+                    if(
+                        CURRENT_RESULTS.length&&
+                        !suggestions.classList.contains(
+                            "hidden"
+                        )
+                    ){
 
-});
+                        event.preventDefault();
+
+                        suggestionIndex=
+                            Math.max(
+                                suggestionIndex-1,
+                                0
+                            );
+
+                        updateSuggestionSelection();
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           INITIAL LOAD
+        ================================================= */
+
+        loadData();
+
+
+        /* =================================================
+           AUTO REFRESH
+        ================================================= */
+
+        setInterval(
+            ()=>loadData(),
+            AUTO_REFRESH_MS
+        );
+
+    }
+);
 
 
 /* =========================================================
@@ -2513,14 +2781,16 @@ function updateSuggestionSelection(){
 
     document
         .querySelectorAll(".search-item")
-        .forEach((element,index)=>{
+        .forEach(
+            (element,index)=>{
 
-            element.classList.toggle(
-                "active",
-                index===suggestionIndex
-            );
+                element.classList.toggle(
+                    "active",
+                    index===suggestionIndex
+                );
 
-        });
+            }
+        );
 
 
     const active=
