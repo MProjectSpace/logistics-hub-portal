@@ -1,14 +1,23 @@
 name: Pelindo TPKS Scraper
 
 on:
-  # Jalankan manual dari GitHub Actions
+  # ======================================================
+  # MANUAL RUN
+  # ======================================================
+
   workflow_dispatch:
 
-  # Jalankan setiap 30 menit
+  # ======================================================
+  # RUN EVERY 30 MINUTES
+  # ======================================================
+
   schedule:
     - cron: "*/30 * * * *"
 
-  # Jalankan otomatis jika scraper/workflow/dependency berubah
+  # ======================================================
+  # RUN WHEN SCRAPER / DEPENDENCY / WORKFLOW CHANGES
+  # ======================================================
+
   push:
     branches:
       - main
@@ -17,19 +26,35 @@ on:
       - "requirements.txt"
       - ".github/workflows/pelindo-scraper.yml"
 
+
+# ==========================================================
+# PREVENT MULTIPLE SCRAPER RUNS AT THE SAME TIME
+# ==========================================================
+
+concurrency:
+  group: pelindo-tpks-scraper
+  cancel-in-progress: false
+
+
+# ==========================================================
+# PERMISSIONS
+# ==========================================================
+
 permissions:
   contents: write
 
 
 jobs:
+
   scrape:
+
     runs-on: ubuntu-latest
 
     steps:
 
-      # ======================================================
+      # ====================================================
       # 1. CHECKOUT
-      # ======================================================
+      # ====================================================
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,9 +63,9 @@ jobs:
           persist-credentials: true
 
 
-      # ======================================================
+      # ====================================================
       # 2. SETUP PYTHON
-      # ======================================================
+      # ====================================================
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -49,9 +74,9 @@ jobs:
           cache: "pip"
 
 
-      # ======================================================
+      # ====================================================
       # 3. INSTALL PYTHON DEPENDENCIES
-      # ======================================================
+      # ====================================================
 
       - name: Install Python dependencies
         run: |
@@ -59,22 +84,23 @@ jobs:
           pip install -r requirements.txt
 
 
-      # ======================================================
+      # ====================================================
       # 4. INSTALL PLAYWRIGHT CHROMIUM
-      # ======================================================
+      # ====================================================
 
       - name: Install Playwright Chromium
         run: |
           python -m playwright install --with-deps chromium
 
 
-      # ======================================================
+      # ====================================================
       # 5. CHECK PELINDO CONNECTION
-      # ======================================================
+      # ====================================================
 
       - name: Check Pelindo connection
         continue-on-error: true
         run: |
+
           echo "======================================"
           echo "CHECKING PELINDO CONNECTION"
           echo "======================================"
@@ -83,13 +109,14 @@ jobs:
           import urllib.request
           import sys
 
-          url = "https://ibstpks.pelindo.co.id/webaccess/"
+          URL = "https://ibstpks.pelindo.co.id/webaccess/"
 
-          print(f"Testing: {url}")
+          print(f"Testing: {URL}")
 
           try:
+
               request = urllib.request.Request(
-                  url,
+                  URL,
                   headers={
                       "User-Agent": (
                           "Mozilla/5.0 "
@@ -111,7 +138,7 @@ jobs:
                   )
 
                   print(
-                      f"Content Type: "
+                      "Content Type: "
                       f"{response.headers.get('Content-Type')}"
                   )
 
@@ -134,18 +161,20 @@ jobs:
               )
 
               sys.exit(1)
+
           PY
 
           echo ""
           echo "======================================"
 
 
-      # ======================================================
+      # ====================================================
       # 6. RUN SCRAPER WITH RETRY
-      # ======================================================
+      # ====================================================
 
       - name: Run Pelindo scraper
         run: |
+
           echo "======================================"
           echo "STARTING PELINDO TPKS SCRAPER"
           echo "======================================"
@@ -180,6 +209,7 @@ jobs:
 
               echo ""
               echo "Waiting 15 seconds before retry..."
+
               sleep 15
 
             fi
@@ -196,73 +226,90 @@ jobs:
           exit 1
 
 
-      # ======================================================
+      # ====================================================
       # 7. VALIDATE DATA.JSON
-      # ======================================================
+      # ====================================================
 
       - name: Validate data.json
         run: |
+
           python - <<'PY'
+
           import json
           from pathlib import Path
 
+
           file = Path("data.json")
+
 
           print("======================================")
           print("VALIDATING DATA.JSON")
           print("======================================")
 
-          # --------------------------------------------------
-          # File existence
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # FILE EXISTENCE
+          # ------------------------------------------------
 
           if not file.exists():
+
               raise SystemExit(
                   "ERROR: data.json tidak ditemukan."
               )
 
-          # --------------------------------------------------
-          # File size
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # FILE SIZE
+          # ------------------------------------------------
 
           if file.stat().st_size == 0:
+
               raise SystemExit(
                   "ERROR: data.json kosong."
               )
+
 
           print(
               f"File size    : "
               f"{file.stat().st_size} bytes"
           )
 
-          # --------------------------------------------------
-          # JSON syntax
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # JSON SYNTAX
+          # ------------------------------------------------
 
           try:
+
               with file.open(
                   "r",
                   encoding="utf-8"
               ) as f:
+
                   data = json.load(f)
 
           except json.JSONDecodeError as exc:
+
               raise SystemExit(
                   f"ERROR: JSON tidak valid: {exc}"
               )
 
-          # --------------------------------------------------
-          # Root object
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # ROOT OBJECT
+          # ------------------------------------------------
 
           if not isinstance(data, dict):
+
               raise SystemExit(
-                  "ERROR: Root data.json harus berupa object."
+                  "ERROR: Root data.json "
+                  "harus berupa object."
               )
 
-          # --------------------------------------------------
-          # Required keys
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # REQUIRED KEYS
+          # ------------------------------------------------
 
           required = [
               "lastUpdated",
@@ -276,20 +323,24 @@ jobs:
               "counts"
           ]
 
+
           missing = [
               key
               for key in required
               if key not in data
           ]
 
+
           if missing:
+
               raise SystemExit(
                   f"ERROR: Missing required keys: {missing}"
               )
 
-          # --------------------------------------------------
-          # Required arrays
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # REQUIRED ARRAYS
+          # ------------------------------------------------
 
           arrays = [
               "vesselAlongside",
@@ -299,46 +350,69 @@ jobs:
               "vesselHistory"
           ]
 
+
           for key in arrays:
 
-              if not isinstance(data[key], list):
+              if not isinstance(
+                  data[key],
+                  list
+              ):
+
                   raise SystemExit(
-                      f"ERROR: '{key}' harus berupa array."
+                      f"ERROR: '{key}' "
+                      f"harus berupa array."
                   )
 
-          # --------------------------------------------------
-          # Counts object
-          # --------------------------------------------------
 
-          if not isinstance(data["counts"], dict):
+          # ------------------------------------------------
+          # COUNTS OBJECT
+          # ------------------------------------------------
+
+          if not isinstance(
+              data["counts"],
+              dict
+          ):
+
               raise SystemExit(
-                  "ERROR: 'counts' harus berupa object."
+                  "ERROR: 'counts' "
+                  "harus berupa object."
               )
 
-          # --------------------------------------------------
-          # Validate counts
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # VALIDATE COUNTS
+          # ------------------------------------------------
 
           for key in arrays:
 
               if key not in data["counts"]:
-                  raise SystemExit(
-                      f"ERROR: counts['{key}'] tidak ditemukan."
-                  )
 
-              expected = len(data[key])
-              actual = data["counts"][key]
-
-              if actual != expected:
                   raise SystemExit(
                       f"ERROR: counts['{key}'] "
-                      f"= {actual}, tetapi jumlah data "
+                      f"tidak ditemukan."
+                  )
+
+
+              expected = len(
+                  data[key]
+              )
+
+              actual = data["counts"][key]
+
+
+              if actual != expected:
+
+                  raise SystemExit(
+                      f"ERROR: counts['{key}'] "
+                      f"= {actual}, "
+                      f"tetapi jumlah data "
                       f"= {expected}."
                   )
 
-          # --------------------------------------------------
-          # Validate vessel records
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # VALIDATE VESSEL RECORDS
+          # ------------------------------------------------
 
           for section in arrays:
 
@@ -346,29 +420,41 @@ jobs:
                   data[section]
               ):
 
-                  if not isinstance(vessel, dict):
+                  if not isinstance(
+                      vessel,
+                      dict
+                  ):
+
                       raise SystemExit(
                           f"ERROR: {section}[{index}] "
                           f"bukan object."
                       )
 
+
                   if "vesselName" not in vessel:
+
                       raise SystemExit(
                           f"ERROR: {section}[{index}] "
                           f"tidak memiliki vesselName."
                       )
 
-          # --------------------------------------------------
-          # Validate Schedule
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # VALIDATE SCHEDULE
+          # ------------------------------------------------
 
           wrong_schedule = []
+
 
           for vessel in data["vesselSchedule"]:
 
               status = str(
-                  vessel.get("mvSts", "")
+                  vessel.get(
+                      "mvSts",
+                      ""
+                  )
               ).strip().upper()
+
 
               if status and status != "SCHEDULE":
 
@@ -382,31 +468,40 @@ jobs:
                       )
                   )
 
+
           if wrong_schedule:
 
               print("")
               print(
-                  "WARNING: ditemukan record Schedule "
-                  "dengan status berbeda:"
+                  "WARNING: ditemukan record "
+                  "Schedule dengan status berbeda:"
               )
 
-              for vessel_name, status in wrong_schedule[:10]:
+
+              for vessel_name, status in \
+                  wrong_schedule[:10]:
 
                   print(
                       f"  - {vessel_name} -> {status}"
                   )
 
-          # --------------------------------------------------
-          # Validate History
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # VALIDATE HISTORY
+          # ------------------------------------------------
 
           wrong_history = []
+
 
           for vessel in data["vesselHistory"]:
 
               status = str(
-                  vessel.get("mvSts", "")
+                  vessel.get(
+                      "mvSts",
+                      ""
+                  )
               ).strip().upper()
+
 
               if status and status != "HISTORY":
 
@@ -420,98 +515,123 @@ jobs:
                       )
                   )
 
+
           if wrong_history:
 
               print("")
               print(
-                  "WARNING: ditemukan record History "
-                  "dengan status berbeda:"
+                  "WARNING: ditemukan record "
+                  "History dengan status berbeda:"
               )
 
-              for vessel_name, status in wrong_history[:10]:
+
+              for vessel_name, status in \
+                  wrong_history[:10]:
 
                   print(
                       f"  - {vessel_name} -> {status}"
                   )
 
-          # --------------------------------------------------
-          # Success
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # SUCCESS
+          # ------------------------------------------------
 
           print("")
           print("======================================")
           print("DATA.JSON VALIDATION PASSED")
           print("======================================")
 
+
           print(
               f"Last Updated : "
               f"{data['lastUpdated']}"
           )
+
 
           print(
               f"Updated At   : "
               f"{data['updatedAt']}"
           )
 
+
           print("")
+
 
           print(
               f"Alongside    : "
               f"{len(data['vesselAlongside'])}"
           )
 
+
           print(
               f"Confirmed    : "
               f"{len(data['confirmedVessel'])}"
           )
+
 
           print(
               f"Open Stack   : "
               f"{len(data['openStack'])}"
           )
 
+
           print(
               f"Schedule     : "
               f"{len(data['vesselSchedule'])}"
           )
+
 
           print(
               f"History      : "
               f"{len(data['vesselHistory'])}"
           )
 
+
           print("")
           print("======================================")
+
           PY
 
 
-      # ======================================================
+      # ====================================================
       # 8. SHOW GENERATED DATA
-      # ======================================================
+      # ====================================================
 
       - name: Show generated data.json
         run: |
+
           echo "======================================"
           echo "GENERATED DATA.JSON"
           echo "======================================"
 
+
           ls -lh data.json
+
 
           echo ""
           echo "Timestamp:"
-          grep -E '"lastUpdated"|"updatedAt"' data.json || true
+
+
+          grep -E \
+            '"lastUpdated"|"updatedAt"' \
+            data.json || true
+
 
           echo ""
           echo "Git status BEFORE commit:"
+
+
           git status --short
+
 
           echo ""
           echo "======================================"
 
 
-      # ======================================================
+      # ====================================================
       # 9. UPLOAD DEBUG FILES
-      # ======================================================
+      # ====================================================
 
       - name: Upload debug files
         if: always()
@@ -524,42 +644,56 @@ jobs:
           if-no-files-found: ignore
 
 
-      # ======================================================
+      # ====================================================
       # 10. COMMIT DATA.JSON
-      # ======================================================
+      # ====================================================
 
       - name: Commit data.json
         run: |
+
           echo "======================================"
           echo "PREPARING GIT COMMIT"
           echo "======================================"
 
-          git config user.name "github-actions[bot]"
 
-          git config user.email \
+          git config \
+            user.name \
+            "github-actions[bot]"
+
+
+          git config \
+            user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # --------------------------------------------------
-          # Add generated data
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # ADD GENERATED DATA
+          # ------------------------------------------------
 
           git add data.json
 
-          # --------------------------------------------------
-          # Show staged changes
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # SHOW STAGED CHANGES
+          # ------------------------------------------------
 
           echo ""
           echo "Git status AFTER git add:"
+
+
           git status --short
+
 
           echo ""
           echo "Staged changes:"
+
+
           git diff --cached --stat
 
-          # --------------------------------------------------
-          # Check changes
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # CHECK CHANGES
+          # ------------------------------------------------
 
           if git diff --cached --quiet; then
 
@@ -572,33 +706,65 @@ jobs:
 
           fi
 
-          # --------------------------------------------------
-          # Commit
-          # --------------------------------------------------
+
+          # ------------------------------------------------
+          # COMMIT
+          # ------------------------------------------------
 
           echo ""
           echo "======================================"
           echo "COMMITTING DATA.JSON"
           echo "======================================"
 
+
           git commit \
             -m "chore: update Pelindo TPKS data"
+
 
           echo ""
           echo "COMMIT CREATED SUCCESSFULLY"
 
 
-      # ======================================================
-      # 11. PUSH DATA.JSON
-      # ======================================================
+      # ====================================================
+      # 11. SYNC AND PUSH
+      # ====================================================
 
-      - name: Push data.json
+      - name: Sync and push data.json
         run: |
+
+          echo "======================================"
+          echo "SYNCING WITH REMOTE MAIN"
+          echo "======================================"
+
+
+          git fetch origin main
+
+
+          echo ""
+          echo "Remote commit:"
+          git rev-parse origin/main
+
+
+          echo ""
+          echo "Local commit:"
+          git rev-parse HEAD
+
+
+          echo ""
+          echo "Rebasing local commit onto origin/main..."
+
+
+          git rebase origin/main
+
+
+          echo ""
           echo "======================================"
           echo "PUSHING DATA.JSON TO MAIN"
           echo "======================================"
 
+
           git push origin HEAD:main
+
 
           echo ""
           echo "======================================"
