@@ -1,1211 +1,362 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TPKS Vessel Monitoring System | Pelindo</title>
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome Icons 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <!-- Plus Jakarta Sans & JetBrains Mono Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: 
-                radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.08), transparent 40%),
-                radial-gradient(circle at 90% 12%, rgba(6, 182, 212, 0.08), transparent 35%),
-                radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.06), transparent 40%),
-                #f8fafc;
-            color: #0f172a;
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            font-size: 14px;
-        }
-
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Header Non-Sticky */
-        .main-header {
-            position: relative;
-            z-index: 10;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(240, 249, 255, 0.95));
-            border-bottom: 1px solid #e2e8f0;
-            backdrop-filter: blur(12px);
-        }
-
-        .brand-icon-box {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #1d4ed8, #0284c7);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
-            color: white;
-        }
-
-        .pulse-live {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background-color: #10b981;
-            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
-            animation: pulseWave 2s infinite;
-        }
-
-        @keyframes pulseWave {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-            70% { box-shadow: 0 0 0 9px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* Search Box */
-        .search-box {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
-            transition: all 0.2s ease;
-        }
-
-        .search-box:focus-within {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12), 0 12px 35px rgba(37, 99, 235, 0.08);
-        }
-
-        .search-input {
-            width: 100%;
-            height: 50px;
-            padding-left: 48px;
-            padding-right: 48px;
-            background: transparent;
-            border: none;
-            outline: none;
-            font-size: 14px;
-            font-weight: 600;
-            color: #0f172a;
-        }
-
-        .search-suggestions-popup {
-            position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
-            right: 0;
-            z-index: 100;
-            max-height: 420px;
-            overflow-y: auto;
-            background: #ffffff;
-            border: 1px solid #dbeafe;
-            border-radius: 18px;
-            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14);
-        }
-
-        .suggestion-row {
-            padding: 12px 18px;
-            cursor: pointer;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background 0.15s ease;
-        }
-
-        .suggestion-row:hover {
-            background: #eff6ff;
-        }
-
-        /* KPI Card */
-        .kpi-card {
-            position: relative;
-            background: #ffffff;
-            border-radius: 18px;
-            border: 1px solid #e2e8f0;
-            padding: 18px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.03);
-            text-align: left;
-            overflow: hidden;
-        }
-
-        .kpi-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
-        }
-
-        .kpi-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-            border-color: #bfdbfe;
-        }
-
-        /* Section Card & Sticky Headers */
-        .section-card {
-            position: relative;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
-            overflow: hidden;
-            scroll-margin-top: 16px;
-        }
-
-        /* 📌 1. Header Section Sticky */
-        .section-header {
-            position: sticky;
-            top: 0;
-            z-index: 30;
-            min-height: 68px;
-            padding: 16px 24px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-        }
-
-        .section-table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .vessel-table {
-            width: 100%;
-            min-width: 960px;
-            border-collapse: separate;
-            border-spacing: 0;
-            text-align: left;
-        }
-
-        /* 📌 2. Header Kolom Tabel Sticky Tepat di Bawah Header Section */
-        .vessel-table thead th {
-            position: sticky;
-            top: 68px;
-            z-index: 20;
-            padding: 14px 20px;
-            background: #f1f5f9;
-            border-bottom: 1px solid #cbd5e1;
-            font-size: 12px;
-            font-weight: 800;
-            color: #334155;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            white-space: nowrap;
-        }
-
-        .vessel-table tbody td {
-            padding: 16px 20px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 13.5px;
-            color: #1e293b;
-            vertical-align: middle;
-            white-space: nowrap;
-        }
-
-        .vessel-table tbody tr {
-            cursor: pointer;
-            transition: background 0.15s ease;
-        }
-
-        .vessel-table tbody tr:nth-child(even) {
-            background-color: #fafbfd;
-        }
-
-        .vessel-table tbody tr:hover {
-            background-color: #eff6ff !important;
-        }
-
-        .vessel-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Highlight Animasi Pencarian */
-        .search-hit {
-            animation: beaconHit 3.2s ease forwards;
-        }
-
-        @keyframes beaconHit {
-            0% {
-                background-color: #bfdbfe !important;
-                box-shadow: inset 0 0 0 2px #2563eb;
-            }
-            35% {
-                background-color: #dbeafe !important;
-                box-shadow: inset 0 0 0 2px #60a5fa;
-            }
-            100% {
-                background-color: transparent;
-                box-shadow: none;
-            }
-        }
-
-        /* Modal Box */
-        .modal-overlay {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(8px);
-        }
-
-        .modal-box {
-            width: min(760px, calc(100vw - 24px));
-            max-height: min(88vh, 820px);
-            background: #ffffff;
-            border-radius: 24px;
-            border: 1px solid #dbeafe;
-            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
-            animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.96) translateY(8px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .detail-card {
-            padding: 14px 16px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TPKS Vessel Monitoring Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 45%,#f8fafc 100%);color:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.main-header{position:relative;z-index:10;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid #e2e8f0}
+.brand-mark{width:40px;height:40px;background:linear-gradient(135deg,#1e3a8a 0%,#0284c7 100%);color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(2,132,199,.25)}
+.status-dot{width:8px;height:8px;border-radius:9999px;display:inline-block}
+.pulse-dot{animation:pulseDot 1.8s infinite}
+@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.35}}
+.search-section{position:relative;z-index:40}
+.search-wrapper{position:relative;z-index:50}
+.search-input{width:100%;height:46px;padding-left:42px;padding-right:40px;border-radius:12px;border:1px solid #cbd5e1;background:#fff;font-size:13px;color:#0f172a;transition:all .2s ease}
+.search-input:focus{outline:none;border-color:#0284c7;box-shadow:0 0 0 3px rgba(2,132,199,.18)}
+.search-suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:100;background:rgba(255,255,255,.98);border:1px solid #cbd5e1;border-radius:14px;box-shadow:0 20px 40px rgba(15,23,42,.12);backdrop-filter:blur(14px);max-height:320px;overflow-y:auto}
+.suggestion-item{width:100%;padding:10px 14px;border:none;background:transparent;text-align:left;cursor:pointer;border-bottom:1px solid #f1f5f9;transition:background .15s ease}
+.suggestion-item:last-child{border-bottom:none}
+.suggestion-item:hover,.suggestion-item.active{background:#f0f9ff}
+.search-button{height:46px;padding:0 22px;border-radius:12px;background:linear-gradient(135deg,#1e3a8a 0%,#0284c7 100%);color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s ease}
+.search-button:hover{opacity:.92}
+.refresh-button{height:46px;padding:0 18px;border-radius:12px;background:#fff;border:1px solid #cbd5e1;color:#334155;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .2s ease}
+.refresh-button:hover{background:#f8fafc;border-color:#94a3b8}
+.stat-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s ease}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3.5px;background:linear-gradient(90deg,var(--accent-a,#0284c7),var(--accent-b,#06b6d4))}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(15,23,42,.08);border-color:#cbd5e1;background:var(--accent-bg,#f0f9ff)}
+.stat-icon{width:32px;height:32px;border-radius:8px;background:var(--accent-bg,#f0f9ff);color:var(--accent-a,#0284c7);display:flex;align-items:center;justify-content:center}
+.stat-number{font-size:22px;font-weight:800;color:#0f172a;line-height:1}
+.dashboard-section{position:relative;scroll-margin-top:12px;overflow:visible}
+.section-card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 2px 8px rgba(15,23,42,.035);overflow:visible}
+.section-header{position:sticky;top:0;z-index:30;min-height:60px;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid #e2e8f0;border-top-left-radius:16px;border-top-right-radius:16px}
+.section-title-icon{width:32px;height:32px;border-radius:8px;background:#f1f5f9;color:#0284c7;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-count{padding:4px 10px;border-radius:9999px;background:#f8fafc;border:1px solid #e2e8f0;font-size:11px;font-weight:700;color:#475569}
+.section-scroll{width:100%;overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch}
+table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;font-size:12px}
+.section-scroll thead{position:sticky;top:60px;z-index:20}
+.section-scroll thead th{padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:10px;font-weight:750;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;text-align:left}
+.section-scroll tbody td{padding:11px 14px;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:middle;white-space:nowrap}
+.section-scroll tbody tr{background:#fff;cursor:pointer;transition:background .15s ease}
+.section-scroll tbody tr:nth-child(even){background:#fcfdff}
+.section-scroll tbody tr:hover{background:#f0f9ff}
+.section-scroll tbody tr:last-child td{border-bottom:0}
+.vessel-primary{font-weight:700;color:#0f172a}
+.vessel-secondary{font-size:10px;color:#64748b}
+.voyage-badge{display:inline-block;padding:2px 8px;border-radius:6px;background:#eff6ff;color:#1d4ed8;font-weight:700;font-size:11px}
+.type-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;background:#f1f5f9;color:#475569;font-size:10px;font-weight:700;border:1px solid #e2e8f0}
+.datetime-value{color:#334155;font-weight:600;font-variant-numeric:tabular-nums}
+.search-hit td{animation:searchHit 3s ease both}
+.search-hit td:first-child{box-shadow:inset 4px 0 0 #0284c7!important}
+@keyframes searchHit{0%{background:#bae6fd!important}20%{background:#e0f2fe!important}60%{background:#f0f9ff!important}100%{background:inherit}}
+.modal-backdrop{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.modal-card{width:min(680px,100%);max-height:88vh;overflow-y:auto;background:#fff;border-radius:20px;box-shadow:0 25px 60px rgba(15,23,42,.25);border:1px solid #e2e8f0}
+.modal-header{position:sticky;top:0;z-index:10;padding:18px 20px;background:rgba(255,255,255,.98);backdrop-filter:blur(10px);border-bottom:1px solid #e2e8f0}
+.modal-section-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:9999px;background:#e0f2fe;color:#0369a1;font-size:11px;font-weight:750;margin-bottom:6px}
+.modal-vessel-name{font-size:20px;font-weight:800;color:#0f172a;line-height:1.2}
+.modal-voyage{font-size:12px;color:#64748b;margin-top:4px}
+.modal-body{padding:20px}
+.modal-field{padding:10px 12px;background:#f8fafc;border:1px solid #f1f5f9;border-radius:10px}
+.modal-field-label{font-size:9px;font-weight:750;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:2px}
+.modal-field-value{font-size:13px;font-weight:650;color:#1e293b;word-break:break-word}
+.empty-state{padding:40px 20px;text-align:center}
+.empty-icon{width:40px;height:40px;border-radius:12px;background:#f1f5f9;color:#94a3b8;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:18px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9999px}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+</style>
 </head>
-
 <body>
 
-    <!-- =========================================================
-         1. MAIN HEADER (NON-STICKY)
-         ========================================================= -->
-    <header class="main-header">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div class="flex items-center justify-between gap-4">
-                
-                <!-- Logo & Brand -->
-                <div class="flex items-center gap-4 min-w-0">
-                    <div class="brand-icon-box shrink-0">
-                        <i class="fa-solid fa-ship text-xl"></i>
-                    </div>
-
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-3 flex-wrap">
-                            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight truncate">
-                                TPKS Vessel Monitoring
-                            </h1>
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
-                                <span class="pulse-live"></span>
-                                Live Operational Feed
-                            </span>
-                        </div>
-                        <p class="mt-0.5 text-xs sm:text-sm text-slate-500 font-semibold truncate">
-                            Pelindo Terminal Petikemas Semarang · Real-Time Berth & Schedule Tracking
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Clock & Status -->
-                <div class="flex items-center gap-4">
-                    <div class="hidden md:flex flex-col text-right">
-                        <span id="liveClock" class="font-mono text-sm font-bold text-slate-800">--:--:-- WIB</span>
-                        <span class="text-xs text-slate-400 font-medium">Tanjung Emas Port</span>
-                    </div>
-
-                    <span id="connectionBadge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200">
-                        <i class="fa-solid fa-arrows-rotate fa-spin text-xs"></i>
-                        <span id="connectionText">Menghubungkan...</span>
-                    </span>
-                </div>
-
-            </div>
-        </div>
-    </header>
-
-
-    <!-- =========================================================
-         2. MAIN CONTENT
-         ========================================================= -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
-
-        <!-- SEARCH BAR & ACTION CONTROLS -->
-        <section class="search-container mb-7 relative z-40">
-            <div class="search-box p-3">
-                <div class="flex flex-col sm:flex-row gap-2.5">
-                    
-                    <div class="relative flex-1">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base pointer-events-none"></i>
-                        
-                        <input
-                            id="searchInput"
-                            type="text"
-                            class="search-input"
-                            autocomplete="off"
-                            placeholder="Cari nama kapal, nomor voyage, kode agen, atau tipe muatan..."
-                            aria-label="Cari kapal"
-                        >
-
-                        <button
-                            id="clearSearchBtn"
-                            type="button"
-                            onclick="clearSearch()"
-                            class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition"
-                        >
-                            <i class="fa-solid fa-xmark text-base"></i>
-                        </button>
-
-                        <!-- Suggestions Dropdown -->
-                        <div id="searchSuggestions" class="search-suggestions-popup hidden"></div>
-                    </div>
-
-                    <!-- Tombol Search (Scroll ke baris data kapal) -->
-                    <button
-                        type="button"
-                        onclick="performSearch()"
-                        class="h-[50px] px-7 rounded-xl text-sm font-extrabold text-white bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-md shadow-blue-500/20 active:scale-[0.98] transition inline-flex items-center justify-center gap-2 cursor-pointer shrink-0"
-                    >
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <span>Cari Kapal</span>
-                    </button>
-
-                    <!-- Tombol Manual Refresh -->
-                    <button
-                        id="refreshBtn"
-                        type="button"
-                        onclick="loadData()"
-                        class="h-[50px] px-5 rounded-xl text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 active:scale-[0.98] transition inline-flex items-center justify-center gap-2.5 cursor-pointer shrink-0"
-                    >
-                        <i class="fa-solid fa-rotate-right text-blue-600"></i>
-                        <span class="hidden sm:inline">Refresh</span>
-                    </button>
-
-                </div>
-            </div>
-
-            <!-- Status Search & Indikator Waktu -->
-            <div class="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-1.5">
-                <p id="searchStatus" class="text-sm font-bold text-blue-600 truncate"></p>
-                <p id="freshnessIndicator" class="text-xs sm:text-sm font-medium text-slate-500 sm:text-right">
-                    Memuat data terkini...
-                </p>
-            </div>
-        </section>
-
-
-        <!-- 3. KPI CARDS (KLIK MENUJU SECTION) -->
-        <section class="mb-8">
-            <div id="statistics" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"></div>
-        </section>
-
-
-        <!-- 4. DASHBOARD SECTIONS (NAMA SECTION + NAMA KOLOM TABEL + ISI DATA) -->
-        <div id="dashboardSections" class="space-y-8"></div>
-
-
-        <!-- FOOTER -->
-        <footer class="mt-16 pt-8 pb-10 border-t border-slate-200">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-500 font-medium">
-                <div>TPKS Vessel Monitoring System · PT Pelabuhan Indonesia (Persero)</div>
-                <div class="flex items-center gap-2">
-                    <span>Sumber Data:</span>
-                    <a
-                        href="https://ibstpks.pelindo.co.id/webaccess/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1.5 transition"
-                    >
-                        <span>Pelindo TPKS Webaccess</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
-
-    </main>
-
-
-    <!-- =========================================================
-         5. MODAL DETAIL LENGKAP
-         ========================================================= -->
-    <div
-        id="vesselModal"
-        class="modal-overlay hidden fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-5"
-        onclick="handleModalBackdropClick(event)"
-        role="dialog"
-        aria-modal="true"
-    >
-        <div class="modal-box flex flex-col overflow-hidden">
-            
-            <!-- Header Modal -->
-            <div class="p-6 sm:p-7 bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-indigo-50/80 border-b border-blue-100">
-                <div class="flex items-start justify-between gap-4">
-                    <div class="min-w-0 flex-1">
-                        <!-- Badge Nama Section -->
-                        <div id="modalSectionBadge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black border mb-2.5 shadow-2xs">
-                            <i class="fa-solid fa-ship"></i>
-                            <span id="modalSectionTitle">Section</span>
-                        </div>
-
-                        <!-- Nama Kapal -->
-                        <h2 id="modalVesselName" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">—</h2>
-
-                        <!-- Info Sub -->
-                        <div id="modalSubInfo" class="mt-2 flex items-center gap-2 flex-wrap text-xs sm:text-sm text-slate-600 font-semibold">
-                            <!-- Injected dynamically -->
-                        </div>
-                    </div>
-
-                    <!-- Tombol Tutup -->
-                    <button
-                        type="button"
-                        onclick="closeVesselModal()"
-                        class="w-11 h-11 rounded-2xl flex items-center justify-center bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition shadow-2xs shrink-0 cursor-pointer"
-                        aria-label="Tutup"
-                    >
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Body Modal -->
-            <div id="modalBody" class="p-6 sm:p-7 overflow-y-auto max-h-[60vh]"></div>
-
-            <!-- Footer Modal -->
-            <div class="px-7 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
-                <span>Pelindo TPKS Verified Data Standard</span>
-                <button
-                    type="button"
-                    onclick="closeVesselModal()"
-                    class="px-5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition cursor-pointer"
-                >
-                    Tutup
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-
-    <!-- =========================================================
-         JAVASCRIPT LOGIC
-         ========================================================= -->
-    <script>
-        const DATA_URL = "./data.json";
-        const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 Menit
-        const FRESHNESS_INTERVAL = 30 * 1000;         // 30 Detik
-        const COUNTDOWN_INTERVAL = 1000;              // 1 Detik
-
-        // Konfigurasi Kolom Lengkap Sesuai Permintaan (Booking, Open, Actual, TEUs ditampilkan)
-        const SECTION_CONFIG = [
-            {
-                key: "vesselAlongside",
-                title: "Vessel Alongside",
-                icon: "fa-ship",
-                subtitle: "Kapal yang sedang bersandar dan beroperasi di dermaga",
-                accentStart: "#2563eb",
-                accentEnd: "#0891b2",
-                accentBg: "#eff6ff",
-                badgeBorder: "#bfdbfe",
-                badgeText: "#1d4ed8",
-                columns: [
-                    { key: "vesselName", label: "Vessel Name", type: "vessel" },
-                    { key: "voyage", label: "Voyage", type: "voyage" },
-                    { key: "type", label: "Type", type: "type" },
-                    { key: "atb", label: "ATB (Berthing)", type: "datetime" },
-                    { key: "etd", label: "ETD (Departure)", type: "datetime" },
-                    { key: "actual", label: "Actual", type: "text" },
-                    { key: "exportTeus", label: "Export TEUs", type: "text" },
-                    { key: "importTeus", label: "Import TEUs", type: "text" }
-                ]
-            },
-            {
-                key: "confirmedVessel",
-                title: "Confirmed Vessel",
-                icon: "fa-circle-check",
-                subtitle: "Kapal yang telah konfirmasi penetapan jadwal dermaga",
-                accentStart: "#7c3aed",
-                accentEnd: "#6366f1",
-                accentBg: "#f5f3ff",
-                badgeBorder: "#ddd6fe",
-                badgeText: "#6d28d9",
-                columns: [
-                    { key: "vesselName", label: "Vessel Name", type: "vessel" },
-                    { key: "voyage", label: "Voyage", type: "voyage" },
-                    { key: "type", label: "Type", type: "type" },
-                    { key: "eta", label: "ETA", type: "datetime" },
-                    { key: "etb", label: "ETB", type: "datetime" },
-                    { key: "etd", label: "ETD", type: "datetime" },
-                    { key: "booking", label: "Booking", type: "text" },
-                    { key: "exportTeus", label: "Export TEUs", type: "text" }
-                ]
-            },
-            {
-                key: "openStack",
-                title: "Open Stack",
-                icon: "fa-box-open",
-                subtitle: "Penerimaan petikemas ekspor / open stack window",
-                accentStart: "#ea580c",
-                accentEnd: "#f59e0b",
-                accentBg: "#fff7ed",
-                badgeBorder: "#fed7aa",
-                badgeText: "#c2410c",
-                columns: [
-                    { key: "vesselName", label: "Vessel Name", type: "vessel" },
-                    { key: "voyage", label: "Voyage", type: "voyage" },
-                    { key: "type", label: "Type", type: "type" },
-                    { key: "openStack", label: "Open Stack", type: "datetime" },
-                    { key: "closingTime", label: "Closing Time", type: "datetime" },
-                    { key: "booking", label: "Booking", type: "text" },
-                    { key: "open", label: "Open Receiving", type: "datetime" },
-                    { key: "actual", label: "Actual", type: "text" }
-                ]
-            },
-            {
-                key: "vesselSchedule",
-                title: "Vessel Schedule",
-                icon: "fa-calendar-days",
-                subtitle: "Rencana jadwal kedatangan kapal mendatang",
-                accentStart: "#0284c7",
-                accentEnd: "#06b6d4",
-                accentBg: "#ecfeff",
-                badgeBorder: "#bae6fd",
-                badgeText: "#0369a1",
-                columns: [
-                    { key: "vesselName", label: "Vessel Name", type: "vessel" },
-                    { key: "voyage", label: "Voyage", type: "voyage" },
-                    { key: "type", label: "Type", type: "type" },
-                    { key: "eta", label: "ETA", type: "datetime" },
-                    { key: "etb", label: "ETB", type: "datetime" },
-                    { key: "etd", label: "ETD", type: "datetime" },
-                    { key: "booking", label: "Booking", type: "text" },
-                    { key: "actual", label: "Actual", type: "text" }
-                ]
-            },
-            {
-                key: "vesselHistory",
-                title: "Vessel History",
-                icon: "fa-clock-rotate-left",
-                subtitle: "Riwayat data kapal yang telah selesai beroperasi dan berangkat",
-                accentStart: "#059669",
-                accentEnd: "#14b8a6",
-                accentBg: "#ecfdf5",
-                badgeBorder: "#a7f3d0",
-                badgeText: "#047857",
-                columns: [
-                    { key: "vesselName", label: "Vessel Name", type: "vessel" },
-                    { key: "voyage", label: "Voyage", type: "voyage" },
-                    { key: "type", label: "Type", type: "type" },
-                    { key: "atb", label: "ATB (Berthing)", type: "datetime" },
-                    { key: "atd", label: "ATD (Departed)", type: "datetime" },
-                    { key: "exportTeus", label: "Export TEUs", type: "text" },
-                    { key: "importTeus", label: "Import TEUs", type: "text" }
-                ]
-            }
-        ];
-
-        const MODAL_FIELDS = [
-            ["vesselName", "Nama Kapal"],
-            ["vesselCode", "Kode Kapal"],
-            ["voyage", "Nomor Voyage"],
-            ["type", "Tipe Muatan"],
-            ["shippingLine", "Agen Pelayaran (Shipping Line)"],
-            ["eta", "ETA (Estimasi Kedatangan)"],
-            ["etb", "ETB (Estimasi Sandar)"],
-            ["atb", "ATB (Realisasi Sandar)"],
-            ["etd", "ETD (Estimasi Berangkat)"],
-            ["atd", "ATD (Realisasi Berangkat)"],
-            ["openStack", "Waktu Open Stack"],
-            ["closingTime", "Waktu Closing Time"],
-            ["booking", "Jumlah Booking"],
-            ["open", "Waktu Buka Receiving"],
-            ["actual", "Realisasi Muat (Actual)"],
-            ["export", "Box Ekspor"],
-            ["exportTeus", "Total Ekspor (TEUs)"],
-            ["import", "Box Impor"],
-            ["importTeus", "Total Impor (TEUs)"]
-        ];
-
-        let dashboardData = {
-            lastUpdated: null,
-            updatedAt: null,
-            source: "Pelindo TPKS Webaccess",
-            vesselAlongside: [],
-            confirmedVessel: [],
-            openStack: [],
-            vesselSchedule: [],
-            vesselHistory: [],
-            counts: {}
-        };
-
-        let searchResults = [];
-        let nextUpdateAt = null;
-
-        // Elemen DOM
-        const searchInput = document.getElementById("searchInput");
-        const clearSearchBtn = document.getElementById("clearSearchBtn");
-        const searchSuggestions = document.getElementById("searchSuggestions");
-        const searchStatus = document.getElementById("searchStatus");
-        const freshnessIndicator = document.getElementById("freshnessIndicator");
-        const statistics = document.getElementById("statistics");
-        const dashboardSections = document.getElementById("dashboardSections");
-        const refreshBtn = document.getElementById("refreshBtn");
-        const connectionBadge = document.getElementById("connectionBadge");
-        const connectionText = document.getElementById("connectionText");
-
-        // Helper String & Sanitasi
-        function escapeHtml(text) {
-            if (text === null || text === undefined) return "";
-            return String(text)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function normalize(val) {
-            return val ? String(val).toLowerCase().trim() : "";
-        }
-
-        function getVesselKey(vessel, sectionKey) {
-            const name = normalize(vessel?.vesselName);
-            const code = normalize(vessel?.vesselCode);
-            const voyage = normalize(vessel?.voyage);
-            return `${sectionKey}|${name}|${code}|${voyage}`;
-        }
-
-        function parseDate(value) {
-            if (!value) return null;
-            if (value instanceof Date) return value;
-            let text = String(value).trim();
-            if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)) {
-                text = text.replace(" ", "T");
-            }
-            const date = new Date(text);
-            return !isNaN(date.getTime()) ? date : null;
-        }
-
-        function formatDateTime(value) {
-            if (!value) return "—";
-            const date = parseDate(value);
-            if (!date) return String(value);
-            try {
-                return new Intl.DateTimeFormat("id-ID", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false
-                }).format(date).replace(/\./g, ':');
-            } catch {
-                return String(value);
-            }
-        }
-
-        function getFreshnessText(date) {
-            if (!date) return "Waktu data tidak tersedia";
-            const diffSec = Math.floor(Math.max(0, Date.now() - date.getTime()) / 1000);
-            if (diffSec < 30) return "Diperbarui baru saja";
-            if (diffSec < 60) return `Diperbarui ${diffSec} dtk lalu`;
-            const diffMin = Math.floor(diffSec / 60);
-            if (diffMin < 60) return `Diperbarui ${diffMin} mnt lalu`;
-            const diffHour = Math.floor(diffMin / 60);
-            return `Diperbarui ${diffHour} jam lalu`;
-        }
-
-        function setConnectionStatus(status) {
-            if (status === "online") {
-                connectionBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
-                connectionBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Connected</span>`;
-            } else if (status === "offline") {
-                connectionBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200";
-                connectionBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation text-xs"></i><span>Offline</span>`;
-            } else {
-                connectionBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200";
-                connectionBadge.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-xs"></i><span>Updating...</span>`;
-            }
-        }
-
-        function startLiveClock() {
-            setInterval(() => {
-                const now = new Date();
-                const clockEl = document.getElementById("liveClock");
-                if (clockEl) {
-                    const timeStr = now.toLocaleTimeString("id-ID", { hour12: false });
-                    clockEl.textContent = `${timeStr} WIB`;
-                }
-            }, 1000);
-        }
-
-        // Render KPI Cards
-        function renderStatistics() {
-            statistics.innerHTML = "";
-            SECTION_CONFIG.forEach(sec => {
-                const list = Array.isArray(dashboardData[sec.key]) ? dashboardData[sec.key] : [];
-                const card = document.createElement("button");
-                card.type = "button";
-                card.className = "kpi-card group";
-                card.style.setProperty("--accent-start", sec.accentStart);
-                card.style.setProperty("--accent-end", sec.accentEnd);
-                card.onclick = () => scrollToSection(sec.key);
-
-                card.innerHTML = `
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="color: ${sec.accentStart}; background: ${sec.accentBg}">
-                            <i class="fa-solid ${sec.icon} text-lg"></i>
-                        </div>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-300 group-hover:text-blue-600 transition-colors"></i>
-                    </div>
-                    <div class="mt-3.5">
-                        <div class="text-xs font-extrabold uppercase tracking-wider text-slate-500 truncate">
-                            ${escapeHtml(sec.title)}
-                        </div>
-                        <div class="mt-1 flex items-baseline gap-2">
-                            <span class="text-3xl font-black text-slate-900 font-mono tracking-tight">${list.length}</span>
-                            <span class="text-xs font-semibold text-slate-400">kapal</span>
-                        </div>
-                    </div>
-                `;
-                statistics.appendChild(card);
-            });
-        }
-
-        function scrollToSection(key) {
-            const el = document.getElementById(`section-${key}`);
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-
-        // Render Section & Kolom-kolom Lengkap
-        function renderDashboardSections() {
-            dashboardSections.innerHTML = "";
-
-            SECTION_CONFIG.forEach(sec => {
-                const list = Array.isArray(dashboardData[sec.key]) ? dashboardData[sec.key] : [];
-                const sectionEl = document.createElement("section");
-                sectionEl.id = `section-${sec.key}`;
-                sectionEl.className = "section-card";
-
-                // 📌 1. Header Section Sticky
-                const header = document.createElement("div");
-                header.className = "section-header";
-                header.innerHTML = `
-                    <div class="flex items-center gap-4 min-w-0">
-                        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-2xs" style="color: ${sec.accentStart}; background: ${sec.accentBg}">
-                            <i class="fa-solid ${sec.icon} text-lg"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <h2 class="text-lg font-black text-slate-900 tracking-tight truncate">${escapeHtml(sec.title)}</h2>
-                            <p class="text-xs sm:text-sm text-slate-500 font-medium truncate">${escapeHtml(sec.subtitle)}</p>
-                        </div>
-                    </div>
-                    <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold border shrink-0" style="color: ${sec.badgeText}; background: ${sec.accentBg}; border-color: ${sec.badgeBorder}">
-                        ${list.length} kapal
-                    </span>
-                `;
-
-                // Wrapper Table
-                const wrapper = document.createElement("div");
-                wrapper.className = "section-table-wrapper";
-
-                const table = document.createElement("table");
-                table.className = "vessel-table";
-
-                // 📌 2. Header Tabel Sticky (Nama-nama kolom muncul persis di bawah nama section)
-                const thead = document.createElement("thead");
-                const trHead = document.createElement("tr");
-                sec.columns.forEach(col => {
-                    const th = document.createElement("th");
-                    th.innerHTML = `
-                        <div class="flex items-center gap-1.5">
-                            ${col.type === "datetime" ? '<i class="fa-regular fa-clock text-xs text-slate-400"></i>' : ''}
-                            <span>${escapeHtml(col.label)}</span>
-                        </div>
-                    `;
-                    trHead.appendChild(th);
-                });
-                thead.appendChild(trHead);
-                table.appendChild(thead);
-
-                // Tbody
-                const tbody = document.createElement("tbody");
-                if (!list.length) {
-                    const emptyTr = document.createElement("tr");
-                    emptyTr.innerHTML = `
-                        <td colspan="${sec.columns.length}" class="py-14 text-center text-slate-400">
-                            <i class="fa-regular fa-folder-open text-3xl text-slate-300 mb-2"></i>
-                            <p class="text-sm font-bold text-slate-600">Tidak ada jadwal kapal pada ${escapeHtml(sec.title)} saat ini</p>
-                        </td>
-                    `;
-                    tbody.appendChild(emptyTr);
-                } else {
-                    list.forEach(vessel => {
-                        const tr = document.createElement("tr");
-                        const uniqueKey = getVesselKey(vessel, sec.key);
-                        tr.id = `row-${uniqueKey}`;
-                        tr.dataset.vesselKey = uniqueKey;
-                        
-                        // Klik baris membuka modal detail
-                        tr.onclick = () => openVesselModal(vessel, sec);
-
-                        sec.columns.forEach(col => {
-                            const td = document.createElement("td");
-                            const val = vessel[col.key];
-
-                            if (col.type === "vessel") {
-                                td.innerHTML = `
-                                    <div class="min-w-0 pr-4">
-                                        <div class="font-extrabold text-slate-900 text-sm hover:text-blue-700 transition truncate">${escapeHtml(vessel.vesselName || "Unknown")}</div>
-                                        <div class="flex items-center gap-2 mt-0.5">
-                                            ${vessel.vesselCode ? `<span class="px-2 py-0.5 rounded bg-slate-100 text-xs font-bold text-slate-600">${escapeHtml(vessel.vesselCode)}</span>` : ''}
-                                            ${vessel.shippingLine ? `<span class="text-xs text-slate-400 font-medium truncate max-w-[160px]">· ${escapeHtml(vessel.shippingLine)}</span>` : ''}
-                                        </div>
-                                    </div>
-                                `;
-                            } else if (col.type === "voyage") {
-                                td.innerHTML = `<span class="px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs font-mono">${escapeHtml(val || "—")}</span>`;
-                            } else if (col.type === "type") {
-                                td.innerHTML = `<span class="px-2.5 py-1 rounded-md bg-teal-50 border border-teal-200 text-teal-800 font-extrabold text-xs uppercase">${escapeHtml(val || "—")}</span>`;
-                            } else if (col.type === "datetime") {
-                                td.innerHTML = `<span class="font-mono text-slate-700 font-semibold text-xs whitespace-nowrap">${escapeHtml(formatDateTime(val))}</span>`;
-                            } else {
-                                // Text/angka (Booking, Open, Actual, TEUs)
-                                if (val !== null && val !== undefined && val !== "") {
-                                    td.innerHTML = `<span class="font-mono font-bold text-slate-800 text-xs">${escapeHtml(String(val))}</span>`;
-                                } else {
-                                    td.innerHTML = `<span class="text-slate-300 font-mono">—</span>`;
-                                }
-                            }
-                            tr.appendChild(td);
-                        });
-                        tbody.appendChild(tr);
-                    });
-                }
-                table.appendChild(tbody);
-
-                wrapper.appendChild(table);
-                sectionEl.appendChild(header);
-                sectionEl.appendChild(wrapper);
-                dashboardSections.appendChild(sectionEl);
-            });
-        }
-
-        // Koleksi Data & Mesin Pencarian
-        function getAllVesselRecords() {
-            const records = [];
-            SECTION_CONFIG.forEach(sec => {
-                const list = Array.isArray(dashboardData[sec.key]) ? dashboardData[sec.key] : [];
-                list.forEach(vessel => {
-                    records.push({
-                        vessel,
-                        section: sec,
-                        key: getVesselKey(vessel, sec.key)
-                    });
-                });
-            });
-            return records;
-        }
-
-        function searchVessels(query) {
-            const q = normalize(query);
-            if (!q) return [];
-
-            const terms = q.split(/\s+/).filter(Boolean);
-            const all = getAllVesselRecords();
-            const results = [];
-
-            all.forEach(item => {
-                const { vessel, section } = item;
-                const corpus = [
-                    vessel.vesselName, vessel.vesselCode, vessel.voyage,
-                    vessel.type, vessel.shippingLine, section.title
-                ].map(normalize).join(" ");
-
-                if (terms.every(t => corpus.includes(t))) {
-                    let score = 0;
-                    if (normalize(vessel.vesselName) === q) score += 1000;
-                    if (normalize(vessel.voyage) === q) score += 800;
-                    if (normalize(vessel.vesselName).startsWith(q)) score += 500;
-                    results.push({ ...item, score });
-                }
-            });
-
-            results.sort((a, b) => b.score - a.score);
-            return results;
-        }
-
-        // Suggestions Dropdown
-        function updateSuggestions() {
-            const q = searchInput.value.trim();
-            clearSearchBtn.style.display = q ? "flex" : "none";
-
-            if (!q) {
-                searchSuggestions.classList.add("hidden");
-                searchStatus.textContent = "";
-                return;
-            }
-
-            searchResults = searchVessels(q).slice(0, 10);
-            if (!searchResults.length) {
-                searchSuggestions.innerHTML = `
-                    <div class="p-6 text-center text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-lg text-slate-300 mb-1"></i>
-                        <p class="text-sm font-bold text-slate-600">Kapal tidak ditemukan</p>
-                    </div>
-                `;
-                searchSuggestions.classList.remove("hidden");
-                return;
-            }
-
-            searchSuggestions.innerHTML = `
-                <div class="px-5 py-2.5 bg-slate-50 border-b border-slate-100 flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    <span>Saran Hasil Pencarian (${searchResults.length})</span>
-                    <span class="text-blue-600 font-semibold normal-case">Klik untuk langsung melihat detail</span>
-                </div>
-            `;
-
-            searchResults.forEach(item => {
-                const row = document.createElement("div");
-                row.className = "suggestion-row flex items-center justify-between gap-3";
-                row.innerHTML = `
-                    <div class="flex items-center gap-3.5 min-w-0">
-                        <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="color: ${item.section.accentStart}; background: ${item.section.accentBg}">
-                            <i class="fa-solid ${item.section.icon} text-sm"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <div class="text-sm font-extrabold text-slate-900 truncate">${escapeHtml(item.vessel.vesselName || "Unknown")}</div>
-                            <div class="text-xs text-slate-500 font-medium truncate font-mono mt-0.5">
-                                ${escapeHtml(item.vessel.vesselCode || "—")} · Voyage ${escapeHtml(item.vessel.voyage || "—")}
-                            </div>
-                        </div>
-                    </div>
-                    <span class="px-3 py-1 rounded-md text-xs font-bold border shrink-0" style="color: ${item.section.badgeText}; background: ${item.section.accentBg}; border-color: ${item.section.badgeBorder}">
-                        ${escapeHtml(item.section.title)}
-                    </span>
-                `;
-
-                // KLIK SUGGESTION -> BUKA MODAL DETAIL KAPAL
-                row.onclick = () => {
-                    searchSuggestions.classList.add("hidden");
-                    openVesselModal(item.vessel, item.section);
-                };
-
-                searchSuggestions.appendChild(row);
-            });
-
-            searchSuggestions.classList.remove("hidden");
-        }
-
-        // ENTER / TOMBOL SEARCH -> SCROLL KE BARIS DATA
-        function performSearch() {
-            const q = searchInput.value.trim();
-            if (!q) {
-                searchStatus.textContent = "Ketik nama kapal atau nomor voyage terlebih dahulu.";
-                return;
-            }
-
-            const results = searchVessels(q);
-            searchSuggestions.classList.add("hidden");
-
-            if (!results.length) {
-                searchStatus.textContent = `Tidak ditemukan kapal untuk "${q}".`;
-                return;
-            }
-
-            const top = results[0];
-            const targetRow = document.getElementById(`row-${top.key}`) || document.querySelector(`[data-vessel-key="${CSS.escape(top.key)}"]`);
-
-            if (targetRow) {
-                targetRow.scrollIntoView({ behavior: "smooth", block: "center" });
-                targetRow.classList.remove("search-hit");
-                void targetRow.offsetWidth;
-                targetRow.classList.add("search-hit");
-                setTimeout(() => targetRow.classList.remove("search-hit"), 3200);
-
-                searchStatus.textContent = `Ditemukan ${results.length} hasil. Mengarah ke ${top.vessel.vesselName} (${top.section.title}).`;
-            } else {
-                scrollToSection(top.section.key);
-            }
-        }
-
-        function clearSearch() {
-            searchInput.value = "";
-            clearSearchBtn.style.display = "none";
-            searchSuggestions.classList.add("hidden");
-            searchStatus.textContent = "";
-            searchInput.focus();
-        }
-
-        // Buka Modal Detail
-        function openVesselModal(vessel, section) {
-            const modal = document.getElementById("vesselModal");
-            const badge = document.getElementById("modalSectionBadge");
-            const secTitle = document.getElementById("modalSectionTitle");
-            const name = document.getElementById("modalVesselName");
-            const sub = document.getElementById("modalSubInfo");
-            const body = document.getElementById("modalBody");
-
-            // Tampilkan badge nama section
-            badge.style.color = section.badgeText;
-            badge.style.background = section.accentBg;
-            badge.style.borderColor = section.badgeBorder;
-            secTitle.textContent = section.title;
-
-            name.textContent = vessel.vesselName || "Unknown Vessel";
-            sub.innerHTML = `
-                ${vessel.vesselCode ? `<span class="px-2.5 py-1 rounded bg-white border text-slate-700">Kode: ${escapeHtml(vessel.vesselCode)}</span>` : ''}
-                ${vessel.voyage ? `<span class="px-2.5 py-1 rounded bg-white border text-blue-700 font-bold font-mono">Voyage: ${escapeHtml(vessel.voyage)}</span>` : ''}
-                ${vessel.type ? `<span class="px-2.5 py-1 rounded bg-teal-50 border border-teal-200 text-teal-800 uppercase font-bold text-xs">${escapeHtml(vessel.type)}</span>` : ''}
-            `;
-
-            // Render field data
-            const available = MODAL_FIELDS.filter(([k]) => vessel[k] !== undefined && vessel[k] !== null && vessel[k] !== "");
-            if (!available.length) {
-                body.innerHTML = `<div class="py-12 text-center text-sm text-slate-400">Tidak ada rincian data tambahan.</div>`;
-            } else {
-                body.innerHTML = `
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                        ${available.map(([k, label]) => `
-                            <div class="detail-card">
-                                <div class="text-xs font-extrabold uppercase tracking-wider text-slate-400">${escapeHtml(label)}</div>
-                                <div class="mt-1 text-sm sm:text-base font-bold text-slate-800 font-mono break-words">${escapeHtml(formatDateTime(vessel[k]))}</div>
-                            </div>
-                        `).join("")}
-                    </div>
-                `;
-            }
-
-            modal.classList.remove("hidden");
-            document.body.style.overflow = "hidden";
-        }
-
-        function closeVesselModal() {
-            document.getElementById("vesselModal").classList.add("hidden");
-            document.body.style.overflow = "unset";
-        }
-
-        function handleModalBackdropClick(e) {
-            if (e.target.id === "vesselModal") closeVesselModal();
-        }
-
-        // Fetch Data & Refresh
-        async function loadData() {
-            setConnectionStatus("loading");
-            refreshBtn.querySelector("i").classList.add("fa-spin");
-
-            try {
-                const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: "no-store" });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-
-                dashboardData = {
-                    lastUpdated: data.lastUpdated || data.updatedAt || new Date().toISOString(),
-                    updatedAt: data.updatedAt || data.lastUpdated || new Date().toISOString(),
-                    source: data.source || "Pelindo TPKS Webaccess",
-                    vesselAlongside: Array.isArray(data.vesselAlongside) ? data.vesselAlongside : [],
-                    confirmedVessel: Array.isArray(data.confirmedVessel) ? data.confirmedVessel : [],
-                    openStack: Array.isArray(data.openStack) ? data.openStack : [],
-                    vesselSchedule: Array.isArray(data.vesselSchedule) ? data.vesselSchedule : [],
-                    vesselHistory: Array.isArray(data.vesselHistory) ? data.vesselHistory : [],
-                    counts: data.counts || {}
-                };
-
-                renderStatistics();
-                renderDashboardSections();
-                updateFreshness();
-                setConnectionStatus("online");
-                nextUpdateAt = Date.now() + AUTO_REFRESH_INTERVAL;
-            } catch (err) {
-                console.warn("Fallback offline mode:", err);
-                setConnectionStatus("offline");
-            } finally {
-                refreshBtn.querySelector("i").classList.remove("fa-spin");
-            }
-        }
-
-        function updateFreshness() {
-            const raw = dashboardData.lastUpdated || dashboardData.updatedAt;
-            freshnessIndicator.textContent = getFreshnessText(parseDate(raw));
-        }
-
-        function updateCountdown() {
-            if (!nextUpdateAt) return;
-            const diff = Math.max(0, Math.ceil((nextUpdateAt - Date.now()) / 1000));
-            const m = Math.floor(diff / 60);
-            const s = diff % 60;
-            const text = diff <= 0 ? "Memperbarui..." : `Refresh otomatis dalam ${m}m ${String(s).padStart(2, "0")}s`;
-
-            const raw = dashboardData.lastUpdated || dashboardData.updatedAt;
-            const baseText = getFreshnessText(parseDate(raw));
-            freshnessIndicator.textContent = `${baseText} · ${text}`;
-        }
-
-        // Event Listeners
-        searchInput.addEventListener("input", updateSuggestions);
-        searchInput.addEventListener("keydown", e => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                performSearch();
-            } else if (e.key === "Escape") {
-                searchSuggestions.classList.add("hidden");
-            }
-        });
-
-        document.addEventListener("click", e => {
-            if (!document.querySelector(".search-box")?.contains(e.target)) {
-                searchSuggestions.classList.add("hidden");
-            }
-        });
-
-        document.addEventListener("keydown", e => {
-            if (e.key === "Escape") closeVesselModal();
-        });
-
-        function init() {
-            startLiveClock();
-            loadData();
-            setInterval(loadData, AUTO_REFRESH_INTERVAL);
-            setInterval(updateFreshness, FRESHNESS_INTERVAL);
-            setInterval(updateCountdown, COUNTDOWN_INTERVAL);
-        }
-
-        init();
-    </script>
+<header class="main-header py-4">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+<div class="flex items-center gap-3 min-w-0">
+<div class="brand-mark"><i class="fa-solid fa-ship"></i></div>
+<div class="min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">TPKS Vessel Monitoring</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold"><span id="liveDot" class="status-dot bg-emerald-500 pulse-dot"></span>Live</span>
+</div>
+<p class="text-xs text-slate-500 mt-0.5">Pelindo Terminal Petikemas Semarang</p>
+</div>
+</div>
+<div class="hidden sm:flex items-center gap-2">
+<span id="connectionPill" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold"><span id="connectionDot" class="status-dot bg-sky-500"></span><span id="connectionText">Connecting...</span></span>
+</div>
+</div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<section class="search-section mb-6">
+<div class="search-wrapper">
+<div class="flex flex-col sm:flex-row gap-2">
+<div class="relative flex-1">
+<i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+<input id="searchInput" class="search-input" type="text" autocomplete="off" placeholder="Cari kapal, voyage, kode, tipe, atau seksi..." aria-label="Search vessel">
+<button id="clearSearchButton" type="button" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1" aria-label="Clear search"><i class="fa-solid fa-xmark text-sm"></i></button>
+<div id="searchSuggestions" class="search-suggestions hidden"></div>
+</div>
+<button id="searchButton" type="button" class="search-button" onclick="performSearch()"><i class="fa-solid fa-magnifying-glass"></i><span>Cari</span></button>
+<button id="refreshButton" type="button" class="refresh-button" onclick="loadData()"><i class="fa-solid fa-rotate-right"></i><span>Refresh</span></button>
+</div>
+</div>
+<div class="mt-2 flex items-center justify-between gap-3 text-[11px] text-slate-400"><p id="searchStatus"></p><p id="freshnessText" class="text-right">—</p></div>
+</section>
+
+<section class="mb-6"><div id="statistics" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"></div></section>
+<div id="dashboardSections" class="space-y-6"></div>
+
+<footer class="pt-8 pb-4 text-[11px] text-slate-400 border-t border-slate-200 mt-10">
+<div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+<div>TPKS Vessel Monitoring Portal &copy; 2026</div>
+<div>Sumber Data: <a id="sourceLink" href="https://ibstpks.pelindo.co.id/webaccess/" target="_blank" rel="noopener noreferrer" class="underline hover:text-slate-600">Pelindo TPKS Webaccess</a></div>
+</div>
+</footer>
+</main>
+
+<div id="vesselModal" class="modal-backdrop hidden" onclick="handleModalBackdropClick(event)">
+<div class="modal-card">
+<div class="modal-header">
+<div class="flex items-start justify-between gap-4">
+<div class="min-w-0">
+<div id="modalSectionBadge" class="modal-section-badge"><i class="fa-solid fa-ship"></i><span>Vessel</span></div>
+<div id="modalVesselName" class="modal-vessel-name">—</div>
+<div id="modalVoyage" class="modal-voyage">—</div>
+</div>
+<button type="button" onclick="closeVesselModal()" class="w-8 h-8 rounded-xl flex items-center justify-center bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
+</div>
+</div>
+<div id="modalBody" class="modal-body"></div>
+</div>
+</div>
+
+<script>
+const DATA_URL="./data.json";
+const AUTO_REFRESH_INTERVAL=5*60*1000;
+const FRESHNESS_INTERVAL=30*1000;
+
+const SECTION_CONFIG=[
+{key:"vesselAlongside",title:"Vessel Alongside",icon:"fa-ship",subtitle:"Kapal yang sedang bertambat di dermaga",accentA:"#2563eb",accentB:"#0891b2",accentBg:"#eff6ff",columns:[["vesselName","Vessel Name","vessel"],["voyage","Voyage","voyage"],["type","Tipe","type"],["atb","ATB","datetime"],["etd","ETD","datetime"]]},
+{key:"confirmedVessel",title:"Confirmed Vessel",icon:"fa-circle-check",subtitle:"Kapal dengan jadwal bertambat terkonfirmasi",accentA:"#7c3aed",accentB:"#6366f1",accentBg:"#f5f3ff",columns:[["vesselName","Vessel Name","vessel"],["voyage","Voyage","voyage"],["type","Tipe","type"],["eta","ETA","datetime"],["etb","ETB","datetime"],["etd","ETD","datetime"]]},
+{key:"openStack",title:"Open Stack",icon:"fa-box-open",subtitle:"Informasi open stack penerimaan kargo ekspor",accentA:"#ea580c",accentB:"#f59e0b",accentBg:"#fff7ed",columns:[["vesselName","Vessel Name","vessel"],["voyage","Voyage","voyage"],["type","Tipe","type"],["openStack","Open Stack","datetime"],["closingTime","Closing Time","datetime"]]},
+{key:"vesselSchedule",title:"Vessel Schedule",icon:"fa-calendar-days",subtitle:"Estimasi jadwal kedatangan kapal mendatang",accentA:"#0284c7",accentB:"#06b6d4",accentBg:"#ecfeff",columns:[["vesselName","Vessel Name","vessel"],["voyage","Voyage","voyage"],["type","Tipe","type"],["eta","ETA","datetime"],["etb","ETB","datetime"],["etd","ETD","datetime"]]},
+{key:"vesselHistory",title:"Vessel History",icon:"fa-clock-rotate-left",subtitle:"Riwayat pergerakan kapal yang telah berlayar",accentA:"#059669",accentB:"#14b8a6",accentBg:"#ecfdf5",columns:[["vesselName","Vessel Name","vessel"],["voyage","Voyage","voyage"],["type","Tipe","type"],["atb","ATB","datetime"],["atd","ATD","datetime"]]}
+];
+
+const MODAL_FIELDS=[
+["vesselName","Nama Kapal"],["vesselCode","Kode Kapal"],["voyage","Voyage"],["type","Tipe Pelayaran"],["shippingLine","Agen Pelayaran"],["eta","ETA"],["etb","ETB"],["atb","ATB"],["etd","ETD"],["atd","ATD"],["openStack","Open Stack"],["closingTime","Closing Time"],["booking","Booking Box"],["open","Open Box"],["actual","Actual Box"],["export","Export Box"],["exportTeus","Export TEUs"],["import","Import Box"],["importTeus","Import TEUs"]
+];
+
+let dashboardData={lastUpdated:null,updatedAt:null,source:"",vesselAlongside:[],confirmedVessel:[],openStack:[],vesselSchedule:[],vesselHistory:[],counts:{}};
+let searchResults=[];
+let activeSuggestionIndex=-1;
+let autoRefreshTimer=null;
+let nextUpdateAt=null;
+
+const searchInput=document.getElementById("searchInput");
+const searchSuggestions=document.getElementById("searchSuggestions");
+const clearSearchButton=document.getElementById("clearSearchButton");
+const searchStatus=document.getElementById("searchStatus");
+const freshnessText=document.getElementById("freshnessText");
+const dashboardSections=document.getElementById("dashboardSections");
+const statistics=document.getElementById("statistics");
+
+function escapeHtml(val){if(val===null||val===undefined)return "";return String(val).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function normalizeSearchValue(val){if(val===null||val===undefined)return "";return String(val).toLowerCase().trim()}
+function getVesselKey(vessel,sectionKey){const name=normalizeSearchValue(vessel?.vesselName),code=normalizeSearchValue(vessel?.vesselCode),voyage=normalizeSearchValue(vessel?.voyage);return[sectionKey,name,code,voyage].join("|")}
+function getAllRecords(){const results=[];SECTION_CONFIG.forEach(section=>{const rows=Array.isArray(dashboardData[section.key])?dashboardData[section.key]:[];rows.forEach(vessel=>results.push({vessel,section,key:getVesselKey(vessel,section.key)}))});return results}
+function formatDateTime(val){if(!val)return"—";return String(val)}
+
+function setConnectionStatus(status){
+const dot=document.getElementById("connectionDot"),text=document.getElementById("connectionText"),pill=document.getElementById("connectionPill"),liveDot=document.getElementById("liveDot");
+if(status==="online"){dot.className="status-dot bg-emerald-500";text.textContent="Online";pill.className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold";liveDot.classList.remove("bg-slate-400");liveDot.classList.add("bg-emerald-500")}
+else if(status==="loading"){dot.className="status-dot bg-amber-500 pulse-dot";text.textContent="Updating...";pill.className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold"}
+else{dot.className="status-dot bg-red-500";text.textContent="Offline";pill.className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-700 text-xs font-semibold";liveDot.classList.remove("bg-emerald-500");liveDot.classList.add("bg-red-500")}
+}
+
+function updateStatistics(){
+const stats=[
+{key:"vesselAlongside",label:"Alongside",icon:"fa-ship",a:"#2563eb",b:"#0891b2",bg:"#eff6ff"},
+{key:"confirmedVessel",label:"Confirmed",icon:"fa-circle-check",a:"#7c3aed",b:"#6366f1",bg:"#f5f3ff"},
+{key:"openStack",label:"Open Stack",icon:"fa-box-open",a:"#ea580c",b:"#f59e0b",bg:"#fff7ed"},
+{key:"vesselSchedule",label:"Schedule",icon:"fa-calendar-days",a:"#0284c7",b:"#06b6d4",bg:"#ecfeff"},
+{key:"vesselHistory",label:"History",icon:"fa-clock-rotate-left",a:"#059669",b:"#14b8a6",bg:"#ecfdf5"}
+];
+statistics.innerHTML=stats.map(s=>{const count=Array.isArray(dashboardData[s.key])?dashboardData[s.key].length:0;return`<button type="button" class="stat-card text-left" style="--accent-a:${s.a};--accent-b:${s.b};--accent-bg:${s.bg}" onclick="scrollToSection('${s.key}')"><div class="flex items-center justify-between gap-2"><div class="stat-icon"><i class="fa-solid ${s.icon}"></i></div><span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${s.label}</span></div><div class="mt-3 stat-number">${count}</div><div class="mt-1 text-[10px] text-slate-400">data tersedia</div></button>`}).join("")
+}
+
+function scrollToSection(key){const el=document.getElementById(`section-${key}`);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}
+
+function renderAllSections(){
+dashboardSections.innerHTML="";
+SECTION_CONFIG.forEach(section=>renderSection(section));
+}
+
+function renderSection(section){
+const rows=Array.isArray(dashboardData[section.key])?dashboardData[section.key]:[];
+const sectionElem=document.createElement("section");
+sectionElem.id=`section-${section.key}`;
+sectionElem.className="dashboard-section section-card";
+sectionElem.style.setProperty("--accent-a",section.accentA);
+sectionElem.style.setProperty("--accent-b",section.accentB);
+sectionElem.style.setProperty("--accent-bg",section.accentBg);
+
+const header=document.createElement("div");
+header.className="section-header";
+header.innerHTML=`<div class="flex items-center gap-3 min-w-0"><div class="section-title-icon"><i class="fa-solid ${section.icon}"></i></div><div class="min-w-0"><div class="flex items-center gap-2 flex-wrap"><h2 class="text-sm font-extrabold text-slate-900">${escapeHtml(section.title)}</h2><span class="section-count">${rows.length}</span></div><p class="text-[10px] text-slate-400 mt-0.5">${escapeHtml(section.subtitle)}</p></div></div><div class="hidden sm:flex items-center gap-2 text-[10px] text-slate-400"><i class="fa-solid fa-arrow-down-wide-short"></i><span>Scroll tabel</span></div>`;
+
+const scroll=document.createElement("div");
+scroll.className="section-scroll";
+
+if(!rows.length){
+scroll.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="fa-solid ${section.icon}"></i></div><div class="text-xs font-semibold text-slate-500">Tidak ada data</div><div class="text-[10px] text-slate-400 mt-1">Belum ada informasi pada seksi ini.</div></div>`;
+sectionElem.appendChild(header);
+sectionElem.appendChild(scroll);
+dashboardSections.appendChild(sectionElem);
+return;
+}
+
+const table=document.createElement("table");
+const thead=document.createElement("thead");
+thead.innerHTML=`<tr>${section.columns.map(([_,label])=>`<th>${escapeHtml(label)}</th>`).join("")}</tr>`;
+const tbody=document.createElement("tbody");
+rows.forEach(vessel=>tbody.appendChild(renderTableRow(vessel,section)));
+table.appendChild(thead);
+table.appendChild(tbody);
+scroll.appendChild(table);
+sectionElem.appendChild(header);
+sectionElem.appendChild(scroll);
+dashboardSections.appendChild(sectionElem);
+}
+
+function renderTableRow(vessel,section){
+const row=document.createElement("tr");
+row.dataset.vesselKey=getVesselKey(vessel,section.key);
+row.onclick=()=>openVesselModal(vessel,section);
+section.columns.forEach(([key,_,type])=>{const td=document.createElement("td");td.innerHTML=renderCellValue(vessel,key,type);row.appendChild(td)});
+return row;
+}
+
+function renderCellValue(vessel,key,type){
+const val=vessel?.[key];
+if(!val&&val!==0)return`<span class="text-slate-300">—</span>`;
+if(type==="vessel")return`<div><div class="vessel-primary">${escapeHtml(vessel.vesselName||"—")}</div>${vessel.vesselCode?`<div class="vessel-secondary">${escapeHtml(vessel.vesselCode)}</div>`:""}</div>`;
+if(type==="voyage")return`<span class="voyage-badge">${escapeHtml(val)}</span>`;
+if(type==="type")return`<span class="type-badge">${escapeHtml(val)}</span>`;
+if(type==="datetime")return`<span class="datetime-value">${escapeHtml(formatDateTime(val))}</span>`;
+return escapeHtml(val);
+}
+
+function findSearchResults(query){
+const q=normalizeSearchValue(query);
+if(!q)return[];
+const records=getAllRecords(),terms=q.split(/\s+/).filter(Boolean),scored=[];
+records.forEach(result=>{
+const v=result.vessel,s=result.section;
+const searchable=[v.vesselName,v.vesselCode,v.voyage,v.type,v.shippingLine,v.eta,v.etb,v.atb,v.etd,v.atd,v.openStack,v.closingTime,s.title].map(normalizeSearchValue).join(" ");
+if(terms.every(t=>searchable.includes(t))){let score=0;if(normalizeSearchValue(v.vesselName)===q)score+=1000;if(normalizeSearchValue(v.voyage)===q)score+=800;scored.push({...result,score})}
+});
+scored.sort((a,b)=>b.score-a.score);
+return scored;
+}
+
+function updateSearchSuggestions(){
+const query=searchInput.value.trim();
+clearSearchButton.classList.toggle("hidden",!query);
+if(!query){hideSearchSuggestions();searchStatus.textContent="";return}
+const results=findSearchResults(query);
+searchResults=results.slice(0,10);
+activeSuggestionIndex=-1;
+if(!searchResults.length){searchSuggestions.innerHTML=`<div class="p-4 text-center text-xs text-slate-400">Tidak ada data kapal yang cocok.</div>`;searchSuggestions.classList.remove("hidden");return}
+searchSuggestions.innerHTML=searchResults.map((res,index)=>`<div class="suggestion-item" data-index="${index}" onclick="openSearchSuggestion(${index})"><div class="flex items-center justify-between gap-2"><div><div class="text-xs font-bold text-slate-800">${escapeHtml(res.vessel.vesselName)}</div><div class="text-[10px] text-slate-500">Voyage ${escapeHtml(res.vessel.voyage||"—")} &middot; <span class="font-semibold text-blue-600">${escapeHtml(res.section.title)}</span></div></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i></div></div>`).join("");
+searchSuggestions.classList.remove("hidden");
+}
+
+function openSearchSuggestion(index){const res=searchResults[index];if(!res)return;hideSearchSuggestions();openVesselModal(res.vessel,res.section)}
+
+function performSearch(){
+const query=searchInput.value.trim();
+if(!query)return;
+const results=findSearchResults(query);
+if(!results.length){searchStatus.textContent=`Data "${query}" tidak ditemukan.`;hideSearchSuggestions();return}
+const topResult=results;
+hideSearchSuggestions();
+jumpToSearchResult(topResult);
+searchStatus.textContent=`Ditemukan ${results.length} hasil untuk "${query}".`;
+}
+
+function jumpToSearchResult(result){
+if(!result)return;
+const key=getVesselKey(result.vessel,result.section.key);
+const row=document.querySelector(`[data-vessel-key="${CSS.escape(key)}"]`);
+if(row){row.scrollIntoView({behavior:"smooth",block:"center"});row.classList.remove("search-hit");void row.offsetWidth;row.classList.add("search-hit");setTimeout(()=>row.classList.remove("search-hit"),3000)}
+else scrollToSection(result.section.key);
+}
+
+function clearSearch(){searchInput.value="";searchStatus.textContent="";clearSearchButton.classList.add("hidden");hideSearchSuggestions();searchInput.focus()}
+function hideSearchSuggestions(){searchSuggestions.classList.add("hidden");activeSuggestionIndex=-1}
+
+function openVesselModal(vessel,section){
+const modal=document.getElementById("vesselModal");
+document.getElementById("modalSectionBadge").innerHTML=`<i class="fa-solid ${section.icon}"></i> <span>${escapeHtml(section.title)}</span>`;
+document.getElementById("modalVesselName").textContent=vessel.vesselName||"—";
+document.getElementById("modalVoyage").textContent=`Voyage ${vessel.voyage||"—"} ${vessel.vesselCode?`(${vessel.vesselCode})`:""}`;
+const body=document.getElementById("modalBody");
+const availableFields=MODAL_FIELDS.filter(([k])=>vessel[k]!==undefined&&vessel[k]!==null&&vessel[k]!=="");
+if(!availableFields.length)body.innerHTML=`<div class="p-6 text-center text-xs text-slate-400">Tidak ada detail tambahan.</div>`;
+else body.innerHTML=`<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">${availableFields.map(([key,label])=>`<div class="modal-field"><div class="modal-field-label">${escapeHtml(label)}</div><div class="modal-field-value">${escapeHtml(vessel[key])}</div></div>`).join("")}</div>`;
+modal.classList.remove("hidden");
+document.body.classList.add("overflow-hidden");
+}
+
+function closeVesselModal(){document.getElementById("vesselModal").classList.add("hidden");document.body.classList.remove("overflow-hidden")}
+function handleModalBackdropClick(e){if(e.target.id==="vesselModal")closeVesselModal()}
+
+async function loadData(){
+setConnectionStatus("loading");
+try{
+const res=await fetch(`${DATA_URL}?t=${Date.now()}`,{cache:"no-store"});
+if(!res.ok)throw new Error(`HTTP ${res.status}`);
+const data=await res.json();
+dashboardData={
+lastUpdated:data.lastUpdated||data.updatedAt||null,
+updatedAt:data.updatedAt||data.lastUpdated||null,
+source:data.source||"",
+vesselAlongside:Array.isArray(data.vesselAlongside)?data.vesselAlongside:[],
+confirmedVessel:Array.isArray(data.confirmedVessel)?data.confirmedVessel:[],
+openStack:Array.isArray(data.openStack)?data.openStack:[],
+vesselSchedule:Array.isArray(data.vesselSchedule)?data.vesselSchedule:[],
+vesselHistory:Array.isArray(data.vesselHistory)?data.vesselHistory:[],
+counts:data.counts||{}
+};
+updateStatistics();
+renderAllSections();
+updateFreshness();
+setConnectionStatus("online");
+nextUpdateAt=Date.now()+AUTO_REFRESH_INTERVAL;
+}catch(err){console.error("Failed to load data:",err);setConnectionStatus("offline")}
+}
+
+function updateFreshness(){
+const rawDate=dashboardData.lastUpdated||dashboardData.updatedAt;
+if(!rawDate){freshnessText.textContent="Data time unavailable";return}
+freshnessText.textContent=`Terakhir diperbarui: ${rawDate}`;
+}
+
+searchInput.addEventListener("input",updateSearchSuggestions);
+searchInput.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();performSearch()}if(e.key==="Escape")hideSearchSuggestions()});
+document.addEventListener("click",e=>{if(!document.querySelector(".search-wrapper")?.contains(e.target))hideSearchSuggestions()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeVesselModal()});
+
+setInterval(loadData,AUTO_REFRESH_INTERVAL);
+setInterval(updateFreshness,FRESHNESS_INTERVAL);
+loadData();
+</script>
 </body>
 </html>
