@@ -1,323 +1,295 @@
-#!/usr/bin/env python3
-
-import asyncio
-import json
-import logging
-import re
-from datetime import datetime
-from pathlib import Path
-from zoneinfo import ZoneInfo
-
-from playwright.async_api import (
-    async_playwright,
-    TimeoutError as PlaywrightTimeoutError,
-)
-
-
-URL = "https://ibstpks.pelindo.co.id/webaccess/"
-
-OUTPUT_FILE = Path("data.json")
-
-NAVIGATION_TIMEOUT = 120000
-WAIT_AFTER_LOAD = 5000
-
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(asctime)s] %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
-
 # ============================================================
-# TEXT
+# EXTRACT CARD DIRECTLY FROM DOM
 # ============================================================
 
-def clean_text(value):
-    if value is None:
-        return ""
-
-    value = str(value)
-    value = value.replace("\xa0", " ")
-    value = re.sub(r"\s+", " ", value)
-
-    return value.strip()
-
-
-# ============================================================
-# EMPTY RECORD
-# ============================================================
-
-def make_empty_record():
-    return {
-        "vesselName": "",
-        "vesselCode": "",
-        "voyage": "",
-        "shippingLine": "",
-        "type": "",
-
-        "eta": "",
-        "etb": "",
-        "atb": "",
-        "etd": "",
-        "atd": "",
-
-        "openStack": "",
-        "closingTime": "",
-
-        "booking": "",
-        "open": "",
-        "actual": "",
-
-        "export": "",
-        "exportTeus": "",
-        "import": "",
-        "importTeus": "",
-
-        "vesId": "",
-
-        "detailUrl": "",
-        "historyUrl": "",
-    }
-
-
-# ============================================================
-# EXTRACT ID FROM ONCLICK
-# ============================================================
-
-def extract_id_from_onclick(onclick, function_name):
+async def extract_card_data(card):
     """
-    Contoh:
+    Membaca satu .vcard dari HTML baru.
 
-    waCardDetail('SIBI094')
-    waCardHistory('SIBI094')
+    Struktur yang dibaca:
+
+    .nm-txt          -> Vessel Name
+    .vid             -> Vessel Code
+    .vtag            -> Type
+    .vmeta           -> Voyage
+    .vmeta-agent     -> Shipping Line / Agent
+    .vt-lab/.vt-val  -> ETB, ATB, ATD, EXP, IMP
+    .vacts            -> Detail ID / History ID
     """
 
-    if not onclick:
-        return ""
+    try:
 
-    pattern = (
-        rf"{re.escape(function_name)}"
-        r"\(\s*['\"]([^'\"]+)['\"]\s*\)"
-    )
+        return await card.evaluate(
+            """
+            (card) => {
 
-    match = re.search(
-        pattern,
-        onclick,
-        re.IGNORECASE,
-    )
+                const clean = (value) => {
 
-    if match:
-        return clean_text(match.group(1))
+                    if (
+                        value === null ||
+                        value === undefined
+                    ) {
+                        return "";
+                    }
 
-    return ""
-
-
-# ============================================================
-# PARSE VTIME LABELS
-# ============================================================
-
-def parse_times(data):
-    """
-    HTML baru:
-
-    <div class="vtimes">
-        <span class="vt-lab">ETA</span>
-        <span class="vt-val">...</span>
-
-        <span class="vt-lab">ETB</span>
-        <span class="vt-val">...</span>
-    </div>
-
-    Kita ambil berdasarkan label, bukan berdasarkan posisi.
-    """
-
-    result = {}
-
-    labels = data.get("timeLabels", [])
-    values = data.get("timeValues", [])
-
-    for label, value in zip(labels, values):
-
-        label = clean_text(label)
-        value = clean_text(value)
-
-        if not label:
-            continue
-
-        result[label.lower()] = value
-
-    return result
+                    return String(value)
+                        .replace(/\\u00a0/g, " ")
+                        .replace(/\\s+/g, " ")
+                        .trim();
+                };
 
 
-# ============================================================
-# PARSE PROGRESS
-# ============================================================
+                // =========================================
+                // VESSEL NAME
+                // =========================================
 
-def parse_progress(value):
-    """
-    Contoh:
+                const nameEl =
+                    card.querySelector(".vname .nm-txt");
 
-    600 / 600 / 442
+                const vesselName =
+                    clean(
+                        nameEl
+                            ? nameEl.textContent
+                            : ""
+                    );
 
-    menjadi:
 
-    booking = 600
-    open    = 600
-    actual  = 442
-    """
+                // =========================================
+                // VESSEL CODE
+                // =========================================
 
-    value = clean_text(value)
+                const codeEl =
+                    card.querySelector(".vsub .vid");
 
-    if not value:
-        return "", "", ""
+                let vesselCode =
+                    clean(
+                        codeEl
+                            ? codeEl.textContent
+                            : ""
+                    );
 
-    parts = [
-        clean_text(x)
-        for x in value.split("/")
-    ]
+                vesselCode =
+                    vesselCode
+                        .replace(/^\\(/, "")
+                        .replace(/\\)$/, "")
+                        .trim();
 
-    if len(parts) >= 3:
 
-        return (
-            parts[0],
-            parts[1],
-            parts[2],
+                // =========================================
+                // TYPE
+                // =========================================
+
+                const typeEl =
+                    card.querySelector(".vsub .vtag");
+
+                const type =
+                    clean(
+                        typeEl
+                            ? typeEl.textContent
+                            : ""
+                    );
+
+
+                // =========================================
+                // VOYAGE
+                // =========================================
+                //
+                // .vmeta pertama = voyage
+                // .vmeta-agent = shipping line
+                //
+                // Jadi agent tidak ikut masuk voyage.
+                // =========================================
+
+                const voyageEl =
+                    card.querySelector(
+                        ".vmeta:not(.vmeta-agent)"
+                    );
+
+                const voyage =
+                    clean(
+                        voyageEl
+                            ? voyageEl.textContent
+                            : ""
+                    );
+
+
+                // =========================================
+                // AGENT / SHIPPING LINE
+                // =========================================
+
+                const agentEl =
+                    card.querySelector(
+                        ".vmeta-agent span"
+                    );
+
+                const agent =
+                    clean(
+                        agentEl
+                            ? agentEl.textContent
+                            : ""
+                    );
+
+
+                // =========================================
+                // TIMES
+                // =========================================
+
+                const timeLabels = [
+                    ...card.querySelectorAll(
+                        ".vtimes .vt-lab"
+                    )
+                ].map(
+                    el => clean(el.textContent)
+                );
+
+
+                const timeValues = [
+                    ...card.querySelectorAll(
+                        ".vtimes .vt-val"
+                    )
+                ].map(
+                    el => clean(el.textContent)
+                );
+
+
+                // =========================================
+                // PROGRESS
+                // =========================================
+
+                const progressEl =
+                    card.querySelector(
+                        ".vprog .pnum"
+                    );
+
+                const progress =
+                    clean(
+                        progressEl
+                            ? progressEl.textContent
+                            : ""
+                    );
+
+
+                // =========================================
+                // DETAIL ID
+                // =========================================
+
+                let detailId = "";
+
+                const detailLinks = [
+                    ...card.querySelectorAll(".vacts a")
+                ];
+
+                const detailLink =
+                    detailLinks.find(
+                        a => {
+
+                            const onclick =
+                                a.getAttribute(
+                                    "onclick"
+                                ) || "";
+
+                            return onclick.includes(
+                                "waCardDetail"
+                            );
+                        }
+                    );
+
+
+                if (detailLink) {
+
+                    const onclick =
+                        detailLink.getAttribute(
+                            "onclick"
+                        ) || "";
+
+                    const match =
+                        onclick.match(
+                            /waCardDetail\\s*\\(\\s*['"]([^'"]+)['"]\\s*\\)/
+                        );
+
+                    if (match) {
+
+                        detailId =
+                            clean(
+                                match[1]
+                            );
+                    }
+                }
+
+
+                // =========================================
+                // HISTORY ID
+                // =========================================
+
+                let historyId = "";
+
+                const historyLink =
+                    detailLinks.find(
+                        a => {
+
+                            const onclick =
+                                a.getAttribute(
+                                    "onclick"
+                                ) || "";
+
+                            return onclick.includes(
+                                "waCardHistory"
+                            );
+                        }
+                    );
+
+
+                if (historyLink) {
+
+                    const onclick =
+                        historyLink.getAttribute(
+                            "onclick"
+                        ) || "";
+
+                    const match =
+                        onclick.match(
+                            /waCardHistory\\s*\\(\\s*['"]([^'"]+)['"]\\s*\\)/
+                        );
+
+                    if (match) {
+
+                        historyId =
+                            clean(
+                                match[1]
+                            );
+                    }
+                }
+
+
+                // =========================================
+                // RETURN DATA
+                // =========================================
+
+                return {
+
+                    vesselName,
+                    vesselCode,
+                    type,
+                    voyage,
+                    agent,
+
+                    timeLabels,
+                    timeValues,
+
+                    progress,
+
+                    detailId,
+                    historyId
+                };
+            }
+            """
         )
 
-    return "", "", ""
+    except Exception as e:
 
+        logging.warning(
+            "Gagal membaca vessel card: %s",
+            e,
+        )
 
-# ============================================================
-# PARSE VESSEL CARD
-# ============================================================
-
-def parse_vessel_card(data, category):
-    """
-    Parser utama untuk .vcard pada HTML baru.
-
-    category:
-
-        alongside
-        confirmed
-        openStack
-        schedule
-        history
-    """
-
-    record = make_empty_record()
-
-    # --------------------------------------------------------
-    # NAME
-    # --------------------------------------------------------
-
-    record["vesselName"] = clean_text(
-        data.get("vesselName", "")
-    )
-
-    if not record["vesselName"]:
         return None
-
-    # --------------------------------------------------------
-    # VESSEL CODE
-    # --------------------------------------------------------
-
-    record["vesselCode"] = clean_text(
-        data.get("vesselCode", "")
-    )
-
-    # --------------------------------------------------------
-    # TYPE
-    # --------------------------------------------------------
-
-    record["type"] = clean_text(
-        data.get("type", "")
-    )
-
-    # --------------------------------------------------------
-    # VOYAGE
-    # --------------------------------------------------------
-
-    record["voyage"] = clean_text(
-        data.get("voyage", "")
-    )
-
-    # --------------------------------------------------------
-    # SHIPPING LINE / AGENT
-    # --------------------------------------------------------
-
-    record["shippingLine"] = clean_text(
-        data.get("agent", "")
-    )
-
-    # --------------------------------------------------------
-    # VESSEL ID
-    # --------------------------------------------------------
-
-    record["vesId"] = clean_text(
-        data.get("vesId", "")
-    )
-
-    # --------------------------------------------------------
-    # TIMES
-    # --------------------------------------------------------
-
-    times = parse_times(data)
-
-    record["eta"] = times.get(
-        "eta",
-        ""
-    )
-
-    record["etb"] = times.get(
-        "etb",
-        ""
-    )
-
-    record["atb"] = times.get(
-        "atb",
-        ""
-    )
-
-    record["etd"] = times.get(
-        "etd",
-        ""
-    )
-
-    record["atd"] = times.get(
-        "atd",
-        ""
-    )
-
-    record["openStack"] = times.get(
-        "open stack",
-        ""
-    )
-
-    record["closingTime"] = times.get(
-        "closing time",
-        ""
-    )
-
-    # --------------------------------------------------------
-    # HISTORY EXP / IMP
-    # --------------------------------------------------------
-
-    record["export"] = times.get(
-        "exp",
-        ""
-    )
-
-    record["import"] = times.get(
-        "imp",
-        ""
-    )
-
-    # --------------------------------------------------------
-    # BOOKING / OPEN / ACTUAL
-    # --------------------------------------------------------
-
-    (
-        record["booking"],
-        record["open"],
-        record["a]()
