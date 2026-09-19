@@ -1,3 +1,4 @@
+```yaml
 name: Pelindo TPKS Scraper
 
 on:
@@ -16,7 +17,6 @@ on:
       - "scraper.py"
       - "requirements.txt"
       - ".github/workflows/pelindo-scraper.yml"
-
 
 permissions:
   contents: write
@@ -70,7 +70,79 @@ jobs:
 
 
       # ======================================================
-      # 5. RUN SCRAPER
+      # 5. CHECK PELINDO CONNECTION
+      # ======================================================
+
+      - name: Check Pelindo connection
+        continue-on-error: true
+        run: |
+          echo "======================================"
+          echo "CHECKING PELINDO CONNECTION"
+          echo "======================================"
+
+          python - <<'PY'
+          import urllib.request
+          import sys
+
+          url = "https://ibstpks.pelindo.co.id/webaccess/"
+
+          print(f"Testing: {url}")
+
+          try:
+              request = urllib.request.Request(
+                  url,
+                  headers={
+                      "User-Agent": (
+                          "Mozilla/5.0 "
+                          "(Windows NT 10.0; Win64; x64) "
+                          "AppleWebKit/537.36 "
+                          "(KHTML, like Gecko) "
+                          "Chrome/140.0 Safari/537.36"
+                      )
+                  }
+              )
+
+              with urllib.request.urlopen(
+                  request,
+                  timeout=30
+              ) as response:
+
+                  print(
+                      f"HTTP Status : {response.status}"
+                  )
+
+                  print(
+                      f"Content Type: "
+                      f"{response.headers.get('Content-Type')}"
+                  )
+
+                  print(
+                      "Pelindo connection check completed."
+                  )
+
+          except Exception as exc:
+
+              print(
+                  "WARNING: Pelindo connection check failed."
+              )
+
+              print(
+                  f"Reason: {exc}"
+              )
+
+              print(
+                  "Scraper akan tetap mencoba."
+              )
+
+              sys.exit(1)
+          PY
+
+          echo ""
+          echo "======================================"
+
+
+      # ======================================================
+      # 6. RUN SCRAPER WITH RETRY
       # ======================================================
 
       - name: Run Pelindo scraper
@@ -79,16 +151,54 @@ jobs:
           echo "STARTING PELINDO TPKS SCRAPER"
           echo "======================================"
 
-          python scraper.py
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+
+            echo ""
+            echo "======================================"
+            echo "SCRAPER ATTEMPT $ATTEMPT / $MAX_ATTEMPTS"
+            echo "======================================"
+
+            if python scraper.py; then
+
+              echo ""
+              echo "======================================"
+              echo "SCRAPER FINISHED SUCCESSFULLY"
+              echo "======================================"
+
+              exit 0
+
+            fi
+
+            echo ""
+            echo "======================================"
+            echo "SCRAPER ATTEMPT $ATTEMPT FAILED"
+            echo "======================================"
+
+            if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+
+              echo ""
+              echo "Waiting 15 seconds before retry..."
+              sleep 15
+
+            fi
+
+            ATTEMPT=$((ATTEMPT + 1))
+
+          done
 
           echo ""
           echo "======================================"
-          echo "SCRAPER FINISHED"
+          echo "SCRAPER FAILED AFTER $MAX_ATTEMPTS ATTEMPTS"
           echo "======================================"
+
+          exit 1
 
 
       # ======================================================
-      # 6. VALIDATE DATA.JSON
+      # 7. VALIDATE DATA.JSON
       # ======================================================
 
       - name: Validate data.json
@@ -159,9 +269,7 @@ jobs:
               "lastUpdated",
               "updatedAt",
               "source",
-              "allVessels",
               "vesselAlongside",
-              "anchorageVessel",
               "confirmedVessel",
               "openStack",
               "vesselSchedule",
@@ -185,9 +293,7 @@ jobs:
           # --------------------------------------------------
 
           arrays = [
-              "allVessels",
               "vesselAlongside",
-              "anchorageVessel",
               "confirmedVessel",
               "openStack",
               "vesselSchedule",
@@ -195,6 +301,7 @@ jobs:
           ]
 
           for key in arrays:
+
               if not isinstance(data[key], list):
                   raise SystemExit(
                       f"ERROR: '{key}' harus berupa array."
@@ -213,29 +320,19 @@ jobs:
           # Validate counts
           # --------------------------------------------------
 
-          count_mapping = {
-              "allVessels": "allVessels",
-              "vesselAlongside": "vesselAlongside",
-              "anchorageVessel": "anchorageVessel",
-              "confirmedVessel": "confirmedVessel",
-              "openStack": "openStack",
-              "vesselSchedule": "vesselSchedule",
-              "vesselHistory": "vesselHistory"
-          }
+          for key in arrays:
 
-          for count_key, array_key in count_mapping.items():
-
-              if count_key not in data["counts"]:
+              if key not in data["counts"]:
                   raise SystemExit(
-                      f"ERROR: counts['{count_key}'] tidak ditemukan."
+                      f"ERROR: counts['{key}'] tidak ditemukan."
                   )
 
-              expected = len(data[array_key])
-              actual = data["counts"][count_key]
+              expected = len(data[key])
+              actual = data["counts"][key]
 
               if actual != expected:
                   raise SystemExit(
-                      f"ERROR: counts['{count_key}'] "
+                      f"ERROR: counts['{key}'] "
                       f"= {actual}, tetapi jumlah data "
                       f"= {expected}."
                   )
@@ -275,6 +372,7 @@ jobs:
               ).strip().upper()
 
               if status and status != "SCHEDULE":
+
                   wrong_schedule.append(
                       (
                           vessel.get(
@@ -286,6 +384,7 @@ jobs:
                   )
 
           if wrong_schedule:
+
               print("")
               print(
                   "WARNING: ditemukan record Schedule "
@@ -293,6 +392,7 @@ jobs:
               )
 
               for vessel_name, status in wrong_schedule[:10]:
+
                   print(
                       f"  - {vessel_name} -> {status}"
                   )
@@ -310,6 +410,7 @@ jobs:
               ).strip().upper()
 
               if status and status != "HISTORY":
+
                   wrong_history.append(
                       (
                           vessel.get(
@@ -321,6 +422,7 @@ jobs:
                   )
 
           if wrong_history:
+
               print("")
               print(
                   "WARNING: ditemukan record History "
@@ -328,6 +430,7 @@ jobs:
               )
 
               for vessel_name, status in wrong_history[:10]:
+
                   print(
                       f"  - {vessel_name} -> {status}"
                   )
@@ -352,14 +455,10 @@ jobs:
           )
 
           print("")
+
           print(
               f"Alongside    : "
               f"{len(data['vesselAlongside'])}"
-          )
-
-          print(
-              f"Anchorage    : "
-              f"{len(data['anchorageVessel'])}"
           )
 
           print(
@@ -382,18 +481,13 @@ jobs:
               f"{len(data['vesselHistory'])}"
           )
 
-          print(
-              f"All Vessels  : "
-              f"{len(data['allVessels'])}"
-          )
-
           print("")
           print("======================================")
           PY
 
 
       # ======================================================
-      # 7. SHOW GENERATED DATA
+      # 8. SHOW GENERATED DATA
       # ======================================================
 
       - name: Show generated data.json
@@ -417,20 +511,22 @@ jobs:
 
 
       # ======================================================
-      # 8. UPLOAD DEBUG HTML
+      # 9. UPLOAD DEBUG FILES
       # ======================================================
 
-      - name: Upload debug HTML
+      - name: Upload debug files
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pelindo-debug-html
-          path: debug_pelindo.html
+          name: pelindo-debug
+          path: |
+            debug_pelindo.html
+            debug_pelindo.png
           if-no-files-found: ignore
 
 
       # ======================================================
-      # 9. COMMIT DATA.JSON
+      # 10. COMMIT DATA.JSON
       # ======================================================
 
       - name: Commit data.json
@@ -494,7 +590,7 @@ jobs:
 
 
       # ======================================================
-      # 10. PUSH DATA.JSON
+      # 11. PUSH DATA.JSON
       # ======================================================
 
       - name: Push data.json
@@ -509,3 +605,4 @@ jobs:
           echo "======================================"
           echo "PUSH SUCCESSFUL"
           echo "======================================"
+```
