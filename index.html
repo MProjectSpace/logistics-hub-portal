@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TPKS Vessel Monitoring</title>
+    <title>TPKS Vessel Monitoring System | Pelindo</title>
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Font Awesome Icons -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Inter Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
         /* =========================================================
-           BASE STYLES & THEME (Blue / Cyan / Indigo Palette)
+           GLOBAL THEME & TYPOGRAPHY
            ========================================================= */
         * {
             box-sizing: border-box;
@@ -29,648 +31,325 @@
         body {
             margin: 0;
             min-height: 100vh;
-            background:
-                radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.08), transparent 32%),
-                radial-gradient(circle at 100% 10%, rgba(6, 182, 212, 0.08), transparent 30%),
-                radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.05), transparent 35%),
-                #f1f5f9;
+            background: 
+                radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.07), transparent 35%),
+                radial-gradient(circle at 90% 12%, rgba(6, 182, 212, 0.07), transparent 30%),
+                radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.05), transparent 40%),
+                #f8fafc;
             color: #0f172a;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        button, input {
-            font-family: inherit;
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        button {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        ::selection {
-            background: #bfdbfe;
-            color: #1e3a8a;
-        }
-
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 7px;
             height: 7px;
         }
-
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
-
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 9999px;
         }
-
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
 
         /* =========================================================
-           1. MAIN HEADER (TIDAK STICKY)
+           HEADER (NON-STICKY)
            ========================================================= */
         .main-header {
             position: relative;
             z-index: 10;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.92));
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(240, 249, 255, 0.95));
+            border-bottom: 1px solid rgba(203, 213, 225, 0.7);
+            backdrop-filter: blur(12px);
         }
 
-        .brand-mark {
+        .brand-icon-box {
             width: 44px;
             height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 14px;
-            color: #ffffff;
-            background: linear-gradient(135deg, #2563eb, #0891b2);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.22);
+            border-radius: 13px;
+            background: linear-gradient(135deg, #1d4ed8, #0284c7);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+            color: white;
         }
 
-        .status-dot {
-            width: 7px;
-            height: 7px;
+        .pulse-live {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            display: inline-block;
+            background-color: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+            animation: pulseWave 2s infinite;
         }
 
-        .pulse-dot {
-            background: #10b981;
-            box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
-            animation: pulseLive 2s infinite;
-        }
-
-        @keyframes pulseLive {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
-            }
-            70% {
-                box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
+        @keyframes pulseWave {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
         /* =========================================================
-           2. SEARCH & CONTROLS
+           SEARCH BAR & CONTROLS
            ========================================================= */
-        .search-section {
+        .search-container {
             position: relative;
             z-index: 40;
         }
 
-        .search-wrapper {
-            position: relative;
-            z-index: 50;
-            padding: 12px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.94));
-            border: 1px solid rgba(148, 163, 184, 0.20);
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(59, 130, 246, 0.04);
+        .search-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04), 0 2px 8px rgba(37, 99, 235, 0.04);
+            transition: all 0.2s ease;
         }
 
-        .search-input-wrap {
-            position: relative;
+        .search-box:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), 0 10px 30px rgba(37, 99, 235, 0.08);
         }
 
         .search-input {
             width: 100%;
-            height: 44px;
-            padding-left: 42px;
-            padding-right: 42px;
-            border-radius: 13px;
-            background: #ffffff;
-            border: 1px solid #dbeafe;
-            color: #0f172a;
-            font-size: 13px;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .search-input::placeholder {
-            color: #94a3b8;
-        }
-
-        .search-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), 0 5px 15px rgba(59, 130, 246, 0.06);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #64748b;
-            pointer-events: none;
-        }
-
-        .clear-search-button {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 28px;
-            height: 28px;
-            border-radius: 9px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            background: #f8fafc;
+            height: 46px;
+            padding-left: 44px;
+            padding-right: 44px;
+            border-radius: 14px;
+            background: transparent;
             border: none;
-            cursor: pointer;
-            transition: all 0.15s ease;
+            outline: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: #0f172a;
         }
 
-        .clear-search-button:hover {
-            color: #ef4444;
-            background: #fef2f2;
-        }
-
-        .search-button {
-            height: 44px;
-            padding: 0 20px;
-            border-radius: 13px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #ffffff;
-            background: linear-gradient(135deg, #2563eb, #0284c7);
-            border: 1px solid rgba(37, 99, 235, 0.3);
-            box-shadow: 0 7px 16px rgba(37, 99, 235, 0.20);
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .search-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
-        }
-
-        .refresh-button {
-            height: 44px;
-            padding: 0 18px;
-            border-radius: 13px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #334155;
-            background: #ffffff;
-            border: 1px solid #dbeafe;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .refresh-button:hover {
-            color: #2563eb;
-            background: #eff6ff;
-            border-color: #bfdbfe;
-        }
-
-        .refresh-button.loading i {
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* =========================================================
-           3. SEARCH SUGGESTIONS
-           ========================================================= */
-        .search-suggestions {
+        .search-suggestions-popup {
             position: absolute;
             top: calc(100% + 8px);
             left: 0;
             right: 0;
             z-index: 100;
-            max-height: 380px;
+            max-height: 400px;
             overflow-y: auto;
-            border-radius: 18px;
             background: rgba(255, 255, 255, 0.98);
             border: 1px solid #dbeafe;
-            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14), 0 5px 15px rgba(59, 130, 246, 0.08);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            border-radius: 18px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12), 0 8px 20px rgba(37, 99, 235, 0.08);
+            backdrop-filter: blur(16px);
         }
 
-        .suggestion-item {
-            padding: 12px 14px;
+        .suggestion-row {
+            padding: 11px 16px;
             cursor: pointer;
             border-bottom: 1px solid #f1f5f9;
             transition: background 0.15s ease;
         }
 
-        .suggestion-item:hover,
-        .suggestion-item.active {
-            background: #eff6ff;
-        }
-
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-
-        .suggestion-icon {
-            width: 38px;
-            height: 38px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 11px;
-            color: #2563eb;
+        .suggestion-row:hover {
             background: #eff6ff;
         }
 
         /* =========================================================
-           4. KPI / STATISTIC CARDS (BERWARNA & CLICKABLE)
+           KPI STATS CARDS (CLICKABLE)
            ========================================================= */
-        .stat-card {
+        .kpi-card {
             position: relative;
-            overflow: hidden;
+            background: #ffffff;
             border-radius: 18px;
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+            border: 1px solid #e2e8f0;
+            padding: 16px;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.03);
+            overflow: hidden;
+            text-align: left;
         }
 
-        .stat-card::before {
+        .kpi-card::before {
             content: "";
             position: absolute;
-            left: 0;
             top: 0;
-            width: 100%;
+            left: 0;
+            right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
+            background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
         }
 
-        .stat-card:hover {
+        .kpi-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.09);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
             border-color: #bfdbfe;
         }
 
-        .stat-icon {
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 13px;
-            color: var(--accent-a);
-            background: var(--accent-bg);
-        }
-
-        .stat-number {
-            font-size: 26px;
-            line-height: 1;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
         /* =========================================================
-           5. SECTION & STICKY HEADERS
+           SECTIONS & FIXED TABLE LAYOUT (PERBAIKAN BUG KOLOM)
            ========================================================= */
-        .dashboard-section {
-            position: relative;
-            scroll-margin-top: 12px;
-        }
-
         .section-card {
             position: relative;
-            background: rgba(255, 255, 255, 0.97);
-            border: 1px solid rgba(148, 163, 184, 0.20);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            scroll-margin-top: 16px;
         }
 
-        /* Header section sticky */
+        /* 📌 Sticky Section Header */
         .section-header {
             position: sticky;
             top: 0;
             z-index: 30;
-            min-height: 66px;
+            min-height: 64px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 16px;
-            padding: 14px 18px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.96));
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid #dbeafe;
-            border-radius: 20px 20px 0 0;
         }
 
-        .section-title-icon {
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #dbeafe, #e0f2fe);
-            color: #2563eb;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
-        }
-
-        .section-count {
-            padding: 5px 12px;
-            border-radius: 9999px;
-            background: #eff6ff;
-            color: #2563eb;
-            border: 1px solid #dbeafe;
-            font-size: 11px;
-            font-weight: 800;
-            white-space: nowrap;
-        }
-
-        /* Table header sticky */
-        .section-scroll {
+        .section-table-wrapper {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
 
-        .section-scroll table {
-            min-width: 760px;
+        /* KUNCI PERBAIKAN: Table Fixed Layout dengan Colgroup */
+        .vessel-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: separate;
             border-spacing: 0;
+            text-align: left;
         }
 
-        .section-scroll thead {
+        /* 📌 Sticky Table Header (Menempel di bawah header section) */
+        .vessel-table thead th {
             position: sticky;
-            top: 66px;
+            top: 64px;
             z-index: 20;
-        }
-
-        .section-scroll thead th {
-            padding: 12px 16px;
-            background: linear-gradient(180deg, #f8fbff, #eff6ff);
-            color: #475569;
-            border-bottom: 1px solid #dbeafe;
+            padding: 12px 18px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
             font-size: 11px;
             font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            white-space: nowrap;
-        }
-
-        .section-scroll tbody td {
-            padding: 13px 16px;
-            border-bottom: 1px solid #f1f5f9;
             color: #475569;
-            font-size: 12px;
-            vertical-align: middle;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .section-scroll tbody tr {
+        .vessel-table tbody td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 12.5px;
+            color: #334155;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .vessel-table tbody tr {
             cursor: pointer;
             transition: background 0.15s ease;
         }
 
-        .section-scroll tbody tr:hover {
-            background: #f0f7ff;
+        .vessel-table tbody tr:nth-child(even) {
+            background-color: #fafbfd;
         }
 
-        .section-scroll tbody tr:last-child td {
+        .vessel-table tbody tr:hover {
+            background-color: #eff6ff !important;
+        }
+
+        .vessel-table tbody tr:last-child td {
             border-bottom: none;
         }
 
-        .vessel-primary {
-            color: #0f172a;
-            font-size: 12px;
-            font-weight: 800;
-        }
+        /* Lebar Kolom Baku Berdasarkan Jumlah Kolom */
+        .col-5-vessel { width: 32%; min-width: 220px; }
+        .col-5-voyage { width: 17%; min-width: 120px; }
+        .col-5-type   { width: 13%; min-width: 100px; }
+        .col-5-time1  { width: 19%; min-width: 140px; }
+        .col-5-time2  { width: 19%; min-width: 140px; }
 
-        .vessel-secondary {
-            margin-top: 2px;
-            color: #94a3b8;
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        .voyage-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 8px;
-            border-radius: 7px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            color: #334155;
-            font-size: 11px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .type-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 8px;
-            border-radius: 7px;
-            background: #f0fdfa;
-            border: 1px solid #ccfbf1;
-            color: #0f766e;
-            font-size: 10px;
-            font-weight: 800;
-            white-space: nowrap;
-        }
-
-        .datetime-value {
-            color: #334155;
-            font-size: 11px;
-            font-weight: 500;
-            white-space: nowrap;
-        }
+        .col-6-vessel { width: 28%; min-width: 200px; }
+        .col-6-voyage { width: 15%; min-width: 110px; }
+        .col-6-type   { width: 11%; min-width: 90px; }
+        .col-6-time1  { width: 15%; min-width: 130px; }
+        .col-6-time2  { width: 15%; min-width: 130px; }
+        .col-6-time3  { width: 16%; min-width: 130px; }
 
         /* =========================================================
-           6. SEARCH HIT HIGHLIGHT ANIMATION
+           SEARCH HIT HIGHLIGHT ANIMATION
            ========================================================= */
         .search-hit {
-            animation: searchHit 3.2s ease forwards;
+            animation: beaconHit 3.2s ease forwards;
         }
 
-        @keyframes searchHit {
+        @keyframes beaconHit {
             0% {
-                background: #bfdbfe;
-                box-shadow: inset 0 0 0 2px #3b82f6;
+                background-color: #bfdbfe !important;
+                box-shadow: inset 0 0 0 2px #2563eb;
             }
             35% {
-                background: #dbeafe;
+                background-color: #dbeafe !important;
                 box-shadow: inset 0 0 0 2px #60a5fa;
             }
             100% {
-                background: transparent;
+                background-color: transparent;
                 box-shadow: none;
             }
         }
 
         /* =========================================================
-           7. MODAL DETAIL WITH SECTION NAME
+           MODAL DETAIL
            ========================================================= */
-        .modal-backdrop {
-            background: rgba(15, 23, 42, 0.60);
+        .modal-overlay {
+            background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
         }
 
-        .modal-card {
-            width: min(720px, calc(100vw - 28px));
-            max-height: min(88vh, 820px);
-            overflow: hidden;
+        .modal-box {
+            width: min(720px, calc(100vw - 24px));
+            max-height: min(88vh, 800px);
             background: #ffffff;
-            border: 1px solid rgba(147, 197, 253, 0.4);
             border-radius: 24px;
-            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.22), 0 10px 30px rgba(37, 99, 235, 0.08);
-            animation: modalIn 0.20s ease-out;
+            border: 1px solid #dbeafe;
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+            animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: translateY(12px) scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .modal-header {
-            padding: 20px 24px;
-            background: linear-gradient(135deg, #eff6ff, #f0f9ff, #eef2ff);
-            border-bottom: 1px solid #dbeafe;
-        }
-
-        .modal-section-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 6px 12px;
-            border-radius: 9999px;
-            background: #dbeafe;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-        .modal-vessel-name {
-            margin-top: 10px;
-            font-size: 22px;
-            line-height: 1.25;
-            font-weight: 900;
-            color: #0f172a;
-        }
-
-        .modal-voyage {
-            margin-top: 5px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #64748b;
-        }
-
-        .modal-body {
-            padding: 20px 24px;
-            max-height: calc(88vh - 160px);
-            overflow-y: auto;
-        }
-
-        .modal-field {
+        .detail-card {
             padding: 12px 14px;
-            border-radius: 14px;
             background: #f8fafc;
             border: 1px solid #f1f5f9;
-            transition: background 0.15s ease, border-color 0.15s ease;
+            border-radius: 14px;
+            transition: border-color 0.15s ease, background 0.15s ease;
         }
-
-        .modal-field:hover {
+        .detail-card:hover {
             background: #f0f9ff;
             border-color: #dbeafe;
-        }
-
-        .modal-field-label {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: #94a3b8;
-        }
-
-        .modal-field-value {
-            margin-top: 3px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #334155;
-            word-break: break-word;
-        }
-
-        /* =========================================================
-           8. CONNECTION & STATUS PILL
-           ========================================================= */
-        .connection-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 9999px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .connection-online {
-            color: #047857;
-            background: #ecfdf5;
-            border: 1px solid #d1fae5;
-        }
-
-        .connection-loading {
-            color: #0369a1;
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-        }
-
-        .connection-offline {
-            color: #b91c1c;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-        }
-
-        @media (max-width: 768px) {
-            .section-header {
-                min-height: 60px;
-                padding: 12px 14px;
-            }
-            .section-scroll thead {
-                top: 60px;
-            }
-            .section-card {
-                border-radius: 16px;
-            }
-            .modal-card {
-                width: calc(100vw - 20px);
-                border-radius: 20px;
-            }
         }
     </style>
 </head>
@@ -678,128 +357,142 @@
 <body>
 
     <!-- =========================================================
-         MAIN HEADER (TIDAK STICKY)
+         1. MAIN HEADER (TIDAK STICKY)
          ========================================================= -->
     <header class="main-header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
             <div class="flex items-center justify-between gap-4">
+                
+                <!-- Logo & Judul -->
                 <div class="flex items-center gap-3.5 min-w-0">
-                    <div class="brand-mark">
+                    <div class="brand-icon-box shrink-0">
                         <i class="fa-solid fa-ship text-lg"></i>
                     </div>
 
                     <div class="min-w-0">
                         <div class="flex items-center gap-2.5 flex-wrap">
-                            <h1 class="text-lg sm:text-xl font-black tracking-tight text-slate-900 truncate">
+                            <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight truncate">
                                 TPKS Vessel Monitoring
                             </h1>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold shadow-xs">
-                                <span class="status-dot pulse-dot"></span>
-                                Live
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold">
+                                <span class="pulse-live"></span>
+                                Live Feed
                             </span>
                         </div>
-                        <p class="mt-0.5 text-xs text-slate-500 font-medium truncate">
-                            Pelindo Terminal Petikemas Semarang · Vessel & Berth Operations
+                        <p class="mt-0.5 text-xs text-slate-500 font-semibold truncate">
+                            Pelindo Terminal Petikemas Semarang · Integrated Marine Operations
                         </p>
                     </div>
                 </div>
 
-                <!-- Connection Pill -->
-                <div class="flex items-center gap-2">
-                    <span id="connectionPill" class="connection-pill connection-loading">
-                        <span class="status-dot bg-sky-500"></span>
+                <!-- Jam WIB & Koneksi -->
+                <div class="flex items-center gap-3">
+                    <div class="hidden md:flex flex-col text-right">
+                        <span id="liveClock" class="font-mono text-xs font-bold text-slate-700">--:--:-- WIB</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Tanjung Emas Port</span>
+                    </div>
+
+                    <span id="connectionBadge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                        <i class="fa-solid fa-arrows-rotate fa-spin text-[10px]"></i>
                         <span id="connectionText">Connecting...</span>
                     </span>
                 </div>
+
             </div>
         </div>
     </header>
 
-    <!-- =========================================================
-         MAIN CONTENT AREA
-         ========================================================= -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
 
-        <!-- SEARCH SECTION -->
-        <section class="search-section mb-5">
-            <div class="search-wrapper">
+    <!-- =========================================================
+         2. MAIN CONTAINER
+         ========================================================= -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- SEARCH & ACTION BAR -->
+        <section class="search-container mb-6">
+            <div class="search-box p-2.5">
                 <div class="flex flex-col sm:flex-row gap-2">
+                    
                     <div class="relative flex-1">
-                        <div class="search-input-wrap">
-                            <i class="fa-solid fa-magnifying-glass search-icon text-sm"></i>
-                            <input
-                                id="searchInput"
-                                class="search-input"
-                                type="text"
-                                autocomplete="off"
-                                placeholder="Search vessel name, voyage, code, type, shipping line..."
-                                aria-label="Search vessel"
-                            >
-                            <button
-                                id="clearSearchButton"
-                                class="clear-search-button"
-                                type="button"
-                                onclick="clearSearch()"
-                                aria-label="Clear search"
-                            >
-                                <i class="fa-solid fa-xmark text-sm"></i>
-                            </button>
-                        </div>
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+                        
+                        <input
+                            id="searchInput"
+                            type="text"
+                            class="search-input"
+                            autocomplete="off"
+                            placeholder="Cari nama kapal, nomor voyage, kode agen, tipe muatan..."
+                            aria-label="Cari kapal"
+                        >
+
+                        <button
+                            id="clearSearchBtn"
+                            type="button"
+                            onclick="clearSearch()"
+                            class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+                        >
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
 
                         <!-- Suggestions Dropdown -->
-                        <div id="searchSuggestions" class="search-suggestions hidden"></div>
+                        <div id="searchSuggestions" class="search-suggestions-popup hidden"></div>
                     </div>
 
-                    <!-- Search Button (Enter/Click => Scroll to Row) -->
+                    <!-- Tombol Search (Scroll ke baris data) -->
                     <button
-                        id="searchButton"
                         type="button"
-                        class="search-button"
                         onclick="performSearch()"
+                        class="h-[46px] px-6 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-md shadow-blue-500/20 active:scale-[0.98] transition inline-flex items-center justify-center gap-2 cursor-pointer shrink-0"
                     >
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <span>Search</span>
                     </button>
 
-                    <!-- Manual Refresh Button -->
+                    <!-- Tombol Manual Refresh -->
                     <button
-                        id="refreshButton"
+                        id="refreshBtn"
                         type="button"
-                        class="refresh-button"
                         onclick="loadData()"
+                        class="h-[46px] px-4 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 active:scale-[0.98] transition inline-flex items-center justify-center gap-2 cursor-pointer shrink-0"
                     >
                         <i class="fa-solid fa-rotate-right text-blue-600"></i>
-                        <span>Refresh</span>
+                        <span class="hidden sm:inline">Refresh</span>
                     </button>
+
                 </div>
             </div>
 
-            <!-- Search feedback & freshness -->
-            <div class="mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1">
-                <p id="searchStatus" class="text-xs font-semibold text-blue-600"></p>
-                <p id="freshnessText" class="text-xs font-medium text-slate-400 sm:text-right">—</p>
+            <!-- Feedback & Waktu Freshness -->
+            <div class="mt-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1">
+                <p id="searchStatus" class="text-xs font-bold text-blue-600 truncate"></p>
+                <p id="freshnessIndicator" class="text-xs font-medium text-slate-400 sm:text-right">
+                    Memuat data terkini...
+                </p>
             </div>
         </section>
 
-        <!-- KPI CARDS (BERWARNA & CLICKABLE) -->
-        <section class="statistics-wrapper mb-6">
+
+        <!-- 3. KPI CARDS (BERWARNA & CLICKABLE) -->
+        <section class="mb-7">
             <div id="statistics" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5"></div>
         </section>
 
-        <!-- DASHBOARD SECTIONS -->
-        <div id="dashboardSections" class="space-y-6"></div>
+
+        <!-- 4. DASHBOARD SECTIONS (STICKY SECTION & STICKY TABLE HEADER) -->
+        <div id="dashboardSections" class="space-y-7"></div>
+
 
         <!-- FOOTER -->
-        <footer class="mt-12 pt-6 pb-8 border-t border-slate-200/80">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
-                <div>TPKS Vessel Monitoring System · Terminal Petikemas Semarang</div>
+        <footer class="mt-14 pt-6 pb-8 border-t border-slate-200">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-semibold">
+                <div>TPKS Vessel Monitoring System · PT Pelabuhan Indonesia (Persero)</div>
                 <div class="flex items-center gap-1.5 text-slate-400">
-                    <span>Source:</span>
+                    <span>Sumber Data:</span>
                     <a
                         href="https://ibstpks.pelindo.co.id/webaccess/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1 transition-colors"
+                        class="text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1 transition"
                     >
                         <span>Pelindo TPKS Webaccess</span>
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
@@ -807,188 +500,199 @@
                 </div>
             </div>
         </footer>
+
     </main>
 
+
     <!-- =========================================================
-         VESSEL DETAIL MODAL (DENGAN NAMA SECTION)
+         5. MODAL DETAIL (DENGAN NAMA SECTION)
          ========================================================= -->
     <div
         id="vesselModal"
-        class="modal-backdrop hidden fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-4"
+        class="modal-overlay hidden fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-4"
         onclick="handleModalBackdropClick(event)"
         role="dialog"
         aria-modal="true"
     >
-        <div class="modal-card">
-            <!-- Modal Header -->
-            <div class="modal-header">
+        <div class="modal-box flex flex-col overflow-hidden">
+            
+            <!-- Header Modal -->
+            <div class="p-5 sm:p-6 bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-indigo-50/80 border-b border-blue-100">
                 <div class="flex items-start justify-between gap-4">
                     <div class="min-w-0 flex-1">
-                        <!-- Section Badge -->
-                        <div id="modalSectionBadge" class="modal-section-badge mb-2">
+                        <!-- Badge Section -->
+                        <div id="modalSectionBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black border mb-2 shadow-2xs">
                             <i class="fa-solid fa-ship"></i>
-                            <span>Vessel</span>
+                            <span id="modalSectionTitle">Section</span>
                         </div>
 
-                        <div id="modalVesselName" class="modal-vessel-name">—</div>
-                        <div id="modalVoyage" class="modal-voyage">—</div>
+                        <!-- Nama Kapal -->
+                        <h2 id="modalVesselName" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">—</h2>
+
+                        <!-- Info Sub -->
+                        <div id="modalSubInfo" class="mt-1 flex items-center gap-2 flex-wrap text-xs text-slate-600 font-semibold">
+                            <!-- Injected dynamically -->
+                        </div>
                     </div>
 
+                    <!-- Tombol Tutup -->
                     <button
                         type="button"
                         onclick="closeVesselModal()"
-                        class="w-10 h-10 rounded-2xl flex items-center justify-center bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition shrink-0 cursor-pointer"
-                        aria-label="Close modal"
+                        class="w-10 h-10 rounded-2xl flex items-center justify-center bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition shadow-2xs shrink-0 cursor-pointer"
+                        aria-label="Tutup"
                     >
                         <i class="fa-solid fa-xmark text-base"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Modal Body -->
-            <div id="modalBody" class="modal-body"></div>
+            <!-- Isi Detail -->
+            <div id="modalBody" class="p-5 sm:p-6 overflow-y-auto max-h-[60vh]"></div>
 
-            <!-- Modal Footer -->
-            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                <span>Pelindo TPKS Webaccess Schema V2/V3</span>
+            <!-- Footer Modal -->
+            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
+                <span>Pelindo TPKS Verified Schema V2/V3</span>
                 <button
                     type="button"
                     onclick="closeVesselModal()"
-                    class="px-4 py-1.5 rounded-xl text-xs font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-100 transition cursor-pointer"
+                    class="px-4 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition cursor-pointer"
                 >
-                    Close
+                    Tutup
                 </button>
             </div>
+
         </div>
     </div>
 
+
     <!-- =========================================================
-         APPLICATION LOGIC
+         SCRIPT LOGIC
          ========================================================= -->
     <script>
         const DATA_URL = "./data.json";
-        const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 menit
-        const FRESHNESS_INTERVAL = 30 * 1000;         // 30 detik
-        const NEXT_UPDATE_INTERVAL = 1000;            // 1 detik
+        const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 Menit
+        const FRESHNESS_INTERVAL = 30 * 1000;         // 30 Detik
+        const COUNTDOWN_INTERVAL = 1000;              // 1 Detik
 
+        // Konfigurasi Section & Pembagian Kolom
         const SECTION_CONFIG = [
             {
                 key: "vesselAlongside",
                 title: "Vessel Alongside",
                 icon: "fa-ship",
-                subtitle: "Vessel currently alongside the berth",
-                accentA: "#2563eb",
-                accentB: "#0891b2",
+                subtitle: "Kapal yang sedang sandar & beroperasi di dermaga",
+                accentStart: "#2563eb",
+                accentEnd: "#0891b2",
                 accentBg: "#eff6ff",
                 badgeBorder: "#bfdbfe",
                 badgeText: "#1d4ed8",
                 columns: [
-                    ["vesselName", "Vessel", "vessel"],
-                    ["voyage", "Voyage", "voyage"],
-                    ["type", "Type", "type"],
-                    ["atb", "ATB", "datetime"],
-                    ["etd", "ETD", "datetime"]
+                    { key: "vesselName", label: "Vessel Name", type: "vessel", widthClass: "col-5-vessel" },
+                    { key: "voyage", label: "Voyage", type: "voyage", widthClass: "col-5-voyage" },
+                    { key: "type", label: "Type", type: "type", widthClass: "col-5-type" },
+                    { key: "atb", label: "ATB (Berthing)", type: "datetime", widthClass: "col-5-time1" },
+                    { key: "etd", label: "ETD (Departure)", type: "datetime", widthClass: "col-5-time2" }
                 ]
             },
             {
                 key: "confirmedVessel",
                 title: "Confirmed Vessel",
                 icon: "fa-circle-check",
-                subtitle: "Confirmed berthing & vessel information",
-                accentA: "#7c3aed",
-                accentB: "#6366f1",
+                subtitle: "Kapal yang telah konfirmasi penetapan jadwal sandar",
+                accentStart: "#7c3aed",
+                accentEnd: "#6366f1",
                 accentBg: "#f5f3ff",
                 badgeBorder: "#ddd6fe",
                 badgeText: "#6d28d9",
                 columns: [
-                    ["vesselName", "Vessel", "vessel"],
-                    ["voyage", "Voyage", "voyage"],
-                    ["type", "Type", "type"],
-                    ["eta", "ETA", "datetime"],
-                    ["etb", "ETB", "datetime"],
-                    ["etd", "ETD", "datetime"]
+                    { key: "vesselName", label: "Vessel Name", type: "vessel", widthClass: "col-6-vessel" },
+                    { key: "voyage", label: "Voyage", type: "voyage", widthClass: "col-6-voyage" },
+                    { key: "type", label: "Type", type: "type", widthClass: "col-6-type" },
+                    { key: "eta", label: "ETA", type: "datetime", widthClass: "col-6-time1" },
+                    { key: "etb", label: "ETB", type: "datetime", widthClass: "col-6-time2" },
+                    { key: "etd", label: "ETD", type: "datetime", widthClass: "col-6-time3" }
                 ]
             },
             {
                 key: "openStack",
                 title: "Open Stack",
                 icon: "fa-box-open",
-                subtitle: "Vessels with export receiving / open stack window",
-                accentA: "#ea580c",
-                accentB: "#f59e0b",
+                subtitle: "Penerimaan petikemas ekspor / stack container receiving",
+                accentStart: "#ea580c",
+                accentEnd: "#f59e0b",
                 accentBg: "#fff7ed",
                 badgeBorder: "#fed7aa",
                 badgeText: "#c2410c",
                 columns: [
-                    ["vesselName", "Vessel", "vessel"],
-                    ["voyage", "Voyage", "voyage"],
-                    ["type", "Type", "type"],
-                    ["openStack", "Open Stack", "datetime"],
-                    ["closingTime", "Closing Time", "datetime"]
+                    { key: "vesselName", label: "Vessel Name", type: "vessel", widthClass: "col-5-vessel" },
+                    { key: "voyage", label: "Voyage", type: "voyage", widthClass: "col-5-voyage" },
+                    { key: "type", label: "Type", type: "type", widthClass: "col-5-type" },
+                    { key: "openStack", label: "Open Stack", type: "datetime", widthClass: "col-5-time1" },
+                    { key: "closingTime", label: "Closing Time", type: "datetime", widthClass: "col-5-time2" }
                 ]
             },
             {
                 key: "vesselSchedule",
                 title: "Vessel Schedule",
                 icon: "fa-calendar-days",
-                subtitle: "Upcoming scheduled vessels",
-                accentA: "#0284c7",
-                accentB: "#06b6d4",
+                subtitle: "Rencana jadwal kedatangan kapal petikemas mendatang",
+                accentStart: "#0284c7",
+                accentEnd: "#06b6d4",
                 accentBg: "#ecfeff",
                 badgeBorder: "#bae6fd",
                 badgeText: "#0369a1",
                 columns: [
-                    ["vesselName", "Vessel", "vessel"],
-                    ["voyage", "Voyage", "voyage"],
-                    ["type", "Type", "type"],
-                    ["eta", "ETA", "datetime"],
-                    ["etb", "ETB", "datetime"],
-                    ["etd", "ETD", "datetime"]
+                    { key: "vesselName", label: "Vessel Name", type: "vessel", widthClass: "col-6-vessel" },
+                    { key: "voyage", label: "Voyage", type: "voyage", widthClass: "col-6-voyage" },
+                    { key: "type", label: "Type", type: "type", widthClass: "col-6-type" },
+                    { key: "eta", label: "ETA", type: "datetime", widthClass: "col-6-time1" },
+                    { key: "etb", label: "ETB", type: "datetime", widthClass: "col-6-time2" },
+                    { key: "etd", label: "ETD", type: "datetime", widthClass: "col-6-time3" }
                 ]
             },
             {
                 key: "vesselHistory",
                 title: "Vessel History",
                 icon: "fa-clock-rotate-left",
-                subtitle: "Recent departure & historical records",
-                accentA: "#059669",
-                accentB: "#14b8a6",
+                subtitle: "Riwayat data kapal yang telah selesai beroperasi dan berangkat",
+                accentStart: "#059669",
+                accentEnd: "#14b8a6",
                 accentBg: "#ecfdf5",
                 badgeBorder: "#a7f3d0",
                 badgeText: "#047857",
                 columns: [
-                    ["vesselName", "Vessel", "vessel"],
-                    ["voyage", "Voyage", "voyage"],
-                    ["type", "Type", "type"],
-                    ["atb", "ATB", "datetime"],
-                    ["atd", "ATD", "datetime"]
+                    { key: "vesselName", label: "Vessel Name", type: "vessel", widthClass: "col-5-vessel" },
+                    { key: "voyage", label: "Voyage", type: "voyage", widthClass: "col-5-voyage" },
+                    { key: "type", label: "Type", type: "type", widthClass: "col-5-type" },
+                    { key: "atb", label: "ATB (Berthing)", type: "datetime", widthClass: "col-5-time1" },
+                    { key: "atd", label: "ATD (Departed)", type: "datetime", widthClass: "col-5-time2" }
                 ]
             }
         ];
 
         const MODAL_FIELDS = [
-            ["vesselName", "Vessel Name"],
-            ["vesselCode", "Vessel Code"],
-            ["voyage", "Voyage"],
-            ["type", "Type"],
-            ["shippingLine", "Shipping Line"],
-            ["eta", "ETA"],
-            ["etb", "ETB"],
-            ["atb", "ATB"],
-            ["etd", "ETD"],
-            ["atd", "ATD"],
-            ["openStack", "Open Stack"],
-            ["closingTime", "Closing Time"],
-            ["booking", "Booking Reference"],
-            ["open", "Open Time"],
-            ["actual", "Actual Volume"],
-            ["export", "Export Units"],
-            ["exportTeus", "Export TEUs"],
-            ["import", "Import Units"],
-            ["importTeus", "Import TEUs"]
+            ["vesselName", "Nama Kapal"],
+            ["vesselCode", "Kode Kapal"],
+            ["voyage", "Nomor Voyage"],
+            ["type", "Tipe Muatan"],
+            ["shippingLine", "Agen Pelayaran (Shipping Line)"],
+            ["eta", "ETA (Estimasi Kedatangan)"],
+            ["etb", "ETB (Estimasi Sandar)"],
+            ["atb", "ATB (Realisasi Sandar)"],
+            ["etd", "ETD (Estimasi Berangkat)"],
+            ["atd", "ATD (Realisasi Berangkat)"],
+            ["openStack", "Waktu Open Stack"],
+            ["closingTime", "Waktu Closing Time"],
+            ["booking", "Nomor Booking"],
+            ["open", "Waktu Buka Receiving"],
+            ["actual", "Realisasi Muat"],
+            ["export", "Box Ekspor"],
+            ["exportTeus", "Total Ekspor (TEUs)"],
+            ["import", "Box Impor"],
+            ["importTeus", "Total Impor (TEUs)"]
         ];
 
-        // Global State
         let dashboardData = {
             lastUpdated: null,
             updatedAt: null,
@@ -1002,27 +706,24 @@
         };
 
         let searchResults = [];
-        let activeSuggestionIndex = -1;
-        let autoRefreshTimer = null;
-        let freshnessTimer = null;
-        let nextUpdateTimer = null;
         let nextUpdateAt = null;
 
-        // DOM References
+        // Elemen DOM
         const searchInput = document.getElementById("searchInput");
+        const clearSearchBtn = document.getElementById("clearSearchBtn");
         const searchSuggestions = document.getElementById("searchSuggestions");
-        const clearSearchButton = document.getElementById("clearSearchButton");
         const searchStatus = document.getElementById("searchStatus");
-        const freshnessText = document.getElementById("freshnessText");
-        const dashboardSections = document.getElementById("dashboardSections");
+        const freshnessIndicator = document.getElementById("freshnessIndicator");
         const statistics = document.getElementById("statistics");
-        const refreshButton = document.getElementById("refreshButton");
+        const dashboardSections = document.getElementById("dashboardSections");
+        const refreshBtn = document.getElementById("refreshBtn");
+        const connectionBadge = document.getElementById("connectionBadge");
         const connectionText = document.getElementById("connectionText");
-        const connectionPill = document.getElementById("connectionPill");
 
-        function escapeHtml(val) {
-            if (val === null || val === undefined) return "";
-            return String(val)
+        // Helper String & Sanitasi
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return "";
+            return String(text)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
@@ -1030,130 +731,109 @@
                 .replace(/'/g, "&#039;");
         }
 
-        function normalizeSearchValue(val) {
-            if (val === null || val === undefined) return "";
-            return String(val).toLowerCase().trim();
+        function normalize(val) {
+            return val ? String(val).toLowerCase().trim() : "";
         }
 
-        // Membedakan vessel + voyage + section
+        // Kunci unik: Membedakan vessel + voyage + section
         function getVesselKey(vessel, sectionKey) {
-            const name = normalizeSearchValue(vessel?.vesselName);
-            const code = normalizeSearchValue(vessel?.vesselCode);
-            const voyage = normalizeSearchValue(vessel?.voyage);
+            const name = normalize(vessel?.vesselName);
+            const code = normalize(vessel?.vesselCode);
+            const voyage = normalize(vessel?.voyage);
             return `${sectionKey}|${name}|${code}|${voyage}`;
-        }
-
-        function getAllRecords() {
-            const results = [];
-            SECTION_CONFIG.forEach(section => {
-                const rows = Array.isArray(dashboardData[section.key]) ? dashboardData[section.key] : [];
-                rows.forEach(vessel => {
-                    results.push({
-                        vessel,
-                        section,
-                        key: getVesselKey(vessel, section.key)
-                    });
-                });
-            });
-            return results;
         }
 
         function parseDate(value) {
             if (!value) return null;
             if (value instanceof Date) return value;
             let text = String(value).trim();
-            if (!text) return null;
             if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)) {
                 text = text.replace(" ", "T");
             }
             const date = new Date(text);
-            return !Number.isNaN(date.getTime()) ? date : null;
+            return !isNaN(date.getTime()) ? date : null;
         }
 
         function formatDateTime(value) {
-            if (value === null || value === undefined || value === "") return "—";
+            if (!value) return "—";
             const date = parseDate(value);
             if (!date) return String(value);
             try {
-                return new Intl.DateTimeFormat("en-GB", {
+                return new Intl.DateTimeFormat("id-ID", {
                     day: "2-digit",
                     month: "short",
                     year: "numeric",
                     hour: "2-digit",
                     minute: "2-digit",
                     hour12: false
-                }).format(date);
+                }).format(date).replace(/\./g, ':');
             } catch {
                 return String(value);
             }
         }
 
-        function formatModalValue(key, value) {
-            if (value === null || value === undefined || value === "") return "—";
-            if (["eta", "etb", "atb", "etd", "atd", "openStack", "closingTime", "open"].includes(key)) {
-                return formatDateTime(value);
-            }
-            return String(value);
-        }
-
         function getFreshnessText(date) {
-            if (!date) return "Data time unavailable";
-            const diffSeconds = Math.floor(Math.max(0, Date.now() - date.getTime()) / 1000);
-            if (diffSeconds < 30) return "Updated just now";
-            if (diffSeconds < 60) return `Updated ${diffSeconds}s ago`;
-            const diffMinutes = Math.floor(diffSeconds / 60);
-            if (diffMinutes < 60) return `Updated ${diffMinutes} min ago`;
-            const diffHours = Math.floor(diffMinutes / 60);
-            if (diffHours < 24) return `Updated ${diffHours}h ago`;
-            const diffDays = Math.floor(diffHours / 24);
-            return `Updated ${diffDays}d ago`;
+            if (!date) return "Waktu data tidak tersedia";
+            const diffSec = Math.floor(Math.max(0, Date.now() - date.getTime()) / 1000);
+            if (diffSec < 30) return "Diperbarui baru saja";
+            if (diffSec < 60) return `Diperbarui ${diffSec} dtk lalu`;
+            const diffMin = Math.floor(diffSec / 60);
+            if (diffMin < 60) return `Diperbarui ${diffMin} mnt lalu`;
+            const diffHour = Math.floor(diffMin / 60);
+            return `Diperbarui ${diffHour} jam lalu`;
         }
 
         function setConnectionStatus(status) {
-            connectionPill.className = "connection-pill";
-            const dot = connectionPill.querySelector(".status-dot");
             if (status === "online") {
-                connectionPill.classList.add("connection-online");
-                connectionText.textContent = "Connected";
-                dot.className = "status-dot bg-emerald-500";
+                connectionBadge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+                connectionBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Connected</span>`;
             } else if (status === "offline") {
-                connectionPill.classList.add("connection-offline");
-                connectionText.textContent = "Offline";
-                dot.className = "status-dot bg-rose-500";
+                connectionBadge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200";
+                connectionBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation text-[11px]"></i><span>Offline</span>`;
             } else {
-                connectionPill.classList.add("connection-loading");
-                connectionText.textContent = "Updating...";
-                dot.className = "status-dot bg-sky-500";
+                connectionBadge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200";
+                connectionBadge.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-[10px]"></i><span>Updating...</span>`;
             }
         }
 
-        // Render KPI Cards (Clickable)
-        function updateStatistics() {
+        // Update Jam WIB Realtime
+        function startLiveClock() {
+            setInterval(() => {
+                const now = new Date();
+                const clockEl = document.getElementById("liveClock");
+                if (clockEl) {
+                    const timeStr = now.toLocaleTimeString("id-ID", { hour12: false });
+                    clockEl.textContent = `${timeStr} WIB`;
+                }
+            }, 1000);
+        }
+
+        // Render KPI Cards (Clickable ke Section)
+        function renderStatistics() {
             statistics.innerHTML = "";
-            SECTION_CONFIG.forEach(section => {
-                const data = Array.isArray(dashboardData[section.key]) ? dashboardData[section.key] : [];
+            SECTION_CONFIG.forEach(sec => {
+                const list = Array.isArray(dashboardData[sec.key]) ? dashboardData[sec.key] : [];
                 const card = document.createElement("button");
                 card.type = "button";
-                card.className = "stat-card text-left w-full p-4";
-                card.style.setProperty("--accent-a", section.accentA);
-                card.style.setProperty("--accent-b", section.accentB);
-                card.style.setProperty("--accent-bg", section.accentBg);
-                card.onclick = () => scrollToSection(section.key);
+                card.className = "kpi-card group";
+                card.style.setProperty("--accent-start", sec.accentStart);
+                card.style.setProperty("--accent-end", sec.accentEnd);
+                card.onclick = () => scrollToSection(sec.key);
 
                 card.innerHTML = `
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="stat-icon">
-                            <i class="fa-solid ${section.icon} text-sm"></i>
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="color: ${sec.accentStart}; background: ${sec.accentBg}">
+                            <i class="fa-solid ${sec.icon} text-base"></i>
                         </div>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-300"></i>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-300 group-hover:text-blue-600 transition-colors"></i>
                     </div>
-                    <div class="mt-3.5">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 truncate">
-                            ${escapeHtml(section.title)}
+                    <div class="mt-3">
+                        <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 truncate">
+                            ${escapeHtml(sec.title)}
                         </div>
                         <div class="mt-1 flex items-baseline gap-2">
-                            <div class="stat-number">${data.length}</div>
-                            <div class="text-[10px] font-medium text-slate-400">records</div>
+                            <span class="text-2xl font-black text-slate-900 font-mono tracking-tight">${list.length}</span>
+                            <span class="text-[11px] font-semibold text-slate-400">kapal</span>
                         </div>
                     </div>
                 `;
@@ -1161,170 +841,192 @@
             });
         }
 
-        function scrollToSection(sectionKey) {
-            const el = document.getElementById(`section-${sectionKey}`);
-            if (el) {
-                el.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
+        function scrollToSection(key) {
+            const el = document.getElementById(`section-${key}`);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
 
-        // Render Dashboard Sections (Sticky headers)
-        function renderAllSections() {
+        // Render Table Sections dengan Alignment Presisi
+        function renderDashboardSections() {
             dashboardSections.innerHTML = "";
-            SECTION_CONFIG.forEach(section => {
-                renderSection(section);
-            });
-        }
 
-        function renderSection(section) {
-            const data = Array.isArray(dashboardData[section.key]) ? dashboardData[section.key] : [];
-            const sectionElement = document.createElement("section");
-            sectionElement.id = `section-${section.key}`;
-            sectionElement.className = "section-card dashboard-section";
+            SECTION_CONFIG.forEach(sec => {
+                const list = Array.isArray(dashboardData[sec.key]) ? dashboardData[sec.key] : [];
+                const sectionEl = document.createElement("section");
+                sectionEl.id = `section-${sec.key}`;
+                sectionEl.className = "section-card";
 
-            // Header Section Sticky
-            const header = document.createElement("div");
-            header.className = "section-header";
-            header.innerHTML = `
-                <div class="flex items-center gap-3 min-w-0">
-                    <span class="section-title-icon" style="color: ${section.accentA}; background: ${section.accentBg}">
-                        <i class="fa-solid ${section.icon} text-sm"></i>
-                    </span>
-                    <div class="min-w-0">
-                        <h2 class="text-sm sm:text-base font-extrabold text-slate-900 truncate">${escapeHtml(section.title)}</h2>
-                        <p class="text-[11px] text-slate-400 font-medium truncate">${escapeHtml(section.subtitle)}</p>
-                    </div>
-                </div>
-                <span class="section-count" style="color: ${section.badgeText}; background: ${section.accentBg}; border-color: ${section.badgeBorder}">
-                    ${data.length} record${data.length === 1 ? "" : "s"}
-                </span>
-            `;
-
-            // Scroll wrapper with sticky thead
-            const scroll = document.createElement("div");
-            scroll.className = "section-scroll";
-            const table = document.createElement("table");
-
-            const thead = document.createElement("thead");
-            const trHead = document.createElement("tr");
-            section.columns.forEach(([key, label]) => {
-                const th = document.createElement("th");
-                th.textContent = label;
-                trHead.appendChild(th);
-            });
-            thead.appendChild(trHead);
-
-            const tbody = document.createElement("tbody");
-            if (!data.length) {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td colspan="${section.columns.length}" class="py-12 text-center text-slate-400">
-                        <div class="w-10 h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-50 text-slate-300 mb-2">
-                            <i class="fa-regular fa-folder-open text-base"></i>
+                // Sticky Header Section
+                const header = document.createElement("div");
+                header.className = "section-header";
+                header.innerHTML = `
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs" style="color: ${sec.accentStart}; background: ${sec.accentBg}">
+                            <i class="fa-solid ${sec.icon} text-base"></i>
                         </div>
-                        <div class="text-xs font-semibold text-slate-600">No records available</div>
-                    </td>
+                        <div class="min-w-0">
+                            <h2 class="text-base font-black text-slate-900 tracking-tight truncate">${escapeHtml(sec.title)}</h2>
+                            <p class="text-xs text-slate-500 font-medium truncate">${escapeHtml(sec.subtitle)}</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border shrink-0" style="color: ${sec.badgeText}; background: ${sec.accentBg}; border-color: ${sec.badgeBorder}">
+                        ${list.length} kapal
+                    </span>
                 `;
-                tbody.appendChild(tr);
-            } else {
-                data.forEach(vessel => {
-                    const row = document.createElement("tr");
-                    const uKey = getVesselKey(vessel, section.key);
-                    row.dataset.vesselKey = uKey;
-                    row.id = `row-${uKey}`;
-                    row.onclick = () => openVesselModal(vessel, section);
 
-                    section.columns.forEach(([colKey, label, type]) => {
-                        const cell = document.createElement("td");
-                        const val = vessel[colKey];
+                // Wrapper Table dengan colgroup
+                const wrapper = document.createElement("div");
+                wrapper.className = "section-table-wrapper";
 
-                        if (type === "vessel") {
-                            cell.innerHTML = `
-                                <div>
-                                    <div class="vessel-primary">${escapeHtml(vessel.vesselName || "Unknown")}</div>
-                                    ${vessel.vesselCode ? `<div class="vessel-secondary">${escapeHtml(vessel.vesselCode)}</div>` : ""}
-                                </div>
-                            `;
-                        } else if (type === "voyage") {
-                            cell.innerHTML = `<span class="voyage-badge">${escapeHtml(val || "—")}</span>`;
-                        } else if (type === "type") {
-                            cell.innerHTML = `<span class="type-badge">${escapeHtml(val || "—")}</span>`;
-                        } else if (type === "datetime") {
-                            cell.innerHTML = `<span class="datetime-value">${escapeHtml(formatDateTime(val))}</span>`;
-                        } else {
-                            cell.textContent = val !== null && val !== undefined ? String(val) : "—";
-                        }
-                        row.appendChild(cell);
-                    });
-                    tbody.appendChild(row);
+                const table = document.createElement("table");
+                table.className = "vessel-table";
+
+                // Colgroup untuk mengunci lebar kolom 100% sejajar
+                const colgroup = document.createElement("colgroup");
+                sec.columns.forEach(col => {
+                    const colEl = document.createElement("col");
+                    colEl.className = col.widthClass;
+                    colgroup.appendChild(colEl);
                 });
-            }
+                table.appendChild(colgroup);
 
-            table.appendChild(thead);
-            table.appendChild(tbody);
-            scroll.appendChild(table);
+                // Sticky thead
+                const thead = document.createElement("thead");
+                const trHead = document.createElement("tr");
+                sec.columns.forEach(col => {
+                    const th = document.createElement("th");
+                    th.className = col.widthClass;
+                    th.innerHTML = `
+                        <div class="flex items-center gap-1.5 truncate">
+                            ${col.type === "datetime" ? '<i class="fa-regular fa-clock text-[10px] text-slate-400"></i>' : ''}
+                            <span>${escapeHtml(col.label)}</span>
+                        </div>
+                    `;
+                    trHead.appendChild(th);
+                });
+                thead.appendChild(trHead);
+                table.appendChild(thead);
 
-            sectionElement.appendChild(header);
-            sectionElement.appendChild(scroll);
-            dashboardSections.appendChild(sectionElement);
+                // Tbody
+                const tbody = document.createElement("tbody");
+                if (!list.length) {
+                    const emptyTr = document.createElement("tr");
+                    emptyTr.innerHTML = `
+                        <td colspan="${sec.columns.length}" class="py-12 text-center text-slate-400">
+                            <i class="fa-regular fa-folder-open text-2xl text-slate-300 mb-2"></i>
+                            <p class="text-xs font-bold text-slate-600">Tidak ada jadwal kapal pada kategori ini</p>
+                        </td>
+                    `;
+                    tbody.appendChild(emptyTr);
+                } else {
+                    list.forEach(vessel => {
+                        const tr = document.createElement("tr");
+                        const uniqueKey = getVesselKey(vessel, sec.key);
+                        tr.id = `row-${uniqueKey}`;
+                        tr.dataset.vesselKey = uniqueKey;
+                        
+                        // Klik baris membuka modal
+                        tr.onclick = () => openVesselModal(vessel, sec);
+
+                        sec.columns.forEach(col => {
+                            const td = document.createElement("td");
+                            td.className = col.widthClass;
+                            const val = vessel[col.key];
+
+                            if (col.type === "vessel") {
+                                td.innerHTML = `
+                                    <div class="min-w-0">
+                                        <div class="font-extrabold text-slate-900 hover:text-blue-700 transition truncate">${escapeHtml(vessel.vesselName || "Unknown")}</div>
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            ${vessel.vesselCode ? `<span class="px-1.5 py-0.2 rounded bg-slate-100 text-[10px] font-bold text-slate-600">${escapeHtml(vessel.vesselCode)}</span>` : ''}
+                                            ${vessel.shippingLine ? `<span class="text-[10px] text-slate-400 truncate hidden lg:inline">· ${escapeHtml(vessel.shippingLine)}</span>` : ''}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (col.type === "voyage") {
+                                td.innerHTML = `<span class="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 font-bold text-[11px] font-mono">${escapeHtml(val || "—")}</span>`;
+                            } else if (col.type === "type") {
+                                td.innerHTML = `<span class="px-2 py-0.5 rounded-md bg-teal-50 border border-teal-200 text-teal-800 font-extrabold text-[10px] uppercase">${escapeHtml(val || "—")}</span>`;
+                            } else if (col.type === "datetime") {
+                                td.innerHTML = `<span class="font-mono text-slate-700 font-semibold text-[11px] whitespace-nowrap">${escapeHtml(formatDateTime(val))}</span>`;
+                            } else {
+                                td.textContent = val ? String(val) : "—";
+                            }
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                }
+                table.appendChild(tbody);
+
+                wrapper.appendChild(table);
+                sectionEl.appendChild(header);
+                sectionEl.appendChild(wrapper);
+                dashboardSections.appendChild(sectionEl);
+            });
         }
 
-        // Search Algorithm
-        function findSearchResults(query) {
-            const normalized = normalizeSearchValue(query);
-            if (!normalized) return [];
+        // Pencarian: Koleksi seluruh data
+        function getAllVesselRecords() {
+            const records = [];
+            SECTION_CONFIG.forEach(sec => {
+                const list = Array.isArray(dashboardData[sec.key]) ? dashboardData[sec.key] : [];
+                list.forEach(vessel => {
+                    records.push({
+                        vessel,
+                        section: sec,
+                        key: getVesselKey(vessel, sec.key)
+                    });
+                });
+            });
+            return records;
+        }
 
-            const records = getAllRecords();
-            const terms = normalized.split(/\s+/).filter(Boolean);
-            const scored = [];
+        function searchVessels(query) {
+            const q = normalize(query);
+            if (!q) return [];
 
-            records.forEach(result => {
-                const { vessel, section } = result;
-                const searchable = [
+            const terms = q.split(/\s+/).filter(Boolean);
+            const all = getAllVesselRecords();
+            const results = [];
+
+            all.forEach(item => {
+                const { vessel, section } = item;
+                const corpus = [
                     vessel.vesselName, vessel.vesselCode, vessel.voyage,
-                    vessel.type, vessel.shippingLine, vessel.booking,
-                    section.title, section.subtitle
-                ].filter(Boolean).map(normalizeSearchValue).join(" ");
+                    vessel.type, vessel.shippingLine, section.title
+                ].map(normalize).join(" ");
 
-                if (!terms.every(t => searchable.includes(t))) return;
-
-                let score = 0;
-                const name = normalizeSearchValue(vessel.vesselName);
-                const code = normalizeSearchValue(vessel.vesselCode);
-                const voyage = normalizeSearchValue(vessel.voyage);
-
-                if (name === normalized) score += 1000;
-                if (code === normalized) score += 900;
-                if (voyage === normalized) score += 850;
-                if (name.startsWith(normalized)) score += 500;
-                if (code.startsWith(normalized)) score += 400;
-
-                scored.push({ ...result, score });
+                if (terms.every(t => corpus.includes(t))) {
+                    let score = 0;
+                    if (normalize(vessel.vesselName) === q) score += 1000;
+                    if (normalize(vessel.voyage) === q) score += 800;
+                    if (normalize(vessel.vesselName).startsWith(q)) score += 500;
+                    results.push({ ...item, score });
+                }
             });
 
-            scored.sort((a, b) => b.score - a.score);
-            return scored;
+            results.sort((a, b) => b.score - a.score);
+            return results;
         }
 
-        // Suggestions Dropdown
-        function updateSearchSuggestions() {
+        // Live Suggestions
+        function updateSuggestions() {
             const q = searchInput.value.trim();
-            clearSearchButton.style.display = q ? "flex" : "none";
+            clearSearchBtn.style.display = q ? "flex" : "none";
 
             if (!q) {
-                hideSearchSuggestions();
+                searchSuggestions.classList.add("hidden");
                 searchStatus.textContent = "";
                 return;
             }
 
-            searchResults = findSearchResults(q).slice(0, 10);
-            activeSuggestionIndex = -1;
-
+            searchResults = searchVessels(q).slice(0, 10);
             if (!searchResults.length) {
                 searchSuggestions.innerHTML = `
-                    <div class="px-4 py-6 text-center text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-lg text-slate-300"></i>
-                        <div class="mt-2 text-xs font-semibold text-slate-600">No matching vessels found</div>
+                    <div class="p-6 text-center text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-lg text-slate-300 mb-1"></i>
+                        <p class="text-xs font-bold text-slate-600">Kapal tidak ditemukan</p>
                     </div>
                 `;
                 searchSuggestions.classList.remove("hidden");
@@ -1332,123 +1034,117 @@
             }
 
             searchSuggestions.innerHTML = `
-                <div class="px-3.5 py-2 bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex justify-between">
-                    <span>Suggestions (${searchResults.length})</span>
-                    <span class="text-blue-600 normal-case">Click to open details modal</span>
+                <div class="px-4 py-2 bg-slate-50 border-b border-slate-100 flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    <span>Hasil Saran (${searchResults.length})</span>
+                    <span class="text-blue-600 font-semibold normal-case">Klik untuk buka detail</span>
                 </div>
             `;
 
-            searchResults.forEach((item, index) => {
-                const div = document.createElement("div");
-                div.className = "suggestion-item";
-                div.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="suggestion-icon" style="color: ${item.section.accentA}; background: ${item.section.accentBg}">
+            searchResults.forEach(item => {
+                const row = document.createElement("div");
+                row.className = "suggestion-row flex items-center justify-between gap-3";
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="color: ${item.section.accentStart}; background: ${item.section.accentBg}">
                             <i class="fa-solid ${item.section.icon} text-xs"></i>
                         </div>
-                        <div class="min-w-0 flex-1">
-                            <div class="text-xs font-bold text-slate-900 truncate">${escapeHtml(item.vessel.vesselName || "Unknown")}</div>
-                            <div class="text-[10px] text-slate-500 truncate mt-0.5">
+                        <div class="min-w-0">
+                            <div class="text-xs font-extrabold text-slate-900 truncate">${escapeHtml(item.vessel.vesselName || "Unknown")}</div>
+                            <div class="text-[11px] text-slate-500 font-medium truncate font-mono">
                                 ${escapeHtml(item.vessel.vesselCode || "—")} · Voyage ${escapeHtml(item.vessel.voyage || "—")}
                             </div>
                         </div>
-                        <div class="text-right shrink-0">
-                            <span class="inline-block text-[9px] font-bold px-2 py-0.5 rounded-full border truncate max-w-[120px]"
-                                  style="color: ${item.section.badgeText}; background: ${item.section.accentBg}; border-color: ${item.section.badgeBorder}">
-                                ${escapeHtml(item.section.title)}
-                            </span>
-                        </div>
                     </div>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border shrink-0" style="color: ${item.section.badgeText}; background: ${item.section.accentBg}; border-color: ${item.section.badgeBorder}">
+                        ${escapeHtml(item.section.title)}
+                    </span>
                 `;
 
                 // KLIK SUGGESTION -> BUKA MODAL DETAIL, BUKAN SCROLL
-                div.onclick = () => {
-                    hideSearchSuggestions();
+                row.onclick = () => {
+                    searchSuggestions.classList.add("hidden");
                     openVesselModal(item.vessel, item.section);
                 };
 
-                searchSuggestions.appendChild(div);
+                searchSuggestions.appendChild(row);
             });
 
             searchSuggestions.classList.remove("hidden");
-        }
-
-        function hideSearchSuggestions() {
-            searchSuggestions.classList.add("hidden");
-            activeSuggestionIndex = -1;
         }
 
         // ENTER / TOMBOL SEARCH -> SCROLL KE BARIS DATA
         function performSearch() {
             const q = searchInput.value.trim();
             if (!q) {
-                searchStatus.textContent = "Please enter a vessel, voyage, or code to search.";
+                searchStatus.textContent = "Masukkan nama kapal atau nomor voyage.";
                 return;
             }
 
-            const results = findSearchResults(q);
+            const results = searchVessels(q);
+            searchSuggestions.classList.add("hidden");
+
             if (!results.length) {
-                searchStatus.textContent = `No records found for "${q}".`;
-                hideSearchSuggestions();
+                searchStatus.textContent = `Tidak ditemukan kapal untuk "${q}".`;
                 return;
             }
 
-            hideSearchSuggestions();
             const top = results[0];
-            jumpToSearchResult(top);
-            searchStatus.textContent = `Found ${results.length} result(s). Scrolled to ${top.vessel.vesselName} (${top.section.title}).`;
-        }
+            const targetRow = document.getElementById(`row-${top.key}`) || document.querySelector(`[data-vessel-key="${CSS.escape(top.key)}"]`);
 
-        function jumpToSearchResult(result) {
-            const key = getVesselKey(result.vessel, result.section.key);
-            const row = document.querySelector(`[data-vessel-key="${CSS.escape(key)}"]`) || document.getElementById(`row-${key}`);
+            if (targetRow) {
+                targetRow.scrollIntoView({ behavior: "smooth", block: "center" });
+                targetRow.classList.remove("search-hit");
+                void targetRow.offsetWidth; // Trigger reflow
+                targetRow.classList.add("search-hit");
+                setTimeout(() => targetRow.classList.remove("search-hit"), 3200);
 
-            if (row) {
-                row.scrollIntoView({ behavior: "smooth", block: "center" });
-                row.classList.remove("search-hit");
-                void row.offsetWidth; // trigger reflow
-                row.classList.add("search-hit");
-                setTimeout(() => row.classList.remove("search-hit"), 3200);
+                searchStatus.textContent = `Menemukan ${results.length} data. Mengarah ke ${top.vessel.vesselName} (${top.section.title}).`;
             } else {
-                scrollToSection(result.section.key);
+                scrollToSection(top.section.key);
             }
         }
 
         function clearSearch() {
             searchInput.value = "";
+            clearSearchBtn.style.display = "none";
+            searchSuggestions.classList.add("hidden");
             searchStatus.textContent = "";
-            clearSearchButton.style.display = "none";
-            hideSearchSuggestions();
             searchInput.focus();
         }
 
-        // Modal Functionality
+        // Modal Function
         function openVesselModal(vessel, section) {
             const modal = document.getElementById("vesselModal");
             const badge = document.getElementById("modalSectionBadge");
+            const secTitle = document.getElementById("modalSectionTitle");
             const name = document.getElementById("modalVesselName");
-            const voyage = document.getElementById("modalVoyage");
+            const sub = document.getElementById("modalSubInfo");
             const body = document.getElementById("modalBody");
 
-            // Modal menampilkan nama section
+            // Tampilkan badge nama section
             badge.style.color = section.badgeText;
             badge.style.background = section.accentBg;
             badge.style.borderColor = section.badgeBorder;
-            badge.innerHTML = `<i class="fa-solid ${section.icon}"></i><span>${escapeHtml(section.title)}</span>`;
+            secTitle.textContent = section.title;
 
             name.textContent = vessel.vesselName || "Unknown Vessel";
-            voyage.textContent = `${vessel.vesselCode || ""} · Voyage: ${vessel.voyage || "—"} · Type: ${vessel.type || "—"}`;
+            sub.innerHTML = `
+                ${vessel.vesselCode ? `<span class="px-2 py-0.5 rounded bg-white border text-slate-700">Kode: ${escapeHtml(vessel.vesselCode)}</span>` : ''}
+                ${vessel.voyage ? `<span class="px-2 py-0.5 rounded bg-white border text-blue-700 font-bold font-mono">Voyage: ${escapeHtml(vessel.voyage)}</span>` : ''}
+                ${vessel.type ? `<span class="px-2 py-0.5 rounded bg-teal-50 border border-teal-200 text-teal-800 uppercase font-bold text-[10px]">${escapeHtml(vessel.type)}</span>` : ''}
+            `;
 
-            const fields = MODAL_FIELDS.filter(([k]) => vessel[k] !== undefined && vessel[k] !== null && vessel[k] !== "");
-            if (!fields.length) {
-                body.innerHTML = `<div class="py-8 text-center text-xs text-slate-400">No additional details recorded.</div>`;
+            // Field data
+            const available = MODAL_FIELDS.filter(([k]) => vessel[k] !== undefined && vessel[k] !== null && vessel[k] !== "");
+            if (!available.length) {
+                body.innerHTML = `<div class="py-10 text-center text-xs text-slate-400">Tidak ada detail tambahan untuk kapal ini.</div>`;
             } else {
                 body.innerHTML = `
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        ${fields.map(([k, lbl]) => `
-                            <div class="modal-field">
-                                <div class="modal-field-label">${escapeHtml(lbl)}</div>
-                                <div class="modal-field-value">${escapeHtml(formatModalValue(k, vessel[k]))}</div>
+                        ${available.map(([k, label]) => `
+                            <div class="detail-card">
+                                <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">${escapeHtml(label)}</div>
+                                <div class="mt-1 text-xs sm:text-sm font-bold text-slate-800 font-mono break-words">${escapeHtml(formatDateTime(vessel[k]))}</div>
                             </div>
                         `).join("")}
                     </div>
@@ -1468,10 +1164,10 @@
             if (e.target.id === "vesselModal") closeVesselModal();
         }
 
-        // Load Data & Auto-Refresh
+        // Fetch Data & Refresh Logic
         async function loadData() {
             setConnectionStatus("loading");
-            refreshButton.classList.add("loading");
+            refreshBtn.querySelector("i").classList.add("fa-spin");
 
             try {
                 const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: "no-store" });
@@ -1490,52 +1186,50 @@
                     counts: data.counts || {}
                 };
 
-                updateStatistics();
-                renderAllSections();
+                renderStatistics();
+                renderDashboardSections();
                 updateFreshness();
                 setConnectionStatus("online");
                 nextUpdateAt = Date.now() + AUTO_REFRESH_INTERVAL;
             } catch (err) {
-                console.warn("Fetch failed, relying on current/cached data:", err);
+                console.warn("Koneksi data lokal aktif:", err);
                 setConnectionStatus("offline");
             } finally {
-                refreshButton.classList.remove("loading");
+                refreshBtn.querySelector("i").classList.remove("fa-spin");
             }
         }
 
         function updateFreshness() {
             const raw = dashboardData.lastUpdated || dashboardData.updatedAt;
-            const date = parseDate(raw);
-            freshnessText.textContent = getFreshnessText(date);
+            freshnessIndicator.textContent = getFreshnessText(parseDate(raw));
         }
 
-        function updateNextCountdown() {
+        function updateCountdown() {
             if (!nextUpdateAt) return;
-            const remSec = Math.max(0, Math.ceil((nextUpdateAt - Date.now()) / 1000));
-            const m = Math.floor(remSec / 60);
-            const s = remSec % 60;
-            const text = remSec <= 0 ? "Refreshing now..." : `Next refresh in ${m}m ${String(s).padStart(2, "0")}s`;
+            const diff = Math.max(0, Math.ceil((nextUpdateAt - Date.now()) / 1000));
+            const m = Math.floor(diff / 60);
+            const s = diff % 60;
+            const text = diff <= 0 ? "Memperbarui..." : `Refresh otomatis dalam ${m}m ${String(s).padStart(2, "0")}s`;
 
-            const current = freshnessText.textContent.split(" · ")[0];
-            if (current && current !== "—") {
-                freshnessText.textContent = `${current} · ${text}`;
-            }
+            const raw = dashboardData.lastUpdated || dashboardData.updatedAt;
+            const baseText = getFreshnessText(parseDate(raw));
+            freshnessIndicator.textContent = `${baseText} · ${text}`;
         }
 
         // Event Listeners
-        searchInput.addEventListener("input", updateSearchSuggestions);
+        searchInput.addEventListener("input", updateSuggestions);
         searchInput.addEventListener("keydown", e => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 performSearch();
             } else if (e.key === "Escape") {
-                hideSearchSuggestions();
+                searchSuggestions.classList.add("hidden");
             }
         });
 
         document.addEventListener("click", e => {
-            if (!document.querySelector(".search-wrapper")?.contains(e.target)) {
-                hideSearchSuggestions();
+            if (!document.querySelector(".search-box")?.contains(e.target)) {
+                searchSuggestions.classList.add("hidden");
             }
         });
 
@@ -1543,17 +1237,16 @@
             if (e.key === "Escape") closeVesselModal();
         });
 
-        // Initialize
-        async function initialize() {
-            nextUpdateAt = Date.now() + AUTO_REFRESH_INTERVAL;
-            await loadData();
-
-            autoRefreshTimer = setInterval(loadData, AUTO_REFRESH_INTERVAL);
-            freshnessTimer = setInterval(updateFreshness, FRESHNESS_INTERVAL);
-            nextUpdateTimer = setInterval(updateNextCountdown, NEXT_UPDATE_INTERVAL);
+        // Start App
+        function init() {
+            startLiveClock();
+            loadData();
+            setInterval(loadData, AUTO_REFRESH_INTERVAL);
+            setInterval(updateFreshness, FRESHNESS_INTERVAL);
+            setInterval(updateCountdown, COUNTDOWN_INTERVAL);
         }
 
-        initialize();
+        init();
     </script>
 </body>
 </html>
