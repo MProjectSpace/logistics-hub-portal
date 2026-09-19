@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TPKS Vessel Monitoring</title>
 
-    <!-- Tailwind -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
+    <!-- Font Awesome Icons -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -20,9 +16,8 @@
 
     <style>
         /* =========================================================
-           BASE
+           BASE STYLES & THEME (Blue / Cyan / Indigo Palette)
            ========================================================= */
-
         * {
             box-sizing: border-box;
         }
@@ -34,38 +29,16 @@
         body {
             margin: 0;
             min-height: 100vh;
-
             background:
-                radial-gradient(
-                    circle at 0% 0%,
-                    rgba(59, 130, 246, 0.09),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 100% 8%,
-                    rgba(14, 165, 233, 0.08),
-                    transparent 28%
-                ),
-                radial-gradient(
-                    circle at 50% 100%,
-                    rgba(99, 102, 241, 0.05),
-                    transparent 30%
-                ),
+                radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.08), transparent 32%),
+                radial-gradient(circle at 100% 10%, rgba(6, 182, 212, 0.08), transparent 30%),
+                radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.05), transparent 35%),
                 #f1f5f9;
-
             color: #0f172a;
-            font-family:
-                Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        button,
-        input {
+        button, input {
             font-family: inherit;
         }
 
@@ -79,8 +52,8 @@
         }
 
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
         }
 
         ::-webkit-scrollbar-track {
@@ -89,7 +62,7 @@
 
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
-            border-radius: 999px;
+            border-radius: 9999px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
@@ -97,48 +70,27 @@
         }
 
         /* =========================================================
-           MAIN HEADER
-           NOT STICKY
+           1. MAIN HEADER (TIDAK STICKY)
            ========================================================= */
-
         .main-header {
             position: relative;
             z-index: 10;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(255, 255, 255, 0.97),
-                    rgba(239, 246, 255, 0.94)
-                );
-
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.92));
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border-bottom: 1px solid rgba(148, 163, 184, 0.22);
         }
 
         .brand-mark {
-            width: 42px;
-            height: 42px;
-
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-
-            border-radius: 13px;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #2563eb,
-                    #0891b2
-                );
-
-            box-shadow:
-                0 8px 20px rgba(37, 99, 235, 0.20);
+            border-radius: 14px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #2563eb, #0891b2);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.22);
         }
 
         .status-dot {
@@ -156,25 +108,19 @@
 
         @keyframes pulseLive {
             0% {
-                box-shadow:
-                    0 0 0 0 rgba(16, 185, 129, 0.45);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
             }
-
             70% {
-                box-shadow:
-                    0 0 0 7px rgba(16, 185, 129, 0);
+                box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
             }
-
             100% {
-                box-shadow:
-                    0 0 0 0 rgba(16, 185, 129, 0);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
             }
         }
 
         /* =========================================================
-           SEARCH
+           2. SEARCH & CONTROLS
            ========================================================= */
-
         .search-section {
             position: relative;
             z-index: 40;
@@ -183,23 +129,11 @@
         .search-wrapper {
             position: relative;
             z-index: 50;
-
-            padding: 14px;
-
+            padding: 12px;
             border-radius: 20px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(255, 255, 255, 0.98),
-                    rgba(239, 246, 255, 0.94)
-                );
-
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.94));
             border: 1px solid rgba(148, 163, 184, 0.20);
-
-            box-shadow:
-                0 10px 30px rgba(15, 23, 42, 0.06),
-                0 2px 8px rgba(59, 130, 246, 0.04);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(59, 130, 246, 0.04);
         }
 
         .search-input-wrap {
@@ -209,22 +143,15 @@
         .search-input {
             width: 100%;
             height: 44px;
-
             padding-left: 42px;
             padding-right: 42px;
-
             border-radius: 13px;
-
-            background: white;
+            background: #ffffff;
             border: 1px solid #dbeafe;
-
             color: #0f172a;
-
+            font-size: 13px;
             outline: none;
-
-            transition:
-                border-color 0.2s ease,
-                box-shadow 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .search-input::placeholder {
@@ -232,11 +159,8 @@
         }
 
         .search-input:focus {
-            border-color: #60a5fa;
-
-            box-shadow:
-                0 0 0 4px rgba(59, 130, 246, 0.10),
-                0 5px 15px rgba(59, 130, 246, 0.06);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), 0 5px 15px rgba(59, 130, 246, 0.06);
         }
 
         .search-icon {
@@ -244,32 +168,25 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-
             color: #64748b;
-
             pointer-events: none;
         }
 
         .clear-search-button {
             position: absolute;
-
             right: 10px;
             top: 50%;
-
             transform: translateY(-50%);
-
             width: 28px;
             height: 28px;
-
             border-radius: 9px;
-
             display: none;
             align-items: center;
             justify-content: center;
-
             color: #64748b;
             background: #f8fafc;
-
+            border: none;
+            cursor: pointer;
             transition: all 0.15s ease;
         }
 
@@ -280,64 +197,41 @@
 
         .search-button {
             height: 44px;
-
-            padding: 0 18px;
-
+            padding: 0 20px;
             border-radius: 13px;
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-
-            color: white;
-            background:
-                linear-gradient(
-                    135deg,
-                    #2563eb,
-                    #0284c7
-                );
-
+            color: #ffffff;
+            background: linear-gradient(135deg, #2563eb, #0284c7);
             border: 1px solid rgba(37, 99, 235, 0.3);
-
-            box-shadow:
-                0 7px 16px rgba(37, 99, 235, 0.18);
-
-            font-size: 12px;
+            box-shadow: 0 7px 16px rgba(37, 99, 235, 0.20);
+            font-size: 13px;
             font-weight: 700;
-
-            transition:
-                transform 0.15s ease,
-                box-shadow 0.15s ease;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
         .search-button:hover {
             transform: translateY(-1px);
-
-            box-shadow:
-                0 10px 22px rgba(37, 99, 235, 0.23);
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
         }
 
         .refresh-button {
             height: 44px;
-
-            padding: 0 16px;
-
+            padding: 0 18px;
             border-radius: 13px;
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-
             color: #334155;
-            background: white;
-
+            background: #ffffff;
             border: 1px solid #dbeafe;
-
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
-
+            cursor: pointer;
             transition: all 0.15s ease;
         }
 
@@ -358,47 +252,29 @@
         }
 
         /* =========================================================
-           SEARCH SUGGESTIONS
+           3. SEARCH SUGGESTIONS
            ========================================================= */
-
         .search-suggestions {
             position: absolute;
-
             top: calc(100% + 8px);
             left: 0;
             right: 0;
-
             z-index: 100;
-
-            max-height: 390px;
+            max-height: 380px;
             overflow-y: auto;
-
-            border-radius: 17px;
-
+            border-radius: 18px;
             background: rgba(255, 255, 255, 0.98);
-
             border: 1px solid #dbeafe;
-
-            box-shadow:
-                0 20px 45px rgba(15, 23, 42, 0.14),
-                0 5px 15px rgba(59, 130, 246, 0.08);
-
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14), 0 5px 15px rgba(59, 130, 246, 0.08);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-
-            overflow-x: hidden;
         }
 
         .suggestion-item {
             padding: 12px 14px;
-
             cursor: pointer;
-
             border-bottom: 1px solid #f1f5f9;
-
-            transition:
-                background 0.15s ease,
-                transform 0.15s ease;
+            transition: background 0.15s ease;
         }
 
         .suggestion-item:hover,
@@ -413,206 +289,125 @@
         .suggestion-icon {
             width: 38px;
             height: 38px;
-
             flex-shrink: 0;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             border-radius: 11px;
-
             color: #2563eb;
             background: #eff6ff;
         }
 
         /* =========================================================
-           KPI / STATISTICS
+           4. KPI / STATISTIC CARDS (BERWARNA & CLICKABLE)
            ========================================================= */
-
-        .statistics-wrapper {
-            position: relative;
-            z-index: 10;
-        }
-
         .stat-card {
             position: relative;
-
             overflow: hidden;
-
             border-radius: 18px;
-
             background: rgba(255, 255, 255, 0.96);
-
             border: 1px solid rgba(148, 163, 184, 0.18);
-
-            box-shadow:
-                0 8px 25px rgba(15, 23, 42, 0.05);
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         }
 
         .stat-card::before {
             content: "";
-
             position: absolute;
-
             left: 0;
             top: 0;
-
             width: 100%;
             height: 4px;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    var(--accent-a),
-                    var(--accent-b)
-                );
+            background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
         }
 
         .stat-card:hover {
             transform: translateY(-3px);
-
-            box-shadow:
-                0 14px 35px rgba(15, 23, 42, 0.09);
-
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.09);
             border-color: #bfdbfe;
         }
 
         .stat-icon {
             width: 42px;
             height: 42px;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             border-radius: 13px;
-
             color: var(--accent-a);
             background: var(--accent-bg);
         }
 
         .stat-number {
-            font-size: 24px;
+            font-size: 26px;
             line-height: 1;
-
             font-weight: 800;
-
             color: #0f172a;
         }
 
         /* =========================================================
-           SECTION
+           5. SECTION & STICKY HEADERS
            ========================================================= */
-
         .dashboard-section {
             position: relative;
-
-            scroll-margin-top: 8px;
-
-            overflow: visible;
+            scroll-margin-top: 12px;
         }
 
         .section-card {
             position: relative;
-
             background: rgba(255, 255, 255, 0.97);
-
             border: 1px solid rgba(148, 163, 184, 0.20);
-
             border-radius: 20px;
-
-            overflow: visible;
-
-            box-shadow:
-                0 10px 30px rgba(15, 23, 42, 0.05);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
         }
 
+        /* Header section sticky */
         .section-header {
             position: sticky;
-
             top: 0;
-
             z-index: 30;
-
-            min-height: 68px;
-
+            min-height: 66px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             gap: 16px;
-
             padding: 14px 18px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(255, 255, 255, 0.98),
-                    rgba(239, 246, 255, 0.96)
-                );
-
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.96));
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-
             border-bottom: 1px solid #dbeafe;
-
             border-radius: 20px 20px 0 0;
         }
 
         .section-title-icon {
-            width: 38px;
-            height: 38px;
-
+            width: 40px;
+            height: 40px;
             flex-shrink: 0;
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
-
             border-radius: 12px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #dbeafe,
-                    #e0f2fe
-                );
-
+            background: linear-gradient(135deg, #dbeafe, #e0f2fe);
             color: #2563eb;
-
-            box-shadow:
-                0 5px 12px rgba(37, 99, 235, 0.10);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
         }
 
         .section-count {
-            padding: 5px 10px;
-
-            border-radius: 999px;
-
+            padding: 5px 12px;
+            border-radius: 9999px;
             background: #eff6ff;
-
             color: #2563eb;
-
             border: 1px solid #dbeafe;
-
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
-
             white-space: nowrap;
         }
 
+        /* Table header sticky */
         .section-scroll {
             width: 100%;
-
             overflow-x: auto;
-            overflow-y: visible;
-
             -webkit-overflow-scrolling: touch;
         }
 
@@ -625,57 +420,37 @@
 
         .section-scroll thead {
             position: sticky;
-
-            top: 68px;
-
+            top: 66px;
             z-index: 20;
         }
 
         .section-scroll thead th {
-            padding: 11px 14px;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #f8fbff,
-                    #eff6ff
-                );
-
+            padding: 12px 16px;
+            background: linear-gradient(180deg, #f8fbff, #eff6ff);
             color: #475569;
-
             border-bottom: 1px solid #dbeafe;
-
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
-
             text-transform: uppercase;
             letter-spacing: 0.04em;
-
             white-space: nowrap;
         }
 
         .section-scroll tbody td {
-            padding: 12px 14px;
-
+            padding: 13px 16px;
             border-bottom: 1px solid #f1f5f9;
-
             color: #475569;
-
-            font-size: 11px;
-
+            font-size: 12px;
             vertical-align: middle;
         }
 
         .section-scroll tbody tr {
             cursor: pointer;
-
-            transition:
-                background 0.15s ease,
-                transform 0.15s ease;
+            transition: background 0.15s ease;
         }
 
         .section-scroll tbody tr:hover {
-            background: #f8fbff;
+            background: #f0f7ff;
         }
 
         .section-scroll tbody tr:last-child td {
@@ -684,152 +459,89 @@
 
         .vessel-primary {
             color: #0f172a;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 800;
         }
 
         .vessel-secondary {
             margin-top: 2px;
-
             color: #94a3b8;
-
-            font-size: 9px;
+            font-size: 10px;
+            font-weight: 600;
         }
 
         .voyage-badge {
             display: inline-flex;
             align-items: center;
-
-            padding: 4px 7px;
-
+            padding: 4px 8px;
             border-radius: 7px;
-
             background: #f8fafc;
-
             border: 1px solid #e2e8f0;
-
-            color: #475569;
-
-            font-size: 10px;
+            color: #334155;
+            font-size: 11px;
             font-weight: 700;
-
             white-space: nowrap;
         }
 
         .type-badge {
             display: inline-flex;
             align-items: center;
-
-            padding: 4px 7px;
-
+            padding: 4px 8px;
             border-radius: 7px;
-
             background: #f0fdfa;
-
             border: 1px solid #ccfbf1;
-
             color: #0f766e;
-
-            font-size: 9px;
-            font-weight: 700;
-
+            font-size: 10px;
+            font-weight: 800;
             white-space: nowrap;
         }
 
         .datetime-value {
             color: #334155;
-            font-size: 10px;
+            font-size: 11px;
+            font-weight: 500;
             white-space: nowrap;
         }
 
         /* =========================================================
-           EMPTY STATE
+           6. SEARCH HIT HIGHLIGHT ANIMATION
            ========================================================= */
-
-        .empty-state {
-            padding: 38px 20px;
-
-            text-align: center;
-
-            color: #94a3b8;
-        }
-
-        .empty-icon {
-            width: 46px;
-            height: 46px;
-
-            margin: 0 auto 10px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 14px;
-
-            background: #f8fafc;
-
-            color: #94a3b8;
-        }
-
-        /* =========================================================
-           SEARCH HIT
-           ========================================================= */
-
         .search-hit {
-            animation: searchHit 3s ease;
+            animation: searchHit 3.2s ease forwards;
         }
 
         @keyframes searchHit {
             0% {
                 background: #bfdbfe;
-
-                box-shadow:
-                    inset 0 0 0 2px #60a5fa;
+                box-shadow: inset 0 0 0 2px #3b82f6;
             }
-
             35% {
                 background: #dbeafe;
-
-                box-shadow:
-                    inset 0 0 0 2px #93c5fd;
+                box-shadow: inset 0 0 0 2px #60a5fa;
             }
-
             100% {
                 background: transparent;
-
                 box-shadow: none;
             }
         }
 
         /* =========================================================
-           MODAL
+           7. MODAL DETAIL WITH SECTION NAME
            ========================================================= */
-
         .modal-backdrop {
-            background:
-                rgba(15, 23, 42, 0.50);
-
-            backdrop-filter: blur(7px);
-            -webkit-backdrop-filter: blur(7px);
+            background: rgba(15, 23, 42, 0.60);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .modal-card {
-            width: min(700px, calc(100vw - 28px));
-
-            max-height: min(88vh, 800px);
-
+            width: min(720px, calc(100vw - 28px));
+            max-height: min(88vh, 820px);
             overflow: hidden;
-
             background: #ffffff;
-
-            border: 1px solid rgba(147, 197, 253, 0.35);
-
+            border: 1px solid rgba(147, 197, 253, 0.4);
             border-radius: 24px;
-
-            box-shadow:
-                0 30px 80px rgba(15, 23, 42, 0.22),
-                0 10px 30px rgba(37, 99, 235, 0.08);
-
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.22), 0 10px 30px rgba(37, 99, 235, 0.08);
             animation: modalIn 0.20s ease-out;
         }
 
@@ -838,7 +550,6 @@
                 opacity: 0;
                 transform: translateY(12px) scale(0.98);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
@@ -846,16 +557,8 @@
         }
 
         .modal-header {
-            padding: 20px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #eff6ff,
-                    #f0f9ff,
-                    #eef2ff
-                );
-
+            padding: 20px 24px;
+            background: linear-gradient(135deg, #eff6ff, #f0f9ff, #eef2ff);
             border-bottom: 1px solid #dbeafe;
         }
 
@@ -863,60 +566,42 @@
             display: inline-flex;
             align-items: center;
             gap: 7px;
-
-            padding: 6px 10px;
-
-            border-radius: 999px;
-
+            padding: 6px 12px;
+            border-radius: 9999px;
             background: #dbeafe;
-
             color: #1d4ed8;
-
             border: 1px solid #bfdbfe;
-
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
         }
 
         .modal-vessel-name {
             margin-top: 10px;
-
-            font-size: 21px;
-            line-height: 1.2;
-
-            font-weight: 800;
-
+            font-size: 22px;
+            line-height: 1.25;
+            font-weight: 900;
             color: #0f172a;
         }
 
         .modal-voyage {
             margin-top: 5px;
-
-            font-size: 11px;
-
+            font-size: 12px;
+            font-weight: 600;
             color: #64748b;
         }
 
         .modal-body {
-            padding: 18px;
-
-            max-height: calc(88vh - 150px);
-
+            padding: 20px 24px;
+            max-height: calc(88vh - 160px);
             overflow-y: auto;
         }
 
         .modal-field {
-            padding: 11px 12px;
-
-            border-radius: 12px;
-
+            padding: 12px 14px;
+            border-radius: 14px;
             background: #f8fafc;
-
             border: 1px solid #f1f5f9;
-
-            transition:
-                background 0.15s ease,
-                border-color 0.15s ease;
+            transition: background 0.15s ease, border-color 0.15s ease;
         }
 
         .modal-field:hover {
@@ -925,43 +610,31 @@
         }
 
         .modal-field-label {
-            font-size: 9px;
-
+            font-size: 10px;
             font-weight: 800;
-
             text-transform: uppercase;
-
             letter-spacing: 0.04em;
-
             color: #94a3b8;
         }
 
         .modal-field-value {
             margin-top: 3px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
+            font-size: 13px;
+            font-weight: 700;
             color: #334155;
-
             word-break: break-word;
         }
 
         /* =========================================================
-           CONNECTION STATUS
+           8. CONNECTION & STATUS PILL
            ========================================================= */
-
         .connection-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-
-            padding: 5px 9px;
-
-            border-radius: 999px;
-
-            font-size: 9px;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 11px;
             font-weight: 700;
         }
 
@@ -983,73 +656,20 @@
             border: 1px solid #fecaca;
         }
 
-        /* =========================================================
-           FOOTER
-           ========================================================= */
-
-        .footer-link {
-            color: #2563eb;
-            transition: color 0.15s ease;
-        }
-
-        .footer-link:hover {
-            color: #1d4ed8;
-        }
-
-        /* =========================================================
-           MOBILE
-           ========================================================= */
-
         @media (max-width: 768px) {
-
             .section-header {
-                min-height: 62px;
+                min-height: 60px;
                 padding: 12px 14px;
             }
-
             .section-scroll thead {
-                top: 62px;
+                top: 60px;
             }
-
             .section-card {
                 border-radius: 16px;
             }
-
             .modal-card {
                 width: calc(100vw - 20px);
                 border-radius: 20px;
-            }
-
-            .modal-header {
-                padding: 16px;
-            }
-
-            .modal-body {
-                padding: 14px;
-            }
-
-            .search-wrapper {
-                padding: 10px;
-            }
-        }
-
-        @media (max-width: 640px) {
-
-            .stat-number {
-                font-size: 21px;
-            }
-
-            .section-title-icon {
-                width: 34px;
-                height: 34px;
-            }
-
-            .section-header {
-                gap: 10px;
-            }
-
-            .section-count {
-                padding: 4px 8px;
             }
         }
     </style>
@@ -1058,131 +678,63 @@
 <body>
 
     <!-- =========================================================
-         MAIN HEADER
+         MAIN HEADER (TIDAK STICKY)
          ========================================================= -->
-
     <header class="main-header">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            <div class="py-5 flex items-center justify-between gap-4">
-
-                <div class="flex items-center gap-3 min-w-0">
-
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5 min-w-0">
                     <div class="brand-mark">
-                        <i class="fa-solid fa-ship"></i>
+                        <i class="fa-solid fa-ship text-lg"></i>
                     </div>
 
                     <div class="min-w-0">
-
-                        <div class="flex items-center gap-3 flex-wrap">
-
-                            <h1
-                                class="
-                                    text-lg
-                                    sm:text-xl
-                                    font-extrabold
-                                    tracking-tight
-                                    text-slate-900
-                                "
-                            >
+                        <div class="flex items-center gap-2.5 flex-wrap">
+                            <h1 class="text-lg sm:text-xl font-black tracking-tight text-slate-900 truncate">
                                 TPKS Vessel Monitoring
                             </h1>
-
-                            <span
-                                class="
-                                    inline-flex
-                                    items-center
-                                    gap-1.5
-                                    px-2
-                                    py-1
-                                    rounded-full
-                                    bg-emerald-50
-                                    border
-                                    border-emerald-100
-                                    text-emerald-700
-                                    text-[10px]
-                                    font-bold
-                                "
-                            >
-                                <span
-                                    id="liveDot"
-                                    class="status-dot pulse-dot"
-                                ></span>
-
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold shadow-xs">
+                                <span class="status-dot pulse-dot"></span>
                                 Live
                             </span>
-
                         </div>
-
-                        <p class="mt-1 text-xs text-slate-500">
-                            Pelindo Terminal Petikemas Semarang
+                        <p class="mt-0.5 text-xs text-slate-500 font-medium truncate">
+                            Pelindo Terminal Petikemas Semarang · Vessel & Berth Operations
                         </p>
-
                     </div>
-
                 </div>
 
-                <div class="hidden sm:flex items-center gap-2">
-
-                    <span
-                        id="connectionPill"
-                        class="
-                            connection-pill
-                            connection-loading
-                        "
-                    >
+                <!-- Connection Pill -->
+                <div class="flex items-center gap-2">
+                    <span id="connectionPill" class="connection-pill connection-loading">
                         <span class="status-dot bg-sky-500"></span>
-                        <span id="connectionText">
-                            Connecting...
-                        </span>
+                        <span id="connectionText">Connecting...</span>
                     </span>
-
                 </div>
-
             </div>
-
         </div>
     </header>
 
-
     <!-- =========================================================
-         MAIN
+         MAIN CONTENT AREA
          ========================================================= -->
-
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
 
-        <!-- =====================================================
-             SEARCH
-             ===================================================== -->
-
+        <!-- SEARCH SECTION -->
         <section class="search-section mb-5">
-
             <div class="search-wrapper">
-
                 <div class="flex flex-col sm:flex-row gap-2">
-
                     <div class="relative flex-1">
-
                         <div class="search-input-wrap">
-
-                            <i
-                                class="
-                                    fa-solid
-                                    fa-magnifying-glass
-                                    search-icon
-                                    text-sm
-                                "
-                            ></i>
-
+                            <i class="fa-solid fa-magnifying-glass search-icon text-sm"></i>
                             <input
                                 id="searchInput"
                                 class="search-input"
                                 type="text"
                                 autocomplete="off"
-                                placeholder="Search vessel, voyage, code, type..."
+                                placeholder="Search vessel name, voyage, code, type, shipping line..."
                                 aria-label="Search vessel"
                             >
-
                             <button
                                 id="clearSearchButton"
                                 class="clear-search-button"
@@ -1192,17 +744,13 @@
                             >
                                 <i class="fa-solid fa-xmark text-sm"></i>
                             </button>
-
                         </div>
 
-                        <!-- Suggestions -->
-                        <div
-                            id="searchSuggestions"
-                            class="search-suggestions hidden"
-                        ></div>
-
+                        <!-- Suggestions Dropdown -->
+                        <div id="searchSuggestions" class="search-suggestions hidden"></div>
                     </div>
 
+                    <!-- Search Button (Enter/Click => Scroll to Row) -->
                     <button
                         id="searchButton"
                         type="button"
@@ -1213,252 +761,127 @@
                         <span>Search</span>
                     </button>
 
+                    <!-- Manual Refresh Button -->
                     <button
                         id="refreshButton"
                         type="button"
                         class="refresh-button"
                         onclick="loadData()"
                     >
-                        <i class="fa-solid fa-rotate-right"></i>
+                        <i class="fa-solid fa-rotate-right text-blue-600"></i>
                         <span>Refresh</span>
                     </button>
-
                 </div>
-
             </div>
 
-            <div class="mt-2 flex items-center justify-between gap-3">
-
-                <p
-                    id="searchStatus"
-                    class="text-[10px] text-slate-400"
-                ></p>
-
-                <p
-                    id="freshnessText"
-                    class="
-                        text-[10px]
-                        text-slate-400
-                        text-right
-                    "
-                >
-                    —
-                </p>
-
+            <!-- Search feedback & freshness -->
+            <div class="mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1">
+                <p id="searchStatus" class="text-xs font-semibold text-blue-600"></p>
+                <p id="freshnessText" class="text-xs font-medium text-slate-400 sm:text-right">—</p>
             </div>
-
         </section>
 
-
-        <!-- =====================================================
-             STATISTICS
-             ===================================================== -->
-
+        <!-- KPI CARDS (BERWARNA & CLICKABLE) -->
         <section class="statistics-wrapper mb-6">
-
-            <div
-                id="statistics"
-                class="
-                    grid
-                    grid-cols-2
-                    sm:grid-cols-3
-                    lg:grid-cols-5
-                    gap-3
-                "
-            ></div>
-
+            <div id="statistics" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5"></div>
         </section>
 
+        <!-- DASHBOARD SECTIONS -->
+        <div id="dashboardSections" class="space-y-6"></div>
 
-        <!-- =====================================================
-             DASHBOARD SECTIONS
-             ===================================================== -->
-
-        <div
-            id="dashboardSections"
-            class="space-y-5"
-        ></div>
-
-
-        <!-- =====================================================
-             FOOTER
-             ===================================================== -->
-
-        <footer class="pt-7 pb-3">
-
-            <div
-                class="
-                    flex
-                    flex-col
-                    sm:flex-row
-                    items-center
-                    justify-between
-                    gap-2
-                    text-[10px]
-                    text-slate-400
-                "
-            >
-
-                <div>
-                    TPKS Vessel Monitoring
-                </div>
-
-                <div class="text-center sm:text-right">
-
-                    <span>
-                        Source:
-                    </span>
-
+        <!-- FOOTER -->
+        <footer class="mt-12 pt-6 pb-8 border-t border-slate-200/80">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
+                <div>TPKS Vessel Monitoring System · Terminal Petikemas Semarang</div>
+                <div class="flex items-center gap-1.5 text-slate-400">
+                    <span>Source:</span>
                     <a
                         href="https://ibstpks.pelindo.co.id/webaccess/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="footer-link"
+                        class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1 transition-colors"
                     >
-                        Pelindo TPKS Webaccess
+                        <span>Pelindo TPKS Webaccess</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                     </a>
-
                 </div>
-
             </div>
-
         </footer>
-
     </main>
 
-
     <!-- =========================================================
-         VESSEL MODAL
+         VESSEL DETAIL MODAL (DENGAN NAMA SECTION)
          ========================================================= -->
-
     <div
         id="vesselModal"
-        class="
-            modal-backdrop
-            hidden
-            fixed
-            inset-0
-            z-[200]
-            flex
-            items-center
-            justify-center
-            p-3
-        "
+        class="modal-backdrop hidden fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-4"
         onclick="handleModalBackdropClick(event)"
+        role="dialog"
+        aria-modal="true"
     >
-
         <div class="modal-card">
-
             <!-- Modal Header -->
-
             <div class="modal-header">
-
                 <div class="flex items-start justify-between gap-4">
-
-                    <div class="min-w-0">
-
-                        <div
-                            id="modalSectionBadge"
-                            class="modal-section-badge"
-                        >
+                    <div class="min-w-0 flex-1">
+                        <!-- Section Badge -->
+                        <div id="modalSectionBadge" class="modal-section-badge mb-2">
                             <i class="fa-solid fa-ship"></i>
                             <span>Vessel</span>
                         </div>
 
-                        <div
-                            id="modalVesselName"
-                            class="modal-vessel-name"
-                        >
-                            —
-                        </div>
-
-                        <div
-                            id="modalVoyage"
-                            class="modal-voyage"
-                        >
-                            —
-                        </div>
-
+                        <div id="modalVesselName" class="modal-vessel-name">—</div>
+                        <div id="modalVoyage" class="modal-voyage">—</div>
                     </div>
 
                     <button
                         type="button"
                         onclick="closeVesselModal()"
-                        class="
-                            w-9
-                            h-9
-                            shrink-0
-                            rounded-xl
-                            flex
-                            items-center
-                            justify-center
-                            bg-white
-                            border
-                            border-slate-200
-                            text-slate-500
-                            hover:text-slate-900
-                            hover:bg-slate-50
-                            transition
-                        "
+                        class="w-10 h-10 rounded-2xl flex items-center justify-center bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition shrink-0 cursor-pointer"
                         aria-label="Close modal"
                     >
-                        <i class="fa-solid fa-xmark"></i>
+                        <i class="fa-solid fa-xmark text-base"></i>
                     </button>
-
                 </div>
-
             </div>
 
-
             <!-- Modal Body -->
+            <div id="modalBody" class="modal-body"></div>
 
-            <div
-                id="modalBody"
-                class="modal-body"
-            ></div>
-
+            <!-- Modal Footer -->
+            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                <span>Pelindo TPKS Webaccess Schema V2/V3</span>
+                <button
+                    type="button"
+                    onclick="closeVesselModal()"
+                    class="px-4 py-1.5 rounded-xl text-xs font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-100 transition cursor-pointer"
+                >
+                    Close
+                </button>
+            </div>
         </div>
-
     </div>
 
-
+    <!-- =========================================================
+         APPLICATION LOGIC
+         ========================================================= -->
     <script>
-        /* =========================================================
-           CONFIGURATION
-           ========================================================= */
-
         const DATA_URL = "./data.json";
-
-        const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000;
-
-        const FRESHNESS_INTERVAL = 30 * 1000;
-
-        const NEXT_UPDATE_INTERVAL = 1000;
-
-        const SCRAPER_STATUS_INTERVAL = 2 * 60 * 1000;
-
-
-        /* =========================================================
-           SECTION CONFIG
-           ========================================================= */
+        const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 menit
+        const FRESHNESS_INTERVAL = 30 * 1000;         // 30 detik
+        const NEXT_UPDATE_INTERVAL = 1000;            // 1 detik
 
         const SECTION_CONFIG = [
-
             {
                 key: "vesselAlongside",
-
                 title: "Vessel Alongside",
-
                 icon: "fa-ship",
-
-                subtitle: "Vessel currently alongside",
-
+                subtitle: "Vessel currently alongside the berth",
                 accentA: "#2563eb",
-
                 accentB: "#0891b2",
-
                 accentBg: "#eff6ff",
-
+                badgeBorder: "#bfdbfe",
+                badgeText: "#1d4ed8",
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1467,22 +890,16 @@
                     ["etd", "ETD", "datetime"]
                 ]
             },
-
             {
                 key: "confirmedVessel",
-
                 title: "Confirmed Vessel",
-
                 icon: "fa-circle-check",
-
-                subtitle: "Confirmed vessel information",
-
+                subtitle: "Confirmed berthing & vessel information",
                 accentA: "#7c3aed",
-
                 accentB: "#6366f1",
-
                 accentBg: "#f5f3ff",
-
+                badgeBorder: "#ddd6fe",
+                badgeText: "#6d28d9",
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1492,23 +909,16 @@
                     ["etd", "ETD", "datetime"]
                 ]
             },
-
             {
                 key: "openStack",
-
                 title: "Open Stack",
-
                 icon: "fa-box-open",
-
-                subtitle:
-                    "Vessel with export receiving / open stack information",
-
+                subtitle: "Vessels with export receiving / open stack window",
                 accentA: "#ea580c",
-
                 accentB: "#f59e0b",
-
                 accentBg: "#fff7ed",
-
+                badgeBorder: "#fed7aa",
+                badgeText: "#c2410c",
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1517,22 +927,16 @@
                     ["closingTime", "Closing Time", "datetime"]
                 ]
             },
-
             {
                 key: "vesselSchedule",
-
                 title: "Vessel Schedule",
-
                 icon: "fa-calendar-days",
-
-                subtitle: "Scheduled vessel information",
-
+                subtitle: "Upcoming scheduled vessels",
                 accentA: "#0284c7",
-
                 accentB: "#06b6d4",
-
                 accentBg: "#ecfeff",
-
+                badgeBorder: "#bae6fd",
+                badgeText: "#0369a1",
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1542,22 +946,16 @@
                     ["etd", "ETD", "datetime"]
                 ]
             },
-
             {
                 key: "vesselHistory",
-
                 title: "Vessel History",
-
                 icon: "fa-clock-rotate-left",
-
-                subtitle: "Vessel historical records",
-
+                subtitle: "Recent departure & historical records",
                 accentA: "#059669",
-
                 accentB: "#14b8a6",
-
                 accentBg: "#ecfdf5",
-
+                badgeBorder: "#a7f3d0",
+                badgeText: "#047857",
                 columns: [
                     ["vesselName", "Vessel", "vessel"],
                     ["voyage", "Voyage", "voyage"],
@@ -1566,145 +964,65 @@
                     ["atd", "ATD", "datetime"]
                 ]
             }
-
         ];
-
-
-        /* =========================================================
-           MODAL FIELDS
-           ========================================================= */
 
         const MODAL_FIELDS = [
-
             ["vesselName", "Vessel Name"],
-
             ["vesselCode", "Vessel Code"],
-
             ["voyage", "Voyage"],
-
             ["type", "Type"],
-
+            ["shippingLine", "Shipping Line"],
             ["eta", "ETA"],
-
             ["etb", "ETB"],
-
             ["atb", "ATB"],
-
             ["etd", "ETD"],
-
             ["atd", "ATD"],
-
             ["openStack", "Open Stack"],
-
             ["closingTime", "Closing Time"],
-
-            ["booking", "Booking"],
-
-            ["open", "Open"],
-
-            ["actual", "Actual"],
-
-            ["export", "Export"],
-
+            ["booking", "Booking Reference"],
+            ["open", "Open Time"],
+            ["actual", "Actual Volume"],
+            ["export", "Export Units"],
             ["exportTeus", "Export TEUs"],
-
-            ["import", "Import"],
-
+            ["import", "Import Units"],
             ["importTeus", "Import TEUs"]
-
         ];
 
-
-        /* =========================================================
-           STATE
-           ========================================================= */
-
+        // Global State
         let dashboardData = {
-
             lastUpdated: null,
-
             updatedAt: null,
-
-            source: "",
-
+            source: "Pelindo TPKS Webaccess",
             vesselAlongside: [],
-
             confirmedVessel: [],
-
             openStack: [],
-
             vesselSchedule: [],
-
             vesselHistory: [],
-
             counts: {}
-
         };
 
         let searchResults = [];
-
         let activeSuggestionIndex = -1;
-
         let autoRefreshTimer = null;
-
         let freshnessTimer = null;
-
         let nextUpdateTimer = null;
-
-        let scraperStatusTimer = null;
-
         let nextUpdateAt = null;
 
+        // DOM References
+        const searchInput = document.getElementById("searchInput");
+        const searchSuggestions = document.getElementById("searchSuggestions");
+        const clearSearchButton = document.getElementById("clearSearchButton");
+        const searchStatus = document.getElementById("searchStatus");
+        const freshnessText = document.getElementById("freshnessText");
+        const dashboardSections = document.getElementById("dashboardSections");
+        const statistics = document.getElementById("statistics");
+        const refreshButton = document.getElementById("refreshButton");
+        const connectionText = document.getElementById("connectionText");
+        const connectionPill = document.getElementById("connectionPill");
 
-        /* =========================================================
-           DOM
-           ========================================================= */
-
-        const searchInput =
-            document.getElementById("searchInput");
-
-        const searchSuggestions =
-            document.getElementById("searchSuggestions");
-
-        const clearSearchButton =
-            document.getElementById("clearSearchButton");
-
-        const searchStatus =
-            document.getElementById("searchStatus");
-
-        const freshnessText =
-            document.getElementById("freshnessText");
-
-        const dashboardSections =
-            document.getElementById("dashboardSections");
-
-        const statistics =
-            document.getElementById("statistics");
-
-        const refreshButton =
-            document.getElementById("refreshButton");
-
-        const connectionText =
-            document.getElementById("connectionText");
-
-        const connectionPill =
-            document.getElementById("connectionPill");
-
-
-        /* =========================================================
-           HELPERS
-           ========================================================= */
-
-        function escapeHtml(value) {
-
-            if (
-                value === null ||
-                value === undefined
-            ) {
-                return "";
-            }
-
-            return String(value)
+        function escapeHtml(val) {
+            if (val === null || val === undefined) return "";
+            return String(val)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
@@ -1712,2418 +1030,530 @@
                 .replace(/'/g, "&#039;");
         }
 
-
-        function normalizeSearchValue(value) {
-
-            if (
-                value === null ||
-                value === undefined
-            ) {
-                return "";
-            }
-
-            return String(value)
-                .toLowerCase()
-                .trim();
+        function normalizeSearchValue(val) {
+            if (val === null || val === undefined) return "";
+            return String(val).toLowerCase().trim();
         }
 
-
+        // Membedakan vessel + voyage + section
         function getVesselKey(vessel, sectionKey) {
-
-            const name =
-                normalizeSearchValue(
-                    vessel?.vesselName
-                );
-
-            const code =
-                normalizeSearchValue(
-                    vessel?.vesselCode
-                );
-
-            const voyage =
-                normalizeSearchValue(
-                    vessel?.voyage
-                );
-
-            return [
-                sectionKey,
-                name,
-                code,
-                voyage
-            ].join("|");
+            const name = normalizeSearchValue(vessel?.vesselName);
+            const code = normalizeSearchValue(vessel?.vesselCode);
+            const voyage = normalizeSearchValue(vessel?.voyage);
+            return `${sectionKey}|${name}|${code}|${voyage}`;
         }
-
 
         function getAllRecords() {
-
             const results = [];
-
             SECTION_CONFIG.forEach(section => {
-
-                const rows =
-                    Array.isArray(
-                        dashboardData[section.key]
-                    )
-                        ? dashboardData[section.key]
-                        : [];
-
+                const rows = Array.isArray(dashboardData[section.key]) ? dashboardData[section.key] : [];
                 rows.forEach(vessel => {
-
                     results.push({
-
                         vessel,
-
                         section,
-
-                        key: getVesselKey(
-                            vessel,
-                            section.key
-                        )
-
+                        key: getVesselKey(vessel, section.key)
                     });
-
                 });
-
             });
-
             return results;
         }
 
-
-        /* =========================================================
-           DATE / TIME
-           ========================================================= */
-
         function parseDate(value) {
-
-            if (!value) {
-                return null;
+            if (!value) return null;
+            if (value instanceof Date) return value;
+            let text = String(value).trim();
+            if (!text) return null;
+            if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)) {
+                text = text.replace(" ", "T");
             }
-
-            if (value instanceof Date) {
-                return value;
-            }
-
-            const text = String(value).trim();
-
-            if (!text) {
-                return null;
-            }
-
-            let normalized = text;
-
-            if (
-                /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)
-            ) {
-                normalized =
-                    text.replace(" ", "T");
-            }
-
-            const date = new Date(normalized);
-
-            if (!Number.isNaN(date.getTime())) {
-                return date;
-            }
-
-            return null;
+            const date = new Date(text);
+            return !Number.isNaN(date.getTime()) ? date : null;
         }
-
 
         function formatDateTime(value) {
-
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-                return "—";
-            }
-
+            if (value === null || value === undefined || value === "") return "—";
             const date = parseDate(value);
-
-            if (!date) {
-                return String(value);
-            }
-
+            if (!date) return String(value);
             try {
-
-                return new Intl.DateTimeFormat(
-                    "en-GB",
-                    {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false
-                    }
-                ).format(date);
-
+                return new Intl.DateTimeFormat("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false
+                }).format(date);
             } catch {
-
                 return String(value);
-
             }
         }
 
-
         function formatModalValue(key, value) {
-
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-                return "—";
-            }
-
-            if (
-                [
-                    "eta",
-                    "etb",
-                    "atb",
-                    "etd",
-                    "atd",
-                    "openStack",
-                    "closingTime"
-                ].includes(key)
-            ) {
+            if (value === null || value === undefined || value === "") return "—";
+            if (["eta", "etb", "atb", "etd", "atd", "openStack", "closingTime", "open"].includes(key)) {
                 return formatDateTime(value);
             }
-
             return String(value);
         }
 
-
         function getFreshnessText(date) {
-
-            if (!date) {
-                return "Data time unavailable";
-            }
-
-            const now = Date.now();
-
-            const diffMs =
-                Math.max(
-                    0,
-                    now - date.getTime()
-                );
-
-            const diffSeconds =
-                Math.floor(diffMs / 1000);
-
-            if (diffSeconds < 30) {
-                return "Updated just now";
-            }
-
-            if (diffSeconds < 60) {
-                return `Updated ${diffSeconds}s ago`;
-            }
-
-            const diffMinutes =
-                Math.floor(diffSeconds / 60);
-
-            if (diffMinutes < 60) {
-                return `Updated ${diffMinutes} min ago`;
-            }
-
-            const diffHours =
-                Math.floor(diffMinutes / 60);
-
-            if (diffHours < 24) {
-                return `Updated ${diffHours}h ago`;
-            }
-
-            const diffDays =
-                Math.floor(diffHours / 24);
-
+            if (!date) return "Data time unavailable";
+            const diffSeconds = Math.floor(Math.max(0, Date.now() - date.getTime()) / 1000);
+            if (diffSeconds < 30) return "Updated just now";
+            if (diffSeconds < 60) return `Updated ${diffSeconds}s ago`;
+            const diffMinutes = Math.floor(diffSeconds / 60);
+            if (diffMinutes < 60) return `Updated ${diffMinutes} min ago`;
+            const diffHours = Math.floor(diffMinutes / 60);
+            if (diffHours < 24) return `Updated ${diffHours}h ago`;
+            const diffDays = Math.floor(diffHours / 24);
             return `Updated ${diffDays}d ago`;
         }
 
-
-        /* =========================================================
-           CONNECTION STATUS
-           ========================================================= */
-
         function setConnectionStatus(status) {
-
-            connectionPill.classList.remove(
-                "connection-online",
-                "connection-loading",
-                "connection-offline"
-            );
-
-            const dot =
-                connectionPill.querySelector(
-                    ".status-dot"
-                );
-
+            connectionPill.className = "connection-pill";
+            const dot = connectionPill.querySelector(".status-dot");
             if (status === "online") {
-
-                connectionPill.classList.add(
-                    "connection-online"
-                );
-
-                connectionText.textContent =
-                    "Connected";
-
-                dot.className =
-                    "status-dot bg-emerald-500";
-
+                connectionPill.classList.add("connection-online");
+                connectionText.textContent = "Connected";
+                dot.className = "status-dot bg-emerald-500";
             } else if (status === "offline") {
-
-                connectionPill.classList.add(
-                    "connection-offline"
-                );
-
-                connectionText.textContent =
-                    "Offline";
-
-                dot.className =
-                    "status-dot bg-red-500";
-
+                connectionPill.classList.add("connection-offline");
+                connectionText.textContent = "Offline";
+                dot.className = "status-dot bg-rose-500";
             } else {
-
-                connectionPill.classList.add(
-                    "connection-loading"
-                );
-
-                connectionText.textContent =
-                    "Updating...";
-
-                dot.className =
-                    "status-dot bg-sky-500";
+                connectionPill.classList.add("connection-loading");
+                connectionText.textContent = "Updating...";
+                dot.className = "status-dot bg-sky-500";
             }
         }
 
-
-        /* =========================================================
-           STATISTICS
-           ========================================================= */
-
+        // Render KPI Cards (Clickable)
         function updateStatistics() {
-
             statistics.innerHTML = "";
-
             SECTION_CONFIG.forEach(section => {
-
-                const data =
-                    Array.isArray(
-                        dashboardData[section.key]
-                    )
-                        ? dashboardData[section.key]
-                        : [];
-
-                const card =
-                    document.createElement("button");
-
+                const data = Array.isArray(dashboardData[section.key]) ? dashboardData[section.key] : [];
+                const card = document.createElement("button");
                 card.type = "button";
-
-                card.className =
-                    "stat-card text-left w-full p-4";
-
-                card.style.setProperty(
-                    "--accent-a",
-                    section.accentA
-                );
-
-                card.style.setProperty(
-                    "--accent-b",
-                    section.accentB
-                );
-
-                card.style.setProperty(
-                    "--accent-bg",
-                    section.accentBg
-                );
-
-                card.addEventListener(
-                    "click",
-                    () => scrollToSection(section.key)
-                );
+                card.className = "stat-card text-left w-full p-4";
+                card.style.setProperty("--accent-a", section.accentA);
+                card.style.setProperty("--accent-b", section.accentB);
+                card.style.setProperty("--accent-bg", section.accentBg);
+                card.onclick = () => scrollToSection(section.key);
 
                 card.innerHTML = `
-
                     <div class="flex items-center justify-between gap-3">
-
                         <div class="stat-icon">
                             <i class="fa-solid ${section.icon} text-sm"></i>
                         </div>
-
-                        <i
-                            class="
-                                fa-solid
-                                fa-arrow-up-right-from-square
-                                text-[9px]
-                                text-slate-300
-                            "
-                        ></i>
-
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-300"></i>
                     </div>
-
-                    <div class="mt-4">
-
-                        <div
-                            class="
-                                text-[10px]
-                                font-bold
-                                uppercase
-                                tracking-wide
-                                text-slate-400
-                            "
-                        >
+                    <div class="mt-3.5">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 truncate">
                             ${escapeHtml(section.title)}
                         </div>
-
-                        <div class="mt-1 flex items-end gap-2">
-
-                            <div class="stat-number">
-                                ${data.length}
-                            </div>
-
-                            <div
-                                class="
-                                    pb-0.5
-                                    text-[9px]
-                                    text-slate-400
-                                "
-                            >
-                                records
-                            </div>
-
+                        <div class="mt-1 flex items-baseline gap-2">
+                            <div class="stat-number">${data.length}</div>
+                            <div class="text-[10px] font-medium text-slate-400">records</div>
                         </div>
-
                     </div>
-
                 `;
-
                 statistics.appendChild(card);
-
             });
         }
-
 
         function scrollToSection(sectionKey) {
-
-            const section =
-                document.getElementById(
-                    `section-${sectionKey}`
-                );
-
-            if (!section) {
-                return;
+            const el = document.getElementById(`section-${sectionKey}`);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "start" });
             }
-
-            section.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
         }
 
-
-        /* =========================================================
-           SECTION RENDERING
-           ========================================================= */
-
+        // Render Dashboard Sections (Sticky headers)
         function renderAllSections() {
-
             dashboardSections.innerHTML = "";
-
             SECTION_CONFIG.forEach(section => {
-
                 renderSection(section);
-
             });
-
         }
-
 
         function renderSection(section) {
+            const data = Array.isArray(dashboardData[section.key]) ? dashboardData[section.key] : [];
+            const sectionElement = document.createElement("section");
+            sectionElement.id = `section-${section.key}`;
+            sectionElement.className = "section-card dashboard-section";
 
-            const data =
-                Array.isArray(
-                    dashboardData[section.key]
-                )
-                    ? dashboardData[section.key]
-                    : [];
-
-            const sectionElement =
-                document.createElement("section");
-
-            sectionElement.id =
-                `section-${section.key}`;
-
-            sectionElement.className =
-                "section-card dashboard-section";
-
-
-            /* ---------------------------------------------
-               Header
-               --------------------------------------------- */
-
-            const header =
-                document.createElement("div");
-
-            header.className =
-                "section-header";
-
-
-            const titleWrapper =
-                document.createElement("div");
-
-            titleWrapper.className =
-                "flex items-center gap-3 min-w-0";
-
-
-            const icon =
-                document.createElement("span");
-
-            icon.className =
-                "section-title-icon";
-
-            icon.innerHTML = `
-                <i class="fa-solid ${section.icon} text-xs"></i>
+            // Header Section Sticky
+            const header = document.createElement("div");
+            header.className = "section-header";
+            header.innerHTML = `
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="section-title-icon" style="color: ${section.accentA}; background: ${section.accentBg}">
+                        <i class="fa-solid ${section.icon} text-sm"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <h2 class="text-sm sm:text-base font-extrabold text-slate-900 truncate">${escapeHtml(section.title)}</h2>
+                        <p class="text-[11px] text-slate-400 font-medium truncate">${escapeHtml(section.subtitle)}</p>
+                    </div>
+                </div>
+                <span class="section-count" style="color: ${section.badgeText}; background: ${section.accentBg}; border-color: ${section.badgeBorder}">
+                    ${data.length} record${data.length === 1 ? "" : "s"}
+                </span>
             `;
 
+            // Scroll wrapper with sticky thead
+            const scroll = document.createElement("div");
+            scroll.className = "section-scroll";
+            const table = document.createElement("table");
 
-            const titleContent =
-                document.createElement("div");
+            const thead = document.createElement("thead");
+            const trHead = document.createElement("tr");
+            section.columns.forEach(([key, label]) => {
+                const th = document.createElement("th");
+                th.textContent = label;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
 
-            titleContent.className =
-                "min-w-0";
-
-
-            const title =
-                document.createElement("div");
-
-            title.className =
-                "flex items-center gap-2";
-
-
-            const heading =
-                document.createElement("h2");
-
-            heading.className =
-                "text-sm font-extrabold text-slate-900 truncate";
-
-            heading.textContent =
-                section.title;
-
-
-            title.appendChild(heading);
-
-
-            const subtitle =
-                document.createElement("p");
-
-            subtitle.className =
-                "mt-0.5 text-[10px] text-slate-400 truncate";
-
-            subtitle.textContent =
-                section.subtitle;
-
-
-            titleContent.appendChild(title);
-
-            titleContent.appendChild(subtitle);
-
-
-            titleWrapper.appendChild(icon);
-
-            titleWrapper.appendChild(titleContent);
-
-
-            const count =
-                document.createElement("span");
-
-            count.className =
-                "section-count";
-
-            count.textContent =
-                `${data.length} record${data.length === 1 ? "" : "s"}`;
-
-
-            header.appendChild(titleWrapper);
-
-            header.appendChild(count);
-
-
-            /* ---------------------------------------------
-               Scroll wrapper
-               --------------------------------------------- */
-
-            const scroll =
-                document.createElement("div");
-
-            scroll.className =
-                "section-scroll";
-
-
-            const table =
-                document.createElement("table");
-
-
-            /* ---------------------------------------------
-               Table Header
-               --------------------------------------------- */
-
-            const thead =
-                document.createElement("thead");
-
-            const headerRow =
-                document.createElement("tr");
-
-            section.columns.forEach(
-                ([key, label]) => {
-
-                    const th =
-                        document.createElement("th");
-
-                    th.textContent =
-                        label;
-
-                    if (key === "vesselName") {
-                        th.className = "text-left";
-                    } else {
-                        th.className = "text-left";
-                    }
-
-                    headerRow.appendChild(th);
-
-                }
-            );
-
-            thead.appendChild(headerRow);
-
-
-            /* ---------------------------------------------
-               Table Body
-               --------------------------------------------- */
-
-            const tbody =
-                document.createElement("tbody");
-
-
+            const tbody = document.createElement("tbody");
             if (!data.length) {
-
-                const row =
-                    document.createElement("tr");
-
-                const cell =
-                    document.createElement("td");
-
-                cell.colSpan =
-                    section.columns.length;
-
-                cell.innerHTML = `
-
-                    <div class="empty-state">
-
-                        <div class="empty-icon">
-                            <i class="fa-regular fa-folder-open"></i>
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td colspan="${section.columns.length}" class="py-12 text-center text-slate-400">
+                        <div class="w-10 h-10 mx-auto rounded-xl flex items-center justify-center bg-slate-50 text-slate-300 mb-2">
+                            <i class="fa-regular fa-folder-open text-base"></i>
                         </div>
-
-                        <div
-                            class="
-                                text-xs
-                                font-semibold
-                                text-slate-500
-                            "
-                        >
-                            No data available
-                        </div>
-
-                        <div
-                            class="
-                                mt-1
-                                text-[10px]
-                                text-slate-400
-                            "
-                        >
-                            There are currently no records
-                            in this section.
-                        </div>
-
-                    </div>
-
+                        <div class="text-xs font-semibold text-slate-600">No records available</div>
+                    </td>
                 `;
-
-                row.appendChild(cell);
-
-                tbody.appendChild(row);
-
+                tbody.appendChild(tr);
             } else {
-
                 data.forEach(vessel => {
+                    const row = document.createElement("tr");
+                    const uKey = getVesselKey(vessel, section.key);
+                    row.dataset.vesselKey = uKey;
+                    row.id = `row-${uKey}`;
+                    row.onclick = () => openVesselModal(vessel, section);
 
-                    const row =
-                        renderTableRow(
-                            vessel,
-                            section
-                        );
+                    section.columns.forEach(([colKey, label, type]) => {
+                        const cell = document.createElement("td");
+                        const val = vessel[colKey];
 
+                        if (type === "vessel") {
+                            cell.innerHTML = `
+                                <div>
+                                    <div class="vessel-primary">${escapeHtml(vessel.vesselName || "Unknown")}</div>
+                                    ${vessel.vesselCode ? `<div class="vessel-secondary">${escapeHtml(vessel.vesselCode)}</div>` : ""}
+                                </div>
+                            `;
+                        } else if (type === "voyage") {
+                            cell.innerHTML = `<span class="voyage-badge">${escapeHtml(val || "—")}</span>`;
+                        } else if (type === "type") {
+                            cell.innerHTML = `<span class="type-badge">${escapeHtml(val || "—")}</span>`;
+                        } else if (type === "datetime") {
+                            cell.innerHTML = `<span class="datetime-value">${escapeHtml(formatDateTime(val))}</span>`;
+                        } else {
+                            cell.textContent = val !== null && val !== undefined ? String(val) : "—";
+                        }
+                        row.appendChild(cell);
+                    });
                     tbody.appendChild(row);
-
                 });
-
             }
 
-
             table.appendChild(thead);
-
             table.appendChild(tbody);
-
             scroll.appendChild(table);
 
             sectionElement.appendChild(header);
-
             sectionElement.appendChild(scroll);
-
-            dashboardSections.appendChild(
-                sectionElement
-            );
+            dashboardSections.appendChild(sectionElement);
         }
 
-
-        /* =========================================================
-           TABLE ROW
-           ========================================================= */
-
-        function renderTableRow(
-            vessel,
-            section
-        ) {
-
-            const row =
-                document.createElement("tr");
-
-            row.dataset.vesselKey =
-                getVesselKey(
-                    vessel,
-                    section.key
-                );
-
-            row.addEventListener(
-                "click",
-                () => openVesselModal(
-                    vessel,
-                    section
-                )
-            );
-
-
-            section.columns.forEach(
-                ([key, label, type]) => {
-
-                    const cell =
-                        document.createElement("td");
-
-                    cell.innerHTML =
-                        renderCellValue(
-                            vessel,
-                            key,
-                            type
-                        );
-
-                    row.appendChild(cell);
-
-                }
-            );
-
-
-            return row;
-        }
-
-
-        function renderCellValue(
-            vessel,
-            key,
-            type
-        ) {
-
-            const value =
-                vessel?.[key];
-
-
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-                return `
-                    <span class="text-slate-300">
-                        —
-                    </span>
-                `;
-            }
-
-
-            if (type === "vessel") {
-
-                const name =
-                    vessel.vesselName ||
-                    "Unknown Vessel";
-
-                const code =
-                    vessel.vesselCode ||
-                    "";
-
-                return `
-
-                    <div>
-
-                        <div class="vessel-primary">
-                            ${escapeHtml(name)}
-                        </div>
-
-                        ${
-                            code
-                                ? `
-                                    <div class="vessel-secondary">
-                                        ${escapeHtml(code)}
-                                    </div>
-                                  `
-                                : ""
-                        }
-
-                    </div>
-                `;
-            }
-
-
-            if (type === "voyage") {
-
-                return `
-                    <span class="voyage-badge">
-                        ${escapeHtml(value)}
-                    </span>
-                `;
-            }
-
-
-            if (type === "type") {
-
-                return `
-                    <span class="type-badge">
-                        ${escapeHtml(value)}
-                    </span>
-                `;
-            }
-
-
-            if (type === "datetime") {
-
-                return `
-                    <span class="datetime-value">
-                        ${escapeHtml(
-                            formatDateTime(value)
-                        )}
-                    </span>
-                `;
-            }
-
-
-            if (type === "number") {
-
-                return `
-                    <span class="
-                        text-xs
-                        font-semibold
-                        text-slate-600
-                    ">
-                        ${escapeHtml(value)}
-                    </span>
-                `;
-            }
-
-
-            return `
-                <span class="
-                    text-[11px]
-                    text-slate-600
-                ">
-                    ${escapeHtml(value)}
-                </span>
-            `;
-        }
-
-
-        /* =========================================================
-           SEARCH ENGINE
-           ========================================================= */
-
+        // Search Algorithm
         function findSearchResults(query) {
+            const normalized = normalizeSearchValue(query);
+            if (!normalized) return [];
 
-            const normalizedQuery =
-                normalizeSearchValue(query);
-
-            if (!normalizedQuery) {
-                return [];
-            }
-
-            const records =
-                getAllRecords();
-
-            const terms =
-                normalizedQuery
-                    .split(/\s+/)
-                    .filter(Boolean);
-
-
+            const records = getAllRecords();
+            const terms = normalized.split(/\s+/).filter(Boolean);
             const scored = [];
 
-
             records.forEach(result => {
+                const { vessel, section } = result;
+                const searchable = [
+                    vessel.vesselName, vessel.vesselCode, vessel.voyage,
+                    vessel.type, vessel.shippingLine, vessel.booking,
+                    section.title, section.subtitle
+                ].filter(Boolean).map(normalizeSearchValue).join(" ");
 
-                const vessel =
-                    result.vessel;
-
-                const section =
-                    result.section;
-
-
-                const searchableFields = [
-
-                    vessel.vesselName,
-
-                    vessel.vesselCode,
-
-                    vessel.voyage,
-
-                    vessel.type,
-
-                    vessel.shippingLine,
-
-                    vessel.eta,
-
-                    vessel.etb,
-
-                    vessel.atb,
-
-                    vessel.etd,
-
-                    vessel.atd,
-
-                    vessel.openStack,
-
-                    vessel.closingTime,
-
-                    vessel.booking,
-
-                    vessel.open,
-
-                    vessel.actual,
-
-                    vessel.export,
-
-                    vessel.exportTeus,
-
-                    vessel.import,
-
-                    vessel.importTeus,
-
-                    section.title,
-
-                    section.subtitle
-
-                ]
-                    .filter(
-                        value =>
-                            value !== null &&
-                            value !== undefined
-                    )
-                    .map(
-                        value =>
-                            normalizeSearchValue(value)
-                    );
-
-
-                const searchableText =
-                    searchableFields.join(" ");
-
-
-                const allTermsMatch =
-                    terms.every(
-                        term =>
-                            searchableText.includes(term)
-                    );
-
-
-                if (!allTermsMatch) {
-                    return;
-                }
-
+                if (!terms.every(t => searchable.includes(t))) return;
 
                 let score = 0;
+                const name = normalizeSearchValue(vessel.vesselName);
+                const code = normalizeSearchValue(vessel.vesselCode);
+                const voyage = normalizeSearchValue(vessel.voyage);
 
+                if (name === normalized) score += 1000;
+                if (code === normalized) score += 900;
+                if (voyage === normalized) score += 850;
+                if (name.startsWith(normalized)) score += 500;
+                if (code.startsWith(normalized)) score += 400;
 
-                const name =
-                    normalizeSearchValue(
-                        vessel.vesselName
-                    );
-
-                const code =
-                    normalizeSearchValue(
-                        vessel.vesselCode
-                    );
-
-                const voyage =
-                    normalizeSearchValue(
-                        vessel.voyage
-                    );
-
-                const type =
-                    normalizeSearchValue(
-                        vessel.type
-                    );
-
-                const sectionTitle =
-                    normalizeSearchValue(
-                        section.title
-                    );
-
-
-                if (name === normalizedQuery) {
-                    score += 1000;
-                }
-
-                if (code === normalizedQuery) {
-                    score += 900;
-                }
-
-                if (voyage === normalizedQuery) {
-                    score += 850;
-                }
-
-                if (
-                    name.startsWith(
-                        normalizedQuery
-                    )
-                ) {
-                    score += 500;
-                }
-
-                if (
-                    code.startsWith(
-                        normalizedQuery
-                    )
-                ) {
-                    score += 450;
-                }
-
-                if (
-                    voyage.startsWith(
-                        normalizedQuery
-                    )
-                ) {
-                    score += 400;
-                }
-
-                if (
-                    type.includes(
-                        normalizedQuery
-                    )
-                ) {
-                    score += 100;
-                }
-
-                if (
-                    sectionTitle.includes(
-                        normalizedQuery
-                    )
-                ) {
-                    score += 80;
-                }
-
-
-                score += Math.max(
-                    0,
-                    50 - searchableText.indexOf(
-                        normalizedQuery
-                    )
-                );
-
-
-                scored.push({
-                    ...result,
-                    score
-                });
-
+                scored.push({ ...result, score });
             });
 
-
-            scored.sort(
-                (a, b) =>
-                    b.score - a.score
-            );
-
-
+            scored.sort((a, b) => b.score - a.score);
             return scored;
         }
 
-
-        /* =========================================================
-           SEARCH SUGGESTIONS
-           ========================================================= */
-
+        // Suggestions Dropdown
         function updateSearchSuggestions() {
+            const q = searchInput.value.trim();
+            clearSearchButton.style.display = q ? "flex" : "none";
 
-            const query =
-                searchInput.value.trim();
-
-
-            clearSearchButton.style.display =
-                query
-                    ? "flex"
-                    : "none";
-
-
-            if (!query) {
-
+            if (!q) {
                 hideSearchSuggestions();
-
                 searchStatus.textContent = "";
-
                 return;
             }
 
-
-            const results =
-                findSearchResults(query);
-
-
-            searchResults =
-                results.slice(0, 10);
-
-
+            searchResults = findSearchResults(q).slice(0, 10);
             activeSuggestionIndex = -1;
 
-
             if (!searchResults.length) {
-
                 searchSuggestions.innerHTML = `
-
-                    <div class="
-                        px-4
-                        py-5
-                        text-center
-                    ">
-
-                        <div
-                            class="
-                                mx-auto
-                                w-9
-                                h-9
-                                rounded-xl
-                                flex
-                                items-center
-                                justify-center
-                                bg-slate-50
-                                text-slate-300
-                            "
-                        >
-                            <i class="
-                                fa-solid
-                                fa-magnifying-glass
-                            "></i>
-                        </div>
-
-                        <div
-                            class="
-                                mt-2
-                                text-xs
-                                font-semibold
-                                text-slate-500
-                            "
-                        >
-                            No matching vessel
-                        </div>
-
-                        <div
-                            class="
-                                mt-1
-                                text-[10px]
-                                text-slate-400
-                            "
-                        >
-                            Try another vessel name,
-                            code, or voyage.
-                        </div>
-
+                    <div class="px-4 py-6 text-center text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-lg text-slate-300"></i>
+                        <div class="mt-2 text-xs font-semibold text-slate-600">No matching vessels found</div>
                     </div>
-
                 `;
-
-                searchSuggestions.classList.remove(
-                    "hidden"
-                );
-
+                searchSuggestions.classList.remove("hidden");
                 return;
             }
 
-
-            searchSuggestions.innerHTML = "";
-
-
-            searchResults.forEach(
-                (result, index) => {
-
-                    const vessel =
-                        result.vessel;
-
-                    const section =
-                        result.section;
-
-
-                    const item =
-                        document.createElement("div");
-
-                    item.className =
-                        "suggestion-item";
-
-                    item.dataset.index =
-                        String(index);
-
-
-                    item.innerHTML = `
-
-                        <div class="
-                            flex
-                            items-center
-                            gap-3
-                        ">
-
-                            <div class="suggestion-icon">
-
-                                <i
-                                    class="
-                                        fa-solid
-                                        ${section.icon}
-                                        text-xs
-                                    "
-                                ></i>
-
-                            </div>
-
-
-                            <div class="
-                                min-w-0
-                                flex-1
-                            ">
-
-                                <div
-                                    class="
-                                        text-xs
-                                        font-bold
-                                        text-slate-800
-                                        truncate
-                                    "
-                                >
-                                    ${escapeHtml(
-                                        vessel.vesselName ||
-                                        "Unknown Vessel"
-                                    )}
-                                </div>
-
-                                <div
-                                    class="
-                                        mt-0.5
-                                        text-[10px]
-                                        text-slate-500
-                                        truncate
-                                    "
-                                >
-                                    ${
-                                        vessel.vesselCode
-                                            ? escapeHtml(
-                                                vessel.vesselCode
-                                            )
-                                            : "—"
-                                    }
-
-                                    ·
-
-                                    Voyage ${
-                                        vessel.voyage
-                                            ? escapeHtml(
-                                                vessel.voyage
-                                            )
-                                            : "—"
-                                    }
-
-                                </div>
-
-                            </div>
-
-
-                            <div
-                                class="
-                                    text-right
-                                    shrink-0
-                                "
-                            >
-
-                                <div
-                                    class="
-                                        text-[9px]
-                                        font-bold
-                                        text-blue-600
-                                        max-w-[110px]
-                                        truncate
-                                    "
-                                >
-                                    ${escapeHtml(
-                                        section.title
-                                    )}
-                                </div>
-
-                                <div
-                                    class="
-                                        mt-1
-                                        text-[9px]
-                                        text-slate-300
-                                    "
-                                >
-                                    <i
-                                        class="
-                                            fa-solid
-                                            fa-chevron-right
-                                        "
-                                    ></i>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-
-                    /*
-                     * IMPORTANT:
-                     * Suggestion click = MODAL
-                     * NOT scroll.
-                     */
-
-                    item.addEventListener(
-                        "click",
-                        () => {
-
-                            openSearchSuggestion(
-                                result
-                            );
-
-                        }
-                    );
-
-
-                    searchSuggestions.appendChild(
-                        item
-                    );
-
-                }
-            );
-
-
-            searchSuggestions.classList.remove(
-                "hidden"
-            );
-        }
-
-
-        /* =========================================================
-           SUGGESTION CLICK
-           ========================================================= */
-
-        function openSearchSuggestion(
-            result
-        ) {
-
-            if (
-                !result ||
-                !result.vessel ||
-                !result.section
-            ) {
-                return;
-            }
-
-
-            hideSearchSuggestions();
-
-
-            openVesselModal(
-                result.vessel,
-                result.section
-            );
-
-        }
-
-
-        /* =========================================================
-           PERFORM SEARCH
-           ENTER / SEARCH BUTTON
-           = SCROLL TO ROW
-           ========================================================= */
-
-        function performSearch() {
-
-            const query =
-                searchInput.value.trim();
-
-
-            if (!query) {
-
-                searchStatus.textContent =
-                    "Type a vessel, voyage, code, or type to search.";
-
-                return;
-            }
-
-
-            const results =
-                findSearchResults(query);
-
-
-            if (!results.length) {
-
-                searchStatus.textContent =
-                    `No data found for "${query}"`;
-
-                hideSearchSuggestions();
-
-                return;
-            }
-
-
-            const result =
-                results[0];
-
-
-            hideSearchSuggestions();
-
-
-            jumpToSearchResult(
-                result
-            );
-
-
-            searchStatus.textContent =
-                `${results.length} result${
-                    results.length === 1
-                        ? ""
-                        : "s"
-                } found`;
-
-        }
-
-
-        /* =========================================================
-           JUMP TO SEARCH RESULT
-           ========================================================= */
-
-        function jumpToSearchResult(
-            result
-        ) {
-
-            if (
-                !result ||
-                !result.vessel ||
-                !result.section
-            ) {
-                return;
-            }
-
-
-            const key =
-                getVesselKey(
-                    result.vessel,
-                    result.section.key
-                );
-
-
-            const row =
-                document.querySelector(
-                    `[data-vessel-key="${CSS.escape(key)}"]`
-                );
-
-
-            if (!row) {
-
-                /*
-                 * Fallback:
-                 * If duplicate key exists unexpectedly,
-                 * locate section and render state.
-                 */
-
-                scrollToSection(
-                    result.section.key
-                );
-
-                return;
-            }
-
-
-            row.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-
-
-            row.classList.remove(
-                "search-hit"
-            );
-
-
-            void row.offsetWidth;
-
-
-            row.classList.add(
-                "search-hit"
-            );
-
-
-            setTimeout(
-                () => {
-                    row.classList.remove(
-                        "search-hit"
-                    );
-                },
-                3200
-            );
-
-        }
-
-
-        /* =========================================================
-           CLEAR SEARCH
-           ========================================================= */
-
-        function clearSearch() {
-
-            searchInput.value = "";
-
-            searchStatus.textContent = "";
-
-            clearSearchButton.style.display =
-                "none";
-
-            hideSearchSuggestions();
-
-            searchInput.focus();
-
-        }
-
-
-        /* =========================================================
-           HIDE SUGGESTIONS
-           ========================================================= */
-
-        function hideSearchSuggestions() {
-
-            searchSuggestions.classList.add(
-                "hidden"
-            );
-
-            activeSuggestionIndex = -1;
-
-        }
-
-
-        /* =========================================================
-           KEYBOARD SEARCH
-           ========================================================= */
-
-        searchInput.addEventListener(
-            "input",
-            () => {
-
-                updateSearchSuggestions();
-
-            }
-        );
-
-
-        searchInput.addEventListener(
-            "keydown",
-            event => {
-
-                const isVisible =
-                    !searchSuggestions.classList.contains(
-                        "hidden"
-                    );
-
-
-                if (
-                    event.key === "Enter"
-                ) {
-
-                    event.preventDefault();
-
-                    performSearch();
-
-                    return;
-                }
-
-
-                if (
-                    event.key === "Escape"
-                ) {
-
-                    hideSearchSuggestions();
-
-                    return;
-                }
-
-
-                if (
-                    event.key === "ArrowDown"
-                ) {
-
-                    if (!isVisible) {
-                        return;
-                    }
-
-                    event.preventDefault();
-
-                    moveSuggestion(
-                        1
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    event.key === "ArrowUp"
-                ) {
-
-                    if (!isVisible) {
-                        return;
-                    }
-
-                    event.preventDefault();
-
-                    moveSuggestion(
-                        -1
-                    );
-
-                    return;
-                }
-
-            }
-        );
-
-
-        function moveSuggestion(
-            direction
-        ) {
-
-            if (!searchResults.length) {
-                return;
-            }
-
-
-            activeSuggestionIndex +=
-                direction;
-
-
-            if (
-                activeSuggestionIndex < 0
-            ) {
-                activeSuggestionIndex =
-                    searchResults.length - 1;
-            }
-
-
-            if (
-                activeSuggestionIndex >=
-                searchResults.length
-            ) {
-                activeSuggestionIndex = 0;
-            }
-
-
-            const items =
-                searchSuggestions.querySelectorAll(
-                    ".suggestion-item"
-                );
-
-
-            items.forEach(
-                (item, index) => {
-
-                    item.classList.toggle(
-                        "active",
-                        index ===
-                            activeSuggestionIndex
-                    );
-
-                }
-            );
-
-
-            const activeItem =
-                items[
-                    activeSuggestionIndex
-                ];
-
-
-            if (activeItem) {
-
-                activeItem.scrollIntoView({
-                    block: "nearest"
-                });
-
-            }
-
-        }
-
-
-        /* =========================================================
-           CLICK OUTSIDE SEARCH
-           ========================================================= */
-
-        document.addEventListener(
-            "click",
-            event => {
-
-                const wrapper =
-                    document.querySelector(
-                        ".search-wrapper"
-                    );
-
-
-                if (
-                    wrapper &&
-                    !wrapper.contains(
-                        event.target
-                    )
-                ) {
-
-                    hideSearchSuggestions();
-
-                }
-
-            }
-        );
-
-
-        /* =========================================================
-           MODAL
-           ========================================================= */
-
-        function openVesselModal(
-            vessel,
-            section
-        ) {
-
-            const modal =
-                document.getElementById(
-                    "vesselModal"
-                );
-
-
-            if (
-                !modal ||
-                !vessel ||
-                !section
-            ) {
-                return;
-            }
-
-
-            const sectionBadge =
-                document.getElementById(
-                    "modalSectionBadge"
-                );
-
-            const vesselName =
-                document.getElementById(
-                    "modalVesselName"
-                );
-
-            const voyage =
-                document.getElementById(
-                    "modalVoyage"
-                );
-
-            const body =
-                document.getElementById(
-                    "modalBody"
-                );
-
-
-            /* ---------------------------------------------
-               Section
-               --------------------------------------------- */
-
-            sectionBadge.innerHTML = `
-
-                <i
-                    class="
-                        fa-solid
-                        ${section.icon}
-                    "
-                ></i>
-
-                <span>
-                    ${escapeHtml(
-                        section.title
-                    )}
-                </span>
-
+            searchSuggestions.innerHTML = `
+                <div class="px-3.5 py-2 bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex justify-between">
+                    <span>Suggestions (${searchResults.length})</span>
+                    <span class="text-blue-600 normal-case">Click to open details modal</span>
+                </div>
             `;
 
-
-            /* ---------------------------------------------
-               Vessel Name
-               --------------------------------------------- */
-
-            vesselName.textContent =
-                vessel.vesselName ||
-                "Unknown Vessel";
-
-
-            /* ---------------------------------------------
-               Voyage / Code
-               --------------------------------------------- */
-
-            const voyageParts = [];
-
-
-            if (vessel.vesselCode) {
-
-                voyageParts.push(
-                    vessel.vesselCode
-                );
-
-            }
-
-
-            if (vessel.voyage) {
-
-                voyageParts.push(
-                    `Voyage ${vessel.voyage}`
-                );
-
-            }
-
-
-            voyage.textContent =
-                voyageParts.length
-                    ? voyageParts.join(" · ")
-                    : "Vessel information";
-
-
-            /* ---------------------------------------------
-               Fields
-               --------------------------------------------- */
-
-            body.innerHTML = "";
-
-
-            const availableFields =
-                MODAL_FIELDS.filter(
-                    ([key]) => {
-
-                        const value =
-                            vessel[key];
-
-                        return (
-                            value !==
-                                undefined &&
-                            value !== null &&
-                            value !== ""
-                        );
-
-                    }
-                );
-
-
-            if (!availableFields.length) {
-
-                body.innerHTML = `
-
-                    <div class="
-                        py-10
-                        text-center
-                        text-xs
-                        text-slate-400
-                    ">
-                        No additional information
-                        available.
+            searchResults.forEach((item, index) => {
+                const div = document.createElement("div");
+                div.className = "suggestion-item";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="suggestion-icon" style="color: ${item.section.accentA}; background: ${item.section.accentBg}">
+                            <i class="fa-solid ${item.section.icon} text-xs"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-xs font-bold text-slate-900 truncate">${escapeHtml(item.vessel.vesselName || "Unknown")}</div>
+                            <div class="text-[10px] text-slate-500 truncate mt-0.5">
+                                ${escapeHtml(item.vessel.vesselCode || "—")} · Voyage ${escapeHtml(item.vessel.voyage || "—")}
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="inline-block text-[9px] font-bold px-2 py-0.5 rounded-full border truncate max-w-[120px]"
+                                  style="color: ${item.section.badgeText}; background: ${item.section.accentBg}; border-color: ${item.section.badgeBorder}">
+                                ${escapeHtml(item.section.title)}
+                            </span>
+                        </div>
                     </div>
-
                 `;
 
-            } else {
-
-                const grid =
-                    document.createElement("div");
-
-                grid.className =
-                    "grid grid-cols-1 sm:grid-cols-2 gap-2.5";
-
-
-                availableFields.forEach(
-                    ([key, label]) => {
-
-                        const value =
-                            vessel[key];
-
-
-                        const field =
-                            document.createElement(
-                                "div"
-                            );
-
-                        field.className =
-                            "modal-field";
-
-
-                        field.innerHTML = `
-
-                            <div class="modal-field-label">
-                                ${escapeHtml(label)}
-                            </div>
-
-                            <div class="modal-field-value">
-                                ${escapeHtml(
-                                    formatModalValue(
-                                        key,
-                                        value
-                                    )
-                                )}
-                            </div>
-
-                        `;
-
-
-                        grid.appendChild(
-                            field
-                        );
-
-                    }
-                );
-
-
-                body.appendChild(
-                    grid
-                );
-
-            }
-
-
-            modal.classList.remove(
-                "hidden"
-            );
-
-
-            document.body.classList.add(
-                "overflow-hidden"
-            );
-
-
-            /*
-             * Store currently opened record
-             * for debugging / future extension.
-             */
-
-            modal.dataset.section =
-                section.key;
-
-            modal.dataset.vesselKey =
-                getVesselKey(
-                    vessel,
-                    section.key
-                );
-
-        }
-
-
-        function closeVesselModal() {
-
-            const modal =
-                document.getElementById(
-                    "vesselModal"
-                );
-
-
-            modal.classList.add(
-                "hidden"
-            );
-
-
-            document.body.classList.remove(
-                "overflow-hidden"
-            );
-
-        }
-
-
-        function handleModalBackdropClick(
-            event
-        ) {
-
-            if (
-                event.target.id ===
-                "vesselModal"
-            ) {
-
-                closeVesselModal();
-
-            }
-
-        }
-
-
-        document.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key === "Escape"
-                ) {
-
-                    const modal =
-                        document.getElementById(
-                            "vesselModal"
-                        );
-
-
-                    if (
-                        modal &&
-                        !modal.classList.contains(
-                            "hidden"
-                        )
-                    ) {
-
-                        closeVesselModal();
-
-                    }
-
-                }
-
-            }
-        );
-
-
-        /* =========================================================
-           LOAD DATA
-           ========================================================= */
-
-        async function loadData() {
-
-            setConnectionStatus(
-                "loading"
-            );
-
-
-            refreshButton.classList.add(
-                "loading"
-            );
-
-
-            const originalRefresh =
-                refreshButton.innerHTML;
-
-
-            refreshButton.innerHTML = `
-
-                <i class="fa-solid fa-rotate-right"></i>
-
-                <span>Loading...</span>
-
-            `;
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${DATA_URL}?t=${Date.now()}`,
-                        {
-                            cache: "no-store"
-                        }
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        `HTTP ${response.status}`
-                    );
-
-                }
-
-
-                const data =
-                    await response.json();
-
-
-                dashboardData = {
-
-                    lastUpdated:
-                        data.lastUpdated ||
-                        data.updatedAt ||
-                        null,
-
-                    updatedAt:
-                        data.updatedAt ||
-                        data.lastUpdated ||
-                        null,
-
-                    source:
-                        data.source ||
-                        "",
-
-                    vesselAlongside:
-                        Array.isArray(
-                            data.vesselAlongside
-                        )
-                            ? data.vesselAlongside
-                            : [],
-
-                    confirmedVessel:
-                        Array.isArray(
-                            data.confirmedVessel
-                        )
-                            ? data.confirmedVessel
-                            : [],
-
-                    openStack:
-                        Array.isArray(
-                            data.openStack
-                        )
-                            ? data.openStack
-                            : [],
-
-                    vesselSchedule:
-                        Array.isArray(
-                            data.vesselSchedule
-                        )
-                            ? data.vesselSchedule
-                            : [],
-
-                    vesselHistory:
-                        Array.isArray(
-                            data.vesselHistory
-                        )
-                            ? data.vesselHistory
-                            : [],
-
-                    counts:
-                        data.counts || {}
-
+                // KLIK SUGGESTION -> BUKA MODAL DETAIL, BUKAN SCROLL
+                div.onclick = () => {
+                    hideSearchSuggestions();
+                    openVesselModal(item.vessel, item.section);
                 };
 
+                searchSuggestions.appendChild(div);
+            });
+
+            searchSuggestions.classList.remove("hidden");
+        }
+
+        function hideSearchSuggestions() {
+            searchSuggestions.classList.add("hidden");
+            activeSuggestionIndex = -1;
+        }
+
+        // ENTER / TOMBOL SEARCH -> SCROLL KE BARIS DATA
+        function performSearch() {
+            const q = searchInput.value.trim();
+            if (!q) {
+                searchStatus.textContent = "Please enter a vessel, voyage, or code to search.";
+                return;
+            }
+
+            const results = findSearchResults(q);
+            if (!results.length) {
+                searchStatus.textContent = `No records found for "${q}".`;
+                hideSearchSuggestions();
+                return;
+            }
+
+            hideSearchSuggestions();
+            const top = results[0];
+            jumpToSearchResult(top);
+            searchStatus.textContent = `Found ${results.length} result(s). Scrolled to ${top.vessel.vesselName} (${top.section.title}).`;
+        }
+
+        function jumpToSearchResult(result) {
+            const key = getVesselKey(result.vessel, result.section.key);
+            const row = document.querySelector(`[data-vessel-key="${CSS.escape(key)}"]`) || document.getElementById(`row-${key}`);
+
+            if (row) {
+                row.scrollIntoView({ behavior: "smooth", block: "center" });
+                row.classList.remove("search-hit");
+                void row.offsetWidth; // trigger reflow
+                row.classList.add("search-hit");
+                setTimeout(() => row.classList.remove("search-hit"), 3200);
+            } else {
+                scrollToSection(result.section.key);
+            }
+        }
+
+        function clearSearch() {
+            searchInput.value = "";
+            searchStatus.textContent = "";
+            clearSearchButton.style.display = "none";
+            hideSearchSuggestions();
+            searchInput.focus();
+        }
+
+        // Modal Functionality
+        function openVesselModal(vessel, section) {
+            const modal = document.getElementById("vesselModal");
+            const badge = document.getElementById("modalSectionBadge");
+            const name = document.getElementById("modalVesselName");
+            const voyage = document.getElementById("modalVoyage");
+            const body = document.getElementById("modalBody");
+
+            // Modal menampilkan nama section
+            badge.style.color = section.badgeText;
+            badge.style.background = section.accentBg;
+            badge.style.borderColor = section.badgeBorder;
+            badge.innerHTML = `<i class="fa-solid ${section.icon}"></i><span>${escapeHtml(section.title)}</span>`;
+
+            name.textContent = vessel.vesselName || "Unknown Vessel";
+            voyage.textContent = `${vessel.vesselCode || ""} · Voyage: ${vessel.voyage || "—"} · Type: ${vessel.type || "—"}`;
+
+            const fields = MODAL_FIELDS.filter(([k]) => vessel[k] !== undefined && vessel[k] !== null && vessel[k] !== "");
+            if (!fields.length) {
+                body.innerHTML = `<div class="py-8 text-center text-xs text-slate-400">No additional details recorded.</div>`;
+            } else {
+                body.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        ${fields.map(([k, lbl]) => `
+                            <div class="modal-field">
+                                <div class="modal-field-label">${escapeHtml(lbl)}</div>
+                                <div class="modal-field-value">${escapeHtml(formatModalValue(k, vessel[k]))}</div>
+                            </div>
+                        `).join("")}
+                    </div>
+                `;
+            }
+
+            modal.classList.remove("hidden");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeVesselModal() {
+            document.getElementById("vesselModal").classList.add("hidden");
+            document.body.style.overflow = "unset";
+        }
+
+        function handleModalBackdropClick(e) {
+            if (e.target.id === "vesselModal") closeVesselModal();
+        }
+
+        // Load Data & Auto-Refresh
+        async function loadData() {
+            setConnectionStatus("loading");
+            refreshButton.classList.add("loading");
+
+            try {
+                const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: "no-store" });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                dashboardData = {
+                    lastUpdated: data.lastUpdated || data.updatedAt || new Date().toISOString(),
+                    updatedAt: data.updatedAt || data.lastUpdated || new Date().toISOString(),
+                    source: data.source || "Pelindo TPKS Webaccess",
+                    vesselAlongside: Array.isArray(data.vesselAlongside) ? data.vesselAlongside : [],
+                    confirmedVessel: Array.isArray(data.confirmedVessel) ? data.confirmedVessel : [],
+                    openStack: Array.isArray(data.openStack) ? data.openStack : [],
+                    vesselSchedule: Array.isArray(data.vesselSchedule) ? data.vesselSchedule : [],
+                    vesselHistory: Array.isArray(data.vesselHistory) ? data.vesselHistory : [],
+                    counts: data.counts || {}
+                };
 
                 updateStatistics();
-
                 renderAllSections();
-
                 updateFreshness();
-
-                setConnectionStatus(
-                    "online"
-                );
-
-
-                nextUpdateAt =
-                    Date.now() +
-                    AUTO_REFRESH_INTERVAL;
-
-
-                searchStatus.textContent =
-                    "";
-
-
-            } catch (error) {
-
-                console.error(
-                    "Failed to load data:",
-                    error
-                );
-
-
-                setConnectionStatus(
-                    "offline"
-                );
-
-
-                searchStatus.textContent =
-                    "Unable to load latest data.";
-
-
+                setConnectionStatus("online");
+                nextUpdateAt = Date.now() + AUTO_REFRESH_INTERVAL;
+            } catch (err) {
+                console.warn("Fetch failed, relying on current/cached data:", err);
+                setConnectionStatus("offline");
             } finally {
-
-                refreshButton.classList.remove(
-                    "loading"
-                );
-
-
-                refreshButton.innerHTML =
-                    originalRefresh;
-
+                refreshButton.classList.remove("loading");
             }
-
         }
-
-
-        /* =========================================================
-           FRESHNESS
-           ========================================================= */
 
         function updateFreshness() {
-
-            const rawDate =
-                dashboardData.lastUpdated ||
-                dashboardData.updatedAt;
-
-
-            const date =
-                parseDate(rawDate);
-
-
-            if (!date) {
-
-                freshnessText.textContent =
-                    "Data time unavailable";
-
-                return;
-
-            }
-
-
-            freshnessText.textContent =
-                getFreshnessText(date);
-
+            const raw = dashboardData.lastUpdated || dashboardData.updatedAt;
+            const date = parseDate(raw);
+            freshnessText.textContent = getFreshnessText(date);
         }
 
+        function updateNextCountdown() {
+            if (!nextUpdateAt) return;
+            const remSec = Math.max(0, Math.ceil((nextUpdateAt - Date.now()) / 1000));
+            const m = Math.floor(remSec / 60);
+            const s = remSec % 60;
+            const text = remSec <= 0 ? "Refreshing now..." : `Next refresh in ${m}m ${String(s).padStart(2, "0")}s`;
 
-        /* =========================================================
-           NEXT UPDATE
-           ========================================================= */
-
-        function updateNextUpdate() {
-
-            if (!nextUpdateAt) {
-
-                return;
-
+            const current = freshnessText.textContent.split(" · ")[0];
+            if (current && current !== "—") {
+                freshnessText.textContent = `${current} · ${text}`;
             }
-
-
-            const remainingMs =
-                Math.max(
-                    0,
-                    nextUpdateAt -
-                        Date.now()
-                );
-
-
-            const remainingSeconds =
-                Math.ceil(
-                    remainingMs / 1000
-                );
-
-
-            const minutes =
-                Math.floor(
-                    remainingSeconds / 60
-                );
-
-
-            const seconds =
-                remainingSeconds % 60;
-
-
-            let text;
-
-
-            if (
-                minutes > 0
-            ) {
-
-                text =
-                    `Next refresh in ${minutes}m ${String(
-                        seconds
-                    ).padStart(2, "0")}s`;
-
-            } else {
-
-                text =
-                    `Next refresh in ${seconds}s`;
-
-            }
-
-
-            /*
-             * Only append when there is no active
-             * search result message.
-             */
-
-            if (
-                !searchInput.value.trim()
-            ) {
-
-                const current =
-                    freshnessText.textContent;
-
-
-                if (
-                    current &&
-                    current !== "—"
-                ) {
-
-                    freshnessText.textContent =
-                        `${current} · ${text}`;
-
-                }
-
-            }
-
         }
 
-
-        /* =========================================================
-           SCRAPER STATUS
-           ========================================================= */
-
-        async function loadScraperStatus() {
-
-            /*
-             * GitHub Pages cannot directly know GitHub Actions
-             * status without an API/token.
-             *
-             * This lightweight function is intentionally kept
-             * non-blocking.
-             *
-             * The dashboard connection status is based on
-             * data.json availability.
-             */
-
-            return;
-
-        }
-
-
-        /* =========================================================
-           TIMERS
-           ========================================================= */
-
-        function startTimers() {
-
-            if (autoRefreshTimer) {
-
-                clearInterval(
-                    autoRefreshTimer
-                );
-
+        // Event Listeners
+        searchInput.addEventListener("input", updateSearchSuggestions);
+        searchInput.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                performSearch();
+            } else if (e.key === "Escape") {
+                hideSearchSuggestions();
             }
+        });
 
-
-            if (freshnessTimer) {
-
-                clearInterval(
-                    freshnessTimer
-                );
-
+        document.addEventListener("click", e => {
+            if (!document.querySelector(".search-wrapper")?.contains(e.target)) {
+                hideSearchSuggestions();
             }
+        });
 
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") closeVesselModal();
+        });
 
-            if (nextUpdateTimer) {
-
-                clearInterval(
-                    nextUpdateTimer
-                );
-
-            }
-
-
-            if (scraperStatusTimer) {
-
-                clearInterval(
-                    scraperStatusTimer
-                );
-
-            }
-
-
-            autoRefreshTimer =
-                setInterval(
-                    () => {
-
-                        loadData();
-
-                    },
-                    AUTO_REFRESH_INTERVAL
-                );
-
-
-            freshnessTimer =
-                setInterval(
-                    () => {
-
-                        updateFreshness();
-
-                    },
-                    FRESHNESS_INTERVAL
-                );
-
-
-            nextUpdateTimer =
-                setInterval(
-                    () => {
-
-                        updateNextUpdate();
-
-                    },
-                    NEXT_UPDATE_INTERVAL
-                );
-
-
-            scraperStatusTimer =
-                setInterval(
-                    () => {
-
-                        loadScraperStatus();
-
-                    },
-                    SCRAPER_STATUS_INTERVAL
-                );
-
-        }
-
-
-        /* =========================================================
-           INITIALIZATION
-           ========================================================= */
-
+        // Initialize
         async function initialize() {
-
-            nextUpdateAt =
-                Date.now() +
-                AUTO_REFRESH_INTERVAL;
-
-
+            nextUpdateAt = Date.now() + AUTO_REFRESH_INTERVAL;
             await loadData();
 
-
-            loadScraperStatus();
-
-
-            startTimers();
-
-
-            updateNextUpdate();
-
+            autoRefreshTimer = setInterval(loadData, AUTO_REFRESH_INTERVAL);
+            freshnessTimer = setInterval(updateFreshness, FRESHNESS_INTERVAL);
+            nextUpdateTimer = setInterval(updateNextCountdown, NEXT_UPDATE_INTERVAL);
         }
 
-
         initialize();
-
     </script>
-
 </body>
 </html>
