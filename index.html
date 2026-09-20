@@ -493,7 +493,11 @@ $("kpiHistory").textContent=getSectionItems("vesselHistory").length;
 }
 
 function modalField(label,value){
-return`<div class="modal-field rounded-xl border border-slate-100 bg-slate-50/70 px-3.5 py-2.5"><p class="text-[9px] uppercase tracking-wider font-black text-slate-400">${label}</p><p class="text-sm font-bold text-slate-800 mt-0.5 truncate">${value?escapeHtml(value):"—"}</p></div>`;
+const isShippingLine=label==="Shipping Line";
+return`<div class="modal-field rounded-xl border border-slate-100 bg-slate-50/70 px-3.5 py-2.5">
+<p class="text-[9px] uppercase tracking-wider font-black text-slate-400">${label}</p>
+<p class="${isShippingLine?"text-xs sm:text-sm leading-snug break-words whitespace-normal":"text-sm truncate"} font-bold text-slate-800 mt-0.5">${value?escapeHtml(value):"—"}</p>
+</div>`;
 }
 
 function modalSection(title,icon,content){
