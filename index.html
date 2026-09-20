@@ -24,33 +24,111 @@ button,input{font:inherit}
 .suggestion-item{transition:background .15s ease}
 .suggestion-item:hover,.suggestion-item.active{background:#eff6ff}
 .section-card{scroll-margin-top:24px}
-.section-scroll{width:100%;max-height:360px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable both-edges}
-.section-scroll::-webkit-scrollbar{width:9px;height:9px}
+.section-scroll{
+width:100%;
+max-height:360px;
+overflow-y:auto;
+overflow-x:hidden;
+overscroll-behavior:contain;
+scrollbar-gutter:stable;
+}
+.section-scroll::-webkit-scrollbar{width:8px}
 .section-scroll::-webkit-scrollbar-track{background:#f1f5f9;border-radius:999px}
 .section-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px}
 .section-scroll::-webkit-scrollbar-thumb:hover{background:#94a3b8}
-table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;table-layout:auto}
+table{
+width:100%;
+min-width:100%;
+border-collapse:separate;
+border-spacing:0;
+table-layout:fixed;
+}
 thead{position:sticky;top:0;z-index:40}
 .section-title-cell{background:#fff}
-.column-header-row th{position:sticky;top:68px;z-index:39;background:#f8fafc}
-th,td{white-space:nowrap}
-tbody td{height:52px}
-.data-row{height:52px;transition:background .15s ease}
+.column-header-row th{
+position:sticky;
+top:68px;
+z-index:39;
+background:#f8fafc;
+}
+th,td{
+white-space:normal;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+tbody td{
+height:52px;
+}
+.data-row{
+height:52px;
+transition:background .15s ease;
+}
 .data-row:hover{background:#f8fafc}
 .no-data{height:180px}
-.modal-backdrop{background:rgba(15,23,42,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.vessel-cell{min-width:0}
+.vessel-name{
+font-size:12px;
+font-weight:800;
+line-height:1.25;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+.vessel-code{
+font-size:9px;
+font-weight:600;
+color:#94a3b8;
+margin-top:2px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+.compact-cell{
+font-size:11px;
+line-height:1.25;
+}
+.modal-backdrop{
+background:rgba(15,23,42,.62);
+backdrop-filter:blur(6px);
+-webkit-backdrop-filter:blur(6px);
+}
 .modal-card{animation:modalIn .2s ease-out}
-@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes modalIn{
+from{opacity:0;transform:translateY(12px) scale(.98)}
+to{opacity:1;transform:translateY(0) scale(1)}
+}
 .fade-in{animation:fadeIn .35s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:700}
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(6px)}
+to{opacity:1;transform:translateY(0)}
+}
+.badge{
+display:inline-flex;
+align-items:center;
+border-radius:999px;
+padding:4px 8px;
+font-size:10px;
+font-weight:700;
+}
 .highlight{background:#fef08a;border-radius:3px;padding:0 2px}
 .modal-field{min-height:64px}
-.modal-section-title{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.modal-section-title{
+display:flex;
+align-items:center;
+gap:8px;
+margin-bottom:10px;
+}
 .modal-section-title i{font-size:13px}
+@media(max-width:1024px){
+.column-header-row th{top:66px}
+}
 @media(max-width:768px){
 .column-header-row th{top:62px}
 .section-scroll{max-height:350px}
+table{table-layout:auto}
+.section-scroll{overflow-x:auto}
+th,td{white-space:nowrap}
+.vessel-cell{min-width:145px}
 }
 @media(max-width:640px){
 .modal-field{min-height:58px}
@@ -59,11 +137,9 @@ tbody td{height:52px}
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="hero-bg text-white">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
 <div class="flex flex-col md:flex-row md:items-center gap-4">
-
 <div class="flex items-center gap-3 shrink-0">
 <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
 <i class="fa-solid fa-ship"></i>
@@ -82,18 +158,10 @@ tbody td{height:52px}
 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
 <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
 </div>
-<input
-id="searchInput"
-type="text"
-autocomplete="off"
-placeholder="Search vessel, voyage, code, shipping line..."
-class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder:text-slate-400 shadow-xl outline-none focus:ring-4 focus:ring-blue-400/30"
-/>
+<input id="searchInput" type="text" autocomplete="off" placeholder="Search vessel, voyage, code, shipping line..." class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder:text-slate-400 shadow-xl outline-none focus:ring-4 focus:ring-blue-400/30">
 <div class="absolute inset-y-0 right-0 flex items-center gap-2 pr-3">
 <span id="searchKeyHint" class="hidden sm:inline-flex text-[10px] font-bold text-slate-400 border border-slate-200 rounded-md px-1.5 py-1">ENTER</span>
-<button id="searchClear" class="hidden w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700" title="Clear">
-<i class="fa-solid fa-xmark"></i>
-</button>
+<button id="searchClear" class="hidden w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700" title="Clear"><i class="fa-solid fa-xmark"></i></button>
 </div>
 </div>
 
@@ -117,15 +185,12 @@ class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder
 <span id="connectionDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
 <span id="connectionText">Loading...</span>
 </div>
-
 </div>
 </div>
 </header>
 
-<!-- MAIN -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-<!-- KPI -->
 <section class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-7">
 
 <div class="kpi-card kpi-clickable glass rounded-2xl border border-blue-100 p-4 shadow-sm" data-target="vesselAlongside">
@@ -134,9 +199,7 @@ class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder
 <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Alongside</p>
 <p id="kpiAlongside" class="text-3xl font-black text-slate-900 mt-0.5">0</p>
 </div>
-<div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-<i class="fa-solid fa-anchor"></i>
-</div>
+<div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-anchor"></i></div>
 </div>
 <p class="text-[10px] text-slate-400 mt-2">Currently alongside</p>
 </div>
@@ -147,9 +210,7 @@ class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder
 <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Confirmed</p>
 <p id="kpiConfirmed" class="text-3xl font-black text-slate-900 mt-0.5">0</p>
 </div>
-<div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-<i class="fa-solid fa-circle-check"></i>
-</div>
+<div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-circle-check"></i></div>
 </div>
 <p class="text-[10px] text-slate-400 mt-2">Confirmed vessels</p>
 </div>
@@ -160,9 +221,7 @@ class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder
 <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Open Stack</p>
 <p id="kpiOpenStack" class="text-3xl font-black text-slate-900 mt-0.5">0</p>
 </div>
-<div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-<i class="fa-solid fa-box-open"></i>
-</div>
+<div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-box-open"></i></div>
 </div>
 <p class="text-[10px] text-slate-400 mt-2">Open stack records</p>
 </div>
@@ -173,9 +232,7 @@ class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder
 <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Schedule</p>
 <p id="kpiSchedule" class="text-3xl font-black text-slate-900 mt-0.5">0</p>
 </div>
-<div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
-<i class="fa-solid fa-calendar-days"></i>
-</div>
+<div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-calendar-days"></i></div>
 </div>
 <p class="text-[10px] text-slate-400 mt-2">Upcoming schedule</p>
 </div>
@@ -186,9 +243,7 @@ class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder
 <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">History</p>
 <p id="kpiHistory" class="text-3xl font-black text-slate-900 mt-0.5">0</p>
 </div>
-<div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-<i class="fa-solid fa-clock-rotate-left"></i>
-</div>
+<div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-clock-rotate-left"></i></div>
 </div>
 <p class="text-[10px] text-slate-400 mt-2">Historical movements</p>
 </div>
@@ -196,18 +251,14 @@ class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder
 </section>
 
 <div id="sectionsContainer" class="space-y-6"></div>
-
 </main>
 
-<!-- MODAL -->
 <div id="modalBackdrop" class="hidden fixed inset-0 z-[10000] modal-backdrop p-3 sm:p-5 flex items-center justify-center">
 <div id="modalCard" class="modal-card w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden">
 
 <div class="bg-white border-b border-slate-100 px-5 sm:px-6 py-4 flex items-center justify-between">
 <div class="flex items-center gap-3 min-w-0">
-<div id="modalIcon" class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-<i class="fa-solid fa-ship"></i>
-</div>
+<div id="modalIcon" class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-ship"></i></div>
 <div class="min-w-0">
 <div class="flex items-center gap-2 flex-wrap">
 <h2 id="modalTitle" class="text-lg sm:text-xl font-black text-slate-900 truncate">Vessel</h2>
@@ -216,9 +267,7 @@ class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white text-slate-800 placeholder
 <p id="modalSubtitle" class="text-xs text-slate-500 mt-0.5"></p>
 </div>
 </div>
-<button id="modalClose" class="w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 shrink-0">
-<i class="fa-solid fa-xmark"></i>
-</button>
+<button id="modalClose" class="w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 shrink-0"><i class="fa-solid fa-xmark"></i></button>
 </div>
 
 <div id="modalBody" class="p-5 sm:p-6"></div>
@@ -255,7 +304,6 @@ let currentData={...DATA};
 let searchResults=[];
 let activeSuggestionIndex=-1;
 let selectedSuggestionIndex=-1;
-
 const $=id=>document.getElementById(id);
 
 function escapeHtml(value){
@@ -294,7 +342,10 @@ return "";
 function buildSuggestions(term){
 term=term.trim();
 if(!term){
-searchResults=[];activeSuggestionIndex=-1;selectedSuggestionIndex=-1;return;
+searchResults=[];
+activeSuggestionIndex=-1;
+selectedSuggestionIndex=-1;
+return;
 }
 const results=[];
 SECTION_CONFIG.forEach(section=>{
@@ -310,7 +361,10 @@ selectedSuggestionIndex=activeSuggestionIndex;
 
 function renderSuggestions(){
 const box=$("suggestionBox"),list=$("suggestionList"),footer=$("suggestionFooter"),count=$("suggestionCount");
-if(!$("searchInput").value.trim()){box.classList.add("hidden");return}
+if(!$("searchInput").value.trim()){
+box.classList.add("hidden");
+return;
+}
 box.classList.remove("hidden");
 
 if(!searchResults.length){
@@ -358,7 +412,11 @@ function moveSuggestion(direction){
 if(!searchResults.length)return;
 let next=activeSuggestionIndex;
 if(next<0)next=direction>0?0:searchResults.length-1;
-else{next+=direction;if(next<0)next=searchResults.length-1;if(next>=searchResults.length)next=0}
+else{
+next+=direction;
+if(next<0)next=searchResults.length-1;
+if(next>=searchResults.length)next=0;
+}
 activeSuggestionIndex=next;
 selectedSuggestionIndex=next;
 renderSuggestions();
@@ -377,19 +435,48 @@ openModalWithItem(result.section.key,result.item);
 
 function formatCell(value,key,item){
 if(value===undefined||value===null||value==="")return'<span class="text-slate-300">—</span>';
-if(key==="vesselName")return`<div class="min-w-[170px]"><div class="font-bold text-slate-800">${escapeHtml(value)}</div><div class="text-[10px] font-semibold text-slate-400 mt-0.5">${escapeHtml(item?.vesselCode||"")}</div></div>`;
+if(key==="vesselName"){
+return`<div class="vessel-cell"><div class="vessel-name">${escapeHtml(value)}</div><div class="vessel-code">${escapeHtml(item?.vesselCode||"")}</div></div>`;
+}
 if(["booking","open","actual"].includes(key))return`<span class="badge bg-slate-100 text-slate-600">${escapeHtml(value)}</span>`;
-return escapeHtml(value);
+return`<span class="compact-cell">${escapeHtml(value)}</span>`;
 }
 
 function renderSectionHeader(section,count){
 const c=COLOR_MAP[section.color];
-return`<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-2"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl ${c.icon} flex items-center justify-center shrink-0"><i class="fa-solid ${section.icon}"></i></div><div><div class="flex items-center gap-2"><h2 class="text-base font-black text-slate-900">${section.title}</h2><span class="badge ${c.badge}">${count} records</span></div><p class="text-xs text-slate-400 mt-0.5">${section.description}</p></div></div><div class="text-[11px] text-slate-400 font-medium hidden sm:block"><i class="fa-solid fa-arrows-up-down mr-1"></i>Scroll inside table</div></div>`;
+return`<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl ${c.icon} flex items-center justify-center shrink-0"><i class="fa-solid ${section.icon}"></i></div>
+<div>
+<div class="flex items-center gap-2"><h2 class="text-base font-black text-slate-900">${section.title}</h2><span class="badge ${c.badge}">${count} records</span></div>
+<p class="text-xs text-slate-400 mt-0.5">${section.description}</p>
+</div>
+</div>
+<div class="text-[11px] text-slate-400 font-medium hidden sm:block"><i class="fa-solid fa-arrows-up-down mr-1"></i>Scroll inside table</div>
+</div>`;
 }
 
 function renderTable(section){
 const items=getSectionItems(section.key);
-return`<section id="section-${section.key}" class="section-card glass rounded-3xl border ${COLOR_MAP[section.color].line} shadow-sm overflow-hidden fade-in"><div class="section-scroll"><table><thead><tr><th colspan="${section.columns.length}" class="section-title-cell px-5 py-3 text-left border-b border-slate-100">${renderSectionHeader(section,items.length)}</th></tr><tr class="column-header-row">${section.columns.map(([key,label])=>`<th class="px-5 py-3 text-left text-[10px] uppercase tracking-wider font-black text-slate-500 border-b border-slate-200">${label}</th>`).join("")}</tr></thead><tbody>${items.length?items.map((item,index)=>`<tr class="data-row border-b border-slate-100 cursor-pointer" data-section="${section.key}" data-index="${index}">${section.columns.map(([key])=>`<td class="px-5 py-2.5 text-sm border-b border-slate-100">${formatCell(item[key],key,item)}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="${section.columns.length}"><div class="no-data flex flex-col items-center justify-center text-slate-400"><div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-3"><i class="fa-solid fa-inbox"></i></div><p class="font-bold text-slate-500">No data available</p><p class="text-xs mt-1">There are no records in this section.</p></div></td></tr>`}</tbody></table></div></section>`;
+return`<section id="section-${section.key}" class="section-card glass rounded-3xl border ${COLOR_MAP[section.color].line} shadow-sm overflow-hidden fade-in">
+<div class="section-scroll">
+<table>
+<thead>
+<tr>
+<th colspan="${section.columns.length}" class="section-title-cell px-3 sm:px-4 py-3 text-left border-b border-slate-100">${renderSectionHeader(section,items.length)}</th>
+</tr>
+<tr class="column-header-row">
+${section.columns.map(([key,label])=>`<th class="px-2 sm:px-3 py-3 text-left text-[9px] uppercase tracking-wider font-black text-slate-500 border-b border-slate-200">${label}</th>`).join("")}
+</tr>
+</thead>
+<tbody>
+${items.length?items.map((item,index)=>`<tr class="data-row border-b border-slate-100 cursor-pointer" data-section="${section.key}" data-index="${index}">
+${section.columns.map(([key])=>`<td class="px-2 sm:px-3 py-2.5 text-sm border-b border-slate-100">${formatCell(item[key],key,item)}</td>`).join("")}
+</tr>`).join(""):`<tr><td colspan="${section.columns.length}"><div class="no-data flex flex-col items-center justify-center text-slate-400"><div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-3"><i class="fa-solid fa-inbox"></i></div><p class="font-bold text-slate-500">No data available</p><p class="text-xs mt-1">There are no records in this section.</p></div></td></tr>`}
+</tbody>
+</table>
+</div>
+</section>`;
 }
 
 function renderAllSections(){
@@ -405,8 +492,8 @@ $("kpiSchedule").textContent=getSectionItems("vesselSchedule").length;
 $("kpiHistory").textContent=getSectionItems("vesselHistory").length;
 }
 
-function modalField(label,value,wide=false){
-return`<div class="modal-field rounded-xl border border-slate-100 bg-slate-50/70 px-3.5 py-2.5 ${wide?"col-span-2":""}"><p class="text-[9px] uppercase tracking-wider font-black text-slate-400">${label}</p><p class="text-sm font-bold text-slate-800 mt-0.5 truncate">${value?escapeHtml(value):"—"}</p></div>`;
+function modalField(label,value){
+return`<div class="modal-field rounded-xl border border-slate-100 bg-slate-50/70 px-3.5 py-2.5"><p class="text-[9px] uppercase tracking-wider font-black text-slate-400">${label}</p><p class="text-sm font-bold text-slate-800 mt-0.5 truncate">${value?escapeHtml(value):"—"}</p></div>`;
 }
 
 function modalSection(title,icon,content){
@@ -508,7 +595,11 @@ renderSuggestions();
 $("searchInput").addEventListener("keydown",event=>{
 if(event.key==="ArrowDown"){event.preventDefault();moveSuggestion(1);return}
 if(event.key==="ArrowUp"){event.preventDefault();moveSuggestion(-1);return}
-if(event.key==="Enter"){event.preventDefault();if(activeSuggestionIndex>=0&&searchResults[activeSuggestionIndex])selectSuggestion(activeSuggestionIndex);return}
+if(event.key==="Enter"){
+event.preventDefault();
+if(activeSuggestionIndex>=0&&searchResults[activeSuggestionIndex])selectSuggestion(activeSuggestionIndex);
+return;
+}
 if(event.key==="Escape")$("suggestionBox").classList.add("hidden");
 });
 
@@ -529,7 +620,9 @@ if(!wrapper.contains(event.target))$("suggestionBox").classList.add("hidden");
 
 /* MODAL */
 $("modalClose").addEventListener("click",closeModal);
-$("modalBackdrop").addEventListener("click",event=>{if(event.target===$("modalBackdrop"))closeModal()});
+$("modalBackdrop").addEventListener("click",event=>{
+if(event.target===$("modalBackdrop"))closeModal();
+});
 document.addEventListener("keydown",event=>{
 if(event.key==="Escape"&&!$("modalBackdrop").classList.contains("hidden"))closeModal();
 });
@@ -545,6 +638,5 @@ if(section)section.scrollIntoView({behavior:"smooth",block:"start"});
 loadData();
 setInterval(loadData,30*60*1000);
 </script>
-
 </body>
 </html>
