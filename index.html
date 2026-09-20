@@ -9,756 +9,845 @@
 <style>
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#eef6ff 0%,#f8fafc 42%,#eef2ff 100%);color:#0f172a}
+body{margin:0;background:linear-gradient(135deg,#f8fafc 0%,#eef2ff 50%,#f8fafc 100%);color:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 button,input{font:inherit}
-.container-main{width:min(1500px,calc(100% - 32px));margin:auto}
-.hero{position:relative;overflow:hidden;border-radius:28px;background:linear-gradient(135deg,#0f172a,#172554 55%,#1e40af);box-shadow:0 22px 60px rgba(15,23,42,.18)}
-.hero:before,.hero:after{content:"";position:absolute;border-radius:999px;filter:blur(2px);pointer-events:none}
-.hero:before{width:280px;height:280px;right:-80px;top:-110px;background:rgba(59,130,246,.25)}
-.hero:after{width:220px;height:220px;left:-100px;bottom:-130px;background:rgba(99,102,241,.2)}
-.hero-content{position:relative;z-index:1}
-.glass{background:rgba(255,255,255,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.75);box-shadow:0 12px 35px rgba(15,23,42,.07)}
-.search-wrap{position:relative}
-.search-wrap>i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#94a3b8;z-index:3}
-.search-input{width:100%;padding:13px 76px 13px 42px;border:1px solid #dbe3ef;border-radius:14px;background:#fff;outline:none;transition:.2s}
-.search-input:focus{border-color:#60a5fa;box-shadow:0 0 0 4px rgba(59,130,246,.1)}
-.search-actions{position:absolute;right:9px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:4px;z-index:3}
-.search-key{font-size:10px;font-weight:800;color:#94a3b8;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:3px 6px}
-.search-clear{width:28px;height:28px;border:0;background:transparent;color:#94a3b8;cursor:pointer;border-radius:8px;display:none}
-.search-clear:hover{background:#f1f5f9;color:#475569}
-.suggestion-box{position:absolute;left:0;right:0;top:calc(100% + 8px);background:#fff;border:1px solid #dbe3ef;border-radius:16px;box-shadow:0 18px 45px rgba(15,23,42,.14);overflow:hidden;z-index:80;display:none}
-.suggestion-box.show{display:block}
-.suggestion-head{padding:9px 13px;border-bottom:1px solid #eef2f7;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.suggestion-head-title{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:900;color:#64748b}
-.suggestion-head-hint{font-size:10px;color:#94a3b8}
-.suggestion-list{max-height:390px;overflow:auto}
-.suggestion-item{width:100%;border:0;background:#fff;text-align:left;padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;border-bottom:1px solid #f1f5f9;transition:.12s}
-.suggestion-item:last-child{border-bottom:0}
+.hero-bg{background:radial-gradient(circle at 10% 20%,rgba(59,130,246,.25),transparent 30%),radial-gradient(circle at 90% 10%,rgba(99,102,241,.22),transparent 30%),linear-gradient(135deg,#0f172a,#172554 55%,#1e3a8a)}
+.glass{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.kpi-card{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,23,42,.12)}
+.kpi-card:active{transform:translateY(-1px) scale(.99)}
+.kpi-clickable{cursor:pointer}
+.search-wrapper{position:relative;z-index:1000}
+.search-box{position:relative;z-index:1001}
+#suggestionBox{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:9999}
+.suggestion-shadow{box-shadow:0 24px 60px rgba(15,23,42,.22)}
+.suggestion-item{transition:background .15s ease}
 .suggestion-item:hover,.suggestion-item.active{background:#eff6ff}
-.suggestion-icon{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#eff6ff;color:#2563eb}
-.suggestion-main{min-width:0;flex:1}
-.suggestion-vessel{font-size:12px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.suggestion-code{font-size:9px;font-weight:700;color:#64748b;margin-top:2px}
-.suggestion-meta{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
-.suggestion-section{font-size:9px;font-weight:800;color:#2563eb;background:#eff6ff;padding:3px 6px;border-radius:999px}
-.suggestion-type{font-size:9px;font-weight:800;color:#64748b;background:#f1f5f9;padding:3px 6px;border-radius:999px}
-.suggestion-match{font-size:9px;color:#94a3b8;margin-left:auto;white-space:nowrap}
-.suggestion-arrow{color:#94a3b8;font-size:11px}
-.suggestion-empty{padding:20px;text-align:center;color:#94a3b8;font-size:11px}
-.suggestion-selected-info{font-size:10px;color:#64748b;padding:7px 13px;background:#f8fafc;border-top:1px solid #eef2f7}
-.kpi-card{position:relative;overflow:hidden;border-radius:20px;background:#fff;border:1px solid #e2e8f0;padding:18px;box-shadow:0 10px 28px rgba(15,23,42,.06);transition:.2s}
-.kpi-card:hover{transform:translateY(-2px);box-shadow:0 15px 35px rgba(15,23,42,.1)}
-.kpi-icon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center}
-.section-card{border-radius:22px;background:rgba(255,255,255,.92);border:1px solid #e2e8f0;box-shadow:0 12px 32px rgba(15,23,42,.06);overflow:hidden}
+.section-card{scroll-margin-top:24px}
 .section-scroll{width:100%;max-height:360px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable both-edges}
 .section-scroll::-webkit-scrollbar{width:9px;height:9px}
-.section-scroll::-webkit-scrollbar-track{background:#f1f5f9}
-.section-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px;border:2px solid #f1f5f9}
+.section-scroll::-webkit-scrollbar-track{background:#f1f5f9;border-radius:999px}
+.section-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px}
 .section-scroll::-webkit-scrollbar-thumb:hover{background:#94a3b8}
 table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;table-layout:auto}
 thead{position:sticky;top:0;z-index:40}
-.section-title-cell{padding:0!important;background:rgba(255,255,255,.98)!important;border-bottom:1px solid #e2e8f0!important}
-.section-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 16px}
-.section-head-left{display:flex;align-items:center;gap:12px;min-width:0}
-.section-icon{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:flex;align-items:center;justify-content:center}
-.section-title{font-size:15px;font-weight:800;color:#0f172a;line-height:1.2}
-.section-desc{font-size:12px;color:#64748b;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.section-count{white-space:nowrap;padding:6px 10px;border-radius:999px;background:#f1f5f9;color:#475569;font-size:11px;font-weight:700}
-.column-header-row th{position:sticky;top:68px;z-index:35;background:rgba(248,250,252,.98);color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:left;white-space:nowrap}
-tbody td{padding:0 12px;height:52px;border-bottom:1px solid #eef2f7;font-size:12px;color:#334155;vertical-align:middle;background:#fff}
-tbody tr:last-child td{border-bottom:0}
-tbody tr:hover td{background:#f8fbff}
-.data-row{height:52px}
-.vessel-cell{display:flex;flex-direction:column;gap:2px;min-width:150px}
-.vessel-name{font-weight:800;color:#0f172a;line-height:1.2}
-.vessel-code{font-size:10px;color:#64748b;font-weight:600;line-height:1.1}
-.cell-muted{color:#64748b}
-.cell-strong{font-weight:700;color:#1e293b}
-.badge{display:inline-flex;align-items:center;justify-content:center;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap}
-.badge-blue{background:#eff6ff;color:#2563eb}
-.badge-emerald{background:#ecfdf5;color:#059669}
-.badge-amber{background:#fffbeb;color:#d97706}
-.badge-sky{background:#f0f9ff;color:#0284c7}
-.badge-indigo{background:#eef2ff;color:#4f46e5}
-.no-data-row td{height:180px;text-align:center;background:#fff}
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#94a3b8}
-.empty-state i{font-size:25px;color:#cbd5e1}
-.empty-state span{font-size:12px}
-.highlight{background:#fef3c7;border-radius:3px;padding:0 2px}
-.connection-dot{width:8px;height:8px;border-radius:999px;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.15)}
-.connection-dot.offline{background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.15)}
-.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.58);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;padding:14px}
-.modal-backdrop.show{display:flex}
-.modal-panel{width:min(1060px,calc(100vw - 28px));max-height:calc(100vh - 28px);background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 30px 80px rgba(15,23,42,.3);display:flex;flex-direction:column}
-.modal-header{padding:17px 20px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;gap:16px}
-.modal-title-wrap{min-width:0}
-.modal-title{font-size:18px;font-weight:900;color:#0f172a}
-.modal-subtitle{font-size:11px;color:#64748b;margin-top:3px}
-.modal-close{width:36px;height:36px;border:0;border-radius:11px;background:#f1f5f9;color:#64748b;cursor:pointer}
-.modal-close:hover{background:#e2e8f0;color:#0f172a}
-.modal-body{padding:18px 20px;overflow:auto}
-.modal-section-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#64748b;margin-bottom:9px}
-.info-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.info-item{padding:10px 11px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;min-width:0}
-.info-label{font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;font-weight:800}
-.info-value{margin-top:3px;font-size:12px;color:#1e293b;font-weight:700;word-break:break-word}
-.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.status-card{padding:13px;border-radius:14px;border:1px solid #e2e8f0;background:#fff}
-.status-label{font-size:10px;color:#64748b;font-weight:800;text-transform:uppercase}
-.status-value{font-size:18px;font-weight:900;margin-top:3px;color:#0f172a}
-.movement-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.movement-card{padding:13px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0}
-.movement-label{font-size:10px;color:#64748b;font-weight:800;text-transform:uppercase}
-.movement-value{font-size:17px;font-weight:900;color:#0f172a;margin-top:3px}
-@media(max-width:900px){
-.info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:640px){
-.container-main{width:min(100% - 20px,1500px)}
-.hero{border-radius:20px}
-.section-scroll{max-height:350px}
-.section-head{padding:12px}
-.section-desc{max-width:190px}
+.section-title-cell{background:#fff}
+.column-header-row th{position:sticky;top:68px;z-index:39;background:#f8fafc}
+th,td{white-space:nowrap}
+tbody td{height:52px}
+.data-row{height:52px;transition:background .15s ease}
+.data-row:hover{background:#f8fafc}
+.no-data{height:180px}
+.modal-backdrop{background:rgba(15,23,42,.58);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.modal-card{animation:modalIn .2s ease-out}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.fade-in{animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:700}
+.highlight{background:#fef08a;border-radius:3px;padding:0 2px}
+@media(max-width:768px){
 .column-header-row th{top:62px}
-.info-grid,.status-grid,.movement-grid{grid-template-columns:1fr}
-.modal-panel{max-height:94vh}
-.modal-body{padding:14px}
-.suggestion-match{display:none}
+.section-scroll{max-height:350px}
 }
 </style>
 </head>
 <body>
-<div class="container-main py-5 md:py-7">
 
-<header class="hero mb-5">
-<div class="hero-content p-5 md:p-7">
-<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+<!-- HERO -->
+<header class="hero-bg text-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex flex-col gap-6">
+
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
 <div>
-<div class="flex items-center gap-3">
-<div class="w-11 h-11 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center">
-<i class="fa-solid fa-ship text-white text-lg"></i>
+<div class="flex items-center gap-3 mb-2">
+<div class="w-11 h-11 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
+<i class="fa-solid fa-ship text-xl"></i>
 </div>
 <div>
-<h1 class="text-2xl md:text-3xl font-black text-white tracking-tight">Pelindo TPKS Dashboard</h1>
-<p class="text-blue-100/80 text-sm mt-1">Vessel monitoring & terminal information</p>
+<p class="text-xs uppercase tracking-[.22em] text-blue-200 font-bold">Terminal Petikemas Semarang</p>
+<h1 class="text-2xl sm:text-3xl font-black tracking-tight">Pelindo TPKS Dashboard</h1>
 </div>
 </div>
-<div class="mt-4 flex items-center gap-2 text-xs text-blue-100">
-<span id="connectionDot" class="connection-dot"></span>
-<span id="connectionText">Connecting...</span>
-<span class="opacity-40">•</span>
-<span id="lastUpdated">Last update: —</span>
+<p class="text-sm text-slate-300 max-w-2xl">
+Real-time vessel monitoring dashboard for vessel movement, confirmed vessels, open stack and schedule information.
+</p>
+</div>
+
+<div id="connectionBadge" class="inline-flex items-center gap-2 self-start md:self-auto px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm font-semibold">
+<span class="w-2.5 h-2.5 rounded-full bg-slate-400" id="connectionDot"></span>
+<span id="connectionText">Loading data...</span>
 </div>
 </div>
-<div class="flex items-center gap-2">
-<button id="refreshBtn" onclick="loadData()" class="px-4 py-2.5 rounded-xl bg-white text-slate-800 text-sm font-bold hover:bg-blue-50 transition shadow-lg">
-<i class="fa-solid fa-rotate mr-2"></i>Refresh
+
+<!-- SEARCH -->
+<div class="search-wrapper max-w-4xl">
+<div class="search-box">
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+</div>
+<input
+id="searchInput"
+type="text"
+autocomplete="off"
+placeholder="Search vessel, voyage, code, shipping line, date, booking..."
+class="w-full pl-11 pr-24 py-4 rounded-2xl bg-white text-slate-800 placeholder:text-slate-400 shadow-2xl outline-none ring-0 focus:ring-4 focus:ring-blue-400/30"
+/>
+<div class="absolute inset-y-0 right-0 flex items-center gap-2 pr-3">
+<span id="searchKeyHint" class="hidden sm:inline-flex text-[10px] font-bold text-slate-400 border border-slate-200 rounded-md px-1.5 py-1">ENTER</span>
+<button id="searchClear" class="hidden w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700" title="Clear">
+<i class="fa-solid fa-xmark"></i>
 </button>
 </div>
+</div>
+
+<!-- SEARCH SUGGESTIONS -->
+<div id="suggestionBox" class="hidden">
+<div class="bg-white rounded-2xl border border-slate-200 overflow-hidden suggestion-shadow">
+<div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-list-ul text-blue-500"></i>
+<span class="text-xs font-black uppercase tracking-wider text-slate-500">Suggestions</span>
+</div>
+<span id="suggestionCount" class="text-[11px] font-bold text-slate-400"></span>
+</div>
+
+<div id="suggestionList" class="max-h-[420px] overflow-y-auto"></div>
+
+<div id="suggestionFooter" class="px-4 py-2.5 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500">
+Type to search
+</div>
+</div>
+</div>
+</div>
+</div>
+
 </div>
 </div>
 </header>
 
-<div class="glass rounded-2xl p-3 mb-5">
-<div class="search-wrap" id="searchWrap">
-<i class="fa-solid fa-magnifying-glass"></i>
-<input id="searchInput" class="search-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search vessel, voyage, type, shipping line, date, or any information...">
-<div class="search-actions">
-<span id="searchKeyHint" class="search-key">Enter</span>
-<button id="searchClear" class="search-clear" type="button" onclick="clearSearch()" aria-label="Clear search">
+<!-- MAIN -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
+
+<!-- KPI -->
+<section class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+
+<div class="kpi-card kpi-clickable glass rounded-2xl border border-blue-100 p-5 shadow-sm" data-target="vesselAlongside">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-bold uppercase tracking-wider text-slate-500">Alongside</p>
+<p id="kpiAlongside" class="text-3xl font-black text-slate-900 mt-1">0</p>
+</div>
+<div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+<i class="fa-solid fa-anchor"></i>
+</div>
+</div>
+<p class="text-[11px] text-slate-400 mt-3">Currently alongside</p>
+</div>
+
+<div class="kpi-card kpi-clickable glass rounded-2xl border border-emerald-100 p-5 shadow-sm" data-target="confirmedVessel">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-bold uppercase tracking-wider text-slate-500">Confirmed</p>
+<p id="kpiConfirmed" class="text-3xl font-black text-slate-900 mt-1">0</p>
+</div>
+<div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+<i class="fa-solid fa-circle-check"></i>
+</div>
+</div>
+<p class="text-[11px] text-slate-400 mt-3">Confirmed vessels</p>
+</div>
+
+<div class="kpi-card kpi-clickable glass rounded-2xl border border-amber-100 p-5 shadow-sm" data-target="openStack">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-bold uppercase tracking-wider text-slate-500">Open Stack</p>
+<p id="kpiOpenStack" class="text-3xl font-black text-slate-900 mt-1">0</p>
+</div>
+<div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+<i class="fa-solid fa-box-open"></i>
+</div>
+</div>
+<p class="text-[11px] text-slate-400 mt-3">Open stack records</p>
+</div>
+
+<div class="kpi-card kpi-clickable glass rounded-2xl border border-sky-100 p-5 shadow-sm" data-target="vesselSchedule">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-bold uppercase tracking-wider text-slate-500">Schedule</p>
+<p id="kpiSchedule" class="text-3xl font-black text-slate-900 mt-1">0</p>
+</div>
+<div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+<i class="fa-solid fa-calendar-days"></i>
+</div>
+</div>
+<p class="text-[11px] text-slate-400 mt-3">Upcoming schedule</p>
+</div>
+
+<div class="kpi-card kpi-clickable glass rounded-2xl border border-indigo-100 p-5 shadow-sm col-span-2 lg:col-span-1" data-target="vesselHistory">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-xs font-bold uppercase tracking-wider text-slate-500">History</p>
+<p id="kpiHistory" class="text-3xl font-black text-slate-900 mt-1">0</p>
+</div>
+<div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+<i class="fa-solid fa-clock-rotate-left"></i>
+</div>
+</div>
+<p class="text-[11px] text-slate-400 mt-3">Historical movements</p>
+</div>
+
+</section>
+
+<!-- SECTIONS -->
+<div id="sectionsContainer" class="space-y-6"></div>
+
+</main>
+
+<!-- MODAL -->
+<div id="modalBackdrop" class="hidden fixed inset-0 z-[10000] modal-backdrop p-4 flex items-center justify-center">
+<div id="modalCard" class="modal-card w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white rounded-3xl shadow-2xl">
+
+<div class="sticky top-0 z-10 bg-white border-b border-slate-100 px-6 py-5 flex items-start justify-between">
+<div>
+<div class="flex items-center gap-3">
+<div id="modalIcon" class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+<i class="fa-solid fa-ship"></i>
+</div>
+<div>
+<h2 id="modalTitle" class="text-xl font-black text-slate-900">Vessel</h2>
+<p id="modalSubtitle" class="text-xs text-slate-500 mt-0.5"></p>
+</div>
+</div>
+</div>
+<button id="modalClose" class="w-9 h-9 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700">
 <i class="fa-solid fa-xmark"></i>
 </button>
 </div>
 
-<div id="suggestionBox" class="suggestion-box">
-<div class="suggestion-head">
-<span class="suggestion-head-title"><i class="fa-solid fa-magnifying-glass mr-1"></i>Suggestions</span>
-<span id="suggestionHint" class="suggestion-head-hint">↑ ↓ Navigate • Enter Select</span>
-</div>
-<div id="suggestionList" class="suggestion-list"></div>
-<div id="suggestionFooter" class="suggestion-selected-info"></div>
-</div>
+<div id="modalBody" class="p-6"></div>
 </div>
 </div>
 
-<div id="kpiGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 mb-6"></div>
-<div id="sectionsContainer" class="space-y-5"></div>
-
-<footer class="text-center py-7 text-xs text-slate-400">
-<div>Pelindo TPKS Monitoring Dashboard</div>
-<div class="mt-1">Data source: <a href="https://ibstpks.pelindo.co.id/webaccess/" target="_blank" rel="noopener" class="text-blue-500 hover:underline">Pelindo TPKS WebAccess</a></div>
+<!-- FOOTER -->
+<footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-2">
+<div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+<p>Pelindo TPKS Vessel Monitoring Dashboard</p>
+<p>Last update: <span id="lastUpdate">-</span></p>
+</div>
 </footer>
-</div>
-
-<div id="modalBackdrop" class="modal-backdrop" onclick="closeModal(event)">
-<div class="modal-panel" onclick="event.stopPropagation()">
-<div class="modal-header">
-<div class="modal-title-wrap">
-<div class="flex items-center gap-2">
-<span id="modalSectionBadge" class="badge badge-blue">Vessel</span>
-<span id="modalTypeBadge" class="badge badge-indigo">—</span>
-</div>
-<div id="modalTitle" class="modal-title mt-2">—</div>
-<div id="modalSubtitle" class="modal-subtitle">—</div>
-</div>
-<button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-</div>
-<div id="modalBody" class="modal-body"></div>
-</div>
-</div>
 
 <script>
-const SECTION_CONFIG=[
-{key:"vesselAlongside",title:"Vessel Alongside",icon:"fa-anchor",color:"blue",description:"Vessels currently alongside.",columns:[["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["atb","ATB"],["etd","ETD"]]},
-{key:"confirmedVessel",title:"Confirmed Vessel",icon:"fa-circle-check",color:"emerald",description:"Confirmed vessel and cargo opening information.",columns:[["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["etb","ETB"],["etd","ETD"],["openStack","Open Stack"],["closingTime","Closing Time"],["booking","Booking"],["open","Open"],["actual","Actual"]]},
-{key:"openStack",title:"Open Stack",icon:"fa-box-open",color:"amber",description:"Vessel information with open stack details.",columns:[["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["eta","ETA"],["etb","ETB"],["etd","ETD"],["openStack","Open Stack"],["closingTime","Closing Time"],["booking","Booking"],["open","Open"],["actual","Actual"]]},
-{key:"vesselSchedule",title:"Vessel Schedule",icon:"fa-calendar-days",color:"sky",description:"Upcoming vessel schedule.",columns:[["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["eta","ETA"],["etb","ETB"],["etd","ETD"]]},
-{key:"vesselHistory",title:"Vessel History",icon:"fa-clock-rotate-left",color:"indigo",description:"Historical vessel movements.",columns:[["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["atb","ATB"],["atd","ATD"],["export","Export"],["import","Import"]]}
-];
-
-let DATA={updatedAt:"",source:"",vesselAlongside:[],confirmedVessel:[],openStack:[],vesselSchedule:[],vesselHistory:[],counts:{}};
-let searchTerm="";
-let suggestions=[];
-let activeSuggestionIndex=-1;
-let modalOpen=false;
-
-const colorMap={
-blue:{icon:"bg-blue-50 text-blue-600",badge:"badge-blue"},
-emerald:{icon:"bg-emerald-50 text-emerald-600",badge:"badge-emerald"},
-amber:{icon:"bg-amber-50 text-amber-600",badge:"badge-amber"},
-sky:{icon:"bg-sky-50 text-sky-600",badge:"badge-sky"},
-indigo:{icon:"bg-indigo-50 text-indigo-600",badge:"badge-indigo"}
+const DATA={
+updatedAt:"",
+source:"",
+vesselAlongside:[],
+confirmedVessel:[],
+openStack:[],
+vesselSchedule:[],
+vesselHistory:[],
+counts:{}
 };
 
+const SECTION_CONFIG=[
+{
+key:"vesselAlongside",
+title:"Vessel Alongside",
+icon:"fa-anchor",
+color:"blue",
+description:"Vessels currently alongside.",
+columns:[
+["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["atb","ATB"],["etd","ETD"]
+]
+},
+{
+key:"confirmedVessel",
+title:"Confirmed Vessel",
+icon:"fa-circle-check",
+color:"emerald",
+description:"Confirmed vessel and cargo opening information.",
+columns:[
+["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["etb","ETB"],["etd","ETD"],
+["openStack","Open Stack"],["closingTime","Closing Time"],["booking","Booking"],["open","Open"],["actual","Actual"]
+]
+},
+{
+key:"openStack",
+title:"Open Stack",
+icon:"fa-box-open",
+color:"amber",
+description:"Vessel information with open stack details.",
+columns:[
+["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["eta","ETA"],["etb","ETB"],["etd","ETD"],
+["openStack","Open Stack"],["closingTime","Closing Time"],["booking","Booking"],["open","Open"],["actual","Actual"]
+]
+},
+{
+key:"vesselSchedule",
+title:"Vessel Schedule",
+icon:"fa-calendar-days",
+color:"sky",
+description:"Upcoming vessel schedule.",
+columns:[
+["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["eta","ETA"],["etb","ETB"],["etd","ETD"]
+]
+},
+{
+key:"vesselHistory",
+title:"Vessel History",
+icon:"fa-clock-rotate-left",
+color:"indigo",
+description:"Historical vessel movements.",
+columns:[
+["vesselName","Vessel"],["voyage","Voyage"],["type","Type"],["atb","ATB"],["atd","ATD"],
+["export","Export"],["import","Import"]
+]
+}
+];
+
+const COLOR_MAP={
+blue:{icon:"bg-blue-50 text-blue-600",badge:"bg-blue-50 text-blue-700",line:"border-blue-100"},
+emerald:{icon:"bg-emerald-50 text-emerald-600",badge:"bg-emerald-50 text-emerald-700",line:"border-emerald-100"},
+amber:{icon:"bg-amber-50 text-amber-600",badge:"bg-amber-50 text-amber-700",line:"border-amber-100"},
+sky:{icon:"bg-sky-50 text-sky-600",badge:"bg-sky-50 text-sky-700",line:"border-sky-100"},
+indigo:{icon:"bg-indigo-50 text-indigo-600",badge:"bg-indigo-50 text-indigo-700",line:"border-indigo-100"}
+};
+
+let currentData={...DATA};
+let searchResults=[];
+let activeSuggestionIndex=-1;
+let selectedSuggestionIndex=-1;
+
+const $=id=>document.getElementById(id);
+
 function escapeHtml(value){
-return String(value??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+return String(value??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function highlight(value,term){
+const text=String(value??"");
+if(!term)return escapeHtml(text);
+const escapedTerm=term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+return escapeHtml(text).replace(new RegExp(`(${escapedTerm})`,"gi"),"<mark class='highlight'>$1</mark>");
 }
 
 function normalize(value){
 return String(value??"").toLowerCase().trim();
 }
 
-function formatNumber(value){
-if(value===null||value===undefined||value==="")return"—";
-const n=Number(String(value).replace(/,/g,""));
-return Number.isFinite(n)?n.toLocaleString("en-US"):escapeHtml(value);
-}
-
-function formatUpdatedAt(value){
-if(!value)return"—";
-try{
-const d=new Date(value);
-if(Number.isNaN(d.getTime()))return escapeHtml(value);
-return d.toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
-}catch{return escapeHtml(value)}
-}
-
-function highlight(value){
-if(!searchTerm)return value;
-const safe=escapeHtml(searchTerm).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-try{return value.replace(new RegExp(`(${safe})`,"gi"),'<mark class="highlight">$1</mark>')}catch{return value}
-}
-
-function formatCell(value,key,item){
-if(value===null||value===undefined||value==="")return'<span class="cell-muted">—</span>';
-
-if(key==="vesselName"){
-const name=escapeHtml(value);
-const code=escapeHtml(item?.vesselCode||"");
-return`<div class="vessel-cell"><div class="vessel-name">${highlight(name)}</div>${code?`<div class="vessel-code">${highlight(code)}</div>`:""}</div>`;
-}
-
-if(["booking","open","actual","export","import"].includes(key)){
-return`<span class="cell-strong">${formatNumber(value)}</span>`;
-}
-
-if(key==="type"){
-return`<span class="badge badge-${item?._color||"blue"}">${escapeHtml(value)}</span>`;
-}
-
-return highlight(escapeHtml(value));
-}
-
-function getItemKey(item){
-return`${normalize(item?.vesselName)}|${normalize(item?.voyage)}`;
-}
-
 function dedupe(items){
-const seen=new Set();
-return(items||[]).filter(item=>{
-const key=getItemKey(item);
-if(seen.has(key))return false;
-seen.add(key);
-return true;
+const map=new Map();
+items.forEach(item=>{
+const key=`${normalize(item.vesselName)}||${normalize(item.voyage)}`;
+if(!map.has(key))map.set(key,item);
 });
+return [...map.values()];
 }
 
 function getSection(key){
 return SECTION_CONFIG.find(s=>s.key===key);
 }
 
+function getSectionItems(key){
+return dedupe(currentData[key]||[]);
+}
+
 function searchMatchInfo(item,term){
-const q=normalize(term);
-if(!q)return"";
-
-const fields=[
-["Vessel",item.vesselName],
-["Code",item.vesselCode],
-["Voyage",item.voyage],
-["Type",item.type],
-["Shipping Line",item.shippingLine],
-["ETA",item.eta],
-["ETB",item.etb],
-["ATB",item.atb],
-["ETD",item.etd],
-["ATD",item.atd],
-["Open Stack",item.openStack],
-["Closing Time",item.closingTime],
-["Booking",item.booking],
-["Open",item.open],
-["Actual",item.actual],
-["Export",item.export],
-["Import",item.import]
-];
-
-const found=fields.find(([label,value])=>normalize(value).includes(q));
-return found?found[0]:"Information";
+const fields={
+vesselName:"Vessel",
+vesselCode:"Code",
+voyage:"Voyage",
+type:"Type",
+shippingLine:"Shipping Line",
+eta:"ETA",
+etb:"ETB",
+atb:"ATB",
+etd:"ETD",
+atd:"ATD",
+openStack:"Open Stack",
+closingTime:"Closing Time",
+booking:"Booking",
+open:"Open",
+actual:"Actual",
+export:"Export",
+import:"Import"
+};
+for(const [key,label] of Object.entries(fields)){
+if(normalize(item[key]).includes(normalize(term)))return label;
+}
+return "";
 }
 
 function buildSuggestions(term){
-const q=normalize(term);
-if(!q)return[];
+term=term.trim();
+if(!term){
+searchResults=[];
+activeSuggestionIndex=-1;
+selectedSuggestionIndex=-1;
+return;
+}
 
 const results=[];
 
 SECTION_CONFIG.forEach(section=>{
-const items=dedupe(DATA[section.key]||[]);
-
-items.forEach((item,index)=>{
-const match=Object.values(item||{}).some(value=>normalize(value).includes(q));
-if(!match)return;
-
+getSectionItems(section.key).forEach(item=>{
+const match=searchMatchInfo(item,term);
+if(match){
 results.push({
-sectionKey:section.key,
-section,
 item,
-originalIndex:index,
-matchField:searchMatchInfo(item,term)
+section,
+match
 });
+}
 });
 });
 
-return results.slice(0,20);
+searchResults=results.slice(0,20);
+activeSuggestionIndex=searchResults.length===1?0:-1;
+selectedSuggestionIndex=activeSuggestionIndex;
 }
 
 function renderSuggestions(){
-const box=document.getElementById("suggestionBox");
-const list=document.getElementById("suggestionList");
-const footer=document.getElementById("suggestionFooter");
-const keyHint=document.getElementById("searchKeyHint");
+const box=$("suggestionBox");
+const list=$("suggestionList");
+const footer=$("suggestionFooter");
+const count=$("suggestionCount");
 
-if(!searchTerm){
-suggestions=[];
-activeSuggestionIndex=-1;
-box.classList.remove("show");
-keyHint.textContent="Enter";
+if(!$("searchInput").value.trim()){
+box.classList.add("hidden");
 return;
 }
 
-suggestions=buildSuggestions(searchTerm);
+box.classList.remove("hidden");
 
-if(!suggestions.length){
-activeSuggestionIndex=-1;
-list.innerHTML='<div class="suggestion-empty"><i class="fa-regular fa-face-frown mr-1"></i>No matching vessel or information found</div>';
-footer.textContent="";
-box.classList.add("show");
-keyHint.textContent="Esc";
+if(!searchResults.length){
+count.textContent="0 results";
+list.innerHTML=`
+<div class="px-5 py-8 text-center">
+<div class="w-12 h-12 mx-auto rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
+<i class="fa-solid fa-magnifying-glass"></i>
+</div>
+<p class="font-bold text-slate-700">No matching vessel</p>
+<p class="text-xs text-slate-400 mt-1">Try another keyword.</p>
+</div>`;
+footer.textContent="No result found";
 return;
 }
 
-if(suggestions.length===1){
-activeSuggestionIndex=0;
-}else if(activeSuggestionIndex>=suggestions.length){
-activeSuggestionIndex=-1;
-}
+count.textContent=`${searchResults.length}${searchResults.length>=20?"+":""} result${searchResults.length===1?"":"s"}`;
 
-list.innerHTML=suggestions.map((s,i)=>{
-const item=s.item;
-const section=s.section;
-const color=colorMap[section.color]||colorMap.blue;
-const active=i===activeSuggestionIndex;
+list.innerHTML=searchResults.map((result,index)=>{
+const item=result.item;
+const section=result.section;
+const active=index===activeSuggestionIndex;
+const code=item.vesselCode||"-";
 
 return`
-<button type="button" class="suggestion-item ${active?"active":""}" onclick="selectSuggestion(${i})">
-<div class="suggestion-icon ${color.icon}">
+<button
+type="button"
+class="suggestion-item w-full text-left px-4 py-3 border-b border-slate-100 ${active?"active":""}"
+data-index="${index}"
+>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl ${COLOR_MAP[section.color].icon} flex items-center justify-center shrink-0">
 <i class="fa-solid ${section.icon}"></i>
 </div>
-<div class="suggestion-main">
-<div class="suggestion-vessel">${highlight(escapeHtml(item.vesselName||"Unknown Vessel"))}</div>
-<div class="suggestion-code">${item.vesselCode?highlight(escapeHtml(item.vesselCode)):"No vessel code"}${item.voyage?` • Voyage ${highlight(escapeHtml(item.voyage))}`:""}</div>
-<div class="suggestion-meta">
-<span class="suggestion-section">${escapeHtml(section.title)}</span>
-${item.type?`<span class="suggestion-type">${highlight(escapeHtml(item.type))}</span>`:""}
-<span class="suggestion-match">Match: ${escapeHtml(s.matchField)}</span>
+<div class="min-w-0 flex-1">
+<div class="flex items-center gap-2">
+<p class="font-bold text-sm text-slate-800 truncate">${highlight(item.vesselName||"-",$("searchInput").value)}</p>
+<span class="text-[10px] font-bold text-slate-400 shrink-0">${highlight(code,$("searchInput").value)}</span>
+</div>
+<div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
+<span class="text-xs text-slate-500">Voyage ${highlight(item.voyage||"-",$("searchInput").value)}</span>
+<span class="text-slate-300">•</span>
+<span class="text-xs ${COLOR_MAP[section.color].badge} badge">${section.title}</span>
+<span class="text-[10px] text-slate-400">Match: ${escapeHtml(result.match)}</span>
 </div>
 </div>
-<div class="suggestion-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+<div class="text-slate-300">
+<i class="fa-solid fa-chevron-right text-xs"></i>
+</div>
+</div>
 </button>`;
 }).join("");
 
-box.classList.add("show");
+document.querySelectorAll(".suggestion-item").forEach(button=>{
+button.addEventListener("mouseenter",()=>{
+activeSuggestionIndex=Number(button.dataset.index);
+selectedSuggestionIndex=activeSuggestionIndex;
+renderSuggestions();
+});
+button.addEventListener("click",()=>{
+selectSuggestion(Number(button.dataset.index));
+});
+});
 
-if(suggestions.length===1){
-footer.innerHTML='<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>One result found — press <b>Enter</b> to open';
-keyHint.textContent="Enter";
+if(searchResults.length===1){
+footer.innerHTML=`<span class="font-semibold text-blue-600">1 result automatically selected.</span> Press Enter to open.`;
 }else if(activeSuggestionIndex>=0){
-footer.innerHTML=`<i class="fa-solid fa-location-crosshairs text-blue-500 mr-1"></i>Selected ${activeSuggestionIndex+1} of ${suggestions.length} — press <b>Enter</b> to open`;
-keyHint.textContent="Enter";
+footer.innerHTML=`<span class="font-semibold text-blue-600">Selected.</span> Press Enter to open or use ↑ ↓ to navigate.`;
 }else{
-footer.innerHTML=`<i class="fa-solid fa-arrows-up-down text-slate-400 mr-1"></i>${suggestions.length} results — use <b>↑</b> <b>↓</b> to select`;
-keyHint.textContent="Select";
+footer.innerHTML=`Use <kbd class="px-1.5 py-0.5 rounded border border-slate-200 bg-white font-bold">↑</kbd> <kbd class="px-1.5 py-0.5 rounded border border-slate-200 bg-white font-bold">↓</kbd> to select a result, then press Enter.`;
 }
-
-const activeEl=list.querySelector(".suggestion-item.active");
-if(activeEl)activeEl.scrollIntoView({block:"nearest"});
 }
 
 function moveSuggestion(direction){
-if(!suggestions.length)return;
+if(!searchResults.length)return;
 
-if(activeSuggestionIndex===-1){
-activeSuggestionIndex=direction>0?0:suggestions.length-1;
+let next=activeSuggestionIndex;
+
+if(next<0){
+next=direction>0?0:searchResults.length-1;
 }else{
-activeSuggestionIndex+=direction;
-if(activeSuggestionIndex<0)activeSuggestionIndex=suggestions.length-1;
-if(activeSuggestionIndex>=suggestions.length)activeSuggestionIndex=0;
+next+=direction;
+if(next<0)next=searchResults.length-1;
+if(next>=searchResults.length)next=0;
 }
 
+activeSuggestionIndex=next;
+selectedSuggestionIndex=next;
 renderSuggestions();
+
+const active=document.querySelector(`.suggestion-item[data-index="${next}"]`);
+if(active)active.scrollIntoView({block:"nearest"});
 }
 
 function selectSuggestion(index){
-if(index<0||index>=suggestions.length)return;
+if(index<0||index>=searchResults.length)return;
+const result=searchResults[index];
 activeSuggestionIndex=index;
-const selected=suggestions[index];
-closeSuggestions();
-openModalWithItem(selected.section,selected.item);
+selectedSuggestionIndex=index;
+$("suggestionBox").classList.add("hidden");
+openModalWithItem(result.section.key,result.item);
 }
 
-function closeSuggestions(){
-document.getElementById("suggestionBox").classList.remove("show");
+function formatCell(value,key,item){
+if(value===undefined||value===null||value==="")return'<span class="text-slate-300">—</span>';
+
+if(key==="vesselName"){
+return`
+<div class="min-w-[170px]">
+<div class="font-bold text-slate-800">${escapeHtml(value)}</div>
+<div class="text-[10px] font-semibold text-slate-400 mt-0.5">${escapeHtml(item?.vesselCode||"")}</div>
+</div>`;
 }
 
-function clearSearch(){
-const input=document.getElementById("searchInput");
-input.value="";
-searchTerm="";
-suggestions=[];
-activeSuggestionIndex=-1;
-closeSuggestions();
-document.getElementById("searchClear").style.display="none";
-input.focus();
+if(["booking","open","actual"].includes(key)){
+return`<span class="badge bg-slate-100 text-slate-600">${escapeHtml(value)}</span>`;
 }
 
-function updateSearchControls(){
-document.getElementById("searchClear").style.display=searchTerm?"block":"none";
+return escapeHtml(value);
 }
 
 function renderSectionHeader(section,count){
-const c=colorMap[section.color]||colorMap.blue;
+const c=COLOR_MAP[section.color];
 return`
-<div class="section-head">
-<div class="section-head-left">
-<div class="section-icon ${c.icon}"><i class="fa-solid ${section.icon}"></i></div>
-<div class="min-w-0">
-<div class="section-title">${section.title}</div>
-<div class="section-desc">${section.description}</div>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl ${c.icon} flex items-center justify-center shrink-0">
+<i class="fa-solid ${section.icon}"></i>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-base font-black text-slate-900">${section.title}</h2>
+<span class="badge ${c.badge}">${count} records</span>
+</div>
+<p class="text-xs text-slate-400 mt-0.5">${section.description}</p>
 </div>
 </div>
-<div class="section-count">${count} Records</div>
+<div class="text-[11px] text-slate-400 font-medium hidden sm:block">
+<i class="fa-solid fa-arrows-up-down mr-1"></i>Scroll inside table
+</div>
 </div>`;
 }
 
 function renderTable(section){
-const items=dedupe(DATA[section.key]||[]);
-const colspan=section.columns.length;
-let body="";
-
-if(!items.length){
-body=`
-<tr class="no-data-row">
-<td colspan="${colspan}">
-<div class="empty-state">
-<i class="fa-regular fa-folder-open"></i>
-<span>No data available</span>
-</div>
-</td>
-</tr>`;
-}else{
-body=items.map((item,index)=>{
-item._color=section.color;
-return`
-<tr class="data-row cursor-pointer" onclick='openVesselModal(${JSON.stringify(section.key)},${index})'>
-${section.columns.map(([key])=>`<td>${formatCell(item[key],key,item)}</td>`).join("")}
-</tr>`;
-}).join("");
-}
+const items=getSectionItems(section.key);
 
 return`
-<section class="section-card">
+<section id="section-${section.key}" class="section-card glass rounded-3xl border ${COLOR_MAP[section.color].line} shadow-sm overflow-hidden fade-in">
 <div class="section-scroll">
 <table>
 <thead>
 <tr>
-<th colspan="${colspan}" class="section-title-cell">
+<th colspan="${section.columns.length}" class="section-title-cell px-5 py-3 text-left border-b border-slate-100">
 ${renderSectionHeader(section,items.length)}
 </th>
 </tr>
 <tr class="column-header-row">
-${section.columns.map(([key,label])=>`<th>${escapeHtml(label)}</th>`).join("")}
+${section.columns.map(([key,label])=>`
+<th class="px-5 py-3 text-left text-[10px] uppercase tracking-wider font-black text-slate-500 border-b border-slate-200">
+${label}
+</th>`).join("")}
 </tr>
 </thead>
-<tbody>${body}</tbody>
+<tbody>
+${
+items.length
+?items.map((item,index)=>`
+<tr class="data-row border-b border-slate-100 cursor-pointer" data-section="${section.key}" data-index="${index}">
+${section.columns.map(([key])=>`
+<td class="px-5 py-2.5 text-sm border-b border-slate-100">
+${formatCell(item[key],key,item)}
+</td>`).join("")}
+</tr>`).join("")
+:`<tr><td colspan="${section.columns.length}">
+<div class="no-data flex flex-col items-center justify-center text-slate-400">
+<div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-3">
+<i class="fa-solid fa-inbox"></i>
+</div>
+<p class="font-bold text-slate-500">No data available</p>
+<p class="text-xs mt-1">There are no records in this section.</p>
+</div>
+</td></tr>`
+}
+</tbody>
 </table>
 </div>
 </section>`;
 }
 
-function renderSections(){
-document.getElementById("sectionsContainer").innerHTML=SECTION_CONFIG.map(renderTable).join("");
+function renderAllSections(){
+$("sectionsContainer").innerHTML=SECTION_CONFIG.map(renderTable).join("");
+
+document.querySelectorAll(".data-row").forEach(row=>{
+row.addEventListener("click",()=>{
+openVesselModal(row.dataset.section,Number(row.dataset.index));
+});
+});
 }
 
-function updateKpis(){
-const configs=[
-["vesselAlongside","Alongside","fa-anchor","blue"],
-["confirmedVessel","Confirmed","fa-circle-check","emerald"],
-["openStack","Open Stack","fa-box-open","amber"],
-["vesselSchedule","Schedule","fa-calendar-days","sky"],
-["vesselHistory","History","fa-clock-rotate-left","indigo"]
-];
+function updateKPI(){
+$("kpiAlongside").textContent=getSectionItems("vesselAlongside").length;
+$("kpiConfirmed").textContent=getSectionItems("confirmedVessel").length;
+$("kpiOpenStack").textContent=getSectionItems("openStack").length;
+$("kpiSchedule").textContent=getSectionItems("vesselSchedule").length;
+$("kpiHistory").textContent=getSectionItems("vesselHistory").length;
+}
 
-document.getElementById("kpiGrid").innerHTML=configs.map(([key,title,icon,color])=>{
-const count=dedupe(DATA[key]||[]).length;
-const c=colorMap[color];
-
+function formatModalField(label,value){
 return`
-<div class="kpi-card">
-<div class="flex items-center justify-between gap-3">
-<div>
-<div class="text-[11px] uppercase tracking-wider font-bold text-slate-400">${title}</div>
-<div class="text-2xl font-black text-slate-800 mt-1">${count.toLocaleString()}</div>
-</div>
-<div class="kpi-icon ${c.icon}"><i class="fa-solid ${icon}"></i></div>
-</div>
+<div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+<p class="text-[10px] uppercase tracking-wider font-black text-slate-400">${label}</p>
+<p class="text-sm font-bold text-slate-800 mt-1">${value?escapeHtml(value):"—"}</p>
 </div>`;
-}).join("");
 }
 
-function updateConnection(ok=true){
-const dot=document.getElementById("connectionDot");
-const text=document.getElementById("connectionText");
+function openModalWithItem(sectionKey,item){
+const section=getSection(sectionKey);
+if(!section||!item)return;
 
-if(ok){
-dot.classList.remove("offline");
-text.textContent="Live data connected";
-}else{
-dot.classList.add("offline");
-text.textContent="Data connection unavailable";
-}
-}
+$("modalTitle").textContent=item.vesselName||"Vessel";
+$("modalSubtitle").textContent=`${item.vesselCode||"-"} • Voyage ${item.voyage||"-"} • ${section.title}`;
 
-function renderAll(){
-updateKpis();
-renderSections();
-}
+const c=COLOR_MAP[section.color];
+$("modalIcon").className=`w-11 h-11 rounded-xl ${c.icon} flex items-center justify-center`;
+$("modalIcon").innerHTML=`<i class="fa-solid ${section.icon}"></i>`;
 
-async function loadData(){
-const btn=document.getElementById("refreshBtn");
-const original=btn.innerHTML;
+$("modalBody").innerHTML=`
+<div class="space-y-6">
 
-btn.disabled=true;
-btn.innerHTML='<i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading';
+<div>
+<div class="flex items-center gap-2 mb-3">
+<i class="fa-solid fa-circle-info text-blue-500"></i>
+<h3 class="font-black text-slate-800">Vessel Information</h3>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+${formatModalField("Vessel",item.vesselName)}
+${formatModalField("Vessel Code",item.vesselCode)}
+${formatModalField("Voyage",item.voyage)}
+${formatModalField("Type",item.type)}
+${formatModalField("Shipping Line",item.shippingLine)}
+</div>
+</div>
 
-try{
-const response=await fetch(`data.json?t=${Date.now()}`,{cache:"no-store"});
-if(!response.ok)throw new Error(`HTTP ${response.status}`);
+<div>
+<div class="flex items-center gap-2 mb-3">
+<i class="fa-solid fa-clock text-blue-500"></i>
+<h3 class="font-black text-slate-800">Vessel Timing</h3>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+${formatModalField("ETA",item.eta)}
+${formatModalField("ETB",item.etb)}
+${formatModalField("ATB",item.atb)}
+${formatModalField("ETD",item.etd)}
+${formatModalField("ATD",item.atd)}
+</div>
+</div>
 
-const json=await response.json();
+<div>
+<div class="flex items-center gap-2 mb-3">
+<i class="fa-solid fa-boxes-stacked text-blue-500"></i>
+<h3 class="font-black text-slate-800">Cargo Status</h3>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+${formatModalField("Open Stack",item.openStack)}
+${formatModalField("Closing Time",item.closingTime)}
+${formatModalField("Booking",item.booking)}
+${formatModalField("Open",item.open)}
+${formatModalField("Actual",item.actual)}
+</div>
+</div>
 
-DATA={
-updatedAt:json.updatedAt||"",
-source:json.source||"",
-vesselAlongside:Array.isArray(json.vesselAlongside)?json.vesselAlongside:[],
-confirmedVessel:Array.isArray(json.confirmedVessel)?json.confirmedVessel:[],
-openStack:Array.isArray(json.openStack)?json.openStack:[],
-vesselSchedule:Array.isArray(json.vesselSchedule)?json.vesselSchedule:[],
-vesselHistory:Array.isArray(json.vesselHistory)?json.vesselHistory:[],
-counts:json.counts||{}
-};
+<div>
+<div class="flex items-center gap-2 mb-3">
+<i class="fa-solid fa-truck-ramp-box text-blue-500"></i>
+<h3 class="font-black text-slate-800">Container Movement</h3>
+</div>
+<div class="grid grid-cols-2 gap-3">
+${formatModalField("Export",item.export)}
+${formatModalField("Import",item.import)}
+</div>
+</div>
 
-updateConnection(true);
-document.getElementById("lastUpdated").textContent=`Last update: ${formatUpdatedAt(DATA.updatedAt)}`;
-renderAll();
+</div>`;
 
-if(searchTerm)renderSuggestions();
-
-}catch(error){
-console.error(error);
-updateConnection(false);
-document.getElementById("lastUpdated").textContent="Last update: unavailable";
-renderAll();
-}finally{
-btn.disabled=false;
-btn.innerHTML=original;
-}
+$("modalBackdrop").classList.remove("hidden");
+document.body.classList.add("overflow-hidden");
 }
 
 function openVesselModal(sectionKey,index){
-const section=getSection(sectionKey);
-if(!section)return;
-
-const items=dedupe(DATA[sectionKey]||[]);
+const items=getSectionItems(sectionKey);
 const item=items[index];
-if(!item)return;
-
-openModalWithItem(section,item);
+if(item)openModalWithItem(sectionKey,item);
 }
 
-function openModalWithItem(section,item){
-const color=colorMap[section.color]||colorMap.blue;
-
-document.getElementById("modalSectionBadge").className=`badge ${color.badge}`;
-document.getElementById("modalSectionBadge").textContent=section.title;
-document.getElementById("modalTypeBadge").textContent=item.type||"Vessel";
-document.getElementById("modalTitle").textContent=item.vesselName||"Unknown Vessel";
-
-const voyage=item.voyage?`Voyage ${item.voyage}`:"";
-const code=item.vesselCode?`Code ${item.vesselCode}`:"";
-
-document.getElementById("modalSubtitle").textContent=[code,voyage].filter(Boolean).join(" • ")||"Vessel details";
-
-const infoFields=[
-["Shipping Line",item.shippingLine],
-["Vessel Code",item.vesselCode],
-["Voyage",item.voyage],
-["ETA",item.eta],
-["ETB",item.etb],
-["ATB",item.atb],
-["ETD",item.etd],
-["ATD",item.atd],
-["Open Stack",item.openStack],
-["Closing Time",item.closingTime]
-];
-
-const statusFields=[
-["Booking",item.booking],
-["Open",item.open],
-["Actual",item.actual]
-];
-
-const movementFields=[
-["Export",item.export],
-["Import",item.import]
-];
-
-document.getElementById("modalBody").innerHTML=`
-<div class="modal-section-title">Vessel Information</div>
-<div class="info-grid mb-5">
-${infoFields.map(([label,value])=>`
-<div class="info-item">
-<div class="info-label">${label}</div>
-<div class="info-value">${value!==undefined&&value!==null&&value!==""?escapeHtml(value):"—"}</div>
-</div>`).join("")}
-</div>
-
-<div class="modal-section-title">Cargo Status</div>
-<div class="status-grid mb-5">
-${statusFields.map(([label,value])=>`
-<div class="status-card">
-<div class="status-label">${label}</div>
-<div class="status-value">${value!==undefined&&value!==null&&value!==""?formatNumber(value):"—"}</div>
-</div>`).join("")}
-</div>
-
-<div class="modal-section-title">Container Movement</div>
-<div class="movement-grid">
-${movementFields.map(([label,value])=>`
-<div class="movement-card">
-<div class="movement-label">${label}</div>
-<div class="movement-value">${value!==undefined&&value!==null&&value!==""?formatNumber(value):"—"}</div>
-</div>`).join("")}
-</div>`;
-
-document.getElementById("modalBackdrop").classList.add("show");
-modalOpen=true;
-document.body.style.overflow="hidden";
+function closeModal(){
+$("modalBackdrop").classList.add("hidden");
+document.body.classList.remove("overflow-hidden");
 }
 
-function closeModal(event){
-if(event&&event.target!==document.getElementById("modalBackdrop"))return;
-document.getElementById("modalBackdrop").classList.remove("show");
-modalOpen=false;
-document.body.style.overflow="";
+function updateConnection(success){
+const dot=$("connectionDot");
+const text=$("connectionText");
+
+if(success){
+dot.className="w-2.5 h-2.5 rounded-full bg-emerald-400";
+text.textContent="Live data connected";
+}else{
+dot.className="w-2.5 h-2.5 rounded-full bg-red-400";
+text.textContent="Connection error";
+}
 }
 
-const searchInput=document.getElementById("searchInput");
+async function loadData(){
+try{
+const response=await fetch(`data.json?t=${Date.now()}`,{cache:"no-store"});
+if(!response.ok)throw new Error("Failed to load data.json");
 
-searchInput.addEventListener("input",e=>{
-searchTerm=e.target.value.trim();
-activeSuggestionIndex=-1;
-updateSearchControls();
+const json=await response.json();
+
+currentData={
+...DATA,
+...json
+};
+
+renderAllSections();
+updateKPI();
+updateConnection(true);
+
+$("lastUpdate").textContent=currentData.updatedAt||new Date().toLocaleString("en-GB");
+}catch(error){
+console.error(error);
+updateConnection(false);
+$("lastUpdate").textContent="Unable to load data";
+}
+}
+
+/* SEARCH */
+$("searchInput").addEventListener("input",()=>{
+const value=$("searchInput").value;
+
+$("searchClear").classList.toggle("hidden",!value.trim());
+
+buildSuggestions(value);
 renderSuggestions();
 });
 
-searchInput.addEventListener("keydown",e=>{
-if(!searchTerm)return;
-
-if(e.key==="ArrowDown"){
-e.preventDefault();
+$("searchInput").addEventListener("keydown",event=>{
+if(event.key==="ArrowDown"){
+event.preventDefault();
 moveSuggestion(1);
 return;
 }
 
-if(e.key==="ArrowUp"){
-e.preventDefault();
+if(event.key==="ArrowUp"){
+event.preventDefault();
 moveSuggestion(-1);
 return;
 }
 
-if(e.key==="Enter"){
-e.preventDefault();
+if(event.key==="Enter"){
+event.preventDefault();
 
-if(suggestions.length===1){
-selectSuggestion(0);
-return;
-}
-
-if(suggestions.length>1&&activeSuggestionIndex>=0){
+if(activeSuggestionIndex>=0&&searchResults[activeSuggestionIndex]){
 selectSuggestion(activeSuggestionIndex);
+}
 return;
 }
 
-return;
-}
-
-if(e.key==="Escape"){
-e.preventDefault();
-closeSuggestions();
-return;
+if(event.key==="Escape"){
+$("suggestionBox").classList.add("hidden");
 }
 });
 
-document.addEventListener("click",e=>{
-const wrap=document.getElementById("searchWrap");
-if(!wrap.contains(e.target))closeSuggestions();
+$("searchClear").addEventListener("click",()=>{
+$("searchInput").value="";
+$("searchClear").classList.add("hidden");
+searchResults=[];
+activeSuggestionIndex=-1;
+selectedSuggestionIndex=-1;
+$("suggestionBox").classList.add("hidden");
+$("searchInput").focus();
 });
 
-document.addEventListener("keydown",e=>{
-if(e.key==="Escape"&&modalOpen)closeModal();
+document.addEventListener("click",event=>{
+const wrapper=document.querySelector(".search-wrapper");
+if(!wrapper.contains(event.target)){
+$("suggestionBox").classList.add("hidden");
+}
 });
 
+/* MODAL */
+$("modalClose").addEventListener("click",closeModal);
+
+$("modalBackdrop").addEventListener("click",event=>{
+if(event.target===$("modalBackdrop"))closeModal();
+});
+
+document.addEventListener("keydown",event=>{
+if(event.key==="Escape"&&!$("modalBackdrop").classList.contains("hidden")){
+closeModal();
+}
+});
+
+/* KPI NAVIGATION */
+document.querySelectorAll(".kpi-clickable").forEach(kpi=>{
+kpi.addEventListener("click",()=>{
+const target=kpi.dataset.target;
+const section=document.getElementById(`section-${target}`);
+
+if(!section)return;
+
+section.scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+});
+});
+
+/* INITIAL LOAD */
 loadData();
+
+/* AUTO REFRESH */
 setInterval(loadData,30*60*1000);
 </script>
+
 </body>
 </html>
