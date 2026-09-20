@@ -19,10 +19,33 @@ button,input{font:inherit}
 .hero-content{position:relative;z-index:1}
 .glass{background:rgba(255,255,255,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.75);box-shadow:0 12px 35px rgba(15,23,42,.07)}
 .search-wrap{position:relative}
-.search-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#94a3b8}
-.search-input{width:100%;padding:13px 42px 13px 42px;border:1px solid #dbe3ef;border-radius:14px;background:#fff;outline:none;transition:.2s}
+.search-wrap>i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#94a3b8;z-index:3}
+.search-input{width:100%;padding:13px 76px 13px 42px;border:1px solid #dbe3ef;border-radius:14px;background:#fff;outline:none;transition:.2s}
 .search-input:focus{border-color:#60a5fa;box-shadow:0 0 0 4px rgba(59,130,246,.1)}
-.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#94a3b8;cursor:pointer;display:none}
+.search-actions{position:absolute;right:9px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:4px;z-index:3}
+.search-key{font-size:10px;font-weight:800;color:#94a3b8;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:3px 6px}
+.search-clear{width:28px;height:28px;border:0;background:transparent;color:#94a3b8;cursor:pointer;border-radius:8px;display:none}
+.search-clear:hover{background:#f1f5f9;color:#475569}
+.suggestion-box{position:absolute;left:0;right:0;top:calc(100% + 8px);background:#fff;border:1px solid #dbe3ef;border-radius:16px;box-shadow:0 18px 45px rgba(15,23,42,.14);overflow:hidden;z-index:80;display:none}
+.suggestion-box.show{display:block}
+.suggestion-head{padding:9px 13px;border-bottom:1px solid #eef2f7;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.suggestion-head-title{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:900;color:#64748b}
+.suggestion-head-hint{font-size:10px;color:#94a3b8}
+.suggestion-list{max-height:390px;overflow:auto}
+.suggestion-item{width:100%;border:0;background:#fff;text-align:left;padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;border-bottom:1px solid #f1f5f9;transition:.12s}
+.suggestion-item:last-child{border-bottom:0}
+.suggestion-item:hover,.suggestion-item.active{background:#eff6ff}
+.suggestion-icon{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#eff6ff;color:#2563eb}
+.suggestion-main{min-width:0;flex:1}
+.suggestion-vessel{font-size:12px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.suggestion-code{font-size:9px;font-weight:700;color:#64748b;margin-top:2px}
+.suggestion-meta{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
+.suggestion-section{font-size:9px;font-weight:800;color:#2563eb;background:#eff6ff;padding:3px 6px;border-radius:999px}
+.suggestion-type{font-size:9px;font-weight:800;color:#64748b;background:#f1f5f9;padding:3px 6px;border-radius:999px}
+.suggestion-match{font-size:9px;color:#94a3b8;margin-left:auto;white-space:nowrap}
+.suggestion-arrow{color:#94a3b8;font-size:11px}
+.suggestion-empty{padding:20px;text-align:center;color:#94a3b8;font-size:11px}
+.suggestion-selected-info{font-size:10px;color:#64748b;padding:7px 13px;background:#f8fafc;border-top:1px solid #eef2f7}
 .kpi-card{position:relative;overflow:hidden;border-radius:20px;background:#fff;border:1px solid #e2e8f0;padding:18px;box-shadow:0 10px 28px rgba(15,23,42,.06);transition:.2s}
 .kpi-card:hover{transform:translateY(-2px);box-shadow:0 15px 35px rgba(15,23,42,.1)}
 .kpi-icon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center}
@@ -100,11 +123,13 @@ tbody tr:hover td{background:#f8fbff}
 .info-grid,.status-grid,.movement-grid{grid-template-columns:1fr}
 .modal-panel{max-height:94vh}
 .modal-body{padding:14px}
+.suggestion-match{display:none}
 }
 </style>
 </head>
 <body>
 <div class="container-main py-5 md:py-7">
+
 <header class="hero mb-5">
 <div class="hero-content p-5 md:p-7">
 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -135,12 +160,25 @@ tbody tr:hover td{background:#f8fbff}
 </header>
 
 <div class="glass rounded-2xl p-3 mb-5">
-<div class="search-wrap">
+<div class="search-wrap" id="searchWrap">
 <i class="fa-solid fa-magnifying-glass"></i>
-<input id="searchInput" class="search-input" type="text" placeholder="Search vessel, voyage, type, shipping line, date, or any information...">
-<button id="searchClear" class="search-clear" onclick="clearSearch()"><i class="fa-solid fa-xmark"></i></button>
+<input id="searchInput" class="search-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search vessel, voyage, type, shipping line, date, or any information...">
+<div class="search-actions">
+<span id="searchKeyHint" class="search-key">Enter</span>
+<button id="searchClear" class="search-clear" type="button" onclick="clearSearch()" aria-label="Clear search">
+<i class="fa-solid fa-xmark"></i>
+</button>
 </div>
-<div id="searchInfo" class="hidden px-2 pt-2 text-[11px] text-slate-500"></div>
+
+<div id="suggestionBox" class="suggestion-box">
+<div class="suggestion-head">
+<span class="suggestion-head-title"><i class="fa-solid fa-magnifying-glass mr-1"></i>Suggestions</span>
+<span id="suggestionHint" class="suggestion-head-hint">↑ ↓ Navigate • Enter Select</span>
+</div>
+<div id="suggestionList" class="suggestion-list"></div>
+<div id="suggestionFooter" class="suggestion-selected-info"></div>
+</div>
+</div>
 </div>
 
 <div id="kpiGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 mb-6"></div>
@@ -180,6 +218,8 @@ const SECTION_CONFIG=[
 
 let DATA={updatedAt:"",source:"",vesselAlongside:[],confirmedVessel:[],openStack:[],vesselSchedule:[],vesselHistory:[],counts:{}};
 let searchTerm="";
+let suggestions=[];
+let activeSuggestionIndex=-1;
 let modalOpen=false;
 
 const colorMap={
@@ -213,6 +253,12 @@ return d.toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour
 }catch{return escapeHtml(value)}
 }
 
+function highlight(value){
+if(!searchTerm)return value;
+const safe=escapeHtml(searchTerm).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+try{return value.replace(new RegExp(`(${safe})`,"gi"),'<mark class="highlight">$1</mark>')}catch{return value}
+}
+
 function formatCell(value,key,item){
 if(value===null||value===undefined||value==="")return'<span class="cell-muted">—</span>';
 
@@ -233,18 +279,6 @@ return`<span class="badge badge-${item?._color||"blue"}">${escapeHtml(value)}</s
 return highlight(escapeHtml(value));
 }
 
-function highlight(value){
-if(!searchTerm)return value;
-const safe=escapeHtml(searchTerm).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-try{return value.replace(new RegExp(`(${safe})`,"gi"),'<mark class="highlight">$1</mark>')}catch{return value}
-}
-
-function matchesSearch(item){
-if(!searchTerm)return true;
-const term=normalize(searchTerm);
-return Object.values(item||{}).some(value=>normalize(value).includes(term));
-}
-
 function getItemKey(item){
 return`${normalize(item?.vesselName)}|${normalize(item?.voyage)}`;
 }
@@ -259,11 +293,178 @@ return true;
 });
 }
 
-function getSectionItems(section){
-return dedupe(DATA[section.key]||[]).filter(matchesSearch);
+function getSection(key){
+return SECTION_CONFIG.find(s=>s.key===key);
 }
 
-function renderSectionHeader(section,count,total){
+function searchMatchInfo(item,term){
+const q=normalize(term);
+if(!q)return"";
+
+const fields=[
+["Vessel",item.vesselName],
+["Code",item.vesselCode],
+["Voyage",item.voyage],
+["Type",item.type],
+["Shipping Line",item.shippingLine],
+["ETA",item.eta],
+["ETB",item.etb],
+["ATB",item.atb],
+["ETD",item.etd],
+["ATD",item.atd],
+["Open Stack",item.openStack],
+["Closing Time",item.closingTime],
+["Booking",item.booking],
+["Open",item.open],
+["Actual",item.actual],
+["Export",item.export],
+["Import",item.import]
+];
+
+const found=fields.find(([label,value])=>normalize(value).includes(q));
+return found?found[0]:"Information";
+}
+
+function buildSuggestions(term){
+const q=normalize(term);
+if(!q)return[];
+
+const results=[];
+
+SECTION_CONFIG.forEach(section=>{
+const items=dedupe(DATA[section.key]||[]);
+
+items.forEach((item,index)=>{
+const match=Object.values(item||{}).some(value=>normalize(value).includes(q));
+if(!match)return;
+
+results.push({
+sectionKey:section.key,
+section,
+item,
+originalIndex:index,
+matchField:searchMatchInfo(item,term)
+});
+});
+});
+
+return results.slice(0,20);
+}
+
+function renderSuggestions(){
+const box=document.getElementById("suggestionBox");
+const list=document.getElementById("suggestionList");
+const footer=document.getElementById("suggestionFooter");
+const keyHint=document.getElementById("searchKeyHint");
+
+if(!searchTerm){
+suggestions=[];
+activeSuggestionIndex=-1;
+box.classList.remove("show");
+keyHint.textContent="Enter";
+return;
+}
+
+suggestions=buildSuggestions(searchTerm);
+
+if(!suggestions.length){
+activeSuggestionIndex=-1;
+list.innerHTML='<div class="suggestion-empty"><i class="fa-regular fa-face-frown mr-1"></i>No matching vessel or information found</div>';
+footer.textContent="";
+box.classList.add("show");
+keyHint.textContent="Esc";
+return;
+}
+
+if(suggestions.length===1){
+activeSuggestionIndex=0;
+}else if(activeSuggestionIndex>=suggestions.length){
+activeSuggestionIndex=-1;
+}
+
+list.innerHTML=suggestions.map((s,i)=>{
+const item=s.item;
+const section=s.section;
+const color=colorMap[section.color]||colorMap.blue;
+const active=i===activeSuggestionIndex;
+
+return`
+<button type="button" class="suggestion-item ${active?"active":""}" onclick="selectSuggestion(${i})">
+<div class="suggestion-icon ${color.icon}">
+<i class="fa-solid ${section.icon}"></i>
+</div>
+<div class="suggestion-main">
+<div class="suggestion-vessel">${highlight(escapeHtml(item.vesselName||"Unknown Vessel"))}</div>
+<div class="suggestion-code">${item.vesselCode?highlight(escapeHtml(item.vesselCode)):"No vessel code"}${item.voyage?` • Voyage ${highlight(escapeHtml(item.voyage))}`:""}</div>
+<div class="suggestion-meta">
+<span class="suggestion-section">${escapeHtml(section.title)}</span>
+${item.type?`<span class="suggestion-type">${highlight(escapeHtml(item.type))}</span>`:""}
+<span class="suggestion-match">Match: ${escapeHtml(s.matchField)}</span>
+</div>
+</div>
+<div class="suggestion-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+</button>`;
+}).join("");
+
+box.classList.add("show");
+
+if(suggestions.length===1){
+footer.innerHTML='<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>One result found — press <b>Enter</b> to open';
+keyHint.textContent="Enter";
+}else if(activeSuggestionIndex>=0){
+footer.innerHTML=`<i class="fa-solid fa-location-crosshairs text-blue-500 mr-1"></i>Selected ${activeSuggestionIndex+1} of ${suggestions.length} — press <b>Enter</b> to open`;
+keyHint.textContent="Enter";
+}else{
+footer.innerHTML=`<i class="fa-solid fa-arrows-up-down text-slate-400 mr-1"></i>${suggestions.length} results — use <b>↑</b> <b>↓</b> to select`;
+keyHint.textContent="Select";
+}
+
+const activeEl=list.querySelector(".suggestion-item.active");
+if(activeEl)activeEl.scrollIntoView({block:"nearest"});
+}
+
+function moveSuggestion(direction){
+if(!suggestions.length)return;
+
+if(activeSuggestionIndex===-1){
+activeSuggestionIndex=direction>0?0:suggestions.length-1;
+}else{
+activeSuggestionIndex+=direction;
+if(activeSuggestionIndex<0)activeSuggestionIndex=suggestions.length-1;
+if(activeSuggestionIndex>=suggestions.length)activeSuggestionIndex=0;
+}
+
+renderSuggestions();
+}
+
+function selectSuggestion(index){
+if(index<0||index>=suggestions.length)return;
+activeSuggestionIndex=index;
+const selected=suggestions[index];
+closeSuggestions();
+openModalWithItem(selected.section,selected.item);
+}
+
+function closeSuggestions(){
+document.getElementById("suggestionBox").classList.remove("show");
+}
+
+function clearSearch(){
+const input=document.getElementById("searchInput");
+input.value="";
+searchTerm="";
+suggestions=[];
+activeSuggestionIndex=-1;
+closeSuggestions();
+document.getElementById("searchClear").style.display="none";
+input.focus();
+}
+
+function updateSearchControls(){
+document.getElementById("searchClear").style.display=searchTerm?"block":"none";
+}
+
+function renderSectionHeader(section,count){
 const c=colorMap[section.color]||colorMap.blue;
 return`
 <div class="section-head">
@@ -274,24 +475,22 @@ return`
 <div class="section-desc">${section.description}</div>
 </div>
 </div>
-<div class="section-count">${count}${searchTerm?` / ${total}`:""} Records</div>
+<div class="section-count">${count} Records</div>
 </div>`;
 }
 
 function renderTable(section){
-const raw=dedupe(DATA[section.key]||[]);
-const items=raw.filter(matchesSearch);
+const items=dedupe(DATA[section.key]||[]);
 const colspan=section.columns.length;
-const c=colorMap[section.color]||colorMap.blue;
-
 let body="";
+
 if(!items.length){
 body=`
 <tr class="no-data-row">
 <td colspan="${colspan}">
 <div class="empty-state">
 <i class="fa-regular fa-folder-open"></i>
-<span>${searchTerm?"No matching records found":"No data available"}</span>
+<span>No data available</span>
 </div>
 </td>
 </tr>`;
@@ -300,7 +499,7 @@ body=items.map((item,index)=>{
 item._color=section.color;
 return`
 <tr class="data-row cursor-pointer" onclick='openVesselModal(${JSON.stringify(section.key)},${index})'>
-${section.columns.map(([key,label])=>`<td>${formatCell(item[key],key,item)}</td>`).join("")}
+${section.columns.map(([key])=>`<td>${formatCell(item[key],key,item)}</td>`).join("")}
 </tr>`;
 }).join("");
 }
@@ -312,7 +511,7 @@ return`
 <thead>
 <tr>
 <th colspan="${colspan}" class="section-title-cell">
-${renderSectionHeader(section,items.length,raw.length)}
+${renderSectionHeader(section,items.length)}
 </th>
 </tr>
 <tr class="column-header-row">
@@ -339,16 +538,15 @@ const configs=[
 ];
 
 document.getElementById("kpiGrid").innerHTML=configs.map(([key,title,icon,color])=>{
-const raw=dedupe(DATA[key]||[]);
-const count=raw.filter(matchesSearch).length;
+const count=dedupe(DATA[key]||[]).length;
 const c=colorMap[color];
+
 return`
 <div class="kpi-card">
 <div class="flex items-center justify-between gap-3">
 <div>
 <div class="text-[11px] uppercase tracking-wider font-bold text-slate-400">${title}</div>
 <div class="text-2xl font-black text-slate-800 mt-1">${count.toLocaleString()}</div>
-${searchTerm?`<div class="text-[10px] text-slate-400 mt-1">of ${raw.length.toLocaleString()} total</div>`:""}
 </div>
 <div class="kpi-icon ${c.icon}"><i class="fa-solid ${icon}"></i></div>
 </div>
@@ -359,6 +557,7 @@ ${searchTerm?`<div class="text-[10px] text-slate-400 mt-1">of ${raw.length.toLoc
 function updateConnection(ok=true){
 const dot=document.getElementById("connectionDot");
 const text=document.getElementById("connectionText");
+
 if(ok){
 dot.classList.remove("offline");
 text.textContent="Live data connected";
@@ -368,36 +567,22 @@ text.textContent="Data connection unavailable";
 }
 }
 
-function updateSearchInfo(){
-const info=document.getElementById("searchInfo");
-const clear=document.getElementById("searchClear");
-
-if(searchTerm){
-clear.style.display="block";
-const total=SECTION_CONFIG.reduce((sum,s)=>sum+dedupe(DATA[s.key]||[]).filter(matchesSearch).length,0);
-info.classList.remove("hidden");
-info.innerHTML=`Showing <b>${total.toLocaleString()}</b> matching record${total===1?"":"s"} for <b>"${escapeHtml(searchTerm)}"</b>`;
-}else{
-clear.style.display="none";
-info.classList.add("hidden");
-}
-}
-
 function renderAll(){
 updateKpis();
 renderSections();
-updateSearchInfo();
 }
 
 async function loadData(){
 const btn=document.getElementById("refreshBtn");
 const original=btn.innerHTML;
+
 btn.disabled=true;
 btn.innerHTML='<i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading';
 
 try{
 const response=await fetch(`data.json?t=${Date.now()}`,{cache:"no-store"});
 if(!response.ok)throw new Error(`HTTP ${response.status}`);
+
 const json=await response.json();
 
 DATA={
@@ -414,6 +599,9 @@ counts:json.counts||{}
 updateConnection(true);
 document.getElementById("lastUpdated").textContent=`Last update: ${formatUpdatedAt(DATA.updatedAt)}`;
 renderAll();
+
+if(searchTerm)renderSuggestions();
+
 }catch(error){
 console.error(error);
 updateConnection(false);
@@ -426,10 +614,10 @@ btn.innerHTML=original;
 }
 
 function openVesselModal(sectionKey,index){
-const section=SECTION_CONFIG.find(s=>s.key===sectionKey);
+const section=getSection(sectionKey);
 if(!section)return;
 
-const items=dedupe(DATA[sectionKey]||[]).filter(matchesSearch);
+const items=dedupe(DATA[sectionKey]||[]);
 const item=items[index];
 if(!item)return;
 
@@ -446,6 +634,7 @@ document.getElementById("modalTitle").textContent=item.vesselName||"Unknown Vess
 
 const voyage=item.voyage?`Voyage ${item.voyage}`:"";
 const code=item.vesselCode?`Code ${item.vesselCode}`:"";
+
 document.getElementById("modalSubtitle").textContent=[code,voyage].filter(Boolean).join(" • ")||"Vessel details";
 
 const infoFields=[
@@ -512,17 +701,56 @@ modalOpen=false;
 document.body.style.overflow="";
 }
 
-function clearSearch(){
-const input=document.getElementById("searchInput");
-input.value="";
-searchTerm="";
-renderAll();
-input.focus();
+const searchInput=document.getElementById("searchInput");
+
+searchInput.addEventListener("input",e=>{
+searchTerm=e.target.value.trim();
+activeSuggestionIndex=-1;
+updateSearchControls();
+renderSuggestions();
+});
+
+searchInput.addEventListener("keydown",e=>{
+if(!searchTerm)return;
+
+if(e.key==="ArrowDown"){
+e.preventDefault();
+moveSuggestion(1);
+return;
 }
 
-document.getElementById("searchInput").addEventListener("input",e=>{
-searchTerm=e.target.value.trim();
-renderAll();
+if(e.key==="ArrowUp"){
+e.preventDefault();
+moveSuggestion(-1);
+return;
+}
+
+if(e.key==="Enter"){
+e.preventDefault();
+
+if(suggestions.length===1){
+selectSuggestion(0);
+return;
+}
+
+if(suggestions.length>1&&activeSuggestionIndex>=0){
+selectSuggestion(activeSuggestionIndex);
+return;
+}
+
+return;
+}
+
+if(e.key==="Escape"){
+e.preventDefault();
+closeSuggestions();
+return;
+}
+});
+
+document.addEventListener("click",e=>{
+const wrap=document.getElementById("searchWrap");
+if(!wrap.contains(e.target))closeSuggestions();
 });
 
 document.addEventListener("keydown",e=>{
