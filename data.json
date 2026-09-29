@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-09-30 01:20:01",
-  "updatedAt": "2026-09-30T01:20:01+07:00",
+  "lastUpdated": "2026-09-30 01:49:13",
+  "updatedAt": "2026-09-30T01:49:13+07:00",
   "source": "https://ibstpks.pelindo.co.id/webaccess/",
   "allVessels": [
     {
@@ -244,7 +244,7 @@
       "bkgBoxes": "",
       "bkgTeus": "",
       "actDepartureTsISO": "",
-      "actStartWorkTs": "31/12/1900 23:00",
+      "actStartWorkTs": "30/09/2026 01:41",
       "category": "alongside"
     },
     {
@@ -1116,7 +1116,7 @@
       "closingTime": "03/10/2026 18:00",
       "booking": "1000",
       "open": "1000",
-      "actual": "285",
+      "actual": "293",
       "export": "",
       "exportTeus": "",
       "import": "",
@@ -1148,7 +1148,7 @@
       "cutoffCtr": "N",
       "bkgExport": "1000",
       "bkgOpen": "1000",
-      "joExport": "285",
+      "joExport": "293",
       "actDepTs": "",
       "exportBox": "",
       "importBox": "",
@@ -2442,7 +2442,7 @@
       "bkgBoxes": "",
       "bkgTeus": "",
       "actDepartureTsISO": "",
-      "actStartWorkTs": "31/12/1900 23:00",
+      "actStartWorkTs": "30/09/2026 01:41",
       "category": "alongside"
     }
   ],
@@ -3318,7 +3318,7 @@
       "closingTime": "03/10/2026 18:00",
       "booking": "1000",
       "open": "1000",
-      "actual": "285",
+      "actual": "293",
       "export": "",
       "exportTeus": "",
       "import": "",
@@ -3350,7 +3350,7 @@
       "cutoffCtr": "N",
       "bkgExport": "1000",
       "bkgOpen": "1000",
-      "joExport": "285",
+      "joExport": "293",
       "actDepTs": "",
       "exportBox": "",
       "importBox": "",
