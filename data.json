@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-10-10 01:51:09",
-  "updatedAt": "2026-10-10T01:51:09+07:00",
+  "lastUpdated": "2026-10-10 02:16:36",
+  "updatedAt": "2026-10-10T02:16:36+07:00",
   "source": "https://ibstpks.pelindo.co.id/webaccess/",
   "allVessels": [
     {
@@ -244,7 +244,7 @@
       "bkgBoxes": "",
       "bkgTeus": "",
       "actDepartureTsISO": "",
-      "actStartWorkTs": "31/12/1900 23:00",
+      "actStartWorkTs": "10/10/2026 02:01",
       "category": "alongside"
     },
     {
@@ -2747,7 +2747,7 @@
       "bkgBoxes": "",
       "bkgTeus": "",
       "actDepartureTsISO": "",
-      "actStartWorkTs": "31/12/1900 23:00",
+      "actStartWorkTs": "10/10/2026 02:01",
       "category": "alongside"
     }
   ],
